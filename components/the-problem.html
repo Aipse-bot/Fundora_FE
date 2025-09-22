@@ -1,0 +1,40 @@
+<section id="mainContent" class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-3 min-h-full pb-10">
+  <div>
+    <h1 class="text-4xl sm:text-5xl font-bold mb-8">The Problem</h1>
+
+    <form id="problemForm">
+      <!-- Problem Description -->
+      <div class="mb-5">
+        <textarea id="problemDescription" name="description" rows="6"
+          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+          placeholder="Describe the problem you're solving..."></textarea>
+        <p id="descriptionError" class="text-red-500 text-sm mt-1 hidden"></p>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-end mt-6">
+        <button type="submit"
+          class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+          Next
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section id="card-panel" class="min-h-screen flex px-5 py-6 items-center justify-center">
+  <div class="w-full max-w-lg bg-white rounded-lg p-8 shadow-lg space-y-6">
+
+    <!-- Header -->
+    <h1 class="text-3xl font-bold text-gray-800">The Problem</h1>
+
+    <!-- Problem Description -->
+    <div>
+      <div class="mb-2 text-gray-500 font-semibold text-xl">What's the challenge you're solving?</div>
+      <p id="problemDescription" class="text-gray-700 text-base">
+        <span class="text-gray-400">Loading problem description...</span>
+      </p>
+    </div>
+
+  </div>
+</section>

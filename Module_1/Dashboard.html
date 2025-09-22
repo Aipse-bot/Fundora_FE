@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundora - Investment Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'low-risk': '#10b981',
+                        'med-risk': '#f59e0b',
+                        'high-risk': '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+        <!-- Enhanced Header -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-50">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-2xl font-bold text-gray-900">Fundora</h1>
+                <div class="hidden md:flex items-center space-x-2 text-sm text-gray-600">
+                    <span id="startup-count" class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Loading...</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                    My Watchlist
+                </a>
+                <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Enhanced Sidebar -->
+         <aside class="w-80 bg-white border-r border-gray-200 p-6 min-h-screen overflow-y-auto">
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-2">Investment Filters</h2>
+                <p class="text-sm text-gray-600">Customize your investment criteria</p>
+            </div>
+
+            <form id="filterForm" class="space-y-6">
+                <!-- Presets -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                <label class="block text-sm font-medium text-gray-700 mb-3">Quick Presets</label>
+                <div class="grid grid-cols-1 gap-2">
+                    <button type="button" onclick="applyPreset('conservative')">Conservative</button>
+                    <button type="button" onclick="applyPreset('balanced')">Balanced</button>
+                    <button type="button" onclick="applyPreset('aggressive')">Aggressive</button>
+                </div>
+                </div>
+
+                <!-- Sort By -->
+                <div>
+                <label>Sort By</label>
+                <select name="sort_by">
+                    <option value="recommended">Recommended</option>
+                    <option value="projected_return_desc">Highest Returns First</option>
+                    <option value="projected_return_asc">Lowest Returns First</option>
+                    <option value="reward_potential_desc">Best Reward Potential</option>
+                    <option value="confidence_desc">Highest Confidence</option>
+                    <option value="risk_asc">Lowest Risk First</option>
+                    <option value="company_name">Company Name A-Z</option>
+                </select>
+                </div>
+
+                <!-- Industry -->
+                <div>
+                <label>Industry</label>
+                <select name="industry">
+                    <option value="">All Industries</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Energy">Energy</option>
+                    <option value="Education">Education</option>
+                </select>
+                </div>
+
+                <!-- Risk -->
+                <div>
+                <label>Risk Tolerance</label>
+                <input type="range" name="risk" min="0" max="100" value="50" oninput="updateRiskLabel(this.value)">
+                <div id="risk-value">50%</div>
+                </div>
+
+                <!-- Minimum Return -->
+                <div>
+                <label>Minimum Projected Return</label>
+                <select name="min_return">
+                    <option value="">Any Return</option>
+                    <option value="5">5% or higher</option>
+                    <option value="10">10% or higher</option>
+                    <option value="15">15% or higher</option>
+                    <option value="20">20% or higher</option>
+                    <option value="25">25% or higher</option>
+                    <option value="50">50% or higher</option>
+                    <option value="75">75% or higher</option>
+                    <option value="100">100% or higher</option>
+                </select>
+                </div>
+
+                <!-- Submit -->
+                <div>
+                <button type="submit">Apply Filters</button>
+                </div>
+            </form>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Welcome Section -->
+            <div class="mb-8">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Investment Opportunities</h2>
+                    <p class="text-gray-600">Discover startups tailored to your investment profile</p>
+                    </div>
+                </div>
+
+                <!-- Results Summary -->
+                <div class="mb-6 flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200">
+                    <div>
+                    <p class="text-sm text-gray-600">
+                        Showing <span id="startup-count" class="font-semibold text-gray-900">0</span> startup<span id="startup-plural">s</span>
+                        <span id="filter-match-label" class="hidden">matching your filters</span>
+                    </p>
+                    </div>
+                    <div class="text-sm text-blue-600 hidden" id="clear-filters">
+                    <button onclick="clearAllFilters()" class="hover:text-blue-800 transition-colors">Clear all filters</button>
+                    </div>
+                </div>
+
+                <!-- Active Filters Display -->
+                <div class="mb-6" id="active-filters" class="hidden">
+                    <div class="flex flex-wrap gap-2 items-center">
+                    <span class="text-sm font-medium text-gray-700">Active filters:</span>
+                    <!-- Filter tags will be injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Startup Cards Grid -->
+            <div id="startup-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 relative">
+                    <!-- Top Section -->
+                    <div id="startup-card" class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <h3 id="startup-name" class="text-lg font-semibold text-gray-900 mb-1">Loading...</h3>
+                            <p id="startup-industry" class="text-sm text-gray-600">Loading...</p>
+                        </div>
+                        <div class="flex flex-col items-end space-y-1">
+                            <span id="startup-risk" class="text-xs font-medium px-2 py-1 rounded-full">Loading...</span>
+                        </div>
+                    </div>
+                    <!-- Enhanced Metrics -->
+                    <div id="metrics" class="space-y-3 mb-4">
+                        <!-- Reward Potential -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Reward Potential</span>
+                            <span id="reward-potential" class="text-sm font-semibold">—</span>
+                        </div>
+
+                        <!-- Projected Return -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Projected Return</span>
+                            <span id="projected-return" class="text-sm font-semibold">—</span>
+                        </div>
+
+                        <!-- Confidence -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Confidence</span>
+                            <div class="flex items-center space-x-2">
+                            <div id="confidence-dots" class="flex space-x-1"></div>
+                            <span id="confidence-label" class="text-sm font-semibold">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Investment Performance Chart -->
+                   <div id="risk-chart-container" class="mb-4"></div>
+
+                    <!-- Action Buttons -->
+                    <div id="startup-list" class="grid gap-6"></div>
+                </div>
+            </div>
+            <!-- Empty State -->
+            <div id="no-startups" class="col-span-full text-center py-16 hidden">
+                <div class="text-6xl mb-4">🔍</div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">No startups found</h3>
+                <p class="text-gray-500 text-lg mb-6">No startups match your current filters.</p>
+                <div class="space-x-4">
+                    <button onclick="loadAllStartups()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                        View All Startups
+                    </button>
+                    <button onclick="applyPreset('balanced')" class="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200 font-medium transition-colors">
+                        Try Balanced Filter
+                    </button>
+                </div>
+            </div>
+
+                <!-- Load More -->
+            <div id="load-more" class="mt-12 text-center hidden">
+                <button onclick="loadMoreStartups()" class="px-8 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition-colors shadow-sm hover:shadow">
+                    Load More Opportunities
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function updateRiskLabel(value) {
+            document.getElementById('risk-value').textContent = value + '%';
+        }
+        
+        // Initialize risk label on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const riskSlider = document.querySelector('input[name="risk"]');
+            if (riskSlider) {
+                updateRiskLabel(riskSlider.value);
+            }
+        });
+
+        // Preset functions
+        function applyPreset(type) {
+            const form = document.querySelector('form');
+            const industrySelect = form.querySelector('select[name="industry"]');
+            const riskSlider = form.querySelector('input[name="risk"]');
+            const sortSelect = form.querySelector('select[name="sort_by"]');
+            const minReturnSelect = form.querySelector('select[name="min_return"]');
+
+            // Reset all fields first
+            industrySelect.value = '';
+            
+            switch(type) {
+                case 'conservative':
+                    riskSlider.value = 20;
+                    sortSelect.value = 'confidence_desc';
+                    minReturnSelect.value = '5';
+                    break;
+                case 'balanced':
+                    riskSlider.value = 50;
+                    sortSelect.value = 'recommended';
+                    minReturnSelect.value = '15';
+                    break;
+                case 'aggressive':
+                    riskSlider.value = 80;
+                    sortSelect.value = 'projected_return_desc';
+                    minReturnSelect.value = '25';
+                    break;
+            }
+            updateRiskLabel(riskSlider.value);
+            
+            // Auto-submit the form
+            form.submit();
+        }
+    </script>
+
+    <style>
+        .startup-card {
+            transition: all 0.2s ease;
+        }
+        
+        .startup-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preset-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .preset-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .risk-slider::-webkit-slider-thumb {
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .risk-slider::-webkit-slider-thumb:hover {
+            background: #2563eb;
+            transform: scale(1.1);
+        }
+        
+        .risk-slider::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Custom scrollbar for sidebar */
+        aside::-webkit-scrollbar {
+            width: 6px;
+        }
+        aside::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        aside::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        aside::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Smooth transitions */
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        /* Focus states */
+        /* select:focus, input:focus {
+            outline: none;
+            ring: 2px;
+            ring-color: #3b82f6;
+            border-color: #3b82f6;
+        } */
+        
+        /* Loading animation for buttons */
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</body>
+</html>

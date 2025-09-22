@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Information Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for better focus and active states */
+        .data-source-btn.active {
+            background-color: #3B82F6; /* blue-500 */
+            color: white;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .data-source-btn.active svg {
+            color: white;
+        }
+        /* Accordion styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden; /* Required for the smooth slide animation */
+            transition: max-height 0.3s ease-out;
+        }
+        /* Dynamic tooltip style */
+        .dynamic-tooltip {
+            visibility: hidden;
+            background-color: #1f2937; /* gray-800 */
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+            width: 220px;
+            pointer-events: none; /* So it doesn't interfere with mouse events */
+        }
+        .dynamic-tooltip.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        .dynamic-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+        /* Required field indicator */
+        .required-indicator {
+            display: none;
+            color: #ef4444; /* red-500 */
+            margin-left: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <!-- Include Module 3 Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+            
+            <!-- Left side - Fundora logo/title -->
+            <div class="flex items-center">
+                <a href="/index.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
+                Fundora
+                </a>
+            </div>
+
+            <!-- Right side - Welcome message and logout -->
+            <div id="header-user" class="flex items-center space-x-4"></div>
+
+            </div>
+        </div>
+        <script>
+            function renderHeaderUser(user) {
+                const container = document.getElementById('header-user');
+                container.innerHTML = '';
+
+                if (!user || !user.name) return;
+
+                container.innerHTML = `
+                    <span class="text-gray-700 text-sm">
+                    Welcome, <span class="font-medium">${user.name}</span>
+                    </span>
+                    <a href="/logout.html"
+                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                    Logout
+                    </a>
+                `;
+            }
+        </script>
+        </header>
+
+    <div class="flex items-start justify-center p-4 sm:p-6 lg:p-8 pt-8 min-h-[calc(100vh-4rem)]">
+        <div id="formContainer" class="w-full max-w-2xl mt-4">
+        <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 lg:p-10">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-800">Company Information</h1>
+                <p class="text-slate-500 mt-2">Please fill in the details of the company you want to add.</p>
+            </div>
+
+            <form id="companyForm" action="{% url 'company_information_form' %}" method="POST" class="space-y-6" novalidate>
+                <div>
+                    <label for="company-name" class="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
+                    <div class="relative">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 11-2 0V9.414a1 1 0 00-1-1H7a1 1 0 00-1 1v6.586a1 1 0 11-2 0V4zm7 1a1 1 0 100-2H9a1 1 0 100 2h2zm-4 0a1 1 0 100-2H5a1 1 0 100 2h2z" clip-rule="evenodd" /></svg>
+                        </div>
+                        <input type="text" name="company-name" id="company-name" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="e.g., Acme Corporation" required>
+                    </div>
+                </div>
+                <div>
+                    <label for="industry" class="block text-sm font-medium text-slate-700 mb-2">Industry</label>
+                    <div class="relative">
+                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M4.25 2A2.25 2.25 0 002 4.25v2.5A2.25 2.25 0 004.25 9h2.5A2.25 2.25 0 009 6.75v-2.5A2.25 2.25 0 006.75 2h-2.5zM2 13.25A2.25 2.25 0 014.25 11h2.5A2.25 2.25 0 009 13.25v2.5A2.25 2.25 0 016.75 18h-2.5A2.25 2.25 0 012 15.75v-2.5zM11 4.25A2.25 2.25 0 0113.25 2h2.5A2.25 2.25 0 0118 4.25v2.5A2.25 2.25 0 0115.75 9h-2.5A2.25 2.25 0 0111 6.75v-2.5zM13.25 11A2.25 2.25 0 0011 13.25v2.5A2.25 2.25 0 0013.25 18h2.5A2.25 2.25 0 0018 15.75v-2.5A2.25 2.25 0 0015.75 11h-2.5z" /></svg>
+                        </div>
+                        <select id="industry" name="industry" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition appearance-none" required>
+                            <option value="" disabled selected>Select an industry</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
+                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="company-description" class="block text-sm font-medium text-slate-700 mb-2">Company Description</label>
+                    <textarea id="company-description" name="company-description" rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="Describe the company's services and business overview..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Data Source Confidence</label>
+                     <div id="dataSourceGroup" class="grid grid-cols-1 sm:grid-cols-3 gap-2 rounded-lg bg-slate-100 p-1">
+                        <button type="button" data-confidence="high" class="data-source-btn flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 transition-all duration-200">
+                           <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                            High
+                        </button>
+                        <button type="button" data-confidence="medium" class="data-source-btn flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 transition-all duration-200 active">
+                            <svg class="h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" /></svg>
+                            Medium
+                        </button>
+                        <button type="button" data-confidence="low" class="data-source-btn flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 transition-all duration-200">
+                            <svg class="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" /></svg>
+                            Low
+                        </button>
+                    </div>
+                    <input type="hidden" id="data-source-confidence" name="data-source-confidence" value="Medium">
+                </div>
+
+                <div id="conditionalSections" class="space-y-6 pt-4">
+                    <div id="financialsSection" class="space-y-4">
+                         <h2 class="text-lg font-semibold text-slate-800 border-b pb-2">Financials</h2>
+                         <p class="text-sm text-slate-500">Provide key metrics. This information is crucial for High/Medium confidence analysis.</p>
+                        
+                        <div class="space-y-4 rounded-lg border border-slate-200 p-4">
+                            <button type="button" class="accordion-toggle flex justify-between items-center w-full font-semibold text-slate-700">
+                                Income Statement
+                                <svg class="w-5 h-5 transition-transform transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </button>
+                            <div class="accordion-content space-y-4 pt-2">
+                                <div class="grid sm:grid-cols-2 gap-4">
+                                   
+                                    <div>
+                                        <label for="previous-revenue" class="flex items-center text-sm font-medium text-slate-600">Previous Revenue (₱)<span class="required-indicator">*</span></label>
+                                        <input type="number" name="previous-revenue" id="previous-revenue" class="financial-input mt-1 w-full p-2 bg-slate-50 border border-slate-200 rounded-md" placeholder="e.g., 800000">
+                                    </div>
+                                    <div>
+                                        <label for="current-revenue" class="flex items-center text-sm font-medium text-slate-600">Current Revenue (₱)<span class="required-indicator">*</span></label>
+                                        <input type="number" name="current-revenue" id="current-revenue" class="financial-input mt-1 w-full p-2 bg-slate-50 border border-slate-200 rounded-md" placeholder="e.g., 1000000">
+                                    </div>
+                                    <div>
+                                        <label for="net-income" class="flex items-center text-sm font-medium text-slate-600">Net Income (₱)<span class="required-indicator">*</span>
+                                            <span class="tooltip-trigger ml-1" data-tooltip-text="The company's profit after all expenses, including taxes, have been deducted from revenue.">
+                                                <svg class="h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
+                                            </span>
+                                        </label>
+                                        <input type="number" name="net-income" id="net-income" class="financial-input mt-1 w-full p-2 bg-slate-50 border border-slate-200 rounded-md">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 rounded-lg border border-slate-200 p-4">
+                            <button type="button" class="accordion-toggle flex justify-between items-center w-full font-semibold text-slate-700">
+                                Balance Sheet
+                                <svg class="w-5 h-5 transition-transform transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                            </button>
+                             <div class="accordion-content space-y-4 pt-2">
+                                 <div class="grid sm:grid-cols-2 gap-4">
+                                     <div>
+                                         <label for="total-assets" class="flex items-center text-sm font-medium text-slate-600">Total Assets (₱)<span class="required-indicator">*</span>
+                                            <span class="tooltip-trigger ml-1" data-tooltip-text="Everything of value that the company owns, such as cash, property, and equipment.">
+                                                <svg class="h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
+                                            </span>
+                                         </label>
+                                         <input type="number" name="total-assets" id="total-assets" class="financial-input mt-1 w-full p-2 bg-slate-50 border border-slate-200 rounded-md">
+                                     </div>
+                                     <div>
+                                         <label for="total-liabilities" class="flex items-center text-sm font-medium text-slate-600">Total Liabilities (₱)<span class="required-indicator">*</span>
+                                            <span class="tooltip-trigger ml-1" data-tooltip-text="The company's debts and financial obligations to other parties.">
+                                                <svg class="h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
+                                            </span>
+                                         </label>
+                                         <input type="number" name="total-liabilities" id="total-liabilities" class="financial-input mt-1 w-full p-2 bg-slate-50 border border-slate-200 rounded-md">
+                                     </div>
+                                 </div>
+                                 <div class="pt-2">
+                                     <label for="shareholder-equity" class="block text-sm font-medium text-slate-600">Shareholder Equity (₱)</label>
+                                     <input type="text" name="shareholder-equity" id="shareholder-equity" class="mt-1 w-full p-2 bg-slate-200 border border-slate-300 rounded-md text-slate-700 font-bold" placeholder="Auto-calculated" disabled>
+                                 </div>
+                             </div>
+                        </div>
+
+                        <div class="space-y-4 rounded-lg border border-slate-200 p-4">
+                             <button type="button" class="accordion-toggle flex justify-between items-center w-full font-semibold text-slate-700">
+                                 Cash Flow Statement
+                                 <svg class="w-5 h-5 transition-transform transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                             </button>
+                             <div class="accordion-content space-y-4 pt-2">
+                                 <div>
+                                     <label for="cash-flow" class="flex items-center text-sm font-medium text-slate-600">Cash Flow from Operations (₱)<span class="required-indicator">*</span></label>
+                                     <input type="number" name="cash-flow" id="cash-flow" class="financial-input mt-1 w-full p-2 bg-slate-50 border border-slate-200 rounded-md">
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div id="qualitativeSection" style="display: none;" class="space-y-4">
+                         <h2 class="text-lg font-semibold text-slate-800 border-b pb-2">Qualitative Factors</h2>
+                         <div class="space-y-4">
+                            <div>
+                                <label for="team-strength" class="block text-sm font-medium text-slate-700 mb-1">Management Team Strength</label>
+                                <textarea id="team-strength" name="team-strength" rows="3" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-md" placeholder="Describe the experience and track record..."></textarea>
+                            </div>
+                            <div>
+                                <label for="market-position" class="block text-sm font-medium text-slate-700 mb-1">Market Position & Competitive Advantage</label>
+                                <textarea id="market-position" name="market-position" rows="3" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-md" placeholder="What is the company's market share, brand strength...?"></textarea>
+                            </div>
+                             <div>
+                                <label for="brand-reputation" class="block text-sm font-medium text-slate-700 mb-1">Customer & Brand Reputation</label>
+                                <textarea id="brand-reputation" name="brand-reputation" rows="3" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-md" placeholder="Summarize public sentiment from reviews, social media, etc."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="validationMessage" class="hidden p-4 text-sm text-red-800 rounded-lg bg-red-100" role="alert">
+                    <span class="font-medium">Missing Information!</span> Please complete all fields in at least one financial section (Income Statement, Balance Sheet, or Cash Flow Statement) for a Medium confidence report, or switch to Low confidence.
+                </div>
+
+                <div class="pt-4 space-y-3">
+                    <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                        Generate Health Report
+                    </button>
+                    <button type="button" onclick="window.history.back()" class="w-full bg-transparent text-slate-600 font-semibold py-3 px-4 rounded-lg hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-300 transition-all duration-200">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            //   One-time setup  
+            const formContainer = document.getElementById('formContainer');
+            
+            const dataSourceGroup = document.getElementById('dataSourceGroup');
+            const hiddenInput = document.getElementById('data-source-confidence');
+            const financialsSection = document.getElementById('financialsSection');
+            const qualitativeSection = document.getElementById('qualitativeSection');
+            const totalAssetsInput = document.getElementById('total-assets');
+            const totalLiabilitiesInput = document.getElementById('total-liabilities');
+            const shareholderEquityInput = document.getElementById('shareholder-equity');
+            const form = document.getElementById('companyForm');
+            const validationMessage = document.getElementById('validationMessage');
+            let tooltipElement;
+
+            //   Function to toggle required state for financial fields  
+            function setFinancialFieldsRequired(isRequired) {
+                const financialInputs = financialsSection.querySelectorAll('.financial-input');
+                financialInputs.forEach(input => {
+                    input.required = isRequired;
+                    const label = input.closest('div').querySelector('label');
+                    if (label) {
+                        const indicator = label.querySelector('.required-indicator');
+                        if (indicator) {
+                            indicator.style.display = isRequired ? 'inline' : 'none';
+                        }
+                    }
+                });
+            }
+
+            // Function to update conditional sections 
+            function updateSections(confidence) {
+                validationMessage.classList.add('hidden'); // Hide message on change
+                 if (confidence === 'high') {
+                    financialsSection.style.display = 'block';
+                    qualitativeSection.style.display = 'none';
+                    setFinancialFieldsRequired(true);
+                } else if (confidence === 'medium') {
+                    financialsSection.style.display = 'block';
+                    qualitativeSection.style.display = 'none';
+                    setFinancialFieldsRequired(false);
+                } else if (confidence === 'low') {
+                    financialsSection.style.display = 'none';
+                    qualitativeSection.style.display = 'block';
+                    setFinancialFieldsRequired(false);
+                }
+            }
+            
+            //  Logic for Data Source Button Group 
+            dataSourceGroup.addEventListener('click', function(e) {
+                const button = e.target.closest('.data-source-btn');
+                if (!button) return;
+                const confidence = button.dataset.confidence;
+                dataSourceGroup.querySelectorAll('.data-source-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                hiddenInput.value = confidence.charAt(0).toUpperCase() + confidence.slice(1);
+                updateSections(confidence);
+            });
+            
+            // Hide validation message when user starts typing in financial section
+            financialsSection.addEventListener('input', () => {
+                validationMessage.classList.add('hidden');
+            });
+
+            //  Accordion Logic 
+            document.querySelectorAll('.accordion-toggle').forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('svg');
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        icon.classList.remove('rotate-180');
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        icon.classList.add('rotate-180');
+                    }
+                });
+            });
+
+            //  Auto-calculation for Shareholder Equity 
+            function calculateEquity() {
+                const assets = parseFloat(totalAssetsInput.value) || 0;
+                const liabilities = parseFloat(totalLiabilitiesInput.value) || 0;
+                const equity = assets - liabilities;
+                shareholderEquityInput.value = equity.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+
+            totalAssetsInput.addEventListener('input', calculateEquity);
+            totalLiabilitiesInput.addEventListener('input', calculateEquity);
+
+            //  Dynamic Tooltip Logic 
+            function createTooltip() {
+                if (!tooltipElement) {
+                    tooltipElement = document.createElement('div');
+                    tooltipElement.className = 'dynamic-tooltip';
+                    document.body.appendChild(tooltipElement);
+                }
+            }
+            
+            document.querySelectorAll('.tooltip-trigger').forEach(trigger => {
+                trigger.addEventListener('mouseenter', (e) => {
+                    createTooltip();
+                    const text = trigger.getAttribute('data-tooltip-text');
+                    tooltipElement.textContent = text;
+                    const rect = trigger.getBoundingClientRect();
+                    const tooltipRect = tooltipElement.getBoundingClientRect();
+                    let top = rect.top + window.scrollY - tooltipRect.height - 8;
+                    let left = rect.left + window.scrollX + (rect.width / 2) - (tooltipElement.offsetWidth / 2);
+                    tooltipElement.style.top = `${top}px`;
+                    tooltipElement.style.left = `${left}px`;
+                    tooltipElement.classList.add('visible');
+                });
+                trigger.addEventListener('mouseleave', () => {
+                    if (tooltipElement) {
+                        tooltipElement.classList.remove('visible');
+                    }
+                });
+            });
+            
+            //  Form Submission Handler  
+            form.addEventListener('submit', function(e) {
+                let isFormValid = true;
+                validationMessage.classList.add('hidden');
+                
+                const confidence = hiddenInput.value.toLowerCase();
+
+                // Custom validation for Medium confidence - require complete sections
+                if (confidence === 'medium') {
+                    // Income Statement - ALL fields must be filled for this section to be considered complete
+                    const incomeStatementComplete = 
+                        document.getElementById('previous-revenue').value.trim() !== '' &&
+                        document.getElementById('current-revenue').value.trim() !== '' &&
+                        document.getElementById('net-income').value.trim() !== '';
+                    
+                    // Balance Sheet - ALL fields must be filled for this section to be considered complete
+                    const balanceSheetComplete = 
+                        document.getElementById('total-assets').value.trim() !== '' &&
+                        document.getElementById('total-liabilities').value.trim() !== '';
+                    
+                    // Cash Flow Statement - ALL fields must be filled for this section to be considered complete
+                    const cashFlowComplete = 
+                        document.getElementById('cash-flow').value.trim() !== '';
+                    
+                    // Check if at least one complete section is filled
+                    const isAtLeastOneSectionComplete = incomeStatementComplete || balanceSheetComplete || cashFlowComplete;
+                    
+                    if (!isAtLeastOneSectionComplete) {
+                        validationMessage.classList.remove('hidden');
+                        isFormValid = false;
+                    }
+                }
+                
+                // Standard browser validation for required fields
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    isFormValid = false;
+                }
+
+                // If any check fails, prevent submission
+                if (!isFormValid) {
+                    e.preventDefault();
+                }
+                // Otherwise, allow the default form action (navigation) to proceed
+            });
+
+            //   Initial State Setup  
+            updateSections(hiddenInput.value.toLowerCase());
+            createTooltip();
+        });
+    </script>
+</body>
+</html>

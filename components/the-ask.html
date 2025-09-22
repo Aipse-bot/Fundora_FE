@@ -1,0 +1,41 @@
+<section id="mainContent" class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-3 min-h-full pb-10">
+  <div>
+    <h1 class="text-4xl sm:text-5xl font-bold mb-8">The Ask</h1>
+
+    <form id="askForm">
+      <div class="mb-5">
+        <label for="amount" class="mb-2 text-gray-500 font-semibold text-xl block">Funding Amount Sought</label>
+        <input type="number" id="amount" name="amount" placeholder="₱0.00" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm" />
+      </div>
+
+      <div class="mb-5">
+        <label for="usage_description" class="mb-2 text-gray-500 font-semibold text-xl block">How will the funds be used?</label>
+        <textarea id="usage_description" name="usage_description" rows="6" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm"></textarea>
+      </div>
+
+      <div class="flex justify-end mt-6">
+        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Next</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section id="card-panel" class="min-h-screen flex px-5 py-6 items-center justify-center">
+  <div class="h-auto w-full max-w-lg bg-white rounded-lg p-8 shadow-lg space-y-6 text-center">
+
+    <h1 class="text-3xl font-bold text-gray-800">We are seeking</h1>
+
+    <!-- Funding Amount -->
+    <div>
+      <div class="mb-2 text-gray-500 font-semibold text-xl">Funding Amount (₱)</div>
+      <p id="ask-amount" class="text-4xl font-bold text-green-600">Loading...</p>
+    </div>
+
+    <!-- Usage Description -->
+    <div>
+      <div class="mb-2 text-gray-500 font-semibold text-xl">Use of Funds</div>
+      <p id="ask-usage" class="text-gray-700 text-base">Loading...</p>
+    </div>
+
+  </div>
+</section>

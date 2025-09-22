@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Our Team{% endblock %}
+
+{% block content %}
+<section class="min-h-screen flex px-5 py-6 items-center justify-center">
+  <div class="w-full max-w-lg bg-white rounded-lg p-8 shadow-lg space-y-6">
+
+    <h1 class="text-3xl font-bold text-gray-800 text-center">Our Team</h1>
+
+    {% if team_members %}
+      <div class="space-y-6">
+        {% for member in team_members %}
+          <div class="flex flex-col items-center">
+            <!-- Avatar Placeholder -->
+            <div class="h-16 w-16 bg-gray-300 rounded-full mb-2"></div>
+
+            <!-- Name & Title -->
+            <p class="text-xl font-semibold text-gray-800">{{ member.name }}</p>
+            <p class="text-sm text-gray-500">{{ member.title }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center text-gray-500 text-base">No team members added yet.</p>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

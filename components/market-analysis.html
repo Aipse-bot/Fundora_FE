@@ -1,0 +1,82 @@
+<section id="mainContent" class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-3 min-h-full pb-10">
+  <div>
+    <h1 class="text-4xl sm:text-5xl font-bold mb-8">Market Analysis</h1>
+
+    <form id="marketForm">
+      <!-- Primary Market -->
+      <div class="mb-5">
+        <label for="primaryMarket" class="mb-2 block text-gray-500 font-semibold text-xl">Primary Market</label>
+        <input type="text" id="primaryMarket" name="primary_market"
+          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm" />
+        <p id="primaryMarketError" class="text-red-500 text-sm mt-1 hidden"></p>
+      </div>
+
+      <!-- Target Audience -->
+      <div class="mb-5">
+        <label for="targetAudience" class="mb-2 block text-gray-500 font-semibold text-xl">Target Audience Description</label>
+        <textarea id="targetAudience" name="target_audience" rows="4"
+          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm"></textarea>
+        <p id="targetAudienceError" class="text-red-500 text-sm mt-1 hidden"></p>
+      </div>
+
+      <!-- Market Growth -->
+      <div class="mb-5">
+        <label for="marketGrowthRate" class="mb-2 block text-gray-500 font-semibold text-xl">Market Growth Rate (YoY)</label>
+        <input type="text" id="marketGrowthRate" name="market_growth_rate"
+          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm" />
+        <p id="marketGrowthRateError" class="text-red-500 text-sm mt-1 hidden"></p>
+      </div>
+
+      <!-- Competitive Advantage -->
+      <div class="mb-5">
+        <label for="competitiveAdvantage" class="mb-2 block text-gray-500 font-semibold text-xl">Competitive Advantage</label>
+        <textarea id="competitiveAdvantage" name="competitive_advantage" rows="4"
+          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm"></textarea>
+        <p id="competitiveAdvantageError" class="text-red-500 text-sm mt-1 hidden"></p>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-end mt-6">
+        <button type="submit"
+          class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+          Next
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section id="card-panel" class="min-h-screen flex px-5 py-6 items-center justify-center">
+  <div class="w-full max-w-xl bg-white rounded-lg p-8 shadow-lg space-y-6">
+
+    <!-- Header -->
+    <h1 class="text-3xl font-bold text-gray-800">Our Market</h1>
+
+    <!-- Primary Market -->
+    <div>
+      <div class="mb-2 text-blue-500 font-semibold text-xl">Primary Market</div>
+      <div id="previewPrimaryMarket" class="text-sm text-gray-700">—</div>
+    </div>
+
+    <!-- Target Audience -->
+    <div>
+      <div class="mb-2 text-blue-500 font-semibold text-xl">Target Audience</div>
+      <div id="previewTargetAudience" class="text-sm text-gray-700">—</div>
+    </div>
+
+    <div class="border border-gray-200 w-full my-4"></div>
+
+    <!-- Market Growth and Advantage -->
+    <div class="flex flex-col sm:flex-row gap-8">
+      <div>
+        <div class="mb-2 text-gray-500 font-semibold text-xl">Market Growth (YoY)</div>
+        <div id="previewMarketGrowthRate" class="text-sm text-gray-700">—</div>
+      </div>
+      <div>
+        <div class="mb-2 text-gray-500 font-semibold text-xl">Our Advantage</div>
+        <div id="previewCompetitiveAdvantage" class="text-sm text-gray-700">—</div>
+      </div>
+    </div>
+
+  </div>
+</section>

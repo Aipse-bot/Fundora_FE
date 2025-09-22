@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account - Fundora</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #eef2ff;
+    }
+    .form-error {
+      color: #ef4444;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-cover bg-center bg-no-repeat bg-[url('/assets/img/startup-register-bg.jpg')] flex items-center justify-center p-4">
+
+  <div class="bg-gray-400 shadow-lg w-full max-w-5xl h-[45rem] flex bg-opacity-75">
+    <div class="shadow-lg p-8 w-full max-w-5xl flex items-center justify-center">
+      <h2 class="text-white text-3xl font-semibold text-center">Turn vision into value.</h2>
+    </div>
+  </div>
+
+  <div class="w-full max-w-md p-6 sm:p-8 bg-gray-200 shadow-lg h-[45rem] bg-opacity-75">
+    <div class="text-center mb-6">
+      <h1 class="text-xl font-semibold text-gray-900">Fundora</h1>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">Join Fundora</h2>
+      <p class="text-gray-600">Launch your startup success today</p>
+    </div>
+
+    <div id="messageBox" class="mb-4 hidden">
+      <div id="messageText" class="p-4 rounded-lg text-sm"></div>
+    </div>
+
+    <form id="createAccountForm" class="space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="first_name" class="block text-sm font-medium text-slate-700">First Name</label>
+          <input type="text" id="first_name" name="first_name" required placeholder="Firstname"
+            class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label for="last_name" class="block text-sm font-medium text-slate-700">Last Name</label>
+          <input type="text" id="last_name" name="last_name" required placeholder="Lastname"
+            class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+
+      <div>
+        <label for="email" class="block text-sm font-medium text-slate-700">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="youremail@email.com"
+          class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Create a strong password"
+          class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label for="confirm_password" class="block text-sm font-medium text-slate-700">Confirm Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm your password"
+          class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div class="flex items-center">
+        <input id="terms" name="terms" type="checkbox" required
+          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+        <label for="terms" class="ml-2 block text-sm text-slate-600">
+          I agree to the
+          <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Terms of Service</a> and
+          <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Privacy Policy</a>.
+        </label>
+      </div>
+
+      <div>
+        <button type="submit"
+          class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+          Create Account
+        </button>
+      </div>
+    </form>
+
+    <div class="text-center mt-4">
+      <p class="text-sm text-slate-600">
+        Already have an account?
+        <a href="/login.html" class="font-medium text-blue-600 hover:text-blue-500">Sign in</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('createAccountForm').addEventListener('submit', async function (e) {e.preventDefault();
+
+        // Capture form data
+        const payload = {
+            first_name: document.getElementById('first_name').value.trim(),
+            last_name: document.getElementById('last_name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value,
+            confirm_password: document.getElementById('confirm_password').value,
+            label: 'startup',
+            terms: document.getElementById('terms').checked  // Ensure the checkbox for terms is included
+        };
+
+        // Passwords don't match
+        if (payload.password !== payload.confirm_password) {
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+            text.textContent = 'Passwords do not match.';
+            text.className = 'bg-red-100 border border-red-400 text-red-700';
+            box.classList.remove('hidden');
+            return;
+        }
+
+        // Check if the user agreed to the terms
+        if (!payload.terms) {
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+            text.textContent = 'You must agree to the Terms of Service and Privacy Policy.';
+            text.className = 'bg-red-100 border border-red-400 text-red-700';
+            box.classList.remove('hidden');
+            return;
+        }
+
+        try {
+            const res = await fetch('http://127.0.0.1:8000/api/startup/register/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+
+            if (res.ok) {
+                text.textContent = 'Account created successfully!';
+                text.className = 'bg-green-100 border border-green-400 text-green-700';
+                box.classList.remove('hidden');
+                setTimeout(() => window.location.href = '/login.html', 1500);
+            } else {
+                console.log(data);  // Log errors for debugging
+                text.textContent = data.errors ? data.errors : 'Registration failed. Please check your input.';
+                text.className = 'bg-red-100 border border-red-400 text-red-700';
+                box.classList.remove('hidden');
+            }
+        } catch (err) {
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+            text.textContent = 'Something went wrong. Please try again.';
+            text.className = 'bg-red-100 border border-red-400 text-red-700';
+            box.classList.remove('hidden');
+        }
+    });
+</script>
+</body>
+</html>

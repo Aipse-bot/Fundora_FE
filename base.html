@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deck Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="h-full flex bg-gray-100 text-black overflow-y-hidden">
+  <!-- Sidebar -->
+  <aside class="w-96 h-full p-6 bg-white flex flex-col justify-between shadow-md">
+    <div>
+      <h1 class="text-4xl font-bold mb-6">Deck Builder</h1>
+
+      <!-- Back Button -->
+      <div class="mb-6">
+        <a href="/deck-builder.html" class="flex items-center space-x-2 py-2 px-4 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 font-medium transition duration-200 ease-in-out">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          <span>Back to My Decks</span>
+        </a>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav id="deckSections" class="space-y-2"></nav>
+    </div>
+
+    <button onclick="openModal()" class="mt-6 py-2 px-4 rounded bg-blue-500 text-white text-xl font-semibold hover:bg-blue-600 transform hover:scale-105 transition duration-200 ease-in-out">
+      Generate Report
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 h-full overflow-y-auto p-10" id="mainContent">
+    <!-- Dynamic content will be injected here -->
+  </main>
+
+  <!-- Card Panel -->
+  <section id="card-panel" class="w-[550px] h-full flex-shrink-0 bg-gray-200 border-l border-gray-300 overflow-y-hidden p-5">
+    <!-- Dynamic card panel content -->
+  </section>
+
+  <!-- Report Modal -->
+  <div id="reportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-[600px]">
+      <h2 class="text-xl font-bold mb-4">Generate Report</h2>
+      <p class="text-gray-700 mb-4">Are you sure you want to generate a report for this deck?</p>
+      <div class="flex justify-end space-x-4">
+        <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+        <button onclick="generateReport()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Generate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- tempalte for adding a Team Members -->
+  <template id="teamMemberTemplate">
+    <div class="space-y-3 border-b pb-6 relative team-form">
+      <input type="text" name="name" placeholder="Name"
+        class="w-full p-3 border border-gray-300 rounded-lg shadow-sm" />
+      <input type="text" name="title" placeholder="Title"
+        class="w-full p-3 border border-gray-300 rounded-lg shadow-sm" />
+      <button type="button"
+        class="absolute top-0 right-2 text-red-600 font-bold hover:text-red-700 transition remove-member">
+        ✕
+      </button>
+    </div>
+  </template>
+
+  <!-- tempalte for adding a Financial info -->
+  <template id="financialTemplate">
+    <div class="grid grid-cols-4 gap-2 items-center team-form relative">
+      <input type="number" name="year" placeholder="Year" class="p-2 border rounded" />
+      <input type="number" name="revenue" placeholder="Revenue" class="p-2 border rounded" />
+      <input type="number" name="profit" placeholder="Profit" class="p-2 border rounded" />
+      <button type="button" class="text-red-600 font-bold hover:text-red-700 transition remove-financial">✕</button>
+    </div>
+  </template>
+
+  <script>
+    function openModal() {
+      document.getElementById('reportModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('reportModal').classList.add('hidden');
+    }
+
+  async function loadDeckSections() {
+    const token = localStorage.getItem('authToken');
+    const nav = document.getElementById('deckSections');
+    const deckId = localStorage.getItem('deckId');
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/deck/section-list/', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const sections = await res.json();
+
+      sections.forEach(section => {
+        const button = document.createElement('button');
+        button.className = "block w-full text-left py-2 px-4 rounded hover:bg-blue-500 hover:text-white text-xl font-semibold transform hover:scale-105 transition duration-200 ease-in-out";
+        button.textContent = section.display_name;
+        button.dataset.section = section.key;
+        button.addEventListener('click', () => loadSection(section.key, deckId, section));
+        nav.appendChild(button);
+      });
+    } catch (err) {
+      console.error('Failed to load deck sections:', err);
+    }
+  }
+
+  async function loadSection(sectionName, deckId) {
+    try {
+      const res = await fetch(`components/${sectionName}.html`);
+      const html = await res.text();
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      const mainContent = doc.querySelector('#mainContent');
+      const cardPanel = doc.querySelector('#card-panel');
+
+      // Inject main content
+      const main = document.getElementById('mainContent');
+      main.innerHTML = mainContent
+        ? mainContent.innerHTML
+        : '<p class="text-red-600">Main content missing.</p>';
+
+      // Inject card panel content only if present
+      const panel = document.getElementById('card-panel');
+      if (cardPanel) {
+        panel.innerHTML = cardPanel.innerHTML;
+        panel.style.display = '';
+      } else {
+        panel.innerHTML = '';
+        panel.style.display = 'none';
+      }
+
+      // Rebind logic for the loaded section
+      bindSectionEvents(sectionName, deckId);
+
+    } catch (err) {
+      console.error(`Failed to load section "${sectionName}":`, err);
+      document.getElementById('mainContent').innerHTML = `<p class="text-red-600">Section failed to load.</p>`;
+    }
+  }
+
+  function bindSectionEvents(sectionName, deckId) {
+    const bindings = {
+      'cover-page': () => bindCoverFormEvents(deckId),
+      'the-problem': () => bindProblemFormEvents(deckId),
+      'the-team': () => bindTeamFormEvents(deckId),
+      'the-solution': () => bindSolutionFormEvents(deckId),
+      'market-analysis': () => bindMarketFormEvents(deckId),
+      'financials': () => bindFinancialFormEvents(deckId),
+      'the-ask': () => bindAskFormEvents(deckId),
+      // Add more sections here as needed
+    };
+
+    if (bindings[sectionName]) {
+      bindings[sectionName]();
+    } else {
+      console.warn(`No binding defined for section: ${sectionName}`);
+    }
+  }
+
+  function bindCoverFormEvents(deckId) {
+    const form = document.getElementById('coverForm');
+    const fileInput = document.getElementById('logo');
+    const fileName = document.getElementById('fileName');
+    const openButton = document.getElementById('openButton');
+
+    openButton.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      fileName.textContent = file ? `Selected file: ${file.name}` : 'No file chosen';
+    });
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      formData.append('deck_id', deckId);
+
+      const token = localStorage.getItem('authToken');
+
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/deck/section/cover-page/`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Cover page saved successfully!');
+          localStorage.setItem('deckId', data.deck_id); // persist deck ID for next sections
+        } else {
+          // Display validation errors
+          document.getElementById('errorCompanyName').textContent = data.errors?.company_name || '';
+          document.getElementById('errorCompanyName').classList.toggle('hidden', !data.errors?.company_name);
+
+          document.getElementById('errorTagline').textContent = data.errors?.tagline || '';
+          document.getElementById('errorTagline').classList.toggle('hidden', !data.errors?.tagline);
+
+          document.getElementById('errorLogo').textContent = data.errors?.logo || '';
+          document.getElementById('errorLogo').classList.toggle('hidden', !data.errors?.logo);
+        }
+      } catch (err) {
+        console.error('Submission failed:', err);
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  }
+
+  function bindProblemFormEvents(deckId) {
+    const form = document.getElementById('problemForm');
+    const descriptionInput = document.getElementById('problemDescription');
+    const errorElem = document.getElementById('descriptionError');
+
+    if (!form || !descriptionInput) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem('authToken');
+      const description = descriptionInput.value.trim();
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/section/problem/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            deck_id: deckId,
+            description: description
+          })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          errorElem.classList.add('hidden');
+          alert('Problem section saved successfully!');
+        } else {
+          errorElem.textContent = data.errors?.description || 'Something went wrong.';
+          errorElem.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error('Problem form submission failed:', err);
+        errorElem.textContent = 'Submission failed. Please try again.';
+        errorElem.classList.remove('hidden');
+      }
+    });
+  }
+  
+  function bindSolutionFormEvents(deckId) {
+    const form = document.getElementById('solutionForm');
+    const descriptionInput = document.getElementById('solutionDescription');
+    const errorElem = document.getElementById('descriptionError');
+
+    if (!form || !descriptionInput) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem('authToken');
+      const description = descriptionInput.value.trim();
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/section/solution/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            deck_id: deckId,
+            description: description
+          })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          errorElem.classList.add('hidden');
+          alert('Solution section saved successfully!');
+        } else {
+          errorElem.textContent = data.errors?.description || 'Something went wrong.';
+          errorElem.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error('Solution form submission failed:', err);
+        errorElem.textContent = 'Submission failed. Please try again.';
+        errorElem.classList.remove('hidden');
+      }
+    });
+  }
+
+  function bindMarketFormEvents(deckId) {
+    const form = document.getElementById('marketForm');
+    if (!form) return;
+
+    const primaryMarket = document.getElementById('primaryMarket');
+    const targetAudience = document.getElementById('targetAudience');
+    const marketGrowthRate = document.getElementById('marketGrowthRate');
+    const competitiveAdvantage = document.getElementById('competitiveAdvantage');
+
+    const errorPrimaryMarket = document.getElementById('primaryMarketError');
+    const errorTargetAudience = document.getElementById('targetAudienceError');
+    const errorMarketGrowthRate = document.getElementById('marketGrowthRateError');
+    const errorCompetitiveAdvantage = document.getElementById('competitiveAdvantageError');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem('authToken');
+
+      const payload = {
+        deck_id: deckId,
+        primary_market: primaryMarket.value.trim(),
+        target_audience: targetAudience.value.trim(),
+        market_growth_rate: marketGrowthRate.value.trim(),
+        competitive_advantage: competitiveAdvantage.value.trim()
+      };
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/section/market-analysis/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          [errorPrimaryMarket, errorTargetAudience, errorMarketGrowthRate, errorCompetitiveAdvantage].forEach(el => el.classList.add('hidden'));
+          alert('Market analysis saved successfully!');
+        } else {
+          errorPrimaryMarket.textContent = data.errors?.primary_market || '';
+          errorPrimaryMarket.classList.toggle('hidden', !data.errors?.primary_market);
+
+          errorTargetAudience.textContent = data.errors?.target_audience || '';
+          errorTargetAudience.classList.toggle('hidden', !data.errors?.target_audience);
+
+          errorMarketGrowthRate.textContent = data.errors?.market_growth_rate || '';
+          errorMarketGrowthRate.classList.toggle('hidden', !data.errors?.market_growth_rate);
+
+          errorCompetitiveAdvantage.textContent = data.errors?.competitive_advantage || '';
+          errorCompetitiveAdvantage.classList.toggle('hidden', !data.errors?.competitive_advantage);
+        }
+      } catch (err) {
+        console.error('Market analysis submission failed:', err);
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  }
+
+  function bindTeamFormEvents(deckId) {
+
+    const form = document.getElementById('teamForm');
+    const teamMembers = document.getElementById('teamMembers');
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    const template = document.getElementById('teamMemberTemplate');
+
+    if (!form || !teamMembers || !addMemberBtn || !template) return;
+
+    // Add member logic
+    addMemberBtn.addEventListener('click', () => {
+      const clone = template.content.cloneNode(true);
+      clone.querySelector('.remove-member').addEventListener('click', (e) => {
+        e.target.closest('.team-form').remove();
+      });
+      teamMembers.appendChild(clone);
+    });
+
+    // Submit team members
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = localStorage.getItem('authToken');
+
+      const members = [...teamMembers.querySelectorAll('.team-form')]
+        .map(form => ({
+          name: form.querySelector('input[name="name"]').value.trim(),
+          title: form.querySelector('input[name="title"]').value.trim()
+        }))
+        .filter(member => member.name && member.title); // skip empty entries
+
+      if (members.length === 0) {
+        alert('Please add at least one team member.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/team/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ members })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Failed to save team');
+
+        alert('Team saved successfully!');
+        console.log('Team saved:', data);
+      } catch (err) {
+        console.error('Team submit error:', err);
+        alert('Something went wrong while saving your team.');
+      }
+    });
+  }
+
+  function bindFinancialFormEvents(deckId) {
+    const form = document.getElementById('financialForm');
+    const financialRows = document.getElementById('financialRows');
+    const addYearBtn = document.getElementById('addYearBtn');
+    const previewTable = document.getElementById('financialPreviewTable');
+    const chartCanvas = document.getElementById('revenueProfitChart');
+    const token = localStorage.getItem('authToken');
+
+    if (!form || !financialRows || !addYearBtn || !previewTable || !chartCanvas) return;
+
+    // 🧩 Add Year Row
+    const template = document.getElementById('financialTemplate');
+
+    addYearBtn.addEventListener('click', () => {
+      const clone = template.content.cloneNode(true);
+      clone.querySelector('.remove-financial').addEventListener('click', (e) => {
+        e.target.closest('.team-form').remove();
+      });
+      financialRows.appendChild(clone);
+    });
+
+    // 📤 Submit Financials
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const financials = [...financialRows.querySelectorAll('.team-form')].map(row => ({
+        year: parseInt(row.querySelector('input[name="year"]').value),
+        revenue: parseFloat(row.querySelector('input[name="revenue"]').value),
+        profit: parseFloat(row.querySelector('input[name="profit"]').value)
+      })).filter(f => f.year && !isNaN(f.revenue) && !isNaN(f.profit));
+
+      if (financials.length === 0) {
+        alert('Please add at least one financial entry.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/financials/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ financials })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Failed to save financials');
+
+        alert('Financials saved successfully!');
+        loadFinancialPreview(deckId); // Refresh preview
+      } catch (err) {
+        console.error('Financials submit error:', err);
+        alert('Something went wrong while saving your financials.');
+      }
+    });
+
+    // 📊 Load Preview + Chart
+    async function loadFinancialPreview(deckId) {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/financials/`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await res.json();
+        previewTable.innerHTML = '';
+
+        if (data.length === 0) {
+          previewTable.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-gray-500">No financial data available</td></tr>`;
+          return;
+        }
+
+        const labels = [];
+        const revenueData = [];
+        const profitData = [];
+
+        data.forEach(row => {
+          labels.push(row.year);
+          revenueData.push(parseFloat(row.revenue));
+          profitData.push(parseFloat(row.profit));
+
+          const tr = document.createElement('tr');
+          tr.classList.add('border-t');
+          tr.innerHTML = `
+            <td class="px-4 py-2 font-medium text-gray-800">${row.year}</td>
+            <td class="px-4 py-2 text-gray-600">₱${row.revenue.toFixed(2)}</td>
+            <td class="px-4 py-2 text-gray-600">₱${row.profit.toFixed(2)}</td>
+          `;
+          previewTable.appendChild(tr);
+        });
+
+        renderFinancialChart(labels, revenueData, profitData);
+      } catch (err) {
+        console.error('Preview load error:', err);
+        previewTable.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-red-500">Error loading data</td></tr>`;
+      }
+    }
+
+    // 📈 Chart.js Renderer
+    function renderFinancialChart(labels, revenueData, profitData) {
+      new Chart(chartCanvas.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Revenue',
+              data: revenueData,
+              borderColor: 'green',
+              fill: false
+            },
+            {
+              label: 'Profit',
+              data: profitData,
+              borderColor: 'blue',
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    loadFinancialPreview(deckId);
+  }
+
+  function bindAskFormEvents(deckId) {
+    const token = localStorage.getItem('authToken');
+    const form = document.getElementById('askForm');
+    const amountInput = document.querySelector('input[name="amount"]');
+    const usageInput = document.querySelector('textarea[name="usage_description"]');
+    const previewAmount = document.getElementById('preview-amount');
+    const previewUsage = document.getElementById('preview-usage');
+
+    if (!form || !amountInput || !usageInput || !previewAmount || !previewUsage) return;
+
+    // 🔄 Load existing Ask data
+    async function loadAskData() {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/ask/`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        amountInput.value = data.amount || '';
+        usageInput.value = data.usage_description || '';
+
+        previewAmount.textContent = data.amount
+          ? '₱' + parseFloat(data.amount).toLocaleString()
+          : 'Enter funding amount...';
+
+        previewUsage.textContent = data.usage_description?.trim()
+          ? data.usage_description
+          : 'Describe how you plan to use the funding...';
+      } catch (err) {
+        console.error('Failed to load ask data:', err);
+      }
+    }
+
+    // 📤 Submit Ask data
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        amount: parseFloat(amountInput.value.replace(/,/g, '')),
+        usage_description: usageInput.value.trim()
+      };
+
+      if (isNaN(payload.amount) || !payload.usage_description) {
+        alert('Please fill out both fields correctly.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/ask/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Failed to save ask');
+
+        alert('Funding request saved!');
+        loadAskData(); // Refresh preview
+      } catch (err) {
+        console.error('Ask submit error:', err);
+        alert('Something went wrong while saving your funding request.');
+      }
+    });
+
+    // 🧩 Live preview updates (already handled)
+    amountInput.addEventListener('input', () => {
+      const value = amountInput.value.trim();
+      const numValue = parseFloat(value.replace(/,/g, ''));
+      previewAmount.textContent = !isNaN(numValue)
+        ? '₱' + numValue.toLocaleString()
+        : value || 'Enter funding amount...';
+    });
+
+    usageInput.addEventListener('input', () => {
+      const value = usageInput.value.trim();
+      previewUsage.textContent = value || 'Describe how you plan to use the funding...';
+    });
+
+    // 🔄 Initial load
+    loadAskData();
+  }
+
+    function prettify(text) {
+      return text.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function generateReport() {
+      // Add your report generation logic here
+      alert("Report generation triggered.");
+      closeModal();
+    }
+
+    window.onload = loadDeckSections;
+  </script>
+</body>
+</html>

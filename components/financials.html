@@ -1,0 +1,424 @@
+<section id="mainContent" class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-3 min-h-full pb-10">
+  <div>
+    <h1 class="text-4xl sm:text-5xl font-bold mb-8">Financials</h1>
+
+    <form id="financialForm">
+      <div class="mb-5">
+        <p class="mb-2 text-gray-500 font-semibold text-xl">Add or remove years for your projection</p>
+
+        <div class="grid grid-cols-4 gap-2 px-2 font-semibold text-xl text-black mb-2">
+          <div>Year</div>
+          <div>Revenue</div>
+          <div>Profit</div>
+          <div></div>
+        </div>
+
+        <div id="financialRows" class="flex flex-col gap-4"></div>
+      </div>
+
+      <div class="mb-10">
+        <button type="button" id="addYearBtn" class="bg-gray-300 p-3 font-semibold rounded-lg hover:bg-gray-400 transition">
+          + Add Year
+        </button>
+      </div>
+
+      <div class="flex justify-end">
+        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+          Next
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section id="card-panel" class="min-h-screen flex px-5 py-6 items-center justify-center">
+  <div class="w-full max-w-2xl bg-white rounded-lg p-8 shadow-lg space-y-6">
+
+    <h1 class="text-3xl font-bold text-gray-800">Financial Projections</h1>
+
+    <div class="overflow-x-auto">
+      <table class="w-full border border-gray-200 text-left">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-4 py-2 font-semibold text-gray-700">Year</th>
+            <th class="px-4 py-2 font-semibold text-gray-700">Revenue (₱)</th>
+            <th class="px-4 py-2 font-semibold text-gray-700">Profit (₱)</th>
+          </tr>
+        </thead>
+        <tbody id="financialPreviewTable">
+          <tr>
+            <td colspan="3" class="text-center py-4 text-gray-500">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-xl font-semibold text-gray-800 text-center mb-4">Revenue vs Profit</h2>
+      <canvas id="revenueProfitChart" class="w-full h-64"></canvas>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const addYearBtn = document.getElementById('addYearBtn');
+  const financialRows = document.getElementById('financialRows');
+  const previewFinancialRows = document.getElementById('previewFinancialRows');
+  const emptyTemplate = document.getElementById('empty-financial-template').innerHTML;
+  const totalFormsInput = document.getElementById('id_financials-TOTAL_FORMS');
+
+  let formIndex = parseInt(totalFormsInput.value);
+  let revenueProfitChart; // Global chart variable
+
+  // Function to update chart with new data
+  function updateChart(financialData) {
+    if (!revenueProfitChart) return; // Chart not initialized yet
+
+    if (financialData.length === 0) {
+      // No data case
+      revenueProfitChart.data.labels = ['No data'];
+      revenueProfitChart.data.datasets[0].data = [0];
+      revenueProfitChart.data.datasets[1].data = [0];
+    } else {
+      // Update with sorted financial data
+      const labels = financialData.map(data => data.year || 'Year');
+      const revenueData = financialData.map(data => parseFloat(data.revenue) || 0);
+      const profitData = financialData.map(data => parseFloat(data.profit) || 0);
+
+      revenueProfitChart.data.labels = labels;
+      revenueProfitChart.data.datasets[0].data = revenueData;
+      revenueProfitChart.data.datasets[1].data = profitData;
+    }
+
+    revenueProfitChart.update();
+  }
+
+  // Function to update preview panel
+  function updatePreview() {
+    const forms = document.querySelectorAll('.team-form:not([style*="display: none"])');
+    previewFinancialRows.innerHTML = '';
+
+    if (forms.length === 0) {
+      // Show message when no forms exist
+      const noDataRow = document.createElement('div');
+      noDataRow.className = 'grid grid-cols-3 gap-2 px-2 mb-2';
+      noDataRow.innerHTML = `
+        <div class="p-2 bg-gray-50 rounded border border-gray-200 font-semibold text-gray-500 italic text-center col-span-3">No financial data entered yet...</div>
+      `;
+      previewFinancialRows.appendChild(noDataRow);
+      updateChart([]); // Update chart with empty data
+      return;
+    }
+
+    // Collect all financial data from forms
+    const financialData = [];
+    forms.forEach((form, index) => {
+      const yearInput = form.querySelector('input[name*="year"]');
+      const revenueInput = form.querySelector('input[name*="revenue"]');
+      const profitInput = form.querySelector('input[name*="profit"]');
+
+      const year = yearInput?.value || '';
+      const revenue = revenueInput?.value || '';
+      const profit = profitInput?.value || '';
+
+      // Only include rows that have at least some data entered
+      if (year || revenue || profit) {
+        financialData.push({
+          year: year,
+          revenue: revenue,
+          profit: profit,
+          yearNumeric: parseInt(year) || 0
+        });
+      }
+    });
+
+    // Sort by year in ascending order
+    financialData.sort((a, b) => {
+      // Put entries without years at the end
+      if (!a.year && !b.year) return 0;
+      if (!a.year) return 1;
+      if (!b.year) return -1;
+      return a.yearNumeric - b.yearNumeric;
+    });
+
+    // Create preview rows from sorted data
+    financialData.forEach(data => {
+      const formattedRevenue = data.revenue && parseFloat(data.revenue) ? `₱${parseFloat(data.revenue).toLocaleString()}` : '₱0';
+      const formattedProfit = data.profit && parseFloat(data.profit) ? `₱${parseFloat(data.profit).toLocaleString()}` : '₱0';
+
+      const previewRow = document.createElement('div');
+      previewRow.className = 'grid grid-cols-3 gap-2 px-2 mb-2';
+      previewRow.innerHTML = `
+        <div class="p-2 bg-gray-50 rounded border border-gray-200 font-semibold text-gray-700">${data.year || 'Year'}</div>
+        <div class="p-2 bg-gray-50 rounded border border-gray-200 font-semibold text-gray-700">${formattedRevenue}</div>
+        <div class="p-2 bg-gray-50 rounded border border-gray-200 font-semibold text-gray-700">${formattedProfit}</div>
+      `;
+      previewFinancialRows.appendChild(previewRow);
+    });
+
+    // Update chart with sorted data
+    updateChart(financialData);
+
+    // If no rows were added (all forms are empty), show "no data" message
+    if (previewFinancialRows.children.length === 0) {
+      const noDataRow = document.createElement('div');
+      noDataRow.className = 'grid grid-cols-3 gap-2 px-2 mb-2';
+      noDataRow.innerHTML = `
+        <div class="p-2 bg-gray-50 rounded border border-gray-200 font-semibold text-gray-500 italic text-center col-span-3">No financial data entered yet...</div>
+      `;
+      previewFinancialRows.appendChild(noDataRow);
+    }
+  }
+
+  // Add event listeners to existing forms
+  function addEventListeners() {
+    document.querySelectorAll('input[name*="year"], input[name*="revenue"], input[name*="profit"]').forEach(input => {
+      input.addEventListener('input', updatePreview);
+      
+      // Add year validation for year inputs
+      if (input.name.includes('year')) {
+        input.addEventListener('input', validateYear);
+        input.addEventListener('blur', validateYear);
+      }
+    });
+  }
+
+  // Function to validate year input and prevent duplicates
+  function validateYear(event) {
+    const currentInput = event.target;
+    const currentValue = currentInput.value;
+    const currentForm = currentInput.closest('.team-form');
+    
+    if (!currentValue) return; // Allow empty values
+    
+    // Get all other year inputs (excluding the current one and hidden forms)
+    const allYearInputs = document.querySelectorAll('input[name*="year"]');
+    const otherYears = [];
+    
+    allYearInputs.forEach(input => {
+      const form = input.closest('.team-form');
+      // Skip current input, hidden forms, and forms marked for deletion
+      if (input !== currentInput && 
+          form && 
+          !form.style.display.includes('none') && 
+          !form.querySelector('input[type="checkbox"]:checked')) {
+        const value = input.value;
+        if (value) {
+          otherYears.push(value);
+        }
+      }
+    });
+    
+    // Check for duplicates
+    if (otherYears.includes(currentValue)) {
+      // Show error styling
+      currentInput.style.borderColor = '#ef4444';
+      currentInput.style.backgroundColor = '#fef2f2';
+      
+      // Show error message
+      let errorMsg = currentForm.querySelector('.year-error');
+      if (!errorMsg) {
+        errorMsg = document.createElement('div');
+        errorMsg.className = 'year-error text-red-600 text-sm mt-1 col-span-4';
+        errorMsg.textContent = `Year ${currentValue} is already used. Please choose a different year.`;
+        currentForm.appendChild(errorMsg);
+      } else {
+        errorMsg.textContent = `Year ${currentValue} is already used. Please choose a different year.`;
+      }
+      
+      // Focus the input for correction
+      setTimeout(() => currentInput.focus(), 100);
+    } else {
+      // Remove error styling
+      currentInput.style.borderColor = '';
+      currentInput.style.backgroundColor = '';
+      
+      // Remove error message
+      const errorMsg = currentForm.querySelector('.year-error');
+      if (errorMsg) {
+        errorMsg.remove();
+      }
+    }
+  }
+
+  // Function to validate form submission
+  function validateFormSubmission() {
+    // Get all visible year inputs
+    const allYearInputs = document.querySelectorAll('input[name*="year"]');
+    const years = [];
+    let hasErrors = false;
+    
+    allYearInputs.forEach(input => {
+      const form = input.closest('.team-form');
+      // Only check visible forms that aren't marked for deletion
+      if (form && 
+          !form.style.display.includes('none') && 
+          !form.querySelector('input[type="checkbox"]:checked')) {
+        const value = input.value.trim();
+        if (value) {
+          if (years.includes(value)) {
+            // Duplicate found
+            hasErrors = true;
+            input.style.borderColor = '#ef4444';
+            input.style.backgroundColor = '#fef2f2';
+            
+            // Show error message
+            let errorMsg = form.querySelector('.year-error');
+            if (!errorMsg) {
+              errorMsg = document.createElement('div');
+              errorMsg.className = 'year-error text-red-600 text-sm mt-1 col-span-4';
+              errorMsg.textContent = `Year ${value} is already used. Please choose a different year.`;
+              form.appendChild(errorMsg);
+            }
+          } else {
+            years.push(value);
+          }
+        }
+      }
+    });
+    
+    if (hasErrors) {
+      alert('Please fix the duplicate year entries before submitting.');
+      return false; // Prevent form submission
+    }
+    
+    return true; // Allow form submission
+  }
+
+  addYearBtn.addEventListener('click', () => {
+    const newFormHtml = emptyTemplate.replace(/__prefix__/g, formIndex);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'grid grid-cols-4 gap-2 items-center team-form relative';
+    wrapper.innerHTML = newFormHtml;
+
+    // Get suggested year (next available year)
+    const existingYears = Array.from(document.querySelectorAll('input[name*="year"]'))
+      .map(input => {
+        const form = input.closest('.team-form');
+        if (form && !form.style.display.includes('none') && !form.querySelector('input[type="checkbox"]:checked')) {
+          return parseInt(input.value) || 0;
+        }
+        return 0;
+      })
+      .filter(year => year > 0);
+    
+    const currentYear = new Date().getFullYear();
+    let suggestedYear = existingYears.length > 0 ? Math.max(...existingYears) + 1 : currentYear;
+    
+    // Set the suggested year as placeholder
+    const yearInput = wrapper.querySelector('input[name*="year"]');
+    if (yearInput) {
+      yearInput.placeholder = `e.g., ${suggestedYear}`;
+      yearInput.title = `Suggested next year: ${suggestedYear}`;
+    }
+
+    // Add remove button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = '✕';
+    deleteBtn.className = 'text-red-600 font-bold hover:text-red-700 transition ';
+    deleteBtn.onclick = () => {
+      const checkbox = wrapper.querySelector('input[type="checkbox"]');
+      if (checkbox) checkbox.checked = true;
+      wrapper.style.display = 'none';
+      updatePreview(); // Update preview when form is removed
+    };
+    wrapper.appendChild(deleteBtn);
+
+    financialRows.appendChild(wrapper);
+    formIndex++;
+    totalFormsInput.value = formIndex;
+
+    // Add event listeners to new form inputs
+    wrapper.querySelectorAll('input[name*="year"], input[name*="revenue"], input[name*="profit"]').forEach(input => {
+      input.addEventListener('input', updatePreview);
+      
+      // Add year validation for year inputs
+      if (input.name.includes('year')) {
+        input.addEventListener('input', validateYear);
+        input.addEventListener('blur', validateYear);
+      }
+    });
+
+    updatePreview(); // Update preview when new form is added
+  });
+
+  // Initialize event listeners and preview on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    addEventListeners();
+    updatePreview();
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('revenueProfitChart')?.getContext('2d');
+    if (ctx) {
+      // Dynamic financial data from the backend (sorted by year)
+      {% if financials %}
+        // Sort financials by year on the backend data
+        const backendFinancials = [
+          {% for financial in financials %}
+          {
+            year: "{{ financial.year }}",
+            revenue: {{ financial.revenue|floatformat:2 }},
+            profit: {{ financial.profit|floatformat:2 }},
+            yearNumeric: parseInt("{{ financial.year }}") || 0
+          }{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ];
+        
+        // Sort backend data by year ascending
+        backendFinancials.sort((a, b) => {
+          if (!a.year && !b.year) return 0;
+          if (!a.year) return 1;
+          if (!b.year) return -1;
+          return a.yearNumeric - b.yearNumeric;
+        });
+        
+        const labels = backendFinancials.map(f => f.year);
+        const revenueData = backendFinancials.map(f => f.revenue);
+        const profitData = backendFinancials.map(f => f.profit);
+      {% else %}
+        const labels = ['No data'];
+        const revenueData = [0];
+        const profitData = [0];
+      {% endif %}
+
+      revenueProfitChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Revenue',
+              data: revenueData,
+              backgroundColor: '#3b82f6'
+            },
+            {
+              label: 'Profit',
+              data: profitData,
+              backgroundColor: '#10b981'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            title: { display: true }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: value => '₱' + value.toLocaleString()
+              }
+            }
+          }
+        }
+      });
+    }
+  });
+</script>

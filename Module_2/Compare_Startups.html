@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Startups - Fundora</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto p-6">
+        <!-- Header -->
+        <div class="flex items-center mb-8">
+            <a href="/dashboard.html" class="mr-4 p-2 hover:bg-gray-100 rounded-full">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Compare Startups</h1>
+                <p class="text-gray-600 mt-1">
+                Select startups from your watchlist to compare their key metrics and performance indicators
+                </p>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="flex flex-col md:flex-row gap-4 mb-8">
+            <!-- Search Bar -->
+            <div class="flex-1 relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <input type="text" id="search-input" placeholder="Search startups..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            
+            <!-- Industry Filter -->
+            <div class="relative">
+                <select id="industry-filter" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">All Industries</option>
+                    <option value="AI/Machine Learning">AI/Machine Learning</option>
+                    <option value="E-Commerce">E-Commerce</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Technology">Technology</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Risk Level Filter -->
+            <div class="relative">
+                <select id="risk-filter" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">All Risk Levels</option>
+                    <option value="Low Risk">Low Risk</option>
+                    <option value="Medium Risk">Medium Risk</option>
+                    <option value="High Risk">High Risk</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Selection Section -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-semibold text-gray-900">Select Startups to Compare (Max 3)</h2>
+                <div class="text-sm text-gray-600">
+                    <span id="selected-count">0</span> of 3 selected
+                </div>
+            </div>
+
+            <!-- Selected Startups Display -->
+            <div id="selected-startups" class="mb-6 hidden">
+                <h3 class="text-lg font-medium text-gray-900 mb-3">Selected for Comparison:</h3>
+                <div id="selected-list" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- Startup Grid -->
+            <div id="startups-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="text-center py-12 hidden">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No Startups in Watchlist</h3>
+                <p class="text-gray-600 mb-4">Add some startups to your watchlist first to compare them here.</p>
+                <a href="/dashboard.html" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                Browse Startups
+                </a>
+            </div>
+        </div>
+
+        <!-- Compare Button -->
+        <div class="flex justify-center">
+            <button id="compare-btn" class="bg-gray-400 text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200 cursor-not-allowed" disabled>
+                Select Startups to Compare
+            </button>
+        </div>
+    </div>
+
+    <!-- <script>
+        let selectedStartups = new Set();
+        const maxSelections = 3;
+
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+        });
+
+        function initializeEventListeners() {
+            // Startup card selection
+            const startupCards = document.querySelectorAll('.startup-card');
+            startupCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    toggleStartupSelection(this);
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', function() {
+                filterStartups();
+            });
+
+            // Filter functionality
+            const industryFilter = document.getElementById('industry-filter');
+            const riskFilter = document.getElementById('risk-filter');
+            
+            industryFilter.addEventListener('change', filterStartups);
+            riskFilter.addEventListener('change', filterStartups);
+
+            // Compare button
+            const compareBtn = document.getElementById('compare-btn');
+            if (compareBtn) {
+                compareBtn.addEventListener('click', function() {
+                    if (selectedStartups.size >= 2) {
+                        // Convert Set to Array and create comparison URL
+                        const startupIds = Array.from(selectedStartups);
+                        const url = "{% url 'startup_comparison' %}?startups=" + startupIds.join(',');
+                        window.location.href = url;
+                    }
+                });
+            }
+        }
+
+        function toggleStartupSelection(card) {
+            const startupId = card.dataset.startupId;
+            const startupName = card.dataset.startupName;
+            const indicator = card.querySelector('.selection-indicator');
+            const checkmark = indicator.querySelector('svg');
+
+            if (selectedStartups.has(startupId)) {
+                // Deselect
+                selectedStartups.delete(startupId);
+                card.classList.remove('border-blue-500', 'bg-blue-50');
+                card.classList.add('border-gray-200');
+                indicator.classList.remove('bg-blue-600', 'border-blue-600');
+                indicator.classList.add('border-gray-300');
+                checkmark.classList.add('hidden');
+            } else if (selectedStartups.size < maxSelections) {
+                // Select
+                selectedStartups.add(startupId);
+                card.classList.remove('border-gray-200');
+                card.classList.add('border-blue-500', 'bg-blue-50');
+                indicator.classList.remove('border-gray-300');
+                indicator.classList.add('bg-blue-600', 'border-blue-600');
+                checkmark.classList.remove('hidden');
+            }
+
+            updateSelectedDisplay();
+            updateCompareButton();
+        }
+
+        function updateSelectedDisplay() {
+            const selectedCount = document.getElementById('selected-count');
+            const selectedSection = document.getElementById('selected-startups');
+            const selectedList = document.getElementById('selected-list');
+
+            selectedCount.textContent = selectedStartups.size;
+
+            if (selectedStartups.size > 0) {
+                selectedSection.classList.remove('hidden');
+                selectedList.innerHTML = '';
+
+                selectedStartups.forEach(startupId => {
+                    const card = document.querySelector(`[data-startup-id="${startupId}"]`);
+                    const startupName = card.dataset.startupName;
+                    
+                    const badge = document.createElement('span');
+                    badge.className = 'bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full flex items-center';
+                    badge.innerHTML = `
+                        ${startupName}
+                        <button onclick="removeFromSelection('${startupId}')" class="ml-2 text-blue-600 hover:text-blue-800">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    `;
+                    selectedList.appendChild(badge);
+                });
+            } else {
+                selectedSection.classList.add('hidden');
+            }
+        }
+
+        function removeFromSelection(startupId) {
+            const card = document.querySelector(`[data-startup-id="${startupId}"]`);
+            if (card) {
+                toggleStartupSelection(card);
+            }
+        }
+
+        function updateCompareButton() {
+            const compareBtn = document.getElementById('compare-btn');
+            if (!compareBtn) return;
+
+            if (selectedStartups.size >= 2) {
+                compareBtn.disabled = false;
+                compareBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                compareBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                compareBtn.textContent = `Compare Selected Startups (${selectedStartups.size})`;
+            } else {
+                compareBtn.disabled = true;
+                compareBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                compareBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                compareBtn.textContent = 'Select at least 2 startups to compare';
+            }
+        }
+
+        function filterStartups() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const industryFilter = document.getElementById('industry-filter').value;
+            const riskFilter = document.getElementById('risk-filter').value;
+            
+            const startupCards = document.querySelectorAll('.startup-card');
+            
+            startupCards.forEach(card => {
+                const name = card.dataset.startupName.toLowerCase();
+                const industry = card.dataset.industry;
+                const risk = card.dataset.risk;
+                
+                let show = true;
+                
+                // Search filter
+                if (searchTerm && !name.includes(searchTerm)) {
+                    show = false;
+                }
+                
+                // Industry filter
+                if (industryFilter && industry !== industryFilter) {
+                    show = false;
+                }
+                
+                // Risk filter
+                if (riskFilter && risk !== riskFilter) {
+                    show = false;
+                }
+                
+                if (show) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script> -->
+</body>
+</html>

@@ -1,0 +1,97 @@
+<section id="mainContent" class="bg-gray-100 text-black">
+  <div class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-3 min-h-full pb-10">
+    <div>
+      <h1 class="text-4xl sm:text-5xl font-bold mb-8">Cover Page</h1>
+
+      <form id="coverForm" enctype="multipart/form-data">
+        <!-- Company Name -->
+        <div class="mb-5">
+          <label for="company_name" class="mb-2 block text-gray-500 font-semibold text-xl">Company Name</label>
+          <input type="text" id="company_name" name="company_name" class="w-full p-3 border rounded" required />
+          <p id="errorCompanyName" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
+
+        <!-- Tagline -->
+        <div class="mb-5">
+          <label for="tagline" class="mb-2 block text-gray-500 font-semibold text-xl">Tagline</label>
+          <input type="text" id="tagline" name="tagline" class="w-full p-3 border rounded" required />
+          <p id="errorTagline" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
+
+        <!-- Logo Upload -->
+        <div class="mb-5">
+          <label for="logo" class="mb-2 block text-gray-500 font-semibold text-xl">Logo</label>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <button type="button" id="openButton" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Choose File</button>
+            <input type="file" id="logo" name="logo" class="hidden" accept="image/*" />
+            <p id="fileName" class="text-sm text-gray-700">No file chosen</p>
+          </div>
+          <p id="errorLogo" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end mt-6">
+          <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Next</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const openButton = document.getElementById('openButton');
+    const fileInput = document.getElementById('logo');
+    const fileName = document.getElementById('fileName');
+
+    openButton.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      fileName.textContent = file ? `Selected file: ${file.name}` : 'No file chosen';
+    });
+
+    document.getElementById('coverForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('company_name', document.getElementById('company_name').value.trim());
+      formData.append('tagline', document.getElementById('tagline').value.trim());
+      if (fileInput.files[0]) {
+        formData.append('logo', fileInput.files[0]);
+      }
+
+      const token = localStorage.getItem('authToken');
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/decks/cover/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Cover page saved successfully!');
+          window.location.href = '/decks/next-section.html';
+        } else {
+          // Display validation errors
+          document.getElementById('errorCompanyName').textContent = data.company_name || '';
+          document.getElementById('errorCompanyName').classList.toggle('hidden', !data.company_name);
+
+          document.getElementById('errorTagline').textContent = data.tagline || '';
+          document.getElementById('errorTagline').classList.toggle('hidden', !data.tagline);
+
+          document.getElementById('errorLogo').textContent = data.logo || '';
+          document.getElementById('errorLogo').classList.toggle('hidden', !data.logo);
+        }
+      } catch (err) {
+        console.error('Submission failed:', err);
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  </script>
+</section>
