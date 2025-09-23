@@ -91,7 +91,7 @@
   async function loadDeckSections() {
     const token = localStorage.getItem('authToken');
     const nav = document.getElementById('deckSections');
-    const deckId = localStorage.getItem('deckId');
+    const deckId = localStorage.getItem('deck_id');
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/deck/section-list/', {
@@ -182,7 +182,7 @@
       const file = fileInput.files[0];
       fileName.textContent = file ? `Selected file: ${file.name}` : 'No file chosen';
     });
-
+    console.log('Binding cover form events for deck ID:', deckId);
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
 
@@ -192,7 +192,7 @@
       const token = localStorage.getItem('authToken');
 
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/deck/section/cover-page/`, {
+        const response = await fetch(`http://127.0.0.1:8000/api/deck/cover/`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` },
           body: formData
@@ -201,8 +201,10 @@
         const data = await response.json();
 
         if (response.ok) {
+          console.log(data.deck_id);
           alert('Cover page saved successfully!');
-          localStorage.setItem('deckId', data.deck_id); // persist deck ID for next sections
+          localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
+          loadSection('the-problem', deckId); // redirect to next section
         } else {
           // Display validation errors
           document.getElementById('errorCompanyName').textContent = data.errors?.company_name || '';
@@ -235,7 +237,7 @@
       const description = descriptionInput.value.trim();
 
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/deck/section/problem/`, {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/problem/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -252,6 +254,8 @@
         if (res.ok) {
           errorElem.classList.add('hidden');
           alert('Problem section saved successfully!');
+          localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
+          loadSection('the-solution', deckId); // redirect to next section
         } else {
           errorElem.textContent = data.errors?.description || 'Something went wrong.';
           errorElem.classList.remove('hidden');
@@ -278,7 +282,7 @@
       const description = descriptionInput.value.trim();
 
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/deck/section/solution/`, {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/solution/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -295,6 +299,8 @@
         if (res.ok) {
           errorElem.classList.add('hidden');
           alert('Solution section saved successfully!');
+          localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
+          loadSection('market-analysis', deckId); // redirect to next section
         } else {
           errorElem.textContent = data.errors?.description || 'Something went wrong.';
           errorElem.classList.remove('hidden');
@@ -335,7 +341,7 @@
       };
 
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/deck/section/market-analysis/`, {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/market-analysis/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -349,6 +355,8 @@
         if (res.ok) {
           [errorPrimaryMarket, errorTargetAudience, errorMarketGrowthRate, errorCompetitiveAdvantage].forEach(el => el.classList.add('hidden'));
           alert('Market analysis saved successfully!');
+          localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
+          loadSection('the-team', deckId); // redirect to next section
         } else {
           errorPrimaryMarket.textContent = data.errors?.primary_market || '';
           errorPrimaryMarket.classList.toggle('hidden', !data.errors?.primary_market);
@@ -405,13 +413,13 @@
       }
 
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/team/`, {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/team/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ members })
+          body: JSON.stringify({ deck_id: deckId, members })
         });
 
         const data = await res.json();
@@ -419,6 +427,8 @@
 
         alert('Team saved successfully!');
         console.log('Team saved:', data);
+        localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
+        loadSection('financials', deckId); // redirect to next section
       } catch (err) {
         console.error('Team submit error:', err);
         alert('Something went wrong while saving your team.');
@@ -463,138 +473,140 @@
       }
 
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/financials/`, {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/financial/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ financials })
+          body: JSON.stringify({ deck_id: deckId, financials })
         });
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Failed to save financials');
 
         alert('Financials saved successfully!');
-        loadFinancialPreview(deckId); // Refresh preview
+        localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
+        loadSection('the-ask', deckId); // redirect to next section
+        // loadFinancialPreview(deckId); // Refresh preview
       } catch (err) {
+                console.error('Financials submits:', financials);
         console.error('Financials submit error:', err);
         alert('Something went wrong while saving your financials.');
       }
     });
 
     // 📊 Load Preview + Chart
-    async function loadFinancialPreview(deckId) {
-      try {
-        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/financials/`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+    // async function loadFinancialPreview(deckId) {
+    //   try {
+    //     const res = await fetch(`http://127.0.0.1:8000/api/deck/financial/`, {
+    //       headers: { 'Authorization': `Bearer ${token}` }
+    //     });
 
-        const data = await res.json();
-        previewTable.innerHTML = '';
+    //     const data = await res.json();
+    //     previewTable.innerHTML = '';
 
-        if (data.length === 0) {
-          previewTable.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-gray-500">No financial data available</td></tr>`;
-          return;
-        }
+    //     if (data.length === 0) {
+    //       previewTable.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-gray-500">No financial data available</td></tr>`;
+    //       return;
+    //     }
 
-        const labels = [];
-        const revenueData = [];
-        const profitData = [];
+    //     const labels = [];
+    //     const revenueData = [];
+    //     const profitData = [];
 
-        data.forEach(row => {
-          labels.push(row.year);
-          revenueData.push(parseFloat(row.revenue));
-          profitData.push(parseFloat(row.profit));
+    //     data.forEach(row => {
+    //       labels.push(row.year);
+    //       revenueData.push(parseFloat(row.revenue));
+    //       profitData.push(parseFloat(row.profit));
 
-          const tr = document.createElement('tr');
-          tr.classList.add('border-t');
-          tr.innerHTML = `
-            <td class="px-4 py-2 font-medium text-gray-800">${row.year}</td>
-            <td class="px-4 py-2 text-gray-600">₱${row.revenue.toFixed(2)}</td>
-            <td class="px-4 py-2 text-gray-600">₱${row.profit.toFixed(2)}</td>
-          `;
-          previewTable.appendChild(tr);
-        });
+    //       const tr = document.createElement('tr');
+    //       tr.classList.add('border-t');
+    //       tr.innerHTML = `
+    //         <td class="px-4 py-2 font-medium text-gray-800">${row.year}</td>
+    //         <td class="px-4 py-2 text-gray-600">₱${row.revenue.toFixed(2)}</td>
+    //         <td class="px-4 py-2 text-gray-600">₱${row.profit.toFixed(2)}</td>
+    //       `;
+    //       previewTable.appendChild(tr);
+    //     });
 
-        renderFinancialChart(labels, revenueData, profitData);
-      } catch (err) {
-        console.error('Preview load error:', err);
-        previewTable.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-red-500">Error loading data</td></tr>`;
-      }
-    }
+    //     renderFinancialChart(labels, revenueData, profitData);
+    //   } catch (err) {
+    //     console.error('Preview load error:', err);
+    //     previewTable.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-red-500">Error loading data</td></tr>`;
+    //   }
+    // }
 
-    // 📈 Chart.js Renderer
-    function renderFinancialChart(labels, revenueData, profitData) {
-      new Chart(chartCanvas.getContext('2d'), {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: 'Revenue',
-              data: revenueData,
-              borderColor: 'green',
-              fill: false
-            },
-            {
-              label: 'Profit',
-              data: profitData,
-              borderColor: 'blue',
-              fill: false
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: { beginAtZero: true }
-          }
-        }
-      });
-    }
+    // // 📈 Chart.js Renderer
+    // function renderFinancialChart(labels, revenueData, profitData) {
+    //   new Chart(chartCanvas.getContext('2d'), {
+    //     type: 'line',
+    //     data: {
+    //       labels,
+    //       datasets: [
+    //         {
+    //           label: 'Revenue',
+    //           data: revenueData,
+    //           borderColor: 'green',
+    //           fill: false
+    //         },
+    //         {
+    //           label: 'Profit',
+    //           data: profitData,
+    //           borderColor: 'blue',
+    //           fill: false
+    //         }
+    //       ]
+    //     },
+    //     options: {
+    //       responsive: true,
+    //       scales: {
+    //         y: { beginAtZero: true }
+    //       }
+    //     }
+    //   });
+    // }
 
-    loadFinancialPreview(deckId);
+    //loadFinancialPreview(deckId);
   }
 
   function bindAskFormEvents(deckId) {
     const token = localStorage.getItem('authToken');
     const form = document.getElementById('askForm');
-    const amountInput = document.querySelector('input[name="amount"]');
-    const usageInput = document.querySelector('textarea[name="usage_description"]');
+    const amountInput = document.getElementById('amount');
+    const usageInput = document.getElementById('usage_description');
     const previewAmount = document.getElementById('preview-amount');
     const previewUsage = document.getElementById('preview-usage');
 
-    if (!form || !amountInput || !usageInput || !previewAmount || !previewUsage) return;
 
     // 🔄 Load existing Ask data
-    async function loadAskData() {
-      try {
-        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/ask/`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await res.json();
+    // async function loadAskData() {
+    //   try {
+    //     const res = await fetch(`http://127.0.0.1:8000/api/deck/ask/`, {
+    //       headers: { 'Authorization': `Bearer ${token}` }
+    //     });
+    //     const data = await res.json();
 
-        amountInput.value = data.amount || '';
-        usageInput.value = data.usage_description || '';
+    //     amountInput.value = data.amount || '';
+    //     usageInput.value = data.usage_description || '';
 
-        previewAmount.textContent = data.amount
-          ? '₱' + parseFloat(data.amount).toLocaleString()
-          : 'Enter funding amount...';
+    //     previewAmount.textContent = data.amount
+    //       ? '₱' + parseFloat(data.amount).toLocaleString()
+    //       : 'Enter funding amount...';
 
-        previewUsage.textContent = data.usage_description?.trim()
-          ? data.usage_description
-          : 'Describe how you plan to use the funding...';
-      } catch (err) {
-        console.error('Failed to load ask data:', err);
-      }
-    }
+    //     previewUsage.textContent = data.usage_description?.trim()
+    //       ? data.usage_description
+    //       : 'Describe how you plan to use the funding...';
+    //   } catch (err) {
+    //     console.error('Failed to load ask data:', err);
+    //   }
+    // }
 
     // 📤 Submit Ask data
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const payload = {
+        deck_id: deckId,
         amount: parseFloat(amountInput.value.replace(/,/g, '')),
         usage_description: usageInput.value.trim()
       };
@@ -603,9 +615,9 @@
         alert('Please fill out both fields correctly.');
         return;
       }
-
+      console.log('Submitting payload:', payload);
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/ask/`, {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/ask/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -618,7 +630,8 @@
         if (!res.ok) throw new Error(data.detail || 'Failed to save ask');
 
         alert('Funding request saved!');
-        loadAskData(); // Refresh preview
+        localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
+        //loadAskData(); // Refresh preview
       } catch (err) {
         console.error('Ask submit error:', err);
         alert('Something went wrong while saving your funding request.');
@@ -640,7 +653,7 @@
     });
 
     // 🔄 Initial load
-    loadAskData();
+    //loadAskData();
   }
 
     function prettify(text) {

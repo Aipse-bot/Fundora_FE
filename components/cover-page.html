@@ -37,7 +37,7 @@
     </div>
   </div>
 
-  <script>
+  <!-- <script>
     const openButton = document.getElementById('openButton');
     const fileInput = document.getElementById('logo');
     const fileName = document.getElementById('fileName');
@@ -64,7 +64,7 @@
       const token = localStorage.getItem('authToken');
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/decks/cover/', {
+        const response = await fetch('http://127.0.0.1:8000/api/decks/create/', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -93,5 +93,5 @@
         alert('Something went wrong. Please try again.');
       }
     });
-  </script>
+  </script> -->
 </section>

@@ -39,14 +39,14 @@
   </div>
 
   <script>
-    const API_BASE = 'http://127.0.0.1:8000/api';
+    const API_BASE = 'http://127.0.0.1:8000/api/';
     const token = localStorage.getItem('authToken');
 
     async function loadDecks() {
       const container = document.getElementById('deckList');
       try {
         console.log(token)
-        const res = await fetch(`${API_BASE}/deck`, {
+        const res = await fetch(`${API_BASE}deck/list/`, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -111,9 +111,32 @@
       container.innerHTML = `<div class="p-4 text-sm ${type === 'error' ? 'text-red-700 bg-red-100' : 'text-green-700 bg-green-100'} rounded-lg">${text}</div>`;
     }
 
-    document.getElementById('createDeckBtn').addEventListener('click', () => {
-      window.location.href = '/base.html';
-    });
+    document.getElementById('createDeckBtn').addEventListener('click', async () => {
+        const token = localStorage.getItem('authToken');
+
+        try {
+          const res = await fetch('http://127.0.0.1:8000/api/deck/create/', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          });
+
+          const data = await res.json();
+          console.log('Deck creation response:', data);
+
+          if (res.ok && data.deck_id) {
+            console.log('New deck created with ID:', data.deck_id);
+            localStorage.setItem('deck_id', data.deck_id);
+            window.location.href = '/base.html'; // redirect to deck builder
+          } else {
+            alert(data.error || 'Failed to create new deck.');
+          }
+        } catch (err) {
+          console.error('Deck creation failed:', err);
+          alert('Something went wrong while creating the deck.');
+        }
+      });
 
     window.onload = loadDecks;
   </script>

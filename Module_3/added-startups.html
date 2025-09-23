@@ -75,31 +75,30 @@
   </div>
 
     <script>
-      document.getElementById('createDeckBtn').addEventListener('click', async () => {
-        const token = localStorage.getItem('authToken');
+      // document.getElementById('createDeckBtn').addEventListener('click', async () => {
+      //   const token = localStorage.getItem('authToken');
 
-        try {
-          const res = await fetch('http://127.0.0.1:8000/api/deck/create/', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
+      //   try {
+      //     const res = await fetch('http://127.0.0.1:8000/api/deck/create/', {
+      //       method: 'POST',
+      //       headers: {
+      //         'Authorization': `Bearer ${token}`,
+      //       }
+      //     });
 
-          const data = await res.json();
+      //     const data = await res.json();
 
-          if (res.ok && data.deck_id) {
-            localStorage.setItem('deckId', data.deck_id);
-            window.location.href = '/base.html'; // redirect to deck builder
-          } else {
-            alert(data.error || 'Failed to create new deck.');
-          }
-        } catch (err) {
-          console.error('Deck creation failed:', err);
-          alert('Something went wrong while creating the deck.');
-        }
-      });
+      //     if (res.ok && data.deck_id) {
+      //       localStorage.setItem('deckId', data.deck_id);
+      //       window.location.href = '/base.html'; // redirect to deck builder
+      //     } else {
+      //       alert(data.error || 'Failed to create new deck.');
+      //     }
+      //   } catch (err) {
+      //     console.error('Deck creation failed:', err);
+      //     alert('Something went wrong while creating the deck.');
+      //   }
+      // });
 
     async function loadStartups() {
             const token = localStorage.getItem('authToken');
@@ -119,8 +118,9 @@
                 throw new Error(data.error || data.detail || 'Failed to fetch startups');
               }
 
-            const startups = data.startups || [];
-
+            //const startups = data.startups || [];
+            const startups = Array.isArray(data) ? data : data.startups || [];
+            console.log('Raw API response:', data);
 
             if (startups.length === 0) {
                 grid.innerHTML = `
