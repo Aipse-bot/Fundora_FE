@@ -36,15 +36,17 @@
   <!-- Main Content -->
   <main class="flex-1 h-full overflow-y-auto p-10" id="mainContent">
     <!-- Dynamic content will be injected here -->
+     <p class="text-gray-500 text-center">Start with your cover page on the left side bar.</p>
   </main>
 
   <!-- Card Panel -->
-  <section id="card-panel" class="w-[550px] h-full flex-shrink-0 bg-gray-200 border-l border-gray-300 overflow-y-hidden p-5">
+  <section id="card-panel" class="w-[550px] h-full flex-shrink-0 bg-gray-200 border-l border-gray-300 overflow-y-hidden p-5 flex items-center justify-center">
     <!-- Dynamic card panel content -->
+    <p class="text-gray-500 text-center">Section preview will appear here.</p>
   </section>
 
   <!-- Report Modal -->
-  <div id="reportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <!-- <div id="reportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-lg w-[600px]">
       <h2 class="text-xl font-bold mb-4">Generate Report</h2>
       <p class="text-gray-700 mb-4">Are you sure you want to generate a report for this deck?</p>
@@ -53,7 +55,7 @@
         <button onclick="generateReport()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Generate</button>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <!-- tempalte for adding a Team Members -->
   <template id="teamMemberTemplate">
@@ -79,14 +81,109 @@
     </div>
   </template>
 
-  <script>
-    function openModal() {
-      document.getElementById('reportModal').classList.remove('hidden');
-    }
+  <div id="reportModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center overflow-auto py-5 hidden">
+    <div class="bg-gray-200 rounded-lg shadow-lg w-full max-w-screen-xl mx-auto relative space-y-8 p-4 sm:p-6 lg:p-8">
 
-    function closeModal() {
-      document.getElementById('reportModal').classList.add('hidden');
-    }
+      <!-- Header -->
+      <div class="bg-blue-600 text-white px-4 sm:px-6 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center space-x-4">
+          <div class="bg-white text-blue-600 font-bold w-10 h-10 flex items-center justify-center text-xl" id="companyInitial">L</div>
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-semibold" id="companyName">Loading...</h1>
+            <p class="text-lg sm:text-xl text-blue-100" id="companyTagline">Loading tagline...</p>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <button onclick="closeModal()" class="bg-gray-200 rounded-lg text-gray-800 px-4 py-2 hover:bg-gray-300 transition">← Back to Builder</button>
+          <button onclick="addToStartup()" id="addToRecommendedBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Add to Startup</button>
+        </div>
+      </div>
+
+      <!-- Content Sections -->
+      <div class="space-y-6">
+
+        <!-- Problem & Solution -->
+        <div class="flex flex-col md:flex-row gap-6">
+          <div class="flex-1 px-4 py-6 bg-white border rounded">
+            <h2 class="text-xl font-bold text-black mb-2">The Problem</h2>
+            <div class="w-full h-1 bg-blue-500 mb-4"></div>
+            <p class="text-gray-500 text-lg" id="problemDescription">—</p>
+          </div>
+          <div class="flex-1 px-4 py-6 bg-white border rounded">
+            <h2 class="text-xl font-bold text-black mb-2">The Solution</h2>
+            <div class="w-full h-1 bg-blue-500 mb-4"></div>
+            <p class="text-gray-500 text-lg" id="solutionDescription">—</p>
+          </div>
+        </div>
+
+        <!-- Market & Financials -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Market Analysis -->
+          <div class="bg-white p-4 sm:p-6 rounded shadow text-left">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Market Analysis</h2>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-gray-600 font-medium">Primary Market:</span>
+                <span class="text-gray-900 font-semibold" id="primaryMarket">—</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 font-medium">Target Audience:</span>
+                <span class="text-gray-900 font-semibold" id="targetAudience">—</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 font-medium">Market Growth (YOY):</span>
+                <span class="text-green-600 font-bold" id="marketGrowthRate">—%</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 font-medium">Our Advantage:</span>
+                <span class="text-blue-600 font-semibold" id="competitiveAdvantage">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Financial Table -->
+          <div class="bg-white p-4 sm:p-6 rounded shadow overflow-x-auto">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Financial Projection</h2>
+            <table class="w-full text-left border border-gray-200">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="px-4 py-2 font-semibold text-gray-700">Year</th>
+                  <th class="px-4 py-2 font-semibold text-gray-700">Revenue (₱)</th>
+                  <th class="px-4 py-2 font-semibold text-gray-700">Profit (₱)</th>
+                </tr>
+              </thead>
+                <tbody id="financialTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- The Ask -->
+          <div class="bg-white py-10 px-4 sm:px-6 rounded shadow text-center">
+            <h2 class="text-xl font-bold text-gray-800 mb-2">THE ASK</h2>
+            <p class="text-4xl sm:text-5xl font-extrabold text-green-600 mb-4" id="askAmount">₱0</p>
+            <span class="font-medium text-gray-800" id="askUsage">Loading...</span>
+          </div>
+
+          <!-- Chart -->
+          <div class="bg-white p-4 sm:p-6 rounded shadow">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Revenue & Profit Chart</h2>
+            <canvas id="financialChart" width="400" height="200"></canvas>
+          </div>
+
+        </section>
+      </div>
+    </div>
+  </div>
+  <script>
+  function openModal() {
+    const deckId = localStorage.getItem('deck_id');
+    loadReportModal(deckId)
+    document.getElementById('reportModal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('reportModal').classList.add('hidden');
+  }
 
   async function loadDeckSections() {
     const token = localStorage.getItem('authToken');
@@ -171,25 +268,51 @@
     }
   }
 
-  function bindCoverFormEvents(deckId) {
+  async function bindCoverFormEvents(deckId) {
     const form = document.getElementById('coverForm');
     const fileInput = document.getElementById('logo');
     const fileName = document.getElementById('fileName');
     const openButton = document.getElementById('openButton');
+    const token = localStorage.getItem('authToken');
 
+    // Load existing data if available
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/deck/cover/?deck_id=${deckId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById('company_name').value = data.company_name || '';
+        document.getElementById('tagline').value = data.tagline || '';
+        fileName.textContent = data.logo_url
+          ? `Current file: ${data.logo_url.split('/').pop()}`
+          : 'No file chosen';
+
+        const preview = document.getElementById('logoPreview');
+        if (data.logo_url && preview) {
+          preview.src = data.logo_url;
+          preview.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      console.warn('No existing cover data found or failed to load:', err);
+    }
+
+    // Bind file input preview
     openButton.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => {
       const file = fileInput.files[0];
       fileName.textContent = file ? `Selected file: ${file.name}` : 'No file chosen';
     });
+
     console.log('Binding cover form events for deck ID:', deckId);
+
+    // Bind form submission
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
 
       const formData = new FormData(form);
       formData.append('deck_id', deckId);
-
-      const token = localStorage.getItem('authToken');
 
       try {
         const response = await fetch(`http://127.0.0.1:8000/api/deck/cover/`, {
@@ -201,12 +324,10 @@
         const data = await response.json();
 
         if (response.ok) {
-          console.log(data.deck_id);
           alert('Cover page saved successfully!');
-          localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
-          loadSection('the-problem', deckId); // redirect to next section
+          localStorage.setItem('deck_id', data.deck_id);
+          loadSection('the-problem', deckId);
         } else {
-          // Display validation errors
           document.getElementById('errorCompanyName').textContent = data.errors?.company_name || '';
           document.getElementById('errorCompanyName').classList.toggle('hidden', !data.errors?.company_name);
 
@@ -223,17 +344,44 @@
     });
   }
 
-  function bindProblemFormEvents(deckId) {
+  async function bindProblemFormEvents(deckId) {
     const form = document.getElementById('problemForm');
     const descriptionInput = document.getElementById('problemDescription');
     const errorElem = document.getElementById('descriptionError');
+    const previewElem = document.getElementById('problemPreview');
+    const token = localStorage.getItem('authToken');
 
     if (!form || !descriptionInput) return;
 
+    // Load existing problem data
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/deck/problem/?deck_id=${deckId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const description = data.description || '';
+        descriptionInput.value = description;
+        previewElem.innerHTML = description
+          ? description.replace(/\n/g, '<br>')
+          : '<span class="text-gray-400">Describe the problem you\'re solving...</span>';
+      }
+    } catch (err) {
+      console.warn('No existing problem data found or failed to load:', err);
+    }
+
+    // Live preview update
+    descriptionInput.addEventListener('input', () => {
+      const value = descriptionInput.value.trim();
+      previewElem.innerHTML = value
+        ? value.replace(/\n/g, '<br>')
+        : '<span class="text-gray-400">Describe the problem you\'re solving...</span>';
+    });
+
+    // Form submission
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const token = localStorage.getItem('authToken');
       const description = descriptionInput.value.trim();
 
       try {
@@ -243,10 +391,7 @@
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            deck_id: deckId,
-            description: description
-          })
+          body: JSON.stringify({ deck_id: deckId, description })
         });
 
         const data = await res.json();
@@ -254,8 +399,8 @@
         if (res.ok) {
           errorElem.classList.add('hidden');
           alert('Problem section saved successfully!');
-          localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
-          loadSection('the-solution', deckId); // redirect to next section
+          localStorage.setItem('deck_id', data.deck_id);
+          loadSection('the-solution', deckId);
         } else {
           errorElem.textContent = data.errors?.description || 'Something went wrong.';
           errorElem.classList.remove('hidden');
@@ -268,17 +413,44 @@
     });
   }
   
-  function bindSolutionFormEvents(deckId) {
+  async function bindSolutionFormEvents(deckId) {
     const form = document.getElementById('solutionForm');
     const descriptionInput = document.getElementById('solutionDescription');
     const errorElem = document.getElementById('descriptionError');
+    const previewElem = document.getElementById('solutionPreview');
+    const token = localStorage.getItem('authToken');
 
     if (!form || !descriptionInput) return;
 
+    // Load existing solution data
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/deck/solution/?deck_id=${deckId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const description = data.description || '';
+        descriptionInput.value = description;
+        previewElem.innerHTML = description
+          ? description.replace(/\n/g, '<br>')
+          : '<span class="text-gray-400">Describe your solution to the problem...</span>';
+      }
+    } catch (err) {
+      console.warn('No existing solution data found or failed to load:', err);
+    }
+
+    // Live preview update
+    descriptionInput.addEventListener('input', () => {
+      const value = descriptionInput.value.trim();
+      previewElem.innerHTML = value
+        ? value.replace(/\n/g, '<br>')
+        : '<span class="text-gray-400">Describe your solution to the problem...</span>';
+    });
+
+    // Form submission
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const token = localStorage.getItem('authToken');
       const description = descriptionInput.value.trim();
 
       try {
@@ -288,10 +460,7 @@
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            deck_id: deckId,
-            description: description
-          })
+          body: JSON.stringify({ deck_id: deckId, description })
         });
 
         const data = await res.json();
@@ -299,8 +468,8 @@
         if (res.ok) {
           errorElem.classList.add('hidden');
           alert('Solution section saved successfully!');
-          localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
-          loadSection('market-analysis', deckId); // redirect to next section
+          localStorage.setItem('deck_id', data.deck_id);
+          loadSection('market-analysis', deckId);
         } else {
           errorElem.textContent = data.errors?.description || 'Something went wrong.';
           errorElem.classList.remove('hidden');
@@ -313,7 +482,7 @@
     });
   }
 
-  function bindMarketFormEvents(deckId) {
+  async function bindMarketFormEvents(deckId) {
     const form = document.getElementById('marketForm');
     if (!form) return;
 
@@ -327,10 +496,77 @@
     const errorMarketGrowthRate = document.getElementById('marketGrowthRateError');
     const errorCompetitiveAdvantage = document.getElementById('competitiveAdvantageError');
 
+    const previewPrimary = document.getElementById('previewPrimaryMarket');
+    const previewTarget = document.getElementById('previewTargetAudience');
+    const previewGrowth = document.getElementById('previewMarketGrowthRate');
+    const previewAdvantage = document.getElementById('previewCompetitiveAdvantage');
+
+    const token = localStorage.getItem('authToken');
+
+    // Load existing market analysis data
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/deck/market-analysis/?deck_id=${deckId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        primaryMarket.value = data.primary_market || '';
+        targetAudience.value = data.target_audience || '';
+        marketGrowthRate.value = data.market_growth_rate || '';
+        competitiveAdvantage.value = data.competitive_advantage || '';
+
+        previewPrimary.innerHTML = data.primary_market
+          ? String(data.primary_market).replace(/\n/g, '<br>')
+          : '<span class="text-gray-400">Primary market</span>';
+
+        previewTarget.innerHTML = data.target_audience
+          ? String(data.target_audience).replace(/\n/g, '<br>')
+          : '<span class="text-gray-400">Target audience</span>';
+
+        previewGrowth.innerHTML = data.market_growth_rate
+          ? String(data.market_growth_rate).replace(/\n/g, '<br>')
+          : '<span class="text-gray-400">Growth rate</span>';
+
+        previewAdvantage.innerHTML = data.competitive_advantage
+          ? String(data.competitive_advantage).replace(/\n/g, '<br>')
+          : '<span class="text-gray-400">Growth rate</span>';
+      }
+    } catch (err) {
+      console.warn('No existing market analysis found or failed to load:', err);
+    }
+
+    // Live preview updates
+    primaryMarket.addEventListener('input', () => {
+      const value = primaryMarket.value.trim();
+      previewPrimary.innerHTML = value
+        ? value.replace(/\n/g, '<br>')
+        : '<span class="text-gray-400">Primary market</span>';
+    });
+
+    targetAudience.addEventListener('input', () => {
+      const value = targetAudience.value.trim();
+      previewTarget.innerHTML = value
+        ? value.replace(/\n/g, '<br>')
+        : '<span class="text-gray-400">Target audience</span>';
+    });
+
+    marketGrowthRate.addEventListener('input', () => {
+      const value = marketGrowthRate.value.trim();
+      previewGrowth.innerHTML = value
+        ? value.replace(/\n/g, '<br>')
+        : '<span class="text-gray-400">Growth rate</span>';
+    });
+
+    competitiveAdvantage.addEventListener('input', () => {
+      const value = competitiveAdvantage.value.trim();
+      previewAdvantage.innerHTML = value
+        ? value.replace(/\n/g, '<br>')
+        : '<span class="text-gray-400">Growth rate</span>';
+    });
+
+    // Form submission
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const token = localStorage.getItem('authToken');
 
       const payload = {
         deck_id: deckId,
@@ -355,8 +591,8 @@
         if (res.ok) {
           [errorPrimaryMarket, errorTargetAudience, errorMarketGrowthRate, errorCompetitiveAdvantage].forEach(el => el.classList.add('hidden'));
           alert('Market analysis saved successfully!');
-          localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
-          loadSection('the-team', deckId); // redirect to next section
+          localStorage.setItem('deck_id', data.deck_id);
+          loadSection('the-team', deckId);
         } else {
           errorPrimaryMarket.textContent = data.errors?.primary_market || '';
           errorPrimaryMarket.classList.toggle('hidden', !data.errors?.primary_market);
@@ -377,35 +613,78 @@
     });
   }
 
-  function bindTeamFormEvents(deckId) {
-
+  async function bindTeamFormEvents(deckId) {
     const form = document.getElementById('teamForm');
     const teamMembers = document.getElementById('teamMembers');
     const addMemberBtn = document.getElementById('addMemberBtn');
     const template = document.getElementById('teamMemberTemplate');
+    const previewContainer = document.getElementById('teamPreview');
+    const token = localStorage.getItem('authToken');
 
     if (!form || !teamMembers || !addMemberBtn || !template) return;
 
-    // Add member logic
+    // 🧠 Load existing team data
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/deck/team/?deck_id=${deckId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const members = data.members || [];
+
+        members.forEach(member => {
+          const clone = template.content.cloneNode(true);
+          const formBlock = clone.querySelector('.team-form');
+
+          formBlock.querySelector('input[name="name"]').value = member.name || '';
+          formBlock.querySelector('input[name="title"]').value = member.title || '';
+
+          formBlock.querySelector('.remove-member').addEventListener('click', (e) => {
+            e.target.closest('.team-form').remove();
+            renderTeamPreview();
+          });
+
+          formBlock.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', renderTeamPreview);
+          });
+
+          teamMembers.appendChild(clone);
+        });
+
+        renderTeamPreview();
+      }
+    } catch (err) {
+      console.warn('No existing team data found or failed to load:', err);
+    }
+
+    // ➕ Add new member
     addMemberBtn.addEventListener('click', () => {
       const clone = template.content.cloneNode(true);
-      clone.querySelector('.remove-member').addEventListener('click', (e) => {
+      const formBlock = clone.querySelector('.team-form');
+
+      formBlock.querySelector('.remove-member').addEventListener('click', (e) => {
         e.target.closest('.team-form').remove();
+        renderTeamPreview();
       });
+
+      formBlock.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', renderTeamPreview);
+      });
+
       teamMembers.appendChild(clone);
+      renderTeamPreview();
     });
 
-    // Submit team members
+    // 📨 Submit team
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const token = localStorage.getItem('authToken');
 
       const members = [...teamMembers.querySelectorAll('.team-form')]
         .map(form => ({
           name: form.querySelector('input[name="name"]').value.trim(),
           title: form.querySelector('input[name="title"]').value.trim()
         }))
-        .filter(member => member.name && member.title); // skip empty entries
+        .filter(member => member.name && member.title);
 
       if (members.length === 0) {
         alert('Please add at least one team member.');
@@ -426,14 +705,42 @@
         if (!res.ok) throw new Error(data.detail || 'Failed to save team');
 
         alert('Team saved successfully!');
-        console.log('Team saved:', data);
-        localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
-        loadSection('financials', deckId); // redirect to next section
+        localStorage.setItem('deck_id', data.deck_id);
+        loadSection('financials', deckId);
       } catch (err) {
         console.error('Team submit error:', err);
         alert('Something went wrong while saving your team.');
       }
     });
+
+    // 🧹 Render team preview
+    function renderTeamPreview() {
+      const members = [...teamMembers.querySelectorAll('.team-form')]
+        .map(form => ({
+          name: form.querySelector('input[name="name"]').value.trim(),
+          title: form.querySelector('input[name="title"]').value.trim()
+        }))
+        .filter(member => member.name || member.title);
+
+      previewContainer.innerHTML = '';
+
+      if (members.length === 0) {
+        previewContainer.innerHTML = '<p class="text-center text-gray-500 text-base">No team members added yet.</p>';
+        return;
+      }
+
+      members.forEach(member => {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-50 p-4 rounded-lg shadow-sm border';
+
+        card.innerHTML = `
+          <div class="text-lg font-semibold text-gray-800">${member.name || '<span class="text-gray-400">Unnamed</span>'}</div>
+          <div class="text-sm text-gray-600">${member.title || '<span class="text-gray-400">No title</span>'}</div>
+        `;
+
+        previewContainer.appendChild(card);
+      });
+    }
   }
 
   function bindFinancialFormEvents(deckId) {
@@ -451,8 +758,16 @@
 
     addYearBtn.addEventListener('click', () => {
       const clone = template.content.cloneNode(true);
+      clone.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', updatePreviewAndChart);
+        if (input.name.includes('year')) {
+          input.addEventListener('input', validateYear);
+          input.addEventListener('blur', validateYear);
+        }
+      });
       clone.querySelector('.remove-financial').addEventListener('click', (e) => {
         e.target.closest('.team-form').remove();
+        updatePreviewAndChart();
       });
       financialRows.appendChild(clone);
     });
@@ -495,79 +810,157 @@
         alert('Something went wrong while saving your financials.');
       }
     });
+    // 🧩 Year validation to prevent duplicates
+    function validateYear(event) {
+      const currentInput = event.target;
+      const currentValue = currentInput.value;
+      const currentForm = currentInput.closest('.team-form');
+
+      if (!currentValue) return;
+
+      const allYearInputs = document.querySelectorAll('input[name="year"]');
+      const otherYears = [...allYearInputs].filter(input =>
+        input !== currentInput &&
+        !input.closest('.team-form')?.style.display.includes('none') &&
+        !input.closest('.team-form')?.querySelector('input[type="checkbox"]:checked')
+      ).map(input => input.value);
+
+      if (otherYears.includes(currentValue)) {
+        currentInput.style.borderColor = '#ef4444';
+        currentInput.style.backgroundColor = '#fef2f2';
+
+        let errorMsg = currentForm.querySelector('.year-error');
+        if (!errorMsg) {
+          errorMsg = document.createElement('div');
+          errorMsg.className = 'year-error text-red-600 text-sm mt-1 col-span-4';
+          errorMsg.textContent = `Year ${currentValue} is already used. Please choose a different year.`;
+          currentForm.appendChild(errorMsg);
+        }
+      } else {
+        currentInput.style.borderColor = '';
+        currentInput.style.backgroundColor = '';
+        const errorMsg = currentForm.querySelector('.year-error');
+        if (errorMsg) errorMsg.remove();
+      }
+    }
+
+    let revenueProfitChart;
+    const chartCtx = chartCanvas.getContext('2d');
+    revenueProfitChart = new Chart(chartCtx, {
+      type: 'bar',
+      data: {
+        labels: ['No data'],
+        datasets: [
+          { label: 'Revenue', data: [0], backgroundColor: '#3b82f6' },
+          { label: 'Profit', data: [0], backgroundColor: '#10b981' }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: value => '₱' + value.toLocaleString()
+            }
+          }
+        }
+      }
+    });
+
+    function updateChart(financialData) {
+      if (!revenueProfitChart) return;
+
+      if (financialData.length === 0) {
+        revenueProfitChart.data.labels = ['No data'];
+        revenueProfitChart.data.datasets[0].data = [0];
+        revenueProfitChart.data.datasets[1].data = [0];
+      } else {
+        revenueProfitChart.data.labels = financialData.map(d => d.year);
+        revenueProfitChart.data.datasets[0].data = financialData.map(d => parseFloat(d.revenue) || 0);
+        revenueProfitChart.data.datasets[1].data = financialData.map(d => parseFloat(d.profit) || 0);
+      }
+
+      revenueProfitChart.update();
+    }
+
+  function updatePreviewAndChart() {
+    const rows = [...financialRows.querySelectorAll('.team-form')];
+    const financialData = rows.map(row => {
+      const year = row.querySelector('input[name="year"]')?.value || '';
+      const revenue = row.querySelector('input[name="revenue"]')?.value || '';
+      const profit = row.querySelector('input[name="profit"]')?.value || '';
+      return { year, revenue, profit, yearNumeric: parseInt(year) || 0 };
+    }).filter(d => d.year || d.revenue || d.profit);
+
+    financialData.sort((a, b) => a.yearNumeric - b.yearNumeric);
+
+    previewTable.innerHTML = '';
+
+    // 🧩 Handle empty state
+    if (financialData.length === 0) {
+      const emptyRow = document.createElement('tr');
+      emptyRow.innerHTML = `
+        <td colspan="3" class="text-center py-4 text-gray-500 italic">No financial data entered yet...</td>
+      `;
+      previewTable.appendChild(emptyRow);
+      updateChart([]);
+      return;
+    }
+
+    // 🧩 Inject data rows
+    financialData.forEach(data => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="px-4 py-2 bg-gray-50 border text-gray-700 font-medium">${data.year}</td>
+        <td class="px-4 py-2 bg-gray-50 border text-gray-700 font-medium">₱${parseFloat(data.revenue || 0).toLocaleString()}</td>
+        <td class="px-4 py-2 bg-gray-50 border text-gray-700 font-medium">₱${parseFloat(data.profit || 0).toLocaleString()}</td>
+      `;
+      previewTable.appendChild(row);
+    });
+
+    updateChart(financialData);
+  }
 
     // 📊 Load Preview + Chart
-    // async function loadFinancialPreview(deckId) {
-    //   try {
-    //     const res = await fetch(`http://127.0.0.1:8000/api/deck/financial/`, {
-    //       headers: { 'Authorization': `Bearer ${token}` }
-    //     });
+    async function loadFinancials(deckId) {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/financial-list/?deck_id=${deckId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const financials = await res.json();
+        financials.forEach(data => {
+          const clone = template.content.cloneNode(true);
+          clone.querySelector('input[name="year"]').value = data.year;
+          clone.querySelector('input[name="revenue"]').value = data.revenue;
+          clone.querySelector('input[name="profit"]').value = data.profit;
 
-    //     const data = await res.json();
-    //     previewTable.innerHTML = '';
+          clone.querySelector('.remove-financial').addEventListener('click', (e) => {
+            e.target.closest('.team-form').remove();
+            updatePreviewAndChart();
+          });
 
-    //     if (data.length === 0) {
-    //       previewTable.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-gray-500">No financial data available</td></tr>`;
-    //       return;
-    //     }
+          clone.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', updatePreviewAndChart);
+            if (input.name.includes('year')) {
+              input.addEventListener('input', validateYear);
+              input.addEventListener('blur', validateYear);
+            }
+          });
 
-    //     const labels = [];
-    //     const revenueData = [];
-    //     const profitData = [];
+          financialRows.appendChild(clone);
+        });
+        updatePreviewAndChart();
+      } catch (err) {
+        console.error('Failed to load financials:', err);
+      }
+    }
 
-    //     data.forEach(row => {
-    //       labels.push(row.year);
-    //       revenueData.push(parseFloat(row.revenue));
-    //       profitData.push(parseFloat(row.profit));
-
-    //       const tr = document.createElement('tr');
-    //       tr.classList.add('border-t');
-    //       tr.innerHTML = `
-    //         <td class="px-4 py-2 font-medium text-gray-800">${row.year}</td>
-    //         <td class="px-4 py-2 text-gray-600">₱${row.revenue.toFixed(2)}</td>
-    //         <td class="px-4 py-2 text-gray-600">₱${row.profit.toFixed(2)}</td>
-    //       `;
-    //       previewTable.appendChild(tr);
-    //     });
-
-    //     renderFinancialChart(labels, revenueData, profitData);
-    //   } catch (err) {
-    //     console.error('Preview load error:', err);
-    //     previewTable.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-red-500">Error loading data</td></tr>`;
-    //   }
-    // }
-
-    // // 📈 Chart.js Renderer
-    // function renderFinancialChart(labels, revenueData, profitData) {
-    //   new Chart(chartCanvas.getContext('2d'), {
-    //     type: 'line',
-    //     data: {
-    //       labels,
-    //       datasets: [
-    //         {
-    //           label: 'Revenue',
-    //           data: revenueData,
-    //           borderColor: 'green',
-    //           fill: false
-    //         },
-    //         {
-    //           label: 'Profit',
-    //           data: profitData,
-    //           borderColor: 'blue',
-    //           fill: false
-    //         }
-    //       ]
-    //     },
-    //     options: {
-    //       responsive: true,
-    //       scales: {
-    //         y: { beginAtZero: true }
-    //       }
-    //     }
-    //   });
-    // }
-
-    //loadFinancialPreview(deckId);
+    loadFinancials(deckId);
   }
 
   function bindAskFormEvents(deckId) {
@@ -578,29 +971,30 @@
     const previewAmount = document.getElementById('preview-amount');
     const previewUsage = document.getElementById('preview-usage');
 
+    if (!form || !amountInput || !usageInput || !previewAmount || !previewUsage) return;
 
     // 🔄 Load existing Ask data
-    // async function loadAskData() {
-    //   try {
-    //     const res = await fetch(`http://127.0.0.1:8000/api/deck/ask/`, {
-    //       headers: { 'Authorization': `Bearer ${token}` }
-    //     });
-    //     const data = await res.json();
+    async function loadAskData() {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/deck/ask/?deck_id=${deckId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
 
-    //     amountInput.value = data.amount || '';
-    //     usageInput.value = data.usage_description || '';
+        amountInput.value = data.amount || '';
+        usageInput.value = data.usage_description || '';
 
-    //     previewAmount.textContent = data.amount
-    //       ? '₱' + parseFloat(data.amount).toLocaleString()
-    //       : 'Enter funding amount...';
+        previewAmount.textContent = data.amount
+          ? '₱' + parseFloat(data.amount).toLocaleString()
+          : 'Enter funding amount...';
 
-    //     previewUsage.textContent = data.usage_description?.trim()
-    //       ? data.usage_description
-    //       : 'Describe how you plan to use the funding...';
-    //   } catch (err) {
-    //     console.error('Failed to load ask data:', err);
-    //   }
-    // }
+        previewUsage.textContent = data.usage_description?.trim()
+          ? data.usage_description
+          : 'Describe how you plan to use the funding...';
+      } catch (err) {
+        console.error('Failed to load ask data:', err);
+      }
+    }
 
     // 📤 Submit Ask data
     form.addEventListener('submit', async (e) => {
@@ -615,7 +1009,7 @@
         alert('Please fill out both fields correctly.');
         return;
       }
-      console.log('Submitting payload:', payload);
+
       try {
         const res = await fetch(`http://127.0.0.1:8000/api/deck/ask/`, {
           method: 'POST',
@@ -630,15 +1024,15 @@
         if (!res.ok) throw new Error(data.detail || 'Failed to save ask');
 
         alert('Funding request saved!');
-        localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
-        //loadAskData(); // Refresh preview
+        localStorage.setItem('deck_id', data.deck_id);
+        loadAskData(); // Refresh preview
       } catch (err) {
         console.error('Ask submit error:', err);
         alert('Something went wrong while saving your funding request.');
       }
     });
 
-    // 🧩 Live preview updates (already handled)
+    // 🧩 Live preview updates
     amountInput.addEventListener('input', () => {
       const value = amountInput.value.trim();
       const numValue = parseFloat(value.replace(/,/g, ''));
@@ -653,18 +1047,114 @@
     });
 
     // 🔄 Initial load
-    //loadAskData();
+    loadAskData();
   }
 
-    function prettify(text) {
-      return text.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  async function loadReportModal(deckId) {
+    console.log('Loading report for deck ID:', deckId);
+    const token = localStorage.getItem('authToken');
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/deck/report/${deckId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+
+      // Inject header
+      document.getElementById('companyInitial').textContent = data.company_name?.charAt(0) || 'L';
+      document.getElementById('companyName').textContent = data.company_name || '—';
+      document.getElementById('companyTagline').textContent = data.tagline || '—';
+
+      // Inject problem & solution
+      document.getElementById('problemDescription').textContent = data.problem?.description || '—';
+      document.getElementById('solutionDescription').textContent = data.solution?.description || '—';
+
+      // Inject market analysis
+      document.getElementById('primaryMarket').textContent = data.market_analysis?.primary_market || '—';
+      document.getElementById('targetAudience').textContent = data.market_analysis?.target_audience || '—';
+      document.getElementById('marketGrowthRate').textContent = data.market_analysis?.market_growth_rate || '—';
+      document.getElementById('competitiveAdvantage').textContent = data.market_analysis?.competitive_advantage || '—';
+
+      // Inject financials
+      const tbody = document.getElementById('financialTableBody');
+      tbody.innerHTML = '';
+      if (data.financials?.length) {
+        data.financials.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.className = 'border-t';
+          tr.innerHTML = `
+            <td class="px-4 py-2">${row.year}</td>
+            <td class="px-4 py-2">₱${parseFloat(row.revenue).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+            <td class="px-4 py-2">₱${parseFloat(row.profit).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-2 text-center text-gray-500">No data available</td></tr>`;
+      }
+
+      // Inject ask
+      document.getElementById('askAmount').textContent = `₱${parseFloat(data.ask?.amount || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      document.getElementById('askUsage').textContent = data.ask?.usage_description || '—';
+
+      // Inject chart
+      renderFinancialChart(data.financials || []);
+
+      // Show modal
+      document.getElementById('reportModal').classList.remove('hidden');
+    } catch (err) {
+      console.error('Failed to load report modal:', err);
+      alert('Unable to load report. Please try again.');
+    }
+  }
+  let financialChart = null;
+  function renderFinancialChart(financials) {
+    const ctx = document.getElementById('financialChart').getContext('2d');
+    const years = financials.map(f => f.year);
+    const revenues = financials.map(f => parseFloat(f.revenue));
+    const profits = financials.map(f => parseFloat(f.profit));
+
+    if (financialChart) {
+      financialChart.destroy();
+      financialChart = null;
     }
 
-    function generateReport() {
-      // Add your report generation logic here
-      alert("Report generation triggered.");
-      closeModal();
-    }
+    financialChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: 'Revenue',
+            data: revenues,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)'
+          },
+          {
+            label: 'Profit',
+            data: profits,
+            backgroundColor: 'rgba(75, 192, 192, 0.6)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  function prettify(text) {
+    return text.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function generateReport() {
+    // Add your report generation logic here
+    alert("Report generation triggered.");
+    closeModal();
+  }
 
     window.onload = loadDeckSections;
   </script>
