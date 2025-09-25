@@ -1,225 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fundora - My Watchlist</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fundora - My Watchlist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <div class="max-w-6xl mx-auto p-6">
-        <!-- Messages -->
-        <div id="notificationBox" class="fixed top-6 right-6 z-50 space-y-4"></div>
+  <div class="max-w-6xl mx-auto p-6">
+    <!-- Messages -->
+    <div id="notificationBox" class="fixed top-6 right-6 z-50 space-y-4"></div>
 
-        <!-- Header -->
-        <div class="flex items-center mb-8">
-            <a href="/dashboard.html" class="mr-4 p-2 hover:bg-gray-100 rounded-full">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </a>
-            <h1 class="text-3xl font-bold text-gray-900">My Watchlist</h1>
-        </div>
-
-        <!-- Tab Navigation -->
-        <div class="border-b border-gray-200 mb-8">
-            <nav class="flex space-x-8">
-                <button
-                id="saved-tab"
-                class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200"
-                onclick="switchTab('saved')"
-                >
-                Saved (<span id="saved-count">0</span>)
-                </button>
-                <button
-                id="compared-tab"
-                class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200"
-                onclick="switchTab('compared')"
-                >
-                Compared (<span id="compared-count">0</span>)
-                </button>
-                <button
-                id="downloaded-tab"
-                class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200"
-                onclick="switchTab('downloaded')"
-                >
-                Downloaded (<span id="downloaded-count">0</span>)
-                </button>
-            </nav>
-        </div>
-
-        <!-- Tab Content -->
-        <div id="tab-content">
-            <!-- Saved Tab Content -->
-            <div id="saved-content" class="tab-content">
-                <div id="saved-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-                <!-- Empty State -->
-                <div id="saved-empty" class="text-center py-12 hidden">
-                    <p class="text-gray-600">You have no startups in your watchlist yet.</p>
-                </div>
-            </div>
-
-            <!-- Compared Tab Content -->
-            <div id="compared-content" class="tab-content hidden">
-                <div id="compared-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-            <!-- Empty State -->
-                <div id="compared-empty" class="text-center py-12 hidden">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No comparisons yet</h3>
-                    <p class="mt-1 text-sm text-gray-500">Compare startups to see them here.</p>
-                </div>
-            </div>
-
-            <!-- Downloaded Tab Content -->
-            <div id="downloaded-content" class="tab-content hidden">
-                <div id="downloaded-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-                <!-- Empty State -->
-                <div id="downloaded-empty" class="text-center py-12 hidden">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No downloads yet</h3>
-                    <p class="mt-1 text-sm text-gray-500">Start by downloading a company profile from your saved startups.</p>
-                </div>
-            </div>
-        </div>
+    <!-- Header -->
+    <div class="flex items-center mb-8">
+      <a href="Dashboard.html" class="mr-4 p-2 hover:bg-gray-100 rounded-full">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </a>
+      <h1 class="text-3xl font-bold text-gray-900">My Watchlist</h1>
     </div>
 
-    <script>
-        // Tab switching functionality
-        function switchTab(tabName) {
-            // Hide all tab contents
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => {
-                content.classList.add('hidden');
-            });
+    <!-- Tab Navigation -->
+    <div class="border-b border-gray-200 mb-8">
+      <nav class="flex space-x-8">
+        <button id="saved-tab" class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200" onclick="switchTab('saved')">
+          Saved (<span id="saved-count">0</span>)
+        </button>
+        <button id="compared-tab" class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200" onclick="switchTab('compared')">
+          Compared (<span id="compared-count">0</span>)
+        </button>
+        <button id="downloaded-tab" class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200" onclick="switchTab('downloaded')">
+          Downloaded (<span id="downloaded-count">0</span>)
+        </button>
+      </nav>
+    </div>
 
-            // Remove active styles from all tabs
-            const tabButtons = document.querySelectorAll('.tab-button');
-            tabButtons.forEach(button => {
-                button.classList.remove('border-blue-500', 'text-blue-600');
-                button.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-            });
+    <!-- Tab Content -->
+    <div id="tab-content">
+      <!-- Saved Tab -->
+      <div id="saved-content" class="tab-content">
+        <div id="saved-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Startup Card Example -->
+          <!-- dynamically injected -->
+        </div>
+        <!-- Empty State -->
+        <div id="saved-empty" class="text-center py-12 hidden">
+          <p class="text-gray-600">You have no startups in your watchlist yet.</p>
+        </div>
+      </div>
 
-            // Show selected tab content
-            document.getElementById(tabName + '-content').classList.remove('hidden');
+      <!-- Compared Tab -->
+      <div id="compared-content" class="tab-content hidden">
+        <div id="compared-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Comparison card injected -->
+        </div>
+        <!-- Empty State -->
+        <div id="compared-empty" class="text-center py-12 hidden">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No comparisons yet</h3>
+          <p class="mt-1 text-sm text-gray-500">Compare startups to see them here.</p>
+        </div>
+      </div>
 
-            // Add active styles to selected tab
-            const activeTab = document.getElementById(tabName + '-tab');
-            activeTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-            activeTab.classList.add('border-blue-500', 'text-blue-600');
-        }
+      <!-- Downloaded Tab -->
+      <div id="downloaded-content" class="tab-content hidden">
+        <div id="downloaded-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Downloaded card injected -->
+        </div>
+        <!-- Empty State -->
+        <div id="downloaded-empty" class="text-center py-12 hidden">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No downloads yet</h3>
+          <p class="mt-1 text-sm text-gray-500">Start by downloading a company profile from your saved startups.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        // Remove from watchlist functionality
-        function removeFromWatchlist(startupId, companyName) {
-            if (confirm(`Are you sure you want to remove "${companyName}" from your watchlist?`)) {
-                // Show loading state (optional)
-                const button = event.target.closest('button');
-                const originalHTML = button.innerHTML;
-                button.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>';
-                button.disabled = true;
-                
-                fetch(`/watchlist/remove/${startupId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken'),
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Remove the card from the DOM with animation
-                        const card = button.closest('.bg-white');
-                        card.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.95)';
-                        
-                        setTimeout(() => {
-                            card.remove();
-                            
-                            // Update the saved count
-                            document.getElementById('saved-count').textContent = data.updated_count;
-                            
-                            // Show empty state if no items left
-                            if (data.updated_count === 0) {
-                                document.getElementById('saved-content').innerHTML = `
-                                    <div class="text-center py-12">
-                                        <p class="text-gray-600">You have no startups in your watchlist yet.</p>
-                                    </div>
-                                `;
-                            }
-                        }, 300);
-                        
-                        // Show success message (optional)
-                        showMessage(data.message, 'success');
-                    } else {
-                        // Reset button state
-                        button.innerHTML = originalHTML;
-                        button.disabled = false;
-                        
-                        // Show error message
-                        showMessage(data.message, 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    
-                    // Reset button state
-                    button.innerHTML = originalHTML;
-                    button.disabled = false;
-                    
-                    showMessage('An error occurred while removing the startup. Please try refreshing the page.', 'error');
-                });
-            }
-        }
-        
-        // Show message function (optional - for better UX)
-        function showMessage(message, type) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg transition-all duration-300 ${
-                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-            }`;
-            messageDiv.textContent = message;
-            
-            document.body.appendChild(messageDiv);
-            
-            // Remove message after 3 seconds
-            setTimeout(() => {
-                messageDiv.style.opacity = '0';
-                setTimeout(() => messageDiv.remove(), 300);
-            }, 3000);
-        }
+  <script>
+    // Tab switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'text-blue-600');
+        btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+      });
+      document.getElementById(tabName + '-content').classList.remove('hidden');
+      const activeTab = document.getElementById(tabName + '-tab');
+      activeTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+      activeTab.classList.add('border-blue-500', 'text-blue-600');
+    }
 
-        // Helper function to get CSRF token
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
+    // Remove from watchlist
+    function removeFromWatchlist(startupId, companyName) {
+      if (confirm(`Are you sure you want to remove "${companyName}" from your watchlist?`)) {
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>';
+        button.disabled = true;
+
+        fetch(`/watchlist/remove/${startupId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({})
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              const card = button.closest('.bg-white');
+              card.style.transition = 'opacity 0.3s, transform 0.3s';
+              card.style.opacity = '0';
+              card.style.transform = 'scale(0.95)';
+              setTimeout(() => {
+                card.remove();
+                document.getElementById('saved-count').textContent = data.updated_count;
+                if (data.updated_count === 0) {
+                  document.getElementById('saved-empty').classList.remove('hidden');
                 }
+              }, 300);
+              showMessage(data.message, 'success');
+            } else {
+              button.innerHTML = originalHTML;
+              button.disabled = false;
+              showMessage(data.message, 'error');
             }
-            return cookieValue;
-        }
+          })
+          .catch(() => {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+            showMessage('Error removing startup.', 'error');
+          });
+      }
+    }
 
-        // Initialize with saved tab active
-        document.addEventListener('DOMContentLoaded', function() {
-            switchTab('saved');
-        });
-    </script>
+    function showMessage(message, type) {
+      const div = document.createElement('div');
+      div.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+      div.textContent = message;
+      document.body.appendChild(div);
+      setTimeout(() => {
+        div.style.opacity = '0';
+        setTimeout(() => div.remove(), 300);
+      }, 3000);
+    }
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+          cookie = cookie.trim();
+          if (cookie.startsWith(name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => switchTab('saved'));
+  </script>
 </body>
 </html>
