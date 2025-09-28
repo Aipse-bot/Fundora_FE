@@ -1106,7 +1106,9 @@
       alert('Unable to load report. Please try again.');
     }
   }
+
   let financialChart = null;
+  
   function renderFinancialChart(financials) {
     const ctx = document.getElementById('financialChart').getContext('2d');
     const years = financials.map(f => f.year);
@@ -1150,11 +1152,6 @@
     return text.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
-  function generateReport() {
-    // Add your report generation logic here
-    alert("Report generation triggered.");
-    closeModal();
-  }
 
     window.onload = loadDeckSections;
   </script>
