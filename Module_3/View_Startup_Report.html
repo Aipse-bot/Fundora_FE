@@ -66,11 +66,11 @@
             <!-- Report Header -->
             <div class="flex items-start justify-between mb-8">
                 <div class="flex items-center gap-4">
-                    <a href="" class="p-2 rounded-full hover:bg-slate-100">
+                    <button onclick="history.back()" class="p-2 rounded-full hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-300 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
-                    </a>
+                    </button>
                     <img id="report-logo" src="https://placehold.co/48x48/F97316/FFFFFF?text=C" alt="Company Logo" class="h-12 w-12 rounded-lg">
                     <div>
                         <h1 id="report-company-name" class="text-2xl font-bold text-slate-800">Company Name</h1>
@@ -98,7 +98,7 @@
                     <div id="qualitative-section" >
                         <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
                         <svg class="h-6 w-6 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="..." />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                         Qualitative Assessment
                         </h2>
@@ -229,6 +229,76 @@
             </div>
         </div>
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+        const startupId = localStorage.getItem('startupId');
+        if (!startupId) return;
+
+        const token = localStorage.getItem('authToken');
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/report/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+            });
+
+            if (!res.ok) throw new Error('Failed to fetch report');
+
+            const report = await res.json();
+            const startup = report.startup || {};
+            const data = report.company_data || report;
+
+            // Now inject data into DOM (same logic as before)
+            document.getElementById('report-company-name').textContent = startup.company_name || 'N/A';
+            document.getElementById('report-industry').textContent = startup.industry || 'N/A';
+
+            const badge = document.getElementById('report-confidence-badge');
+            badge.textContent = data.data_source_confidence || 'Unknown';
+            badge.classList.remove('bg-green-100', 'bg-yellow-100', 'bg-red-100', 'text-green-800', 'text-yellow-800', 'text-red-800');
+            if (data.data_source_confidence === 'High') {
+            badge.classList.add('bg-green-100', 'text-green-800');
+            } else if (data.data_source_confidence === 'Medium') {
+            badge.classList.add('bg-yellow-100', 'text-yellow-800');
+            } else {
+            badge.classList.add('bg-red-100', 'text-red-800');
+            }
+
+            document.getElementById('report-summary').textContent = data.company_description || 'No company description provided.';
+            document.getElementById('team-strength').textContent = data.team_strength || 'No team strength information provided.';
+            document.getElementById('market-position').textContent = data.market_position || 'No market position information provided.';
+            document.getElementById('brand-reputation').textContent = data.brand_reputation || 'No brand reputation information provided.';
+
+            const hasFinancials = data.revenue || data.net_income;
+            if (hasFinancials) {
+            document.getElementById('financial-section').style.display = 'block';
+            document.getElementById('report-revenue-growth').textContent = data.revenue ? `₱${Math.round(data.revenue)}` : 'N/A';
+            document.getElementById('report-net-income').textContent = data.net_income ? `₱${Math.round(data.net_income)}` : 'N/A';
+            const burnRate = data.cash_flow ? Math.round(data.cash_flow / 12) : null;
+            document.getElementById('report-burn-rate').textContent = burnRate ? `₱${burnRate}` : 'N/A';
+            const profitMargin = data.revenue && data.net_income
+                ? Math.round((data.net_income / data.revenue) * 100)
+                : null;
+            document.getElementById('report-profit-margin').textContent = profitMargin !== null ? `${profitMargin}%` : 'N/A';
+            }
+
+            const percent = data.confidence_percentage || 0;
+            const circle = document.getElementById('confidence-circle');
+            const radius = circle.getAttribute('r');
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percent / 100) * circumference;
+            circle.style.strokeDasharray = `${circumference}`;
+            circle.style.strokeDashoffset = `${offset}`;
+            document.getElementById('report-confidence-percent').textContent = `${percent}%`;
+            document.getElementById('confidence-description').textContent = `Confidence level based on data completeness and source reliability.`;
+
+            document.getElementById('edit-startup-link').href = `/edit-startup.html?id=${startup.id}`;
+        } catch (err) {
+            console.error('Failed to load report:', err);
+            document.getElementById('reportContainer').innerHTML = `<div class="text-red-600">Failed to load report. Please try again later.</div>`;
+        }
+        });
+    </script>
 
     <!-- <script>
         document.addEventListener('DOMContentLoaded', function() {
