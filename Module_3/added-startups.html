@@ -159,6 +159,7 @@
       const token = localStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to create a pitch deck.');
+        window.location.href = 'login.html';
         return;
       }
 
@@ -191,6 +192,7 @@
       const token = localStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to add your business.');
+        window.location.href = 'login.html';
         return;
       }
       // Use the correct path for the Company Information Form
@@ -207,6 +209,9 @@
 
         if (!token) {
             showMessage('Please log in to view your startups.', 'error');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
             return;
         }
 
@@ -527,10 +532,22 @@
                 </div>
             ` : ''}
 
-            <button onclick="startupReport(${startupId})"
-                    class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                View Report
-            </button>
+            <div class="flex gap-2">
+                <button onclick="editStartup(${startupId})"
+                        class="flex-1 bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit
+                </button>
+                <button onclick="startupReport(${startupId})"
+                        class="flex-1 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Report
+                </button>
+            </div>
         `;
         
         // Safely append to container
@@ -583,6 +600,26 @@
 
         window.onload = loadStartups;
       
+    function editStartup(startupId) {
+      // Validate startupId
+      if (!startupId || startupId === 'unknown') {
+        alert('Invalid startup ID. Cannot edit startup.');
+        return;
+      }
+
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        alert('Please log in to edit startup information.');
+        return;
+      }
+
+      // Store the startup ID for the edit page
+      localStorage.setItem('editStartupId', startupId);
+      
+      // Navigate to the edit page
+      window.location.href = `Edit_Startup.html?id=${startupId}`;
+    }
+
     async function startupReport(startupId) {
       // Validate startupId
       if (!startupId || startupId === 'unknown') {

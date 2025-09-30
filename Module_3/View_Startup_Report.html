@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Health Report</title>
+    <title>Financial Report Summary</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,199 +12,270 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* slate-50 */
+            background-color: #f3f4f6; /* gray-100 */
         }
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.8s ease-out;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        .progress-bar {
+            transition: width 0.8s ease-out;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .growth-positive {
+            color: #10b981;
+        }
+        .growth-negative {
+            color: #ef4444;
+        }
+        .section-header {
+            color: #374151;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .overflow-text {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+        .percentage-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
         }
     </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-gray-100">
 
-    <!-- Include Module 3 Header -->
+    <!-- Header -->
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-            
-            <!-- Left side - Fundora logo/title -->
-            <div class="flex items-center">
-                <a href="/index.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
-                Fundora
-                </a>
-            </div>
-
-            <!-- Right side - Welcome message and logout -->
-            <div id="header-user" class="flex items-center space-x-4"></div>
-
+                <!-- Left side - Fundora logo/title -->
+                <div class="flex items-center">
+                    <a href="/index.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
+                        Fundora
+                    </a>
+                </div>
+                <!-- Right side - Welcome message and logout -->
+                <div id="header-user" class="flex items-center space-x-4"></div>
             </div>
         </div>
-        <script>
-            function renderHeaderUser(user) {
-                const container = document.getElementById('header-user');
-                container.innerHTML = '';
-
-                if (!user || !user.name) return;
-
-                container.innerHTML = `
-                    <span class="text-gray-700 text-sm">
-                    Welcome, <span class="font-medium">${user.name}</span>
-                    </span>
-                    <a href="/logout.html"
-                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                    Logout
-                    </a>
-                `;
-            }
-        </script>
     </header>
 
-    <div class="flex items-start justify-center p-4 sm:p-6 lg:p-8 pt-8 min-h-[calc(100vh-4rem)]">
-        <div id="reportContainer" class="w-full max-w-6xl mt-4">
-        <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8">
-            <!-- Report Header -->
-            <div class="flex items-start justify-between mb-8">
-                <div class="flex items-center gap-4">
-                    <button onclick="history.back()" class="p-2 rounded-full hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-300 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    </button>
-                    <img id="report-logo" src="https://placehold.co/48x48/F97316/FFFFFF?text=C" alt="Company Logo" class="h-12 w-12 rounded-lg">
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-4 mb-4">
+                <button onclick="history.back()" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </button>
+                <div class="flex items-center gap-3">
+                    <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
                     <div>
-                        <h1 id="report-company-name" class="text-2xl font-bold text-slate-800">Company Name</h1>
-                        <p id="report-industry" class="text-sm font-medium text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full inline-block">Industry</p>
-                    </div>
-                </div>
-                <div id="report-confidence-badge" class="text-xs font-bold px-3 py-1 rounded-full 
-                    {% if company_data.data_source_confidence == 'High' %}bg-green-100 text-green-800
-                    {% elif company_data.data_source_confidence == 'Medium' %}bg-yellow-100 text-yellow-800
-                    {% else %}bg-red-100 text-red-800{% endif %}">
-                    Confidence
-                </div>
-            </div>
-
-            <!-- Report Body -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Left Column -->
-                <div class="lg:col-span-2 space-y-8">
-                    <!-- Company Summary -->
-                    <div>
-                        <h2 class="text-lg font-semibold text-slate-800 mb-2">Company Summary</h2>
-                        <p id="report-summary" class="text-slate-600 leading-relaxed">No company description provided.</p>
-                    </div>
-                    <!-- Qualitative Assessment -->
-                    <div id="qualitative-section" >
-                        <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                        <svg class="h-6 w-6 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                        Qualitative Assessment
-                        </h2>
-
-                        <div class="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                        <h3 class="font-semibold text-slate-800 mb-2 flex items-center gap-2">Management Team Strength</h3>
-                        <p id="team-strength" class="text-slate-700 leading-relaxed">No team strength information provided.</p>
-                        </div>
-
-                        <div class="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-r-lg">
-                        <h3 class="font-semibold text-slate-800 mb-2 flex items-center gap-2">Market Position & Competitive Advantage</h3>
-                        <p id="market-position" class="text-slate-700 leading-relaxed">No market position information provided.</p>
-                        </div>
-
-                        <div class="mb-6 bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-500 p-4 rounded-r-lg">
-                        <h3 class="font-semibold text-slate-800 mb-2 flex items-center gap-2">Customer & Brand Reputation</h3>
-                        <p id="brand-reputation" class="text-slate-700 leading-relaxed">No brand reputation information provided.</p>
-                        </div>
-
-                        <div class="bg-slate-50 p-4 rounded-lg">
-                        <h3 class="font-semibold text-slate-800 mb-2">Qualitative Assessment Summary</h3>
-                        <p class="text-sm text-slate-600">
-                            This analysis is based on qualitative factors due to limited financial data availability. The assessment considers management expertise, market positioning, and brand reputation as key indicators of company potential.
-                        </p>
-                        </div>
-                    </div>
-                    <!-- Financial Metrics -->
-                    <div id="financial-section" style="display: none;">
-                        <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                            <svg class="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                            </svg>
-                            Financial Metrics
-                        </h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="bg-green-50 p-4 rounded-lg">
-                            <p class="text-sm text-green-700">Current Revenue</p>
-                            <p id="report-revenue-growth" class="text-2xl font-bold text-green-800">N/A</p>
-                            </div>
-                            <div class="bg-blue-50 p-4 rounded-lg">
-                            <p class="text-sm text-blue-700">Net Income</p>
-                            <p id="report-net-income" class="text-2xl font-bold text-blue-800">N/A</p>
-                            </div>
-                            <div class="bg-orange-50 p-4 rounded-lg">
-                            <p class="text-sm text-orange-700">Monthly Burn Rate</p>
-                            <p id="report-burn-rate" class="text-2xl font-bold text-orange-800">N/A</p>
-                            </div>
-                            <div class="bg-purple-50 p-4 rounded-lg">
-                            <p class="text-sm text-purple-700">Profit Margin</p>
-                            <p id="report-profit-margin" class="text-2xl font-bold text-purple-800">N/A</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Right Column -->
-                <div class="space-y-6">
-                    <!-- Risk & Reward -->
-                    <div class="bg-slate-50 p-5 rounded-lg">
-                        <h3 class="font-semibold text-slate-800 mb-4">Risk & Reward</h3>
-                        <div class="space-y-3">
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                            <p>Risk Score</p>
-                            <p id="report-risk-score" class="font-semibold"></p>
-                            </div>
-                            <div class="w-full bg-slate-200 rounded-full h-2">
-                            <div id="report-risk-bar" class="bg-red-500 h-2 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                            <p>Reward Potential</p>
-                            <p id="report-reward-score" class="font-semibold"></p>
-                            </div>
-                            <div class="w-full bg-slate-200 rounded-full h-2">
-                            <div id="report-reward-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    <!-- Data Confidence -->
-                    <div class="bg-slate-50 p-5 rounded-lg text-center">
-                        <h3 class="font-semibold text-slate-800 mb-4">Data Confidence</h3>
-                        <div class="relative inline-flex items-center justify-center">
-                        <svg class="w-32 h-32">
-                            <circle class="text-slate-200" stroke-width="10" stroke="currentColor" fill="transparent" r="54" cx="64" cy="64" />
-                            <circle id="confidence-circle" class="text-blue-500 progress-ring__circle" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="54" cx="64" cy="64" />
-                        </svg>
-                        <span id="report-confidence-percent" class="absolute text-3xl font-bold text-blue-600">0%</span>
-                        </div>
-                        <p id="confidence-description" class="text-sm text-slate-600 mt-3"></p>
-                    </div>
-                    <!-- Action Buttons -->
-                    <div class="space-y-3">
-                        <a id="edit-startup-link" href="#" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 block text-center">
-                        Edit Startup
-                        </a>
-                        <button onclick="confirmDelete()" class="w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200">
-                        Delete Startup
-                        </button>
+                        <h1 class="text-2xl font-bold text-gray-900">Financial Report Summary</h1>
+                        <p class="text-gray-600">Comprehensive overview of company financial metrics</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Report Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Company Profile Card -->
+            <div class="card p-6">
+                <div class="section-header">
+                    <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h2M7 21V3"></path>
+                    </svg>
+                    Company Profile
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Company Name</p>
+                        <p id="company-name" class="text-lg font-semibold text-gray-900">Acme Corporation</p>
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Industry</p>
+                        <p id="company-industry" class="text-sm text-gray-700 bg-blue-50 text-blue-800 px-2 py-1 rounded-md inline-block">Technology & Software</p>
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Company Description</p>
+                        <p id="company-description" class="text-sm text-gray-700 leading-relaxed">Leading provider of innovative software solutions, focused on delivering cutting-edge products and services that empower businesses to achieve their digital transformation goals.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Income Statement Card -->
+            <div class="card p-6">
+                <div class="section-header">
+                    <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    Income Statement
+                    <span class="ml-auto text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">Yearly</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-gray-500 mb-1">Prior Period Revenue</p>
+                        <p id="prior-revenue" class="text-xl font-bold text-gray-900">₱800,000</p>
+                    </div>
+                    
+                    <div>
+                        <p class="text-xs text-gray-500 mb-1">Current Period Revenue</p>
+                        <div class="flex items-baseline gap-2">
+                            <p id="current-revenue" class="text-xl font-bold text-gray-900">₱1,000,000</p>
+                            <span id="revenue-growth" class="text-xs growth-positive font-medium">+25.0%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <p class="text-xs text-gray-500 mb-1">Current Period Net Income</p>
+                    <p id="net-income" class="text-2xl font-bold text-green-600">₱150,000</p>
+                </div>
+            </div>
+
+            <!-- Balance Sheet Card -->
+            <div class="card p-6">
+                <div class="section-header">
+                    <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Balance Sheet
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Total Assets</p>
+                        <p id="total-assets" class="text-2xl font-bold text-gray-900">₱2,500,000</p>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="text-sm text-gray-500">Total Liabilities</p>
+                            <span id="liability-percentage" class="text-xs text-gray-400 percentage-text">32.0% of assets</span>
+                        </div>
+                        <p id="total-liabilities" class="text-lg font-semibold text-gray-900">₱800,000</p>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                            <div id="liability-bar" class="bg-blue-600 h-1.5 rounded-full" style="width: 32%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-gray-500">Shareholder Equity</p>
+                            <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">Auto-calculated</span>
+                        </div>
+                        <p id="shareholder-equity" class="text-xl font-bold text-green-600">₱1,700,000</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cash Flow Card -->
+            <div class="card p-6">
+                <div class="section-header">
+                    <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                    Cash Flow
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-sm text-gray-600">Operations Cash Flow</span>
+                        </div>
+                        <span id="operations-cash-flow" class="font-semibold text-green-600">₱200,000</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                            <span class="text-sm text-gray-600">Investment Cash Flow</span>
+                        </div>
+                        <span id="investment-cash-flow" class="font-semibold text-red-600">-₱50,000</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span class="text-sm text-gray-600">Financing Cash Flow</span>
+                        </div>
+                        <span id="financing-cash-flow" class="font-semibold text-blue-600">₱100,000</span>
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-600">Net Cash Flow</span>
+                            <span id="net-cash-flow" class="text-xl font-bold text-blue-600">₱250,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Confidence Section -->
+        <div class="mt-6">
+            <div class="card p-6">
+                <div class="section-header">
+                    <svg class="h-5 w-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Report Confidence
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">Data Quality Score</span>
+                            <span id="confidence-percentage" class="text-sm font-semibold">8%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div id="confidence-bar" class="bg-red-500 h-2 rounded-full progress-bar" style="width: 8%"></div>
+                        </div>
+                        <p id="confidence-level" class="text-sm text-red-600 font-medium mt-1">Low Confidence</p>
+                    </div>
+                    
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
+                        <p id="confidence-description" class="text-sm text-amber-800">
+                            This confidence score reflects the completeness and reliability of the financial data provided. Additional verification may be required for critical business decisions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-6 flex gap-4">
+            <a id="edit-startup-link" href="#" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                Edit Startup
+            </a>
+            <button onclick="confirmDelete()" class="bg-red-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200">
+                Delete Startup
+            </button>
+        </div>
+    </div>
     <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
@@ -216,7 +287,7 @@
                 </div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Delete Startup</h3>
                 <div class="mt-2 px-7 py-3">
-                    <p class="text-sm text-gray-500">Are you sure you want to delete company_name? This action cannot be undone.</p>
+                    <p class="text-sm text-gray-500">Are you sure you want to delete <span id="modal-company-name">this startup</span>? This action cannot be undone.</p>
                 </div>
                 <div class="items-center px-4 py-3">
                     <button id="modal-delete-confirm" class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-auto shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
@@ -230,313 +301,25 @@
         </div>
     </div>
     
+    
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-        const startupId = localStorage.getItem('startupId');
-        if (!startupId) return;
+        // Header user rendering function
+        function renderHeaderUser(user) {
+            const container = document.getElementById('header-user');
+            container.innerHTML = '';
 
-        const token = localStorage.getItem('authToken');
-        try {
-            const res = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/report/`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-            });
+            if (!user || !user.name) return;
 
-            if (!res.ok) throw new Error('Failed to fetch report');
-
-            const report = await res.json();
-            const startup = report.startup || {};
-            const data = report.company_data || report;
-
-            // Now inject data into DOM (same logic as before)
-            document.getElementById('report-company-name').textContent = startup.company_name || 'N/A';
-            document.getElementById('report-industry').textContent = startup.industry || 'N/A';
-
-            const badge = document.getElementById('report-confidence-badge');
-            badge.textContent = data.data_source_confidence || 'Unknown';
-            badge.classList.remove('bg-green-100', 'bg-yellow-100', 'bg-red-100', 'text-green-800', 'text-yellow-800', 'text-red-800');
-            if (data.data_source_confidence === 'High') {
-            badge.classList.add('bg-green-100', 'text-green-800');
-            } else if (data.data_source_confidence === 'Medium') {
-            badge.classList.add('bg-yellow-100', 'text-yellow-800');
-            } else {
-            badge.classList.add('bg-red-100', 'text-red-800');
-            }
-
-            document.getElementById('report-summary').textContent = data.company_description || 'No company description provided.';
-            document.getElementById('team-strength').textContent = data.team_strength || 'No team strength information provided.';
-            document.getElementById('market-position').textContent = data.market_position || 'No market position information provided.';
-            document.getElementById('brand-reputation').textContent = data.brand_reputation || 'No brand reputation information provided.';
-
-            const hasFinancials = data.revenue || data.net_income;
-            if (hasFinancials) {
-            document.getElementById('financial-section').style.display = 'block';
-            document.getElementById('report-revenue-growth').textContent = data.revenue ? `₱${Math.round(data.revenue)}` : 'N/A';
-            document.getElementById('report-net-income').textContent = data.net_income ? `₱${Math.round(data.net_income)}` : 'N/A';
-            const burnRate = data.cash_flow ? Math.round(data.cash_flow / 12) : null;
-            document.getElementById('report-burn-rate').textContent = burnRate ? `₱${burnRate}` : 'N/A';
-            const profitMargin = data.revenue && data.net_income
-                ? Math.round((data.net_income / data.revenue) * 100)
-                : null;
-            document.getElementById('report-profit-margin').textContent = profitMargin !== null ? `${profitMargin}%` : 'N/A';
-            }
-
-            const percent = data.confidence_percentage || 0;
-            const circle = document.getElementById('confidence-circle');
-            const radius = circle.getAttribute('r');
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference - (percent / 100) * circumference;
-            circle.style.strokeDasharray = `${circumference}`;
-            circle.style.strokeDashoffset = `${offset}`;
-            document.getElementById('report-confidence-percent').textContent = `${percent}%`;
-            document.getElementById('confidence-description').textContent = `Confidence level based on data completeness and source reliability.`;
-
-            document.getElementById('edit-startup-link').href = `/edit-startup.html?id=${startup.id}`;
-        } catch (err) {
-            console.error('Failed to load report:', err);
-            document.getElementById('reportContainer').innerHTML = `<div class="text-red-600">Failed to load report. Please try again later.</div>`;
+            container.innerHTML = `
+                <span class="text-gray-700 text-sm">
+                Welcome, <span class="font-medium">${user.name}</span>
+                </span>
+                <a href="/logout.html"
+                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                Logout
+                </a>
+            `;
         }
-        });
-    </script>
-
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get Django template data - using safe filter to handle special characters
-            const companyData = {
-                company_name: "{{ company_data.company_name|default:''|escapejs }}",
-                industry: "{{ company_data.industry|default:''|escapejs }}",
-                company_description: "{{ company_data.company_description|default:''|escapejs }}",
-                data_source_confidence: "{{ company_data.data_source_confidence|default:'Medium'|escapejs }}",
-                current_revenue: "{{ company_data.revenue|default:''|escapejs }}", // Using stored revenue as current revenue
-                net_income: "{{ company_data.net_income|default:''|escapejs }}",
-                total_assets: "{{ company_data.total_assets|default:''|escapejs }}",
-                total_liabilities: "{{ company_data.total_liabilities|default:''|escapejs }}",
-                cash_flow: "{{ company_data.cash_flow|default:''|escapejs }}"
-            };
-
-            // Debug: Log the data to console
-            console.log('Company Data:', companyData);
-
-            //    Function to display the report from Django data   
-            function displayReportFromDjango() {
-                // Only update logo if we have company name
-                if (companyData.company_name) {
-                    const firstLetter = companyData.company_name.charAt(0).toUpperCase();
-                    document.getElementById('report-logo').src = `https://placehold.co/48x48/F97316/FFFFFF?text=${firstLetter}`;
-                }
-
-                // Skip financial calculations for low confidence companies as they don't have these elements
-                if (companyData.data_source_confidence.toLowerCase() === 'low') {
-                    console.log('Skipping financial calculations for low confidence company');
-                    return;
-                }
-
-                // Financial calculations (same logic as Health Report Page)
-                const currentRevenue = parseFloat(companyData.current_revenue) || 0;
-                const netIncome = parseFloat(companyData.net_income) || 0;
-                const cashFlow = parseFloat(companyData.cash_flow) || 0;
-
-                console.log('Current Revenue:', currentRevenue);
-                console.log('Net Income:', netIncome);
-                console.log('Cash Flow:', cashFlow);
-
-                // 1. Current Revenue Display
-                let revenueDisplay = "N/A";
-                if (currentRevenue > 0) {
-                    const revenueElement = document.getElementById('report-revenue-growth');
-                    if (revenueElement) {
-                        revenueElement.className = `text-2xl font-bold text-blue-800`;
-                        revenueDisplay = `₱${currentRevenue.toLocaleString()}`;
-                    }
-                }
-                const revenueElement = document.getElementById('report-revenue-growth');
-                if (revenueElement) {
-                    revenueElement.textContent = revenueDisplay;
-                }
-
-                // 2. Calculate Profit Margin
-                let profitMargin = "N/A";
-                let profitMarginValue = 0; // for risk calculation
-                if (currentRevenue > 0 && netIncome !== 0) {
-                    profitMarginValue = (netIncome / currentRevenue);
-                    profitMargin = `${(profitMarginValue * 100).toFixed(1)}%`;
-                    const marginColor = profitMarginValue >= 0 ? 'text-purple-800' : 'text-red-800';
-                    const profitElement = document.getElementById('report-profit-margin');
-                    if (profitElement) {
-                        profitElement.className = `text-2xl font-bold ${marginColor}`;
-                    }
-                } else if (netIncome !== 0 && currentRevenue === 0) {
-                    // If we have net income but no revenue, show it as a flat amount
-                    const incomeColor = netIncome >= 0 ? 'text-purple-800' : 'text-red-800';
-                    const profitElement = document.getElementById('report-profit-margin');
-                    if (profitElement) {
-                        profitElement.className = `text-2xl font-bold ${incomeColor}`;
-                    }
-                    profitMargin = `₱${Math.abs(netIncome).toLocaleString()}`;
-                }
-                const profitElement = document.getElementById('report-profit-margin');
-                if (profitElement) {
-                    profitElement.textContent = profitMargin;
-                }
-
-                // 3. Calculate Monthly Burn Rate
-                let burnRate = "₱0";
-                let burnRateColor = 'text-green-800'; // Default to green for no burn
-                
-                if (cashFlow !== 0) {
-                    if (cashFlow < 0) {
-                        // Negative cash flow = burning money (bad - red)
-                        const monthlyBurn = Math.abs(cashFlow);
-                        burnRate = `-₱${monthlyBurn.toLocaleString()}`;
-                        burnRateColor = 'text-red-800';
-                    } else {
-                        // Positive cash flow = generating money (good - green)
-                        burnRate = `+₱${cashFlow.toLocaleString()}`;
-                        burnRateColor = 'text-green-800';
-                    }
-                }
-                
-                const burnRateElement = document.getElementById('report-burn-rate');
-                if (burnRateElement) {
-                    burnRateElement.textContent = burnRate;
-                    burnRateElement.className = `text-2xl font-bold ${burnRateColor}`;
-                }
-            }
-
-            // Separate function to populate Risk & Reward that always runs
-            function populateRiskAndReward() {
-                // Financial calculations
-                const currentRevenue = parseFloat(companyData.current_revenue) || 0;
-                const netIncome = parseFloat(companyData.net_income) || 0;
-                const cashFlow = parseFloat(companyData.cash_flow) || 0;
-                
-                let profitMarginValue = 0;
-                if (currentRevenue > 0 && netIncome !== 0) {
-                    profitMarginValue = (netIncome / currentRevenue);
-                }
-
-                // Populate Risk & Reward with calculated values (enhanced calculation)
-                let riskScore = 2.5; // Default moderate risk
-                let rewardScore = 3.0; // Default moderate reward
-                
-                console.log('Calculating Risk & Reward scores...');
-                console.log('Data source confidence:', companyData.data_source_confidence);
-                
-                // Check if we have financial data for calculation
-                const hasFinancialData = (currentRevenue > 0 || netIncome !== 0 || cashFlow !== 0);
-                console.log('Has financial data:', hasFinancialData);
-                
-                if (hasFinancialData) {
-                    // Calculate risk based on profit margin and financial health
-                    if (profitMarginValue > 0.2) {
-                        riskScore = 2.0; // Lower risk for high profit margin
-                        rewardScore = 4.5; // Higher reward potential
-                    } else if (profitMarginValue > 0.1) {
-                        riskScore = 2.5;
-                        rewardScore = 3.5;
-                    } else if (profitMarginValue > 0) {
-                        riskScore = 3.5;
-                        rewardScore = 2.5;
-                    } else {
-                        riskScore = 4.5; // Higher risk for negative margins
-                        rewardScore = 2.0;
-                    }
-                } else {
-                    // For low confidence/qualitative data, use moderate scores
-                    if (companyData.data_source_confidence.toLowerCase() === 'low') {
-                        riskScore = 2.5; // Moderate risk
-                        rewardScore = 2.5; // Moderate reward potential
-                        console.log('Setting low confidence scores: risk=2.5, reward=2.5');
-                    }
-                }
-                
-                console.log('Final scores - Risk:', riskScore, 'Reward:', rewardScore);
-                
-                const riskScoreElement = document.getElementById('report-risk-score');
-                const rewardScoreElement = document.getElementById('report-reward-score');
-                const riskBarElement = document.getElementById('report-risk-bar');
-                const rewardBarElement = document.getElementById('report-reward-bar');
-                
-                if (riskScoreElement) {
-                    riskScoreElement.textContent = `${riskScore.toFixed(1)}/5`;
-                } else {
-                    console.error('Could not find report-risk-score element');
-                }
-                
-                if (rewardScoreElement) {
-                    rewardScoreElement.textContent = `${rewardScore.toFixed(1)}/5`;
-                } else {
-                    console.error('Could not find report-reward-score element');
-                }
-                
-                if (riskBarElement) {
-                    riskBarElement.style.width = `${(riskScore/5)*100}%`;
-                } else {
-                    console.error('Could not find report-risk-bar element');
-                }
-                
-                if (rewardBarElement) {
-                    rewardBarElement.style.width = `${(rewardScore/5)*100}%`;
-                } else {
-                    console.error('Could not find report-reward-bar element');
-                }
-            }
-
-            // Always populate Data Confidence Circle regardless of financial data availability
-            function populateDataConfidence() {
-                console.log('Populating Data Confidence for:', companyData.data_source_confidence);
-                const confidenceLevel = companyData.data_source_confidence.toLowerCase();
-                let confidencePercent = 0;
-                
-                if (confidenceLevel === 'high') {
-                    confidencePercent = 95;
-                } else if (confidenceLevel === 'medium') {
-                    confidencePercent = 75;
-                } else {
-                    confidencePercent = 30;
-                }
-                
-                console.log('Setting confidence percent to:', confidencePercent);
-                const confidencePercentElement = document.getElementById('report-confidence-percent');
-                if (confidencePercentElement) {
-                    confidencePercentElement.textContent = `${confidencePercent}%`;
-                } else {
-                    console.error('Could not find report-confidence-percent element');
-                }
-                
-                const circle = document.getElementById('confidence-circle');
-                if (circle) {
-                    const radius = circle.r.baseVal.value;
-                    const circumference = radius * 2 * Math.PI;
-                    circle.style.strokeDasharray = `${circumference} ${circumference}`;
-                    
-                    // Set a timeout to apply the transition after the page has loaded
-                    setTimeout(() => {
-                        const offset = circumference - confidencePercent / 100 * circumference;
-                        circle.style.strokeDashoffset = offset;
-                    }, 100);
-                } else {
-                    console.error('Could not find confidence-circle element');
-                }
-            }
-
-            //    Initial call to populate the report   
-            displayReportFromDjango();
-            
-            // Always populate risk & reward scores
-            populateRiskAndReward();
-            
-            // Always populate data confidence regardless of financial data
-            populateDataConfidence();
-            
-            // Additional timeout to ensure DOM is fully ready
-            setTimeout(() => {
-                populateRiskAndReward();
-                populateDataConfidence();
-                console.log('Retry population completed');
-            }, 200);
-        });
 
         // Delete confirmation functionality
         function confirmDelete() {
@@ -549,45 +332,234 @@
             modal.classList.add('hidden');
         }
 
-        // Set up event listeners for delete modal
-        document.getElementById('modal-delete-cancel').addEventListener('click', closeDeleteModal);
-
-        document.getElementById('modal-delete-confirm').addEventListener('click', async function() {
-            const startupId = {{ startup.id }};
-            const csrfToken = document.querySelector('meta[name=csrf-token]').content;
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Set up delete modal event listeners first
+            document.getElementById('modal-delete-cancel').addEventListener('click', closeDeleteModal);
             
-            // Disable the confirm button and show loading state
-            this.disabled = true;
-            this.textContent = 'Deleting...';
-            
-            try {
-                const response = await fetch(`/delete-startup/${startupId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrfToken,
-                        'Content-Type': 'application/json',
+            document.getElementById('modal-delete-confirm').addEventListener('click', async function() {
+                const startupId = localStorage.getItem('startupId');
+                const token = localStorage.getItem('authToken');
+                
+                // Check authentication
+                if (!token) {
+                    alert('Please log in to delete startups.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Disable the confirm button and show loading state
+                this.disabled = true;
+                this.textContent = 'Deleting...';
+                
+                try {
+                    const response = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        }
+                    });
+                    
+                    // Parse response
+                    let result = {};
+                    try {
+                        result = await response.json();
+                    } catch (parseError) {
+                        console.warn('Could not parse JSON response:', parseError);
+                        // If we can't parse JSON, check if it was successful based on status code
+                        if (response.ok) {
+                            result = { success: true, message: 'Startup deleted successfully!' };
+                        } else {
+                            result = { success: false, error: 'Failed to delete startup' };
+                        }
                     }
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert('Startup deleted successfully!');
-                    window.location.href = '{% url "added_startups" %}';
-                } else {
-                    alert('Error: ' + (result.error || 'Failed to delete startup'));
+                    
+                    console.log('Delete response:', { status: response.status, result });
+                    
+                    if (response.ok && result.success) {
+                        // Success - show message and redirect
+                        alert(result.message || 'Startup deleted successfully!');
+                        window.location.href = 'added-startups.html';
+                    } else if (response.status === 401) {
+                        // Authentication error
+                        alert('Session expired. Please log in again.');
+                        window.location.href = 'login.html';
+                        return;
+                    } else if (response.status === 403) {
+                        // Access denied
+                        alert('Access denied. You can only delete your own startups.');
+                        closeDeleteModal();
+                        // Re-enable button
+                        this.disabled = false;
+                        this.textContent = 'Delete';
+                    } else if (response.status === 404) {
+                        // Startup not found or access denied
+                        alert('Startup not found or you do not have permission to delete it.');
+                        closeDeleteModal();
+                        // Re-enable button
+                        this.disabled = false;
+                        this.textContent = 'Delete';
+                    } else {
+                        // Other errors - try to get error message from different possible fields
+                        const errorMsg = result.error || result.detail || result.message || 'Failed to delete startup';
+                        alert('Error: ' + errorMsg);
+                        // Re-enable button
+                        this.disabled = false;
+                        this.textContent = 'Delete';
+                    }
+                } catch (error) {
+                    console.error('Error deleting startup:', error);
+                    
+                    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                        alert('Network error. Please check your connection and ensure the server is running.');
+                    } else {
+                        alert('Error: Failed to delete startup. Please try again.');
+                    }
+                    
                     // Re-enable button
                     this.disabled = false;
                     this.textContent = 'Delete';
+                } finally {
+                    // Close modal if still open
+                    const modal = document.getElementById('delete-modal');
+                    if (!this.disabled && modal && !modal.classList.contains('hidden')) {
+                        closeDeleteModal();
+                    }
                 }
-            } catch (error) {
-                console.error('Error deleting startup:', error);
-                alert('Error: Failed to delete startup');
-                // Re-enable button
-                this.disabled = false;
-                this.textContent = 'Delete';
+            });
+
+            // Load startup data
+            const startupId = localStorage.getItem('startupId');
+            if (!startupId) return;
+
+            const token = localStorage.getItem('authToken');
+            
+            // Check authentication
+            if (!token) {
+                alert('Please log in to view startup reports.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/report/`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!res.ok) {
+                    if (res.status === 401) {
+                        alert('Session expired. Please log in again.');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error('Failed to fetch report');
+                }
+
+                const report = await res.json();
+                const startup = report.startup || {};
+                const data = report.company_data || report.data || report;
+
+                console.log('Report data:', report); // Debug log
+                console.log('Startup object:', startup); // Debug log
+                console.log('Startup ID:', startup.id); // Debug log
+
+                // Populate Company Profile
+                const companyName = startup.company_name || startup.name || 'N/A';
+                document.getElementById('company-name').textContent = companyName;
+                document.getElementById('company-industry').textContent = startup.industry || startup.sector || 'N/A';
+                document.getElementById('company-description').textContent = 
+                    data.company_description || 
+                    data.description || 
+                    startup.description || 
+                    'No company description available.';
+
+                // Update modal with company name
+                document.getElementById('modal-company-name').textContent = companyName;
+
+                // Populate Income Statement
+                const currentRevenue = parseFloat(data.current_revenue) || parseFloat(data.revenue) || 0;
+                const priorRevenue = parseFloat(data.prior_revenue) || (currentRevenue > 0 ? currentRevenue * 0.8 : 0);
+                const netIncome = parseFloat(data.net_income) || parseFloat(data.profit) || 0;
+                const revenueGrowth = priorRevenue > 0 ? ((currentRevenue - priorRevenue) / priorRevenue * 100) : 0;
+
+                document.getElementById('prior-revenue').textContent = `₱${priorRevenue.toLocaleString()}`;
+                document.getElementById('current-revenue').textContent = `₱${currentRevenue.toLocaleString()}`;
+                document.getElementById('revenue-growth').textContent = `${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth.toFixed(1)}%`;
+                document.getElementById('revenue-growth').className = revenueGrowth >= 0 ? 'text-xs growth-positive font-medium' : 'text-xs growth-negative font-medium';
+                document.getElementById('net-income').textContent = `₱${netIncome.toLocaleString()}`;
+
+                // Populate Balance Sheet
+                const totalAssets = parseFloat(data.total_assets) || parseFloat(data.assets) || 1;
+                const totalLiabilities = parseFloat(data.total_liabilities) || parseFloat(data.liabilities) || 0;
+                const shareholderEquity = totalAssets - totalLiabilities;
+                const liabilityPercentage = totalAssets > 0 ? (totalLiabilities / totalAssets * 100) : 0;
+
+                document.getElementById('total-assets').textContent = `₱${totalAssets.toLocaleString()}`;
+                document.getElementById('total-liabilities').textContent = `₱${totalLiabilities.toLocaleString()}`;
+                document.getElementById('liability-percentage').textContent = `${liabilityPercentage.toFixed(1)}% of assets`;
+                document.getElementById('liability-bar').style.width = `${Math.min(liabilityPercentage, 100)}%`;
+                document.getElementById('shareholder-equity').textContent = `₱${shareholderEquity.toLocaleString()}`;
+
+                // Populate Cash Flow
+                const operationsCashFlow = parseFloat(data.operations_cash_flow) || parseFloat(data.operating_cash_flow) || 0;
+                const investmentCashFlow = parseFloat(data.investment_cash_flow) || parseFloat(data.investing_cash_flow) || 0;
+                const financingCashFlow = parseFloat(data.financing_cash_flow) || parseFloat(data.financing_flow) || 0;
+                const netCashFlow = operationsCashFlow + investmentCashFlow + financingCashFlow;
+
+                // Format cash flow values with proper signs
+                const formatCashFlow = (value) => {
+                    const sign = value >= 0 ? '' : '-';
+                    return `${sign}₱${Math.abs(value).toLocaleString()}`;
+                };
+
+                document.getElementById('operations-cash-flow').textContent = formatCashFlow(operationsCashFlow);
+                document.getElementById('investment-cash-flow').textContent = formatCashFlow(investmentCashFlow);
+                document.getElementById('financing-cash-flow').textContent = formatCashFlow(financingCashFlow);
+                document.getElementById('net-cash-flow').textContent = formatCashFlow(netCashFlow);
+
+                // Update colors based on values
+                document.getElementById('operations-cash-flow').className = `font-semibold ${operationsCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`;
+                document.getElementById('investment-cash-flow').className = `font-semibold ${investmentCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`;
+                document.getElementById('financing-cash-flow').className = `font-semibold ${financingCashFlow >= 0 ? 'text-blue-600' : 'text-red-600'}`;
+                document.getElementById('net-cash-flow').className = `text-xl font-bold ${netCashFlow >= 0 ? 'text-blue-600' : 'text-red-600'}`;
+
+                // Populate Report Confidence
+                const confidenceLevel = data.data_source_confidence || data.confidence || 'Low';
+                let confidencePercent = 8;
+                let confidenceColor = 'bg-red-500';
+                let confidenceText = 'Low Confidence';
+
+                if (confidenceLevel === 'High') {
+                    confidencePercent = 95;
+                    confidenceColor = 'bg-green-500';
+                    confidenceText = 'High Confidence';
+                } else if (confidenceLevel === 'Medium') {
+                    confidencePercent = 75;
+                    confidenceColor = 'bg-yellow-500';
+                    confidenceText = 'Medium Confidence';
+                }
+
+                document.getElementById('confidence-percentage').textContent = `${confidencePercent}%`;
+                document.getElementById('confidence-bar').style.width = `${confidencePercent}%`;
+                document.getElementById('confidence-bar').className = `${confidenceColor} h-2 rounded-full progress-bar`;
+                document.getElementById('confidence-level').textContent = confidenceText;
+                document.getElementById('confidence-level').className = `text-sm font-medium mt-1 ${confidenceLevel === 'High' ? 'text-green-600' : confidenceLevel === 'Medium' ? 'text-yellow-600' : 'text-red-600'}`;
+
+                // Set edit link with startup ID
+                console.log('Setting edit link for startup ID:', startup.id);
+                document.getElementById('edit-startup-link').href = `Edit_Startup.html?id=${startup.id}`;
+                
+                // Also store the startup ID in localStorage as backup
+                localStorage.setItem('editStartupId', startup.id);
+
+            } catch (err) {
+                console.error('Failed to load report:', err);
+                document.body.innerHTML = `<div class="flex items-center justify-center min-h-screen"><div class="text-red-600 text-center"><h2 class="text-xl font-bold mb-2">Failed to load report</h2><p>Please try again later.</p></div></div>`;
             }
         });
-    </script> -->
+    </script>
 </body>
 </html>
