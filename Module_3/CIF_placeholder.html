@@ -89,7 +89,7 @@
 
     <main class="flex-1 min-h-0 py-4">
         <div class="max-w-10xl mx-4 px-8 sm:px-10 lg:px-12 h-full border-2 border-gray-300 rounded-lg">
-            <form id="companyForm" novalidate class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 h-full">
+            <form id="companyForm" novalidate class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 h-full overflow-auto">
                 <div class="grid lg:grid-cols-5 gap-8">
 
                     <!-- Left Column: Core Info -->
@@ -139,12 +139,12 @@
                              <i data-lucide="line-chart" class="w-8 h-8 text-blue-600"></i>
                             <h2 class="text-2xl font-bold text-slate-800">Financial Metrics</h2>
                         </div>
-                        <div class="grid grid-cols-2 gap-6">
+                        <div class="grid md:grid-cols-3 gap-6">
 
                             <!-- Income Statement -->
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                                <h3 class="font-semibold text-slate-800 mb-4 text-center">Income Statement</h3>
-                                <div class="space-y-4">
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                                <h3 class="font-semibold text-slate-800 mb-3 text-center text-sm">Income Statement</h3>
+                                <div class="space-y-3">
                                     <div>
                                         <label for="income-period" class="flex items-center text-sm font-medium text-slate-600">Reporting Period
                                             <span class="tooltip-trigger ml-1.5" data-tooltip-text="Select the time frame for the income data (e.g., Yearly, Quarterly).">
@@ -185,9 +185,9 @@
                             </div>
 
                             <!-- Balance Sheet -->
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                                <h3 class="font-semibold text-slate-800 mb-4 text-center">Balance Sheet</h3>
-                                <div class="space-y-4">
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                                <h3 class="font-semibold text-slate-800 mb-3 text-center text-sm">Balance Sheet</h3>
+                                <div class="space-y-3">
                                     <div>
                                         <label for="total-assets" class="flex items-center text-sm font-medium text-slate-600">Total Assets (₱)
                                             <span class="tooltip-trigger ml-1.5" data-tooltip-text="The total value of all assets owned by the company.">
@@ -212,9 +212,9 @@
                             </div>
 
                             <!-- Cash Flow -->
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                                <h3 class="font-semibold text-slate-800 mb-4 text-center">Cash Flow</h3>
-                                <div class="space-y-4">
+                             <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                                <h3 class="font-semibold text-slate-800 mb-3 text-center text-sm">Cash Flow</h3>
+                                <div class="space-y-3">
                                     <div>
                                         <label for="cash-flow" class="flex items-center text-sm font-medium text-slate-600">Operations Cash Flow (₱)
                                             <span class="tooltip-trigger ml-1.5" data-tooltip-text="Cash generated from normal business operations.">
@@ -242,10 +242,77 @@
                                 </div>
                             </div>
 
+                            <!-- Business Metrics -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                                <h3 class="font-semibold text-slate-800 mb-3 text-center text-sm">Business Metrics</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="funding-ask" class="flex items-center text-sm font-medium text-slate-600">Funding Ask (₱)
+                                            <span class="tooltip-trigger ml-1.5" data-tooltip-text="Amount of funding being requested from investors.">
+                                                <i data-lucide="info" class="w-4 h-4 text-slate-400 hover:text-slate-600"></i>
+                                            </span>
+                                        </label>
+                                        <input type="number" name="funding-ask" id="funding-ask" class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="5,000,000">
+                                    </div>
+                                    <div>
+                                        <label for="team-strength" class="flex items-center text-sm font-medium text-slate-600">Team Strength
+                                            <span class="tooltip-trigger ml-1.5" data-tooltip-text="Describe the team's expertise, experience, and key strengths.">
+                                                <i data-lucide="info" class="w-4 h-4 text-slate-400 hover:text-slate-600"></i>
+                                            </span>
+                                        </label>
+                                        <textarea id="team-strength" name="team-strength" rows="2" class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm resize-none" placeholder="Strong technical team with 10+ years experience..."></textarea>
+                                    </div>
+                                    <div>
+                                        <label for="market-position" class="flex items-center text-sm font-medium text-slate-600">Market Position
+                                            <span class="tooltip-trigger ml-1.5" data-tooltip-text="Describe the company's position in the market and competitive advantage.">
+                                                <i data-lucide="info" class="w-4 h-4 text-slate-400 hover:text-slate-600"></i>
+                                            </span>
+                                        </label>
+                                        <textarea id="market-position" name="market-position" rows="2" class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm resize-none" placeholder="Market leader in fintech solutions..."></textarea>
+                                    </div>
+                                    <div>
+                                        <label for="brand-reputation" class="flex items-center text-sm font-medium text-slate-600">Brand Reputation
+                                            <span class="tooltip-trigger ml-1.5" data-tooltip-text="Describe the company's brand recognition and reputation in the market.">
+                                                <i data-lucide="info" class="w-4 h-4 text-slate-400 hover:text-slate-600"></i>
+                                            </span>
+                                        </label>
+                                        <textarea id="brand-reputation" name="brand-reputation" rows="2" class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm resize-none" placeholder="Well-established brand with high customer satisfaction..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Metrics -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                                <h3 class="font-semibold text-slate-800 mb-3 text-center text-sm">Additional Metrics</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="confidence-percentage" class="flex items-center text-sm font-medium text-slate-600">Confidence Percentage (%)
+                                            <span class="tooltip-trigger ml-1.5" data-tooltip-text="Overall confidence level in the data accuracy and business viability (0-100%).">
+                                                <i data-lucide="info" class="w-4 h-4 text-slate-400 hover:text-slate-600"></i>
+                                            </span>
+                                        </label>
+                                        <input type="number" name="confidence-percentage" id="confidence-percentage" class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" min="0" max="100" step="0.01" placeholder="85.5">
+                                    </div>
+                                    <div>
+                                        <label for="data-source-confidence" class="flex items-center text-sm font-medium text-slate-600">Data Source Confidence
+                                            <span class="tooltip-trigger ml-1.5" data-tooltip-text="Select the reliability level of the data sources used for this analysis.">
+                                                <i data-lucide="info" class="w-4 h-4 text-slate-400 hover:text-slate-600"></i>
+                                            </span>
+                                        </label>
+                                        <select id="data-source-confidence" name="data-source-confidence" class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm">
+                                            <option value="">Select confidence level</option>
+                                            <option value="Low">Low</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="High">High</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Actions & Confidence -->
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col justify-between">
                                  <div>
-                                    <h3 class="font-semibold text-slate-800 mb-4 text-center">Actions</h3>
+                                    <h3 class="font-semibold text-slate-800 mb-3 text-center text-sm">Actions</h3>
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-2">Confidence Level</label>
                                         <div class="w-full bg-slate-200 rounded-full h-2.5">
@@ -255,12 +322,12 @@
                                         <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low">
                                     </div>
                                  </div>
-                                <div class="mt-6 space-y-3">
-                                    <button type="submit" class="w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                                <div class="mt-4 space-y-2">
+                                    <button type="submit" class="w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-2 px-3 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 text-sm">
                                         <i data-lucide="save" class="w-4 h-4"></i>
                                         Save & Generate Report
                                     </button>
-                                    <button type="button" onclick="window.history.back()" class="w-full bg-white text-slate-700 font-semibold py-3 px-4 rounded-lg hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-300 transition-all duration-200 border border-slate-300">
+                                    <button type="button" onclick="window.history.back()" class="w-full bg-white text-slate-700 font-semibold py-2 px-3 rounded-lg hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-300 transition-all duration-200 text-sm border border-slate-300">
                                         Cancel
                                     </button>
                                 </div>
@@ -322,15 +389,7 @@
                 const assets = parseFloat(totalAssetsInput.value) || 0;
                 const liabilities = parseFloat(totalLiabilitiesInput.value) || 0;
                 const equity = assets - liabilities;
-                
-                if (equity > 0) {
-                    shareholderEquityInput.value = new Intl.NumberFormat('en-PH', { 
-                        style: 'currency', 
-                        currency: 'PHP' 
-                    }).format(equity);
-                } else {
-                    shareholderEquityInput.value = '₱ 0.00';
-                }
+                shareholderEquityInput.value = equity > 0 ? equity.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' }).replace('₱', '₱ ') : '₱ 0.00';
             }
             totalAssetsInput.addEventListener('input', calculateEquity);
             totalLiabilitiesInput.addEventListener('input', calculateEquity);
@@ -418,99 +477,30 @@
 
             // --- Company Data Object Constructor ---
             function createCompanyDataObject() {
-                // Helper function to parse numeric values
-                function parseNumericValue(value) {
-                    if (!value || value.trim() === '') return null;
-                    // Remove currency symbols, commas, and spaces
-                    const cleaned = value.toString().replace(/[₱,\s]/g, '');
-                    const parsed = parseFloat(cleaned);
-                    return isNaN(parsed) ? null : parsed;
-                }
-
-                // Calculate shareholder equity from the input values (not the formatted display)
-                const assets = parseNumericValue(document.getElementById('total-assets').value);
-                const liabilities = parseNumericValue(document.getElementById('total-liabilities').value);
-                const calculatedEquity = (assets && liabilities) ? assets - liabilities : null;
-
-                // Calculate actual confidence percentage from form completeness
-                const formInputs = Array.from(form.querySelectorAll('input[type="text"], input[type="number"], select, textarea')).filter(el => !el.disabled);
-                const totalFields = formInputs.length;
-                let filledFields = 0;
-                
-                formInputs.forEach(input => {
-                    if ((input.type === 'select-one' && input.value !== "") || (input.type !== 'select-one' && input.value && input.value.trim() !== '')) {
-                         filledFields++;
-                    }
-                });
-                
-                const actualPercentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
-                
-                // Determine confidence level based on actual percentage (same logic as UI)
-                let confidenceLevel = 'Low'; // Default
-                let confidencePercentage = actualPercentage; // Use the actual calculated percentage
-                
-                if (actualPercentage > 75) {
-                    confidenceLevel = 'High';
-                } else if (actualPercentage > 40) {
-                    confidenceLevel = 'Medium';
-                } else {
-                    confidenceLevel = 'Low';
-                }
-
                 const companyData = {
-                    // Basic Information (match DRF serializer field names exactly)
+                    // Basic Information (match serializer field names)
                     company_name: document.getElementById('company-name').value.trim(),
                     industry: document.getElementById('industry').value,
                     company_description: document.getElementById('company-description').value.trim(),
                     
-                    // Financial Data (match DRF serializer field names exactly)
-                    revenue: parseNumericValue(document.getElementById('current-revenue').value),
-                    net_income: parseNumericValue(document.getElementById('net-income').value),
-                    total_assets: parseNumericValue(document.getElementById('total-assets').value),
-                    total_liabilities: parseNumericValue(document.getElementById('total-liabilities').value),
-                    shareholder_equity: calculatedEquity,
-                    cash_flow: parseNumericValue(document.getElementById('cash-flow').value),
+                    // Financial Data (match serializer field names exactly)
+                    revenue: document.getElementById('current-revenue').value || null,
+                    net_income: document.getElementById('net-income').value || null,
+                    total_assets: document.getElementById('total-assets').value || null,
+                    total_liabilities: document.getElementById('total-liabilities').value || null,
+                    shareholder_equity: document.getElementById('shareholder-equity').value || null,
+                    cash_flow: document.getElementById('cash-flow').value || null,
+                    funding_ask: document.getElementById('funding-ask').value || null,
                     
-                    // Additional financial fields (DRF expects these)
-                    current_revenue: parseNumericValue(document.getElementById('current-revenue').value),
-                    previous_revenue: parseNumericValue(document.getElementById('previous-revenue').value),
-                    investment_flow: parseNumericValue(document.getElementById('investment-flow').value),
-                    financing_flow: parseNumericValue(document.getElementById('financing-flow').value),
-                    reporting_period: document.getElementById('income-period').value || 'yearly',
+                    // Business Metrics (match serializer field names)
+                    team_strength: document.getElementById('team-strength').value.trim() || null,
+                    market_position: document.getElementById('market-position').value.trim() || null,
+                    brand_reputation: document.getElementById('brand-reputation').value.trim() || null,
+                    confidence_percentage: document.getElementById('confidence-percentage').value || null,
                     
-                    // Business Metrics (DRF expects these - optional fields)
-                    team_strength: '',
-                    market_position: '',
-                    brand_reputation: '',
-                    
-                    // Confidence Metrics (DRF expects these - calculated from form)
-                    data_source_confidence: confidenceLevel,
-                    confidence_percentage: confidencePercentage,
-                    
-                    // DRF optional fields
-                    funding_ask: null // Set to null for DRF compatibility
+                    // Data Source Confidence (match serializer field name)
+                    data_source_confidence: document.getElementById('data-source-confidence').value || 'Medium'
                 };
-                
-                // Debug output to console
-                console.log('=== FORM DATA BEING SENT ===');
-                console.log('Confidence Metrics:');
-                console.log('  UI Display Percentage:', actualPercentage + '%');
-                console.log('  Confidence Level:', confidenceLevel);
-                console.log('  Confidence Percentage (sent to API):', confidencePercentage + '%');
-                console.log('Income Statement Fields:');
-                console.log('  Current Revenue:', companyData.current_revenue);
-                console.log('  Previous Revenue:', companyData.previous_revenue);
-                console.log('  Net Income:', companyData.net_income);
-                console.log('  Reporting Period:', companyData.reporting_period);
-                console.log('Balance Sheet Fields:');
-                console.log('  Total Assets:', companyData.total_assets);
-                console.log('  Total Liabilities:', companyData.total_liabilities);
-                console.log('  Shareholder Equity:', companyData.shareholder_equity);
-                console.log('Cash Flow Fields:');
-                console.log('  Operations Cash Flow:', companyData.cash_flow);
-                console.log('  Investment Flow:', companyData.investment_flow);
-                console.log('  Financing Flow:', companyData.financing_flow);
-                console.log('=============================');
                 
                 return companyData;
             }
@@ -530,10 +520,9 @@
                 // Define field categories for better organization
                 const fieldCategories = {
                     basic: ['company_name', 'industry', 'company_description'],
-                    financial: ['revenue', 'net_income', 'total_assets', 'total_liabilities', 'shareholder_equity', 'cash_flow', 'current_revenue', 'previous_revenue', 'investment_flow', 'financing_flow'],
-                    business: ['team_strength', 'market_position', 'brand_reputation'],
-                    confidence: ['data_source_confidence', 'confidence_percentage'],
-                    other: ['reporting_period', 'funding_ask']
+                    financial: ['revenue', 'net_income', 'total_assets', 'total_liabilities', 'shareholder_equity', 'cash_flow', 'funding_ask'],
+                    business: ['team_strength', 'market_position', 'brand_reputation', 'confidence_percentage'],
+                    confidence: ['data_source_confidence']
                 };
 
                 // Validate each field
@@ -597,87 +586,45 @@
                     // Get auth token
                     const token = localStorage.getItem('authToken');
                     
-                    if (!token) {
-                        showErrorMessage('Authentication required. Please log in again.');
-                        return;
-                    }
-                    
                     // Show loading state
                     const submitButton = form.querySelector('button[type="submit"]');
                     const originalText = submitButton.innerHTML;
                     submitButton.disabled = true;
                     submitButton.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Saving...';
                     
-                    // Make DRF-compliant API call
+                    // Make API call
                     const response = await fetch('http://127.0.0.1:8000/api/startup/add/', {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json',
-                            'Accept': 'application/json',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                                          document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                         },
                         body: JSON.stringify(companyData)
                     });
                     
-                    // Handle response based on DRF standards
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        
-                        // Handle DRF validation errors
-                        if (response.status === 400 && errorData.errors) {
-                            const errorMessages = Object.entries(errorData.errors)
-                                .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
-                                .join('\n');
-                            showErrorMessage(`Validation errors:\n${errorMessages}`);
-                        } else if (response.status === 401) {
-                            showErrorMessage('Authentication failed. Please log in again.');
-                            // Optionally redirect to login
-                        } else if (response.status === 403) {
-                            showErrorMessage('Access denied. Only startup users can submit company information.');
-                        } else {
-                            showErrorMessage(errorData.error || errorData.message || 'An error occurred while saving the startup data.');
-                        }
-                        return;
-                    }
-                    
                     const result = await response.json();
                     
-                    // Handle DRF success response
                     if (result.success) {
-                        // Success handling with DRF response structure
+                        // Success handling
                         showSuccessMessage(result.message, result.startup_id);
-                        
-                        // Log the saved data for verification
-                        console.log('=== STARTUP SAVED SUCCESSFULLY ===');
-                        console.log('Startup ID:', result.startup_id);
-                        console.log('Saved Data:', result.data);
-                        console.log('================================');
-                        
-                        // Optionally redirect to another page after success
-                        // setTimeout(() => {
-                        //     window.location.href = `/dashboard/`;
-                        // }, 2000);
+                        // Optionally redirect to another page
+                        // window.location.href = `/startup/${result.startup_id}/`;
                     } else {
-                        // Handle non-success response
-                        showErrorMessage(result.error || 'An unexpected error occurred.');
+                        // Error handling
+                        showErrorMessage(result.error || 'An error occurred while saving the startup data.');
                     }
                     
                 } catch (error) {
                     console.error('API Error:', error);
-                    
-                    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                        showErrorMessage('Network error. Please check your connection and ensure the server is running.');
-                    } else {
-                        showErrorMessage('An unexpected error occurred. Please try again.');
-                    }
+                    showErrorMessage('Network error. Please check your connection and try again.');
                 } finally {
                     // Reset button state
                     const submitButton = form.querySelector('button[type="submit"]');
-                    if (submitButton) {
-                        submitButton.disabled = false;
-                        submitButton.innerHTML = originalText;
-                        lucide.createIcons(); // Recreate icons after innerHTML change
-                    }
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalText;
+                    lucide.createIcons(); // Recreate icons after innerHTML change
                 }
             }
 
