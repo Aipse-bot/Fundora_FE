@@ -90,14 +90,17 @@
       if (response.ok) {
         console.log('Login successful:', data);
 
-        // Store token if returned
+        // Store token and user data
         if (data.token) {
           localStorage.setItem('authToken', data.token);
+        }
+        if (data.user) {
+          localStorage.setItem('userData', JSON.stringify(data.user));
         }
 
         // Redirect based on label
         if (data.user.label === 'startup') {
-          window.location.href = '/deck-builder.html';
+          window.location.href = '/Module_3/added-startups.html';
         } else if (data.user.label === 'investor') {
           window.location.href = '/Module_1/Dashboard.html';
         } else {
