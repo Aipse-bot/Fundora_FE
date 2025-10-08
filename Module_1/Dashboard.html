@@ -25,12 +25,12 @@
     <div class="flex justify-between items-center">
       <div class="flex items-center space-x-4">
         <h1 class="text-2xl font-bold text-gray-900">Fundora</h1>
-        <div class="hidden md:flex items-center space-x-2 text-sm text-gray-600">
+        <!-- <div class="hidden md:flex items-center space-x-2 text-sm text-gray-600">
           <span id="startup-count-header" class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">0</span>
-        </div>
+        </div> -->
       </div>
       <div class="flex items-center space-x-4">
-        <a href="Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+        <a href="./Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">
           My Watchlist
         </a>
         <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">
@@ -77,7 +77,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
           <select name="sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
-            <option value="recommended">Recommended</option>
+            <option value="">Recommended</option>
             <option value="projected_return_desc">Highest Returns First</option>
             <option value="projected_return_asc">Lowest Returns First</option>
             <option value="reward_potential_desc">Best Reward Potential</option>
@@ -105,13 +105,15 @@
         <!-- Risk -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Risk Tolerance</label>
-          <input type="range" name="risk" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" oninput="updateRiskLabel(this.value)">
+          <input type="range" name="risk_slider" min="0" max="100" value="" class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" oninput="updateRiskLabel(this.value)">
           <div class="flex justify-between text-xs text-gray-500 mt-1">
             <span>Low</span><span>Medium</span><span>High</span>
           </div>
           <div class="text-center mt-2">
-            <span id="risk-value" class="text-sm font-medium text-gray-700">50%</span>
+            <span id="risk-value" class="text-sm font-medium text-gray-700">None</span>
           </div>
+          <!-- Hidden field to send actual risk value -->
+          <input type="hidden" name="risk" id="risk-hidden" value="">
         </div>
 
         <!-- Minimum Return -->
@@ -151,7 +153,7 @@
           Showing <span id="startup-count" class="font-semibold text-gray-900">0</span> startup<span id="startup-plural">s</span>
         </p>
         <div id="clear-filters" class="hidden">
-          <button onclick="clearAllFilters()" class="text-blue-600 hover:text-blue-800 text-sm">Clear all</button>
+          <button onclick="clearAllFilters()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Clear all filters</button>
         </div>
       </div>
 
@@ -173,23 +175,83 @@
         const token = localStorage.getItem('authToken');
         if (!token) throw new Error('No auth token found');
 
-        // Read form values
+        // Read filter form values
         const form = document.getElementById('filterForm');
-        const params = new URLSearchParams(new FormData(form));
+        const formData = new FormData(form);
 
-        // Build URL with filters
-        const url = `http://127.0.0.1:8000/api/startups/?${params.toString()}`;
+        // Remove the slider value and keep only the hidden risk field
+        formData.delete('risk_slider');
+        formData.delete('sort_by');
 
+        // Build query params (backend filtering)
+        const params = new URLSearchParams(formData);
+        
+        // Remove empty params - this is critical!
+        const keysToDelete = [];
+        for (let [key, value] of params) {
+          if (!value || value === '') {
+            keysToDelete.push(key);
+          }
+        }
+        keysToDelete.forEach(key => params.delete(key));
+
+        const url = `http://127.0.0.1:8000/api/startups/${params.toString() ? '?' + params.toString() : ''}`;
+        console.log('Fetching from:', url);
+
+        // Fetch from backend
         const response = await fetch(url, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!response.ok) throw new Error('Failed to fetch startups');
+
+        if (!response.ok) throw new Error(`Failed to fetch startups: ${response.status}`);
+
         const data = await response.json();
-        return data.results || data.startups || [];
+        console.log('Received data:', data);
+
+        // Use backend response format
+        let startups = data.results || data.startups || [];
+        
+        // Client-side sorting
+        const sortBy = form.elements.sort_by?.value;
+        startups = sortStartups(startups, sortBy);
+
+        return startups;
       } catch (error) {
         console.error('Error fetching startups:', error);
         return [];
       }
+    }
+
+    function sortStartups(startups, sortBy) {
+      const copy = [...startups];
+      
+      if (!sortBy) return copy;
+      
+      switch(sortBy) {
+        case 'projected_return_desc':
+          return copy.sort((a, b) => (b.projected_return || 0) - (a.projected_return || 0));
+        case 'projected_return_asc':
+          return copy.sort((a, b) => (a.projected_return || 0) - (b.projected_return || 0));
+        case 'reward_potential_desc':
+          return copy.sort((a, b) => (b.reward_potential || 0) - (a.reward_potential || 0));
+        case 'confidence_desc':
+          return copy.sort((a, b) => {
+            const aConf = confidenceToNum(a.data_source_confidence);
+            const bConf = confidenceToNum(b.data_source_confidence);
+            return bConf - aConf;
+          });
+        case 'risk_asc':
+          return copy.sort((a, b) => (a.reward_potential || 0) - (b.reward_potential || 0));
+        case 'company_name':
+          return copy.sort((a, b) => (a.company_name || '').localeCompare(b.company_name || ''));
+        default:
+          return copy;
+      }
+    }
+
+    function confidenceToNum(confidence) {
+      const map = { 'High': 3, 'Medium': 2, 'Low': 1 };
+      return map[confidence] || 0;
     }
 
     function createStartupCard(startup) {
@@ -239,15 +301,18 @@
       const grid = document.getElementById('startup-grid');
       const countSpan = document.getElementById('startup-count');
       const noStartups = document.getElementById('no-startups');
+      const clearBtn = document.getElementById('clear-filters');
 
       grid.innerHTML = '';
       if (!startups || startups.length === 0) {
         noStartups.classList.remove('hidden');
         countSpan.textContent = '0';
+        clearBtn.classList.add('hidden');
         return;
       }
       noStartups.classList.add('hidden');
       countSpan.textContent = startups.length;
+      document.getElementById('startup-plural').textContent = startups.length === 1 ? '' : 's';
       startups.forEach(s => grid.appendChild(createStartupCard(s)));
     }
 
@@ -257,20 +322,64 @@
     });
 
     function clearAllFilters() {
-      document.getElementById('filterForm').reset();
-      document.getElementById('risk-value').textContent = '50%';
+      const form = document.getElementById('filterForm');
+      form.reset();
+
+      const slider = form.elements.risk_slider;
+      slider.value = 50;
+      document.getElementById('risk-value').textContent = 'None';
+      document.getElementById('risk-hidden').value = '';
+      document.getElementById('filterForm').elements.risk_slider.value = 0;
+      document.getElementById('startup-plural').textContent = 's';
       renderStartups();
     }
-    function updateRiskLabel(v) {
-      document.getElementById('risk-value').textContent = v + '%';
+
+    function updateRiskLabel(value) {
+      let label = 'Medium';
+      let riskValue = 'medium';
+      
+      if (value < 33) {
+        label = 'Low';
+        riskValue = 'low';
+      } else if (value > 66) {
+        label = 'High';
+        riskValue = 'high';
+      }
+      
+      document.getElementById('risk-value').textContent = label;
+      document.getElementById('risk-hidden').value = riskValue;
     }
 
     function applyPreset(preset) {
-      // apply preset logic (set form fields based on preset)
+      const form = document.getElementById('filterForm');
+      
+      if (preset === 'conservative') {
+        form.elements.risk_slider.value = 20;
+        form.elements.min_return.value = '';
+        updateRiskLabel(20);
+      } else if (preset === 'balanced') {
+        form.elements.risk_slider.value = 50;
+        form.elements.min_return.value = '';
+        updateRiskLabel(50);
+      } else if (preset === 'aggressive') {
+        form.elements.risk_slider.value = 80;
+        form.elements.min_return.value = '20';
+        updateRiskLabel(80);
+      }
+      
       renderStartups();
     }
 
-    document.addEventListener('DOMContentLoaded', renderStartups);
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if user is logged in
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        // Redirect to login
+        window.location.href = '/login';
+        return;
+      }
+      renderStartups();
+    });
   </script>
 
   <style>
