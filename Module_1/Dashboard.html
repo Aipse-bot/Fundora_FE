@@ -20,60 +20,36 @@
   </script>
 </head>
 <body class="bg-gray-50 min-h-screen">
-  <!-- Header -->
   <header class="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-50">
     <div class="flex justify-between items-center">
       <div class="flex items-center space-x-4">
         <h1 class="text-2xl font-bold text-gray-900">Fundora</h1>
-        <!-- <div class="hidden md:flex items-center space-x-2 text-sm text-gray-600">
-          <span id="startup-count-header" class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">0</span>
-        </div> -->
       </div>
       <div class="flex items-center space-x-4">
-        <a href="./Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">
-          My Watchlist
-        </a>
-        <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">
-          Logout
-        </button>
+        <a href="./Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">My Watchlist</a>
+        <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">Logout</button>
       </div>
     </div>
   </header>
 
   <div class="flex">
-    <!-- Sidebar -->
     <aside class="fixed top-16 left-0 w-80 h-[calc(100vh-64px)] bg-white border-r border-gray-200 p-6 overflow-y-auto">
-      <div class="mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-2">Investment Filters</h2>
-      </div>
-
       <form id="filterForm" class="space-y-6">
-        <!-- Presets -->
         <div class="bg-gray-50 p-4 rounded-lg">
           <label class="block text-sm font-medium text-gray-700 mb-3">Quick Presets</label>
           <div class="grid grid-cols-1 gap-2">
             <button type="button" onclick="applyPreset('conservative')" class="preset-btn w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition">
-              <div class="flex items-center justify-between">
-                <span class="font-medium">Conservative</span>
-                <span class="text-xs text-gray-500">Low Risk</span>
-              </div>
+              <div class="flex items-center justify-between"><span class="font-medium">Conservative</span><span class="text-xs text-gray-500">Low Risk</span></div>
             </button>
             <button type="button" onclick="applyPreset('balanced')" class="preset-btn w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition">
-              <div class="flex items-center justify-between">
-                <span class="font-medium">Balanced</span>
-                <span class="text-xs text-gray-500">Mixed</span>
-              </div>
+              <div class="flex items-center justify-between"><span class="font-medium">Balanced</span><span class="text-xs text-gray-500">Mixed</span></div>
             </button>
             <button type="button" onclick="applyPreset('aggressive')" class="preset-btn w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition">
-              <div class="flex items-center justify-between">
-                <span class="font-medium">Aggressive</span>
-                <span class="text-xs text-gray-500">High Risk</span>
-              </div>
+              <div class="flex items-center justify-between"><span class="font-medium">Aggressive</span><span class="text-xs text-gray-500">High Risk</span></div>
             </button>
           </div>
         </div>
 
-        <!-- Sort -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
           <select name="sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
@@ -87,7 +63,6 @@
           </select>
         </div>
 
-        <!-- Industry -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
           <select name="industry" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
@@ -102,21 +77,14 @@
           </select>
         </div>
 
-        <!-- Risk -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Risk Tolerance</label>
           <input type="range" name="risk_slider" min="0" max="100" value="" class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" oninput="updateRiskLabel(this.value)">
-          <div class="flex justify-between text-xs text-gray-500 mt-1">
-            <span>Low</span><span>Medium</span><span>High</span>
-          </div>
-          <div class="text-center mt-2">
-            <span id="risk-value" class="text-sm font-medium text-gray-700">None</span>
-          </div>
-          <!-- Hidden field to send actual risk value -->
+          <div class="flex justify-between text-xs text-gray-500 mt-1"><span>Low</span><span>Medium</span><span>High</span></div>
+          <div class="text-center mt-2"><span id="risk-value" class="text-sm font-medium text-gray-700">None</span></div>
           <input type="hidden" name="risk" id="risk-hidden" value="">
         </div>
 
-        <!-- Minimum Return -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Projected Return</label>
           <select name="min_return" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
@@ -132,7 +100,6 @@
           </select>
         </div>
 
-        <!-- Buttons -->
         <div class="space-y-3 pt-4 border-t border-gray-200">
           <button type="submit" class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 font-medium transition">Apply Filters</button>
           <button type="button" onclick="clearAllFilters()" class="w-full bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 font-medium transition">Clear All</button>
@@ -140,27 +107,19 @@
       </form>
     </aside>
 
-    <!-- Main -->
     <main class="flex-1 p-6 ml-80">
       <div class="mb-8">
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Investment Opportunities</h2>
         <p class="text-gray-600">Discover startups tailored to your investment profile</p>
       </div>
 
-      <!-- Results header -->
       <div class="mb-6 flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200">
-        <p class="text-sm text-gray-600">
-          Showing <span id="startup-count" class="font-semibold text-gray-900">0</span> startup<span id="startup-plural">s</span>
-        </p>
-        <div id="clear-filters" class="hidden">
-          <button onclick="clearAllFilters()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Clear all filters</button>
-        </div>
+        <p class="text-sm text-gray-600">Showing <span id="startup-count" class="font-semibold text-gray-900">0</span> startup<span id="startup-plural">s</span></p>
+        <div id="clear-filters" class="hidden"><button onclick="clearAllFilters()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Clear all filters</button></div>
       </div>
 
-      <!-- Startup Grid -->
       <div id="startup-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-      <!-- Empty state -->
       <div id="no-startups" class="col-span-full text-center py-16 hidden">
         <div class="text-6xl mb-4">🔍</div>
         <h3 class="text-xl font-semibold text-gray-900 mb-2">No startups found</h3>
@@ -174,47 +133,23 @@
       try {
         const token = localStorage.getItem('authToken');
         if (!token) throw new Error('No auth token found');
-
-        // Read filter form values
         const form = document.getElementById('filterForm');
         const formData = new FormData(form);
-
-        // Remove the slider value and keep only the hidden risk field
         formData.delete('risk_slider');
         formData.delete('sort_by');
-
-        // Build query params (backend filtering)
         const params = new URLSearchParams(formData);
-        
-        // Remove empty params - this is critical!
         const keysToDelete = [];
         for (let [key, value] of params) {
-          if (!value || value === '') {
-            keysToDelete.push(key);
-          }
+          if (!value || value === '') keysToDelete.push(key);
         }
         keysToDelete.forEach(key => params.delete(key));
-
         const url = `http://127.0.0.1:8000/api/startups/${params.toString() ? '?' + params.toString() : ''}`;
-        console.log('Fetching from:', url);
-
-        // Fetch from backend
-        const response = await fetch(url, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
+        const response = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
         if (!response.ok) throw new Error(`Failed to fetch startups: ${response.status}`);
-
         const data = await response.json();
-        console.log('Received data:', data);
-
-        // Use backend response format
         let startups = data.results || data.startups || [];
-        
-        // Client-side sorting
         const sortBy = form.elements.sort_by?.value;
         startups = sortStartups(startups, sortBy);
-
         return startups;
       } catch (error) {
         console.error('Error fetching startups:', error);
@@ -224,28 +159,15 @@
 
     function sortStartups(startups, sortBy) {
       const copy = [...startups];
-      
       if (!sortBy) return copy;
-      
-      switch(sortBy) {
-        case 'projected_return_desc':
-          return copy.sort((a, b) => (b.projected_return || 0) - (a.projected_return || 0));
-        case 'projected_return_asc':
-          return copy.sort((a, b) => (a.projected_return || 0) - (b.projected_return || 0));
-        case 'reward_potential_desc':
-          return copy.sort((a, b) => (b.reward_potential || 0) - (a.reward_potential || 0));
-        case 'confidence_desc':
-          return copy.sort((a, b) => {
-            const aConf = confidenceToNum(a.data_source_confidence);
-            const bConf = confidenceToNum(b.data_source_confidence);
-            return bConf - aConf;
-          });
-        case 'risk_asc':
-          return copy.sort((a, b) => (a.reward_potential || 0) - (b.reward_potential || 0));
-        case 'company_name':
-          return copy.sort((a, b) => (a.company_name || '').localeCompare(b.company_name || ''));
-        default:
-          return copy;
+      switch (sortBy) {
+        case 'projected_return_desc': return copy.sort((a, b) => (b.projected_return || 0) - (a.projected_return || 0));
+        case 'projected_return_asc': return copy.sort((a, b) => (a.projected_return || 0) - (b.projected_return || 0));
+        case 'reward_potential_desc': return copy.sort((a, b) => (b.reward_potential || 0) - (a.reward_potential || 0));
+        case 'confidence_desc': return copy.sort((a, b) => confidenceToNum(b.data_source_confidence) - confidenceToNum(a.data_source_confidence));
+        case 'risk_asc': return copy.sort((a, b) => (a.reward_potential || 0) - (b.reward_potential || 0));
+        case 'company_name': return copy.sort((a, b) => (a.company_name || '').localeCompare(b.company_name || ''));
+        default: return copy;
       }
     }
 
@@ -255,44 +177,63 @@
     }
 
     function createStartupCard(startup) {
-      let riskBadge = '';
-      if (startup.is_deck_builder) {
-        riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>';
-      } else if (startup.data_source_confidence === 'High') {
-        riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>';
-      } else if (startup.data_source_confidence === 'Medium') {
-        riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>';
-      } else {
-        riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>';
-      }
-
       const card = document.createElement('div');
       card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition';
+      const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
+      card.setAttribute('data-startup-id', startup.id);
+      card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
+
+      const riskBadge = isDeck
+        ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>'
+        : startup.data_source_confidence === 'High'
+          ? '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>'
+          : startup.data_source_confidence === 'Medium'
+            ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>'
+            : '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>';
+
+      const industry = startup.industry || '—';
+      let reward = 'N/A';
+        if (startup.reward_potential != null) {
+          if (typeof startup.reward_potential === 'string') {
+            reward = startup.reward_potential.split(',')[0].trim();
+          } else if (Array.isArray(startup.reward_potential)) {
+            reward = startup.reward_potential[0];
+          } else {
+            reward = String(startup.reward_potential);
+          }
+        }
+      const projected = startup.projected_return != null ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
+
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="flex-1">
             <h3 class="text-lg font-semibold text-gray-900 mb-1">${startup.company_name}</h3>
-            <p class="text-sm text-gray-600">${startup.industry || 'Technology'}</p>
+            <p class="text-sm text-gray-600">${industry}</p>
           </div>
           <div class="flex flex-col items-end">${riskBadge}</div>
         </div>
         <div class="space-y-3 mb-4">
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-600">Reward Potential</span>
-            <span class="text-sm font-semibold">${startup.reward_potential || 'N/A'}/5</span>
+            <span class="text-sm font-semibold">${reward}/5</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-600">Projected Return</span>
-            <span class="text-sm font-semibold ${startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">
-              ${startup.projected_return != null ? (startup.projected_return >= 0 ? '+' : '') + startup.projected_return + '%' : 'N/A'}
-            </span>
+            <span class="text-sm font-semibold ${startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${projected}</span>
           </div>
         </div>
         <div class="flex gap-2">
-          <a href="/company/${startup.id}/" class="flex-1 px-3 py-2 border rounded-md text-sm text-gray-700 text-center hover:bg-gray-50">View Details</a>
-          <a href="/simulate/${startup.id}/" class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700">Invest</a>
+          <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
+          <a href="./Investment_Simulation.html" class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700">Invest</a>
         </div>
       `;
+
+      card.querySelector('.view-details-btn').addEventListener('click', () => {
+        const id = card.getAttribute('data-startup-id');
+        const isDeckBuilder = card.getAttribute('data-is-deck-builder') === 'true';
+        openStartupProfile(id, isDeckBuilder);
+      });
+
       return card;
     }
 
@@ -302,7 +243,6 @@
       const countSpan = document.getElementById('startup-count');
       const noStartups = document.getElementById('no-startups');
       const clearBtn = document.getElementById('clear-filters');
-
       grid.innerHTML = '';
       if (!startups || startups.length === 0) {
         noStartups.classList.remove('hidden');
@@ -324,60 +264,38 @@
     function clearAllFilters() {
       const form = document.getElementById('filterForm');
       form.reset();
-
       const slider = form.elements.risk_slider;
       slider.value = 50;
       document.getElementById('risk-value').textContent = 'None';
       document.getElementById('risk-hidden').value = '';
-      document.getElementById('filterForm').elements.risk_slider.value = 0;
-      document.getElementById('startup-plural').textContent = 's';
       renderStartups();
     }
 
     function updateRiskLabel(value) {
-      let label = 'Medium';
-      let riskValue = 'medium';
-      
-      if (value < 33) {
-        label = 'Low';
-        riskValue = 'low';
-      } else if (value > 66) {
-        label = 'High';
-        riskValue = 'high';
-      }
-      
+      let label = 'Medium', riskValue = 'medium';
+      if (value < 33) { label = 'Low'; riskValue = 'low'; }
+      else if (value > 66) { label = 'High'; riskValue = 'high'; }
       document.getElementById('risk-value').textContent = label;
       document.getElementById('risk-hidden').value = riskValue;
     }
 
     function applyPreset(preset) {
       const form = document.getElementById('filterForm');
-      
-      if (preset === 'conservative') {
-        form.elements.risk_slider.value = 20;
-        form.elements.min_return.value = '';
-        updateRiskLabel(20);
-      } else if (preset === 'balanced') {
-        form.elements.risk_slider.value = 50;
-        form.elements.min_return.value = '';
-        updateRiskLabel(50);
-      } else if (preset === 'aggressive') {
-        form.elements.risk_slider.value = 80;
-        form.elements.min_return.value = '20';
-        updateRiskLabel(80);
-      }
-      
+      if (preset === 'conservative') { form.elements.risk_slider.value = 20; updateRiskLabel(20); }
+      else if (preset === 'balanced') { form.elements.risk_slider.value = 50; updateRiskLabel(50); }
+      else if (preset === 'aggressive') { form.elements.risk_slider.value = 80; form.elements.min_return.value = '20'; updateRiskLabel(80); }
       renderStartups();
     }
 
+    function openStartupProfile(id, isDeckBuilder) {
+      const base = '../Module_2/';
+      const target = isDeckBuilder ? `${base}Company_ProfileDB.html?id=${id}` : `${base}Company_Profile.html?id=${id}`;
+      window.location.href = target;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      // Check if user is logged in
       const token = localStorage.getItem('authToken');
-      if (!token) {
-        // Redirect to login
-        window.location.href = '/login';
-        return;
-      }
+      if (!token) { window.location.href = '/login'; return; }
       renderStartups();
     });
   </script>
