@@ -26,7 +26,7 @@
         <h1 class="text-2xl font-bold text-gray-900">Fundora</h1>
       </div>
       <div class="flex items-center space-x-4">
-        <a href="./Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">My Watchlist</a>
+        <a id="watchlistLink" href="./Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">My Watchlist <span id="watchlist-badge" class="ml-2 inline-block bg-white text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">0</span></a>
         <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">Logout</button>
       </div>
     </div>
@@ -79,10 +79,11 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Risk Tolerance</label>
-          <input type="range" name="risk_slider" min="0" max="100" value="" class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" oninput="updateRiskLabel(this.value)">
+          <input id="riskSlider" type="range" name="risk_slider" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" oninput="updateRiskLabel(this.value)">
           <div class="flex justify-between text-xs text-gray-500 mt-1"><span>Low</span><span>Medium</span><span>High</span></div>
-          <div class="text-center mt-2"><span id="risk-value" class="text-sm font-medium text-gray-700">None</span></div>
-          <input type="hidden" name="risk" id="risk-hidden" value="">
+          <div class="text-center mt-2"><span id="risk-value" class="text-sm font-medium text-gray-700">Medium</span></div>
+          <!-- hidden numeric value expected by backend (confidence threshold 0-100) -->
+          <input type="hidden" name="risk" id="risk-hidden" value="50">
         </div>
 
         <div>
@@ -129,46 +130,30 @@
   </div>
 
   <script>
-    async function fetchStartups() {
-      try {
-        const token = localStorage.getItem('authToken');
-        if (!token) throw new Error('No auth token found');
-        const form = document.getElementById('filterForm');
-        const formData = new FormData(form);
-        formData.delete('risk_slider');
-        formData.delete('sort_by');
-        const params = new URLSearchParams(formData);
-        const keysToDelete = [];
-        for (let [key, value] of params) {
-          if (!value || value === '') keysToDelete.push(key);
-        }
-        keysToDelete.forEach(key => params.delete(key));
-        const url = `http://127.0.0.1:8000/api/startups/${params.toString() ? '?' + params.toString() : ''}`;
-        const response = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-        if (!response.ok) throw new Error(`Failed to fetch startups: ${response.status}`);
-        const data = await response.json();
-        let startups = data.results || data.startups || [];
-        const sortBy = form.elements.sort_by?.value;
-        startups = sortStartups(startups, sortBy);
-        return startups;
-      } catch (error) {
-        console.error('Error fetching startups:', error);
-        return [];
-      }
+    // =========================== 
+    // Configuration
+    // =========================== 
+    const API_BASE = 'http://127.0.0.1:8000';
+    const STARTUPS_ENDPOINT = `${API_BASE}/api/startups/`;
+    const WATCHLIST_ENDPOINT = `${API_BASE}/api/investor/watchlist/`;
+    const ADD_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/add/${id}/`;
+    const REMOVE_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/remove/${id}/`;
+    const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
+    const COMPANY_PROFILE_PAGE = '../Module_2/Company_Profile.html';
+    const COMPANY_PROFILE_DB_PAGE = '../Module_2/Company_ProfileDB.html';
+    const INVEST_PAGE = '../Module_2/Investment_Simulation.html';
+
+    // ===========================
+    // Helpers
+    // ===========================
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
     }
 
-    function sortStartups(startups, sortBy) {
-      const copy = [...startups];
-      if (!sortBy) return copy;
-      switch (sortBy) {
-        case 'projected_return_desc': return copy.sort((a, b) => (b.projected_return || 0) - (a.projected_return || 0));
-        case 'projected_return_asc': return copy.sort((a, b) => (a.projected_return || 0) - (b.projected_return || 0));
-        case 'reward_potential_desc': return copy.sort((a, b) => (b.reward_potential || 0) - (a.reward_potential || 0));
-        case 'confidence_desc': return copy.sort((a, b) => confidenceToNum(b.data_source_confidence) - confidenceToNum(a.data_source_confidence));
-        case 'risk_asc': return copy.sort((a, b) => (a.reward_potential || 0) - (b.reward_potential || 0));
-        case 'company_name': return copy.sort((a, b) => (a.company_name || '').localeCompare(b.company_name || ''));
-        default: return copy;
-      }
+    function authHeaders() {
+      const token = getAuthToken();
+      if (!token) return {};
+      return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
     }
 
     function confidenceToNum(confidence) {
@@ -176,6 +161,211 @@
       return map[confidence] || 0;
     }
 
+    // ===========================
+    // Fetch helpers
+    // ===========================
+    async function fetchJSON(url, options = {}) {
+      const token = getAuthToken();
+      if (!token) {
+        // not logged in
+        window.location.href = '/login';
+        throw new Error('No auth token');
+      }
+      options.headers = Object.assign({}, options.headers || {}, { 'Authorization': `Bearer ${token}` });
+      const res = await fetch(url, options);
+      if (res.status === 401 || res.status === 403) {
+        // token expired / invalid
+        localStorage.removeItem('authToken');
+        window.location.href = '/login';
+        throw new Error('Unauthorized');
+      }
+      if (!res.ok) {
+        const text = await res.text().catch(()=>null);
+        throw new Error(`Request failed: ${res.status} ${text || ''}`);
+      }
+      // Return parsed JSON safely
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('application/json')) return await res.json();
+      return null;
+    }
+
+    // ===========================
+    // Watchlist: fetch cached ids for current user
+    // ===========================
+    let watchlistIdsSet = new Set();
+    async function refreshWatchlist() {
+        try {
+            const data = await fetchJSON(WATCHLIST_ENDPOINT, { method: 'GET' });
+            // Handle both response formats
+            const items = data.results || data.watchlist || [];
+            watchlistIdsSet = new Set(items.map(it => it.id));
+            
+            // update badge
+            const badge = document.getElementById('watchlist-badge');
+            badge.textContent = data.count ?? items.length ?? 0;
+        } catch (err) {
+            console.warn('Could not refresh watchlist:', err);
+            // leave existing set
+        }
+    }
+
+    async function toggleWatchlist(startupId, button) {
+      const inWatchlist = watchlistIdsSet.has(Number(startupId));
+      button.disabled = true;
+      let success = false;
+      if (inWatchlist) {
+        success = await removeFromWatchlist(startupId);
+      } else {
+        success = await addToWatchlist(startupId);
+      }
+      button.disabled = false;
+
+      if (success) {
+        const newState = !inWatchlist;
+        button.innerHTML = watchIcon(newState);
+        button.title = newState ? 'Remove from watchlist' : 'Add to watchlist';
+        button.setAttribute('aria-pressed', newState ? 'true' : 'false');
+      } else {
+        alert('Failed to update watchlist.');
+      }
+    }
+
+    async function addToWatchlist(startupId, btn) {
+      try {
+        const res = await fetch(ADD_WATCHLIST_ENDPOINT(startupId), {
+          method: 'POST',
+          headers: authHeaders()
+        });
+        if (res.status === 201 || res.ok) {
+          // success
+          watchlistIdsSet.add(Number(startupId));
+          updateWatchlistBadge();
+          btn && btn.classList.add('text-blue-600');
+          return true;
+        } else {
+          const json = await res.json().catch(()=>null);
+          console.warn('Add failed', res.status, json);
+          return false;
+        }
+      } catch (err) {
+        console.error('Error adding to watchlist', err);
+        return false;
+      }
+    }
+
+    async function removeFromWatchlist(startupId, btn) {
+      try {
+        const res = await fetch(REMOVE_WATCHLIST_ENDPOINT(startupId), {
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+        if (res.ok) {
+          watchlistIdsSet.delete(Number(startupId));
+          updateWatchlistBadge();
+          btn && btn.classList.remove('text-blue-600');
+          return true;
+        } else {
+          const json = await res.json().catch(()=>null);
+          console.warn('Remove failed', res.status, json);
+          return false;
+        }
+      } catch (err) {
+        console.error('Error removing from watchlist', err);
+        return false;
+      }
+    }
+
+    function updateWatchlistBadge() {
+      const badge = document.getElementById('watchlist-badge');
+      badge.textContent = watchlistIdsSet.size;
+    }
+
+    // ===========================
+    // Fetch startups (list)
+    // ===========================
+    async function fetchStartups() {
+      try {
+        const token = getAuthToken();
+        if (!token) throw new Error('No auth token found');
+
+        const form = document.getElementById('filterForm');
+        const fd = new FormData(form);
+
+        // Build params: use the backend parameter names expected in StartupListView
+        // risk is numeric confidence threshold (0-100)
+        const params = new URLSearchParams();
+
+        // include sort_by if provided (backend supports it)
+        const sortVal = form.elements.sort_by?.value;
+        if (sortVal) params.set('sort_by', sortVal);
+
+        const industry = fd.get('industry') || '';
+        if (industry) params.set('industry', industry);
+
+        const minReturn = fd.get('min_return') || '';
+        if (minReturn) params.set('min_return', minReturn);
+
+        // risk hidden numeric
+        const riskVal = document.getElementById('risk-hidden')?.value || '';
+        if (riskVal) {
+          // send numeric 0-100
+          params.set('risk', riskVal);
+        }
+
+        // Build final URL
+        const url = STARTUPS_ENDPOINT + (params.toString() ? `?${params.toString()}` : '');
+
+        // fetch startups AND refresh watchlist concurrently
+        const [startupsData] = await Promise.allSettled([
+          fetchJSON(url, { method: 'GET' }),
+          refreshWatchlist()
+        ]);
+
+        const startupPayload = (startupsData.status === 'fulfilled') ? (startupsData.value) : null;
+        let startups = [];
+        if (startupPayload) {
+          // StartupListView returns a queryset (serialized) normally; older views returned data.results
+          // Accept multiple shapes
+          startups = startupPayload.results || startupPayload.startups || startupPayload;
+          if (!Array.isArray(startups)) {
+            // If it's an object containing 'startups' key or mapping
+            if (startupPayload.startups && Array.isArray(startupPayload.startups)) {
+              startups = startupPayload.startups;
+            } else if (Array.isArray(startupPayload)) {
+              startups = startupPayload;
+            } else {
+              startups = [];
+            }
+          }
+        }
+
+        return startups || [];
+      } catch (error) {
+        console.error('Error fetching startups:', error);
+        return [];
+      }
+    }
+
+    // ===========================
+    // Sorting (client fallback)
+    // ===========================
+    function sortStartups(startups, sortBy) {
+      const copy = [...startups];
+      if (!sortBy) return copy;
+      switch (sortBy) {
+        case 'projected_return_desc': return copy.sort((a, b) => (b.projected_return || 0) - (a.projected_return || 0));
+        case 'projected_return_asc': return copy.sort((a, b) => (a.projected_return || 0) - (b.projected_return || 0));
+        case 'reward_potential_desc': return copy.sort((a, b) => (b.reward_potential || 0) - (a.reward_potential || 0));
+        case 'confidence_desc': return copy.sort((a, b) => (confidenceToNum(b.data_source_confidence) - confidenceToNum(a.data_source_confidence)));
+        case 'risk_asc': return copy.sort((a, b) => (a.reward_potential || 0) - (b.reward_potential || 0));
+        case 'company_name': return copy.sort((a, b) => (a.company_name || '').localeCompare(b.company_name || ''));
+        default: return copy;
+      }
+    }
+
+    // ===========================
+    // Startup card creation
+    // ===========================
     function createStartupCard(startup) {
       const card = document.createElement('div');
       card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition';
@@ -185,119 +375,233 @@
 
       const riskBadge = isDeck
         ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>'
-        : startup.data_source_confidence === 'High'
-          ? '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>'
-          : startup.data_source_confidence === 'Medium'
-            ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>'
-            : '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>';
+        : (startup.data_source_confidence === 'High'
+            ? '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>'
+            : (startup.data_source_confidence === 'Medium'
+                ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>'
+                : '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>'));
 
       const industry = startup.industry || '—';
       let reward = 'N/A';
-        if (startup.reward_potential != null) {
-          if (typeof startup.reward_potential === 'string') {
-            reward = startup.reward_potential.split(',')[0].trim();
-          } else if (Array.isArray(startup.reward_potential)) {
-            reward = startup.reward_potential[0];
-          } else {
-            reward = String(startup.reward_potential);
-          }
+      if (startup.reward_potential != null) {
+        if (typeof startup.reward_potential === 'string') {
+          reward = startup.reward_potential.split(',')[0].trim();
+        } else if (Array.isArray(startup.reward_potential)) {
+          reward = startup.reward_potential[0];
+        } else {
+          reward = String(startup.reward_potential);
         }
-      const projected = startup.projected_return != null ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
+      }
+      const projected = (startup.projected_return != null && startup.projected_return !== '') ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
+
+      // determine watchlist state
+      const inWatchlist = watchlistIdsSet.has(Number(startup.id));
 
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="flex-1">
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">${startup.company_name}</h3>
-            <p class="text-sm text-gray-600">${industry}</p>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(startup.company_name)}</h3>
+            <p class="text-sm text-gray-600">${escapeHtml(industry)}</p>
           </div>
-          <div class="flex flex-col items-end">${riskBadge}</div>
+          <div class="flex flex-col items-end space-y-2">
+            ${riskBadge}
+            <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
+              ${inWatchlist ? watchIcon(true) : watchIcon(false)}
+            </button>
+          </div>
         </div>
         <div class="space-y-3 mb-4">
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-600">Reward Potential</span>
-            <span class="text-sm font-semibold">${reward}/5</span>
+            <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-600">Projected Return</span>
-            <span class="text-sm font-semibold ${startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${projected}</span>
+            <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
           </div>
         </div>
         <div class="flex gap-2">
           <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
-          <a href="./Investment_Simulation.html" class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700">Invest</a>
+          <a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>
         </div>
       `;
 
+      // click handlers
       card.querySelector('.view-details-btn').addEventListener('click', () => {
         const id = card.getAttribute('data-startup-id');
         const isDeckBuilder = card.getAttribute('data-is-deck-builder') === 'true';
-        openStartupProfile(id, isDeckBuilder);
+        // Keep previous behavior: open page (frontend will fetch profile from new API)
+        const target = isDeckBuilder ? `${COMPANY_PROFILE_DB_PAGE}?id=${id}` : `${COMPANY_PROFILE_PAGE}?id=${id}`;
+        window.location.href = target;
+      });
+
+      // Watch toggle
+      const watchBtn = card.querySelector('.watch-toggle');
+      watchBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const sid = startup.id;
+        const currently = watchlistIdsSet.has(Number(sid));
+        // optimistic UI toggle
+        if (!currently) {
+          // Add
+          watchBtn.disabled = true;
+          const ok = await addToWatchlist(sid, watchBtn);
+          watchBtn.disabled = false;
+          if (ok) {
+            watchBtn.innerHTML = watchIcon(true);
+            watchBtn.title = 'Remove from watchlist';
+            watchBtn.setAttribute('aria-pressed', 'true');
+          } else {
+            // show feedback
+            alert('Could not add to watchlist.');
+          }
+        } else {
+          // Remove
+          watchBtn.disabled = true;
+          const ok = await removeFromWatchlist(sid, watchBtn);
+          watchBtn.disabled = false;
+          if (ok) {
+            watchBtn.innerHTML = watchIcon(false);
+            watchBtn.title = 'Add to watchlist';
+            watchBtn.setAttribute('aria-pressed', 'false');
+          } else {
+            alert('Could not remove from watchlist.');
+          }
+        }
       });
 
       return card;
     }
 
+    // small accessible watch icon markup generator
+    function watchIcon(active) {
+      if (active) {
+        return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+      }
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35l-0.45-0.41C6.4 15.36 3 12.28 3 8.5 3 6 5 4 7.5 4c1.54 0 3.04 .99 3.57 2.36h0.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5z"/></svg>`;
+    }
+
+    // simple html-escape for safety (data may be untrusted)
+    function escapeHtml(unsafe) {
+      if (unsafe === null || unsafe === undefined) return '';
+      return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // ===========================
+    // Render flow
+    // ===========================
     async function renderStartups() {
       const startups = await fetchStartups();
+      const sortBy = document.getElementById('filterForm').elements.sort_by?.value;
+      const sorted = sortStartups(startups, sortBy);
+
       const grid = document.getElementById('startup-grid');
       const countSpan = document.getElementById('startup-count');
       const noStartups = document.getElementById('no-startups');
       const clearBtn = document.getElementById('clear-filters');
       grid.innerHTML = '';
-      if (!startups || startups.length === 0) {
+
+      if (!sorted || sorted.length === 0) {
         noStartups.classList.remove('hidden');
         countSpan.textContent = '0';
         clearBtn.classList.add('hidden');
         return;
       }
+
       noStartups.classList.add('hidden');
-      countSpan.textContent = startups.length;
-      document.getElementById('startup-plural').textContent = startups.length === 1 ? '' : 's';
-      startups.forEach(s => grid.appendChild(createStartupCard(s)));
+      countSpan.textContent = sorted.length;
+      document.getElementById('startup-plural').textContent = sorted.length === 1 ? '' : 's';
+      clearBtn.classList.remove('hidden');
+
+      for (const s of sorted) {
+        const card = createStartupCard(s);
+        grid.appendChild(card);
+      }
     }
 
+    // ===========================
+    // Filters & UI helpers
+    // ===========================
+    function clearAllFilters() {
+      const form = document.getElementById('filterForm');
+      form.reset();
+      const slider = document.getElementById('riskSlider');
+      slider.value = 50;
+      updateRiskLabel(50);
+      renderStartups();
+    }
+
+    function updateRiskLabel(value) {
+      let label = 'Medium';
+      if (value === '' || value === null) value = 50;
+      const numeric = Number(value);
+      if (numeric < 33) label = 'Low';
+      else if (numeric > 66) label = 'High';
+      document.getElementById('risk-value').textContent = label;
+      document.getElementById('risk-hidden').value = numeric;
+    }
+
+    function applyPreset(preset) {
+      const form = document.getElementById('filterForm');
+      if (preset === 'conservative') { document.getElementById('riskSlider').value = 20; updateRiskLabel(20); }
+      else if (preset === 'balanced') { document.getElementById('riskSlider').value = 50; updateRiskLabel(50); }
+      else if (preset === 'aggressive') { document.getElementById('riskSlider').value = 80; updateRiskLabel(80); form.elements.min_return.value = '20'; }
+      renderStartups();
+    }
+
+    // ===========================
+    // Logout
+    // ===========================
+    async function logoutUser() {
+      try {
+        await fetch(LOGOUT_ENDPOINT, { method: 'POST', headers: authHeaders() });
+      } catch (err) {
+        console.warn('Logout error (ignored):', err);
+      } finally {
+        localStorage.removeItem('authToken');
+        // Redirect to login
+        window.location.href = '/login';
+      }
+    }
+
+    // ===========================
+    // DOM events
+    // ===========================
     document.getElementById('filterForm').addEventListener('submit', e => {
       e.preventDefault();
       renderStartups();
     });
 
-    function clearAllFilters() {
-      const form = document.getElementById('filterForm');
-      form.reset();
-      const slider = form.elements.risk_slider;
-      slider.value = 50;
-      document.getElementById('risk-value').textContent = 'None';
-      document.getElementById('risk-hidden').value = '';
-      renderStartups();
-    }
-
-    function updateRiskLabel(value) {
-      let label = 'Medium', riskValue = 'medium';
-      if (value < 33) { label = 'Low'; riskValue = 'low'; }
-      else if (value > 66) { label = 'High'; riskValue = 'high'; }
-      document.getElementById('risk-value').textContent = label;
-      document.getElementById('risk-hidden').value = riskValue;
-    }
-
-    function applyPreset(preset) {
-      const form = document.getElementById('filterForm');
-      if (preset === 'conservative') { form.elements.risk_slider.value = 20; updateRiskLabel(20); }
-      else if (preset === 'balanced') { form.elements.risk_slider.value = 50; updateRiskLabel(50); }
-      else if (preset === 'aggressive') { form.elements.risk_slider.value = 80; form.elements.min_return.value = '20'; updateRiskLabel(80); }
-      renderStartups();
-    }
-
-    function openStartupProfile(id, isDeckBuilder) {
-      const base = '../Module_2/';
-      const target = isDeckBuilder ? `${base}Company_ProfileDB.html?id=${id}` : `${base}Company_Profile.html?id=${id}`;
-      window.location.href = target;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const token = localStorage.getItem('authToken');
-      if (!token) { window.location.href = '/login'; return; }
-      renderStartups();
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      logoutUser();
     });
+
+    // initial boot
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = getAuthToken();
+      if (!token) { window.location.href = '/login'; return; }
+
+      // Refresh watchlist then render
+      try {
+        await refreshWatchlist();
+      } catch (e) { /* ignore */ }
+
+      await renderStartups();
+    });
+
+    // expose helpers for debugging (optional)
+    window._fundora = {
+      refreshWatchlist,
+      fetchStartups,
+      renderStartups,
+      addToWatchlist,
+      removeFromWatchlist
+    };
   </script>
 
   <style>

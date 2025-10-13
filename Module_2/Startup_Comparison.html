@@ -1,157 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Startup Comparison - Fundora</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="max-w-7xl mx-auto p-6">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Startup Comparison</h1>
-                <p id="comparison-count" class="text-gray-600 mt-1">Loading...</p>
-            </div>
-                <div class="flex gap-3">
-                <a href="/dashboard.html" class="text-gray-600 hover:text-gray-800 font-medium flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-                Dashboard
-                </a>
-            </div>
-        </div>
+{% extends "base.html" %}
+{% block title %}Startup Comparison{% endblock %}
 
-        <!-- Company Headers -->
-        <div id="comparison-header" class="grid gap-6 mb-8"></div>
+{% block content %}
+<header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center">
+        <a href="../Module1/Dashboard.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
+          Fundora
+        </a>
+      </div>
+      <div id="header-user" class="flex items-center space-x-4"></div>
+    </div>
+  </div>
+  <script>
+    function renderHeaderUser(user) {
+      const container = document.getElementById('header-user');
+      container.innerHTML = '';
+      if (!user || !user.name) return;
+      container.innerHTML = `
+        <span class="text-gray-700 text-sm">
+          Welcome, <span class="font-medium">${user.name}</span>
+        </span>
+        <a href="/logout.html"
+          class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+          Logout
+        </a>
+      `;
+    }
+  </script>
+</header>
 
-        <!-- Comparison Table -->
-        <div id="comparison-table" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"></div>
-
-        <!-- Action Buttons -->
-        <div class="flex justify-center gap-4 mt-8">
-            <button id="export-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                <span id="export-text">Export PDF Report</span>
-            </button>
-
-            <a href="/compare.html" class="border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center">
-                Compare Different Startups
-            </a>
-        </div>
+<main class="bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Startup Comparison</h1>
+        <p id="comparison-count" class="text-gray-600 mt-1">Loading...</p>
+      </div>
+      <div class="flex gap-3">
+        <a href="../Module1/Dashboard.html" class="text-gray-600 hover:text-gray-800 font-medium flex items-center">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Dashboard
+        </a>
+      </div>
     </div>
 
-    <!-- Loading Modal -->
-    <div id="loading-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-            <div class="flex items-center justify-center mb-4">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-            <p class="text-center text-gray-700 font-medium">Generating PDF Report...</p>
-            <p class="text-center text-gray-500 text-sm mt-2">This may take a few moments</p>
-        </div>
+    <!-- Company Headers -->
+    <div id="comparison-header" class="grid gap-6 mb-8"></div>
+
+    <!-- Comparison Table -->
+    <div id="comparison-table" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"></div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-center gap-4 mt-8">
+      <button id="export-btn"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <span id="export-text">Export PDF Report</span>
+      </button>
+
+      <a href="/compare.html"
+        class="border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center">
+        Compare Different Startups
+      </a>
     </div>
+  </div>
 
-    <!-- <script>
-        // Export functionality
-        document.getElementById('export-btn').addEventListener('click', function() {
-            const btn = this;
-            const btnText = document.getElementById('export-text');
-            const loadingModal = document.getElementById('loading-modal');
-            
-            // Get current URL parameters to maintain startup selection
-            const urlParams = new URLSearchParams(window.location.search);
-            const startups = urlParams.get('startups');
-            
-            if (!startups) {
-                alert('No startups selected for comparison');
-                return;
-            }
-            
-            // Show loading state
-            btn.disabled = true;
-            btnText.textContent = 'Generating PDF...';
-            loadingModal.classList.remove('hidden');
-            
-            // Create export URL (you'll need to add this URL pattern in your urls.py)
-            const exportUrl = `/export-startup-comparison-pdf/?startups=${startups}`;
-            
-            // Create a temporary link to trigger download
-            const link = document.createElement('a');
-            link.href = exportUrl;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Reset button state after a delay
-            setTimeout(() => {
-                btn.disabled = false;
-                btnText.textContent = 'Export PDF Report';
-                loadingModal.classList.add('hidden');
-            }, 3000);
-        });
+  <!-- Loading Modal -->
+  <div id="loading-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+      <div class="flex items-center justify-center mb-4">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+      <p class="text-center text-gray-700 font-medium">Generating PDF Report...</p>
+      <p class="text-center text-gray-500 text-sm mt-2">This may take a few moments</p>
+    </div>
+  </div>
+</main>
 
-        // Alternative method using fetch for better error handling
-        function exportPDFWithFetch() {
-            const btn = document.getElementById('export-btn');
-            const btnText = document.getElementById('export-text');
-            const loadingModal = document.getElementById('loading-modal');
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const startups = urlParams.get('startups');
-            
-            if (!startups) {
-                alert('No startups selected for comparison');
-                return;
-            }
-            
-            // Show loading state
-            btn.disabled = true;
-            btnText.textContent = 'Generating PDF...';
-            loadingModal.classList.remove('hidden');
-            
-            const exportUrl = `/export-startup-comparison-pdf/?startups=${startups}`;
-            
-            fetch(exportUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('PDF generation failed');
-                    }
-                    return response.blob();
-                })
-                .then(blob => {
-                    // Create download link
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `startup_comparison_${new Date().toISOString().split('T')[0]}.pdf`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                })
-                .catch(error => {
-                    console.error('Export failed:', error);
-                    alert('Failed to export PDF. Please try again.');
-                })
-                .finally(() => {
-                    // Reset button state
-                    btn.disabled = false;
-                    btnText.textContent = 'Export PDF Report';
-                    loadingModal.classList.add('hidden');
-                });
-        }
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const exportBtn = document.getElementById('export-btn');
+  const exportText = document.getElementById('export-text');
+  const loadingModal = document.getElementById('loading-modal');
+  const comparisonCount = document.getElementById('comparison-count');
 
-        // Print functionality (optional alternative)
-        function printComparison() {
-            window.print();
-        }
-    </script> -->
-</body>
-</html>
+  const urlParams = new URLSearchParams(window.location.search);
+  const startups = urlParams.get('startups');
+
+  if (startups) {
+    const startupList = startups.split(',').length;
+    comparisonCount.textContent = `${startupList} startup${startupList > 1 ? 's' : ''} selected for comparison`;
+  } else {
+    comparisonCount.textContent = 'No startups selected';
+  }
+
+  exportBtn.addEventListener('click', function () {
+    if (!startups) {
+      alert('No startups selected for comparison');
+      return;
+    }
+
+    exportBtn.disabled = true;
+    exportText.textContent = 'Generating PDF...';
+    loadingModal.classList.remove('hidden');
+
+    const exportUrl = `/export-startup-comparison-pdf/?startups=${startups}`;
+    const link = document.createElement('a');
+    link.href = exportUrl;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setTimeout(() => {
+      exportBtn.disabled = false;
+      exportText.textContent = 'Export PDF Report';
+      loadingModal.classList.add('hidden');
+    }, 3000);
+  });
+});
+</script>
+{% endblock %}

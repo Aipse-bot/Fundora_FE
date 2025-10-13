@@ -1,216 +1,408 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company Name</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Company Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #f8fafc;
+    }
+  </style>
 </head>
 <body class="bg-gray-50 text-black min-h-screen">
-    <!-- Include Module 3 Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-            
-            <!-- Left side - Fundora logo/title -->
-            <div class="flex items-center">
-                <a href="/index.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
-                Fundora
-                </a>
-            </div>
-
-            <!-- Right side - Welcome message and logout -->
-            <div id="header-user" class="flex items-center space-x-4"></div>
-
-            </div>
+  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="../Module_1/Dashboard.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">Fundora</a>
         </div>
-    <script>
-        function renderHeaderUser(user) {
-            const container = document.getElementById('header-user');
-            container.innerHTML = '';
+        <div id="header-user" class="flex items-center space-x-4"></div>
+      </div>
+    </div>
+  </header>
 
-            if (!user || !user.name) return;
-
-            container.innerHTML = `
-                <span class="text-gray-700 text-sm">
-                Welcome, <span class="font-medium">${user.name}</span>
-                </span>
-                <a href="/logout.html"
-                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                Logout
-                </a>
-            `;
-        }
-    </script>
-    </header>
-
-    <!-- Full page layout instead of modal -->
-    <div class="py-0">
-        <div class="max-w-screen-xl mx-auto space-y-8 p-4 sm:p-6 lg:p-8">
-
-            <!-- Header -->
-            <div class="bg-blue-600 text-white px-4 sm:px-6 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg">
-                <div class="flex items-center space-x-4">
-                    <div id="deck-initial" class="bg-white text-blue-600 font-bold w-10 h-10 flex items-center justify-center text-xl">L</div>
-                    <div>
-                    <h1 id="deck-name" class="text-2xl sm:text-3xl font-semibold">Loading...</h1>
-                    <p id="deck-tagline" class="text-lg sm:text-xl text-blue-100">Loading...</p>
-                    </div>
-                </div>
-                <div id="deck-nav" class="flex flex-col sm:flex-row gap-2 sm:gap-3"></div>
-            </div>
-
-            <!-- Main Layout with Sidebar -->
-            <div class="flex flex-col lg:flex-row gap-6">
-                <!-- Main Content -->
-                <div class="flex-1 space-y-6">
-                    <!-- Problem & Solution -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="px-4 py-6 bg-white border rounded">
-                        <h2 class="text-xl font-bold text-black mb-2">The Problem</h2>
-                        <div class="w-full h-1 bg-blue-500 mb-4"></div>
-                        <p id="problem-description" class="text-gray-500 text-lg">—</p>
-                        </div>
-                        <div class="px-4 py-6 bg-white border rounded">
-                        <h2 class="text-xl font-bold text-black mb-2">The Solution</h2>
-                        <div class="w-full h-1 bg-blue-500 mb-4"></div>
-                        <p id="solution-description" class="text-gray-500 text-lg">—</p>
-                        </div>
-                    </div>
-
-                    <!-- Market & Financials -->
-                    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Market Analysis -->
-                        <div class="bg-white p-4 sm:p-6 rounded shadow text-left">
-                            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Market Analysis</h2>
-                            <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600 font-medium">Primary Market:</span>
-                                    <span id="primary-market" class="text-gray-900 font-semibold">—</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600 font-medium">Target Audience:</span>
-                                    <span id="target-audience" class="text-gray-900 font-semibold">—</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600 font-medium">Market Growth (YOY):</span>
-                                    <span id="market-growth" class="text-green-600 font-semibold">—</span>
-                                </div>
-                                <div class="mt-4">
-                                    <span class="text-gray-600 font-medium">Our Advantage:</span>
-                                    <p id="competitive-advantage" class="text-blue-600 mt-1">—</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Financial Projections -->
-                        <div class="bg-white p-4 sm:p-6 rounded shadow">
-                            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Financial Projection</h2>
-                            <div id="financial-table-container" class="overflow-x-auto mb-4"></div>
-                            <div class="mt-4">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">Revenue & Profit Chart</h3>
-                                <canvas id="revenueProfitChart" class="w-full h-64"></canvas>
-                            </div>
-                        </div>
-                    </section>
-                    <!-- The Ask -->
-                    <div class="px-4 py-6 bg-white border rounded text-center">
-                        <h2 class="text-xl font-bold text-black mb-4">THE ASK</h2>
-                        <div id="ask-section" class="space-y-3">
-                        <p class="text-gray-500">No funding information available</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sidebar Actions -->
-                <div class="w-full lg:w-80 space-y-6">
-                <!-- Actions -->
-                    <div class="px-4 py-6 bg-white border rounded">
-                        <h2 class="text-xl font-bold text-black mb-4">Actions</h2>
-                        <div id="actions-panel" class="space-y-3"></div>
-                    </div>
-                </div>
-            </div>
+  <div class="py-0">
+    <div class="max-w-screen-xl mx-auto space-y-8 p-4 sm:p-6 lg:p-8">
+      <div class="bg-blue-600 text-white px-4 sm:px-6 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg">
+        <div class="flex items-center space-x-4">
+          <div id="deck-initial" class="bg-white text-blue-600 font-bold w-10 h-10 flex items-center justify-center text-xl">L</div>
+          <div>
+            <h1 id="deck-name" class="text-2xl sm:text-3xl font-semibold">Loading...</h1>
+            <p id="deck-tagline" class="text-lg sm:text-xl text-blue-100">Loading...</p>
+          </div>
         </div>
+        <div id="deck-nav" class="flex flex-col sm:flex-row gap-2 sm:gap-3"></div>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-6">
+        <div class="flex-1 space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="px-4 py-6 bg-white border rounded">
+              <h2 class="text-xl font-bold text-black mb-2">The Problem</h2>
+              <div class="w-full h-1 bg-blue-500 mb-4"></div>
+              <p id="problem-description" class="text-gray-500 text-lg">—</p>
+            </div>
+            <div class="px-4 py-6 bg-white border rounded">
+              <h2 class="text-xl font-bold text-black mb-2">The Solution</h2>
+              <div class="w-full h-1 bg-blue-500 mb-4"></div>
+              <p id="solution-description" class="text-gray-500 text-lg">—</p>
+            </div>
+          </div>
+
+          <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-4 sm:p-6 rounded shadow text-left">
+              <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Market Analysis</h2>
+              <div class="space-y-3">
+                <div class="flex justify-between">
+                  <span class="text-gray-600 font-medium">Primary Market:</span>
+                  <span id="primary-market" class="text-gray-900 font-semibold">—</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600 font-medium">Target Audience:</span>
+                  <span id="target-audience" class="text-gray-900 font-semibold">—</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600 font-medium">Market Growth (YOY):</span>
+                  <span id="market-growth" class="text-green-600 font-semibold">—</span>
+                </div>
+                <div class="mt-4">
+                  <span class="text-gray-600 font-medium">Our Advantage:</span>
+                  <p id="competitive-advantage" class="text-blue-600 mt-1">—</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white p-4 sm:p-6 rounded shadow">
+              <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Financial Projection</h2>
+              <div id="financial-table-container" class="overflow-x-auto mb-4"></div>
+              <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">Revenue & Profit Chart</h3>
+                <canvas id="revenueProfitChart" class="w-full h-64"></canvas>
+              </div>
+            </div>
+          </section>
+
+          <div class="px-4 py-6 bg-white border rounded text-center">
+            <h2 class="text-xl font-bold text-black mb-4">THE ASK</h2>
+            <div id="ask-section" class="space-y-3">
+              <p class="text-gray-500">No funding information available</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-full lg:w-80 space-y-6">
+          <div class="px-4 py-6 bg-white border rounded">
+            <h2 class="text-xl font-bold text-black mb-4">Actions</h2>
+            <div id="actions-panel" class="space-y-3"></div>
+          </div>
+        </div>
+      </div>
     </div>
-    </div>
-    </div>
+  </div>
 
-<!-- <script>
-document.addEventListener('DOMContentLoaded', async function () {
-  const ctx = document.getElementById('revenueProfitChart')?.getContext('2d');
-  if (!ctx) return;
+  <script>
+    const token = localStorage.getItem("authToken");
+    const params = new URLSearchParams(window.location.search);
+    const startupId = params.get("id");
 
-  try {
-    const token = localStorage.getItem('authToken');
-    const res = await fetch('http://127.0.0.1:8000/api/financials/', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const financials = await res.json();
+    function authHeaders() {
+      const h = {};
+      if (token) h['Authorization'] = `Bearer ${token}`;
+      return h;
+    }
 
-    const sorted = (financials || [])
-      .map(f => ({
-        year: f.year,
-        revenue: parseFloat(f.revenue) || 0,
-        profit: parseFloat(f.profit) || 0,
-        yearNumeric: parseInt(f.year) || 0
-      }))
-      .sort((a, b) => a.yearNumeric - b.yearNumeric);
-
-    const labels = sorted.length ? sorted.map(f => f.year) : ['No data'];
-    const revenueData = sorted.length ? sorted.map(f => f.revenue) : [0];
-    const profitData = sorted.length ? sorted.map(f => f.profit) : [0];
-
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Revenue',
-            data: revenueData,
-            backgroundColor: '#3b82f6'
-          },
-          {
-            label: 'Profit',
-            data: profitData,
-            backgroundColor: '#10b981'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: false }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              callback: value => '₱' + value.toLocaleString()
-            }
-          }
-        }
+    async function fetchJSON(url, opts = {}) {
+      const merged = Object.assign({ headers: authHeaders() }, opts);
+      const res = await fetch(url, merged);
+      if (!res.ok) {
+        // return a rejected promise with status for upstream handling
+        const text = await res.text().catch(() => '');
+        const err = new Error(`API request failed: ${res.status} ${res.statusText} ${text}`);
+        err.status = res.status;
+        throw err;
       }
+      return res.json();
+    }
+
+    async function tryFetchJSON(url) {
+      try {
+        return await fetchJSON(url);
+      } catch (err) {
+        console.warn(`fetch failed for ${url}:`, err.message || err);
+        return null;
+      }
+    }
+
+    async function loadHeaderUser() {
+      // Not all projects expose /api/users/me/ — don't hard-fail
+      const user = await tryFetchJSON(`http://127.0.0.1:8000/api/users/me/`);
+      const container = document.getElementById("header-user");
+      container.innerHTML = '';
+      if (!user) {
+        // Simple fallback UI (logged-in state assumed if token present)
+        if (token) {
+          container.innerHTML = `<a href="/logout.html" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100">Logout</a>`;
+        }
+        return;
+      }
+      // If API returns user object, attempt to use `name` or `username`/`email`
+      const displayName = user.name || user.username || user.email || "User";
+      container.innerHTML = `
+        <span class="text-gray-700 text-sm">Welcome, <span class="font-medium">${displayName}</span></span>
+        <a href="/logout.html" class="inline-flex items-center px-3 py-2 border text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100">Logout</a>
+      `;
+    }
+
+    function populateHeaderFromStartup(startup) {
+      const initial = (startup.company_name || "—").charAt(0).toUpperCase() || "L";
+      document.title = startup.company_name || "Company Profile";
+      document.getElementById("deck-initial").textContent = initial;
+      document.getElementById("deck-name").textContent = startup.company_name || "—";
+      document.getElementById("deck-tagline").textContent = startup.company_description || "—";
+    }
+
+    function populateAsk(ask) {
+      const askSection = document.getElementById("ask-section");
+      if (!ask) {
+        askSection.innerHTML = `<p class="text-gray-500">No funding information available</p>`;
+        return;
+      }
+      // If amount is numeric, format it; else show as-is
+      const amt = (ask.amount != null && !isNaN(Number(ask.amount))) ? `₱${Number(ask.amount).toLocaleString()}` : (ask.amount || "—");
+      askSection.innerHTML = `
+        <p class="text-lg font-semibold text-gray-800">Funding Goal: ${amt}</p>
+        <p class="text-gray-600">Use of Funds: ${ask.usage_description || "—"}</p>
+      `;
+    }
+
+    function populateMarket(market) {
+      document.getElementById("primary-market").textContent = market?.primary_market || "—";
+      document.getElementById("target-audience").textContent = market?.target_audience || "—";
+      const growth = market?.market_growth_rate ?? market?.market_growth ?? "—";
+      document.getElementById("market-growth").textContent = growth !== null ? String(growth) : "—";
+      document.getElementById("competitive-advantage").textContent = market?.competitive_advantage || "—";
+    }
+
+    function populateProblemSolution(problemObj, solutionObj) {
+      const problemText = problemObj?.description ?? (typeof problemObj === 'string' ? problemObj : null);
+      const solutionText = solutionObj?.description ?? (typeof solutionObj === 'string' ? solutionObj : null);
+      document.getElementById("problem-description").textContent = problemText || "—";
+      document.getElementById("solution-description").textContent = solutionText || "—";
+    }
+
+    function buildActionsPanel(isInWatchlist, startupId) {
+      const actionsPanel = document.getElementById("actions-panel");
+      const inWatchlist = !!isInWatchlist;
+      
+      const watchBtnText = inWatchlist 
+          ? `<svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg> In Watchlist`
+          : `<svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg> Add to Watchlist`;
+      
+      const watchBtnClass = inWatchlist 
+          ? "bg-gray-500 hover:bg-gray-600" 
+          : "bg-red-400 hover:bg-red-500";
+
+      actionsPanel.innerHTML = `
+          <button id="watchlistBtn" class="w-full ${watchBtnClass} text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200">
+              ${watchBtnText}
+          </button>
+          <a href="../Module_2/Compare_Startups.html" class="block w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg text-center transition-colors duration-200">
+              Compare Startups
+          </a>
+          <a href="../Module_2/Investment_Simulation.html?startup_id=${startupId}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors duration-200">
+              Invest
+          </a>
+      `;
+      
+      document.getElementById("watchlistBtn").onclick = async () => {
+          try {
+              const action = inWatchlist ? 'remove' : 'add';
+              const method = action === 'add' ? 'POST' : 'DELETE';
+              
+              const res = await fetch(`http://127.0.0.1:8000/api/investor/watchlist/${action}/${startupId}/`, {
+                  method: method,
+                  headers: authHeaders()
+              });
+              
+              if (res.ok) {
+                  // Reload data to update button state
+                  await loadAllData();
+              } else {
+                  const errorData = await res.json().catch(() => null);
+                  console.error('Watchlist update failed:', errorData);
+                  alert('Unable to update watchlist. Please try again.');
+              }
+          } catch (err) {
+              console.error('Watchlist toggle failed:', err);
+              alert('Unable to update watchlist. Please try again.');
+          }
+      };
+    }
+
+    function renderFinancialTable(financials) {
+      const container = document.getElementById("financial-table-container");
+      if (!financials || financials.length === 0) {
+        container.innerHTML = "<p class='text-gray-500 text-center'>No financial data available.</p>";
+        return;
+      }
+
+      const parsed = financials.map(f => ({
+        year: f.year,
+        revenue: Number(f.revenue) || 0,
+        profit: Number(f.profit) || 0
+      })).sort((a,b) => (Number(a.year) || 0) - (Number(b.year) || 0));
+
+      const rows = parsed.map(f => `
+        <tr class="border-b">
+          <td class="py-2 px-3">${f.year}</td>
+          <td class="py-2 px-3 text-blue-600 font-semibold">₱${f.revenue.toLocaleString()}</td>
+          <td class="py-2 px-3 text-green-600 font-semibold">₱${f.profit.toLocaleString()}</td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = `
+        <table class="min-w-full text-sm text-left">
+          <thead class="bg-gray-100 font-semibold text-gray-700">
+            <tr><th class="py-2 px-3">Year</th><th class="py-2 px-3">Revenue</th><th class="py-2 px-3">Profit</th></tr>
+          </thead><tbody>${rows}</tbody>
+        </table>`;
+
+      // Chart heress
+      const ctxEl = document.getElementById("revenueProfitChart");
+      if (!ctxEl) return;
+      const ctx = ctxEl.getContext("2d");
+      // destroy previous chart if any
+      if (window._revenueProfitChart) {
+        try { window._revenueProfitChart.destroy(); } catch(e){/*ignore*/ }
+        window._revenueProfitChart = null;
+      }
+
+      window._revenueProfitChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: parsed.map(p => p.year),
+          datasets: [
+            { label: "Revenue", data: parsed.map(p => p.revenue), backgroundColor: "#3b82f6" },
+            { label: "Profit", data: parsed.map(p => p.profit), backgroundColor: "#10b981" }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true, ticks: { callback: v => "₱" + Number(v).toLocaleString() } }
+          }
+        }
+      });
+    }
+
+    async function loadDeckReport(startupId) {
+      return tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupId}/profile/`);
+    }
+
+    async function loadStartupProfile(startupId) {
+      return tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupId}/profile/`);
+    }
+
+    async function loadAllData() {
+      if (!startupId) {
+        alert('Missing startup id');
+        return;
+      }
+
+      // Try report (deck-backed) first
+      let report = await loadDeckReport(startupId);
+      if (report && report.report_type === 'deck') {
+        // Report returns deck info and nested fields (see DeckReportSerializer / DeckReportView)
+        const deckInfo = report.deck_info || {};
+        const problem = report.problem || null;
+        const solution = report.solution || null;
+        const market = report.market_analysis || null;
+        const ask = report.ask || null;
+        const financials = report.financials || [];
+
+        populateHeaderFromStartup({ company_name: deckInfo.company_name, company_description: deckInfo.tagline });
+        populateProblemSolution(problem, solution);
+        populateMarket(market);
+        populateAsk(ask);
+        const inWatchlist = report.is_in_watchlist ?? false;
+        buildActionsPanel(inWatchlist, startupId);
+        renderFinancialTable(financials);
+        return;
+      }
+
+      const profile = await loadStartupProfile(startupId);
+      if (!profile) {
+        console.warn('No profile or deck report available for startup', startupId);
+        const fallback = await tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupId}/`);
+        if (fallback) {
+          populateHeaderFromStartup(fallback);
+          buildActionsPanel(fallback.is_in_watchlist, startupId);
+        } else {
+          document.getElementById("deck-name").textContent = "Startup not found";
+        }
+        // ensure no financials
+        renderFinancialTable([]);
+        populateProblemSolution(null, null);
+        populateMarket(null);
+        populateAsk(null);
+        return;
+      }
+
+      const data = profile;
+
+      const startupObj = data.startup || data;
+      const deckObj = data.deck || null;
+
+      populateHeaderFromStartup({
+        company_name: startupObj.company_name || startupObj.company_name, // both shapes attempt
+        company_description: startupObj.company_description || startupObj.company_description
+      });
+
+      if (deckObj) {
+        populateProblemSolution(deckObj.problem, deckObj.solution);
+        populateMarket(deckObj.market_analysis || {});
+        populateAsk(deckObj.ask || {});
+        renderFinancialTable(deckObj.financials || []);
+      } else {
+        // If no deck edi deck deck
+        populateProblemSolution(data.problem, data.solution);
+        populateMarket({
+          primary_market: data.primary_market,
+          target_audience: data.target_audience,
+          market_growth_rate: data.market_growth,
+          competitive_advantage: data.competitive_advantage
+        });
+        populateAsk({
+          amount: data.funding_goal ?? data.funding_ask ?? data.funding_goal,
+          usage_description: data.use_of_funds ?? data.usage_description ?? data.usage
+        });
+        renderFinancialTable(data.financials || []);
+      }
+
+      // Actions
+      const inWatchlist = data.is_in_watchlist ?? startupObj.is_in_watchlist ?? false;
+      buildActionsPanel(inWatchlist, startupId);
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // auth enforce if requred dri
+      if (!token) {
+        // window.location.href = '/login.html';
+        console.warn('No auth token present — page will try to load public data where available.');
+      }
+
+      await loadHeaderUser();
+      await loadAllData();
     });
-
-  } catch (err) {
-    console.error('Failed to load financial chart:', err);
-    showAlert('Unable to load financial chart', 'error');
-  }
-});
-</script> -->
-
+  </script>
 </body>
 </html>

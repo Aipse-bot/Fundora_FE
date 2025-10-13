@@ -20,7 +20,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center">
-        <a href="/Dashboard.html" class="mr-6 p-2 hover:bg-gray-100 rounded-full">
+        <a href="../Module_1/Dashboard.html" class="mr-6 p-2 hover:bg-gray-100 rounded-full">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
@@ -92,7 +92,7 @@
         <!-- Action Buttons -->
         <div class="space-y-3">
           <button id="watchlistBtn" class="w-full font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"></button>
-          <a href="/compare.html" class="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
+          <a href="../Module_2/Compare_Startups.html" class="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
             Compare Startups
           </a>
           <a id="downloadPdf" class="w-full bg-green-100 hover:bg-green-200 text-green-700 font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
@@ -107,152 +107,162 @@
   </div>
 
   <script>
-  const token = localStorage.getItem("authToken");
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
+      const token = localStorage.getItem("authToken");
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
 
-  async function loadCompany() {
-    if (!id) return;
+      async function loadCompany() {
+          if (!id || !token) {
+              alert('Missing startup ID or authentication');
+              window.location.href = '../Module_1/Dashboard.html';
+              return;
+          }
 
-    const res = await fetch(`http://127.0.0.1:8000/api/startups/${id}/profile/`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
+          try {
+              const res = await fetch(`http://127.0.0.1:8000/api/startups/${id}/`, {
+                  headers: { Authorization: `Bearer ${token}` },
+              });
+              
+              if (!res.ok) {
+                  throw new Error('Failed to load startup data');
+              }
+              
+              const data = await res.json();
 
-    document.title = `${data.company_name} - Company Profile`;
-    document.getElementById("companyName").textContent = data.company_name;
-    document.getElementById("industry").textContent = data.industry || "—";
-    document.getElementById("companyDescription").textContent =
-      data.company_description || "No description provided.";
+              document.title = `${data.company_name} - Company Profile`;
+              document.getElementById("companyName").textContent = data.company_name;
+              document.getElementById("industry").textContent = data.industry || "—";
+              document.getElementById("companyDescription").textContent =
+                  data.company_description || "No description provided.";
 
-    // Risk Badge
-    const badge = document.getElementById("riskBadge");
-    if (data.data_source_confidence === "High") {
-      badge.textContent = "Low Risk";
-      badge.className =
-        "bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full";
-    } else if (data.data_source_confidence === "Medium") {
-      badge.textContent = "Medium Risk";
-      badge.className =
-        "bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full";
-    } else {
-      badge.textContent = "High Risk";
-      badge.className =
-        "bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full";
-    }
+              const badge = document.getElementById("riskBadge");
+              const conf = data.data_source_confidence || "Medium";
+              const riskMap = {
+                  High: ["Low Risk", "bg-green-100 text-green-800"],
+                  Medium: ["Medium Risk", "bg-yellow-100 text-yellow-800"],
+                  Low: ["High Risk", "bg-red-100 text-red-800"],
+              };
+              const [label, classes] = riskMap[conf] || ["Unknown", "bg-gray-100 text-gray-800"];
+              badge.textContent = label;
+              badge.className = `${classes} text-sm font-medium px-3 py-1 rounded-full`;
 
-    // Financial Metrics
-    const fin = document.getElementById("financials");
-    fin.innerHTML = `
-      <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-        <div class="text-2xl font-bold text-green-600 mb-1">${data.revenue ?? "N/A"}</div>
-        <div class="text-sm text-gray-600">Revenue</div>
-      </div>
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-        <div class="text-2xl font-bold text-blue-600 mb-1">${data.net_income ?? "N/A"}</div>
-        <div class="text-sm text-gray-600">Net Income</div>
-      </div>
-      <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
-        <div class="text-2xl font-bold text-orange-600 mb-1">${data.total_assets ?? "N/A"}</div>
-        <div class="text-sm text-gray-600">Total Assets</div>
-      </div>
-      <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
-        <div class="text-2xl font-bold text-purple-600 mb-1">${data.cash_flow ?? "N/A"}</div>
-        <div class="text-sm text-gray-600">Cash Flow</div>
-      </div>
-    `;
+              const fin = document.getElementById("financials");
+              fin.innerHTML = `
+                  ${metric("green","Revenue",data.revenue)}
+                  ${metric("blue","Net Income",data.net_income)}
+                  ${metric("orange","Total Assets",data.total_assets)}
+                  ${metric("purple","Cash Flow",data.cash_flow)}
+              `;
 
-    // Qualitative Insights
-    const qual = document.getElementById("qualitative");
-    qual.innerHTML = `
-      <div class="mb-4">
-        <span class="text-gray-700 font-medium">Team Strength</span>
-        <p class="text-gray-600 text-sm">${data.team_strength ?? "No data"}</p>
-      </div>
-      <div class="mb-4">
-        <span class="text-gray-700 font-medium">Market Position</span>
-        <p class="text-gray-600 text-sm">${data.market_position ?? "No data"}</p>
-      </div>
-      <div class="mb-4">
-        <span class="text-gray-700 font-medium">Brand Reputation</span>
-        <p class="text-gray-600 text-sm">${data.brand_reputation ?? "No data"}</p>
-      </div>
-    `;
+              const qual = document.getElementById("qualitative");
+              qual.innerHTML = section("Team Strength", data.team_strength) +
+                              section("Market Position", data.market_position) +
+                              section("Brand Reputation", data.brand_reputation);
 
-    // Risk & Reward
-    const rr = document.getElementById("riskReward");
-    const riskScore = data.risk_score ?? 2.5;
-    const rewardScore = data.reward_score ?? 3.0;
-    rr.innerHTML = `
-      <div>
-        <div class="flex justify-between text-sm mb-2">
-          <p class="text-gray-700 font-medium">Risk Score</p>
-          <p class="font-semibold text-gray-900">${riskScore}/5</p>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-2">
-          <div class="bg-red-500 h-2 rounded-full" style="width:${(riskScore / 5) * 100}%"></div>
-        </div>
-      </div>
-      <div>
-        <div class="flex justify-between text-sm mb-2">
-          <p class="text-gray-700 font-medium">Reward Potential</p>
-          <p class="font-semibold text-gray-900">${rewardScore}/5</p>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-2">
-          <div class="bg-blue-500 h-2 rounded-full" style="width:${(rewardScore / 5) * 100}%"></div>
-        </div>
-      </div>
-    `;
+              const rr = document.getElementById("riskReward");
+              const reward = data.reward_potential ?? 3;
+              const risk = data.confidence_percentage
+                  ? Math.max(1, 5 - Math.round(data.confidence_percentage / 20))
+                  : 3;
+              rr.innerHTML = bar("Risk Score", risk, "red") + bar("Reward Potential", reward, "blue");
 
-    // Data Confidence
-    const dc = document.getElementById("dataConfidence");
-    dc.innerHTML = `
-      <div class="inline-flex items-center justify-center w-24 h-24 bg-blue-100 rounded-full mb-3">
-        <span class="text-lg font-bold text-blue-600 px-2 text-center leading-tight">${data.data_source_confidence ?? "N/A"}</span>
-      </div>
-      <p class="text-sm text-gray-600">
-        Confidence Level: <strong>${data.data_source_confidence ?? "Unknown"}</strong>
-      </p>
-    `;
+              const dc = document.getElementById("dataConfidence");
+              dc.innerHTML = `
+                  <div class="inline-flex items-center justify-center w-24 h-24 bg-blue-100 rounded-full mb-3">
+                      <span class="text-lg font-bold text-blue-600">${conf}</span>
+                  </div>
+                  <p class="text-sm text-gray-600">Confidence Level: <strong>${conf}</strong></p>
+              `;
 
-    // Watchlist Button
-    const watchBtn = document.getElementById("watchlistBtn");
-    const isInWatchlist = data.is_in_watchlist ?? false;
-    if (isInWatchlist) {
-      watchBtn.innerHTML = `
-        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-        </svg>
-        ✓ In Your Watchlist
-      `;
-      watchBtn.className =
-        "w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center";
-      watchBtn.onclick = () => modifyWatchlist("remove");
-    } else {
-      watchBtn.innerHTML = `
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-        </svg>
-        Add to Watchlist
-      `;
-      watchBtn.className =
-        "w-full bg-red-400 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center";
-      watchBtn.onclick = () => modifyWatchlist("add");
-    }
+              // Watchlist button with heart icon
+              const watchBtn = document.getElementById("watchlistBtn");
+              const inWatchlist = data.is_in_watchlist === true;
 
-    document.getElementById("downloadPdf").href = `/download_company_profile_pdf/${data.id}/`;
-    document.getElementById("investBtn").href = `/investment_simulation_with_startup/${data.id}/`;
-  }
+              if (inWatchlist) {
+                  watchBtn.innerHTML = `
+                      <svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                      </svg>
+                      In Watchlist
+                  `;
+                  watchBtn.className = "w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200";
+                  watchBtn.onclick = () => modifyWatchlist("remove");
+              } else {
+                  watchBtn.innerHTML = `
+                      <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                      </svg>
+                      Add to Watchlist
+                  `;
+                  watchBtn.className = "w-full bg-red-400 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200";
+                  watchBtn.onclick = () => modifyWatchlist("add");
+              }
 
-  async function modifyWatchlist(action) {
-    await fetch(`/api/watchlist/${action}/${id}/`, {
-      method: "POST",
-      headers: { Authorization: `Token ${token}` },
-    });
-    loadCompany();
-  }
+              document.getElementById("downloadPdf").href = `http://127.0.0.1:8000/api/startups/${id}/download/`;
+              document.getElementById("investBtn").href = `../Module_2/Investment_Simulation.html?startup_id=${id}`;
+          } catch (err) {
+              console.error('Error loading company:', err);
+              alert('Failed to load company profile');
+          }
+      }
 
-  document.addEventListener("DOMContentLoaded", loadCompany);
+      function metric(color, label, value) {
+          return `
+              <div class="bg-${color}-50 border border-${color}-200 rounded-lg p-4 text-center">
+                  <div class="text-2xl font-bold text-${color}-600 mb-1">${value ?? "N/A"}</div>
+                  <div class="text-sm text-gray-600">${label}</div>
+              </div>`;
+      }
+
+      function section(title, text) {
+          return `
+              <div class="mb-4">
+                  <span class="text-gray-700 font-medium">${title}</span>
+                  <p class="text-gray-600 text-sm">${text ?? "No data"}</p>
+              </div>`;
+      }
+
+      function bar(label, score, color) {
+          return `
+              <div>
+                  <div class="flex justify-between text-sm mb-2">
+                      <p class="text-gray-700 font-medium">${label}</p>
+                      <p class="font-semibold text-gray-900">${score}/5</p>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-${color}-500 h-2 rounded-full" style="width:${(score / 5) * 100}%"></div>
+                  </div>
+              </div>`;
+      }
+
+      async function modifyWatchlist(action) {
+        try {
+            const method = action === 'add' ? 'POST' : 'DELETE';
+            const endpoint = `http://127.0.0.1:8000/api/investor/watchlist/${action}/${id}/`;
+            
+            const res = await fetch(endpoint, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            
+            if (res.ok) {
+                // Reload to update button state
+                await loadCompany();
+            } else {
+                const errorData = await res.json().catch(() => null);
+                console.error('Watchlist update failed:', errorData);
+                alert('Failed to update watchlist. Please try again.');
+            }
+        } catch (err) {
+            console.error('Error updating watchlist:', err);
+            alert('Failed to update watchlist. Please try again.');
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadCompany);
   </script>
 </body>
 </html>
