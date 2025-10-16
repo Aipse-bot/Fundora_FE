@@ -1,131 +1,501 @@
-{% extends "base.html" %}
-{% block title %}Startup Comparison{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Startup Comparison - Fundora</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="../Module_1/Dashboard.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
+            Fundora
+          </a>
+        </div>
+        <div id="header-user" class="flex items-center space-x-4">
+          <a href="../Module_1/Dashboard.html" class="text-gray-600 hover:text-gray-800 font-medium">Dashboard</a>
+          <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
 
-{% block content %}
-<header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center h-16">
-      <div class="flex items-center">
-        <a href="../Module1/Dashboard.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
-          Fundora
+  <main class="bg-gray-50 min-h-screen pb-12">
+    <div class="max-w-7xl mx-auto p-6">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Startup Comparison</h1>
+          <p id="comparison-count" class="text-gray-600 mt-1">Loading comparison...</p>
+        </div>
+        <div class="flex gap-3">
+          <a href="Compare_Startups.html" class="text-gray-600 hover:text-gray-800 font-medium flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to Selection
+          </a>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-state" class="text-center py-16">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p class="text-gray-600">Loading startup data...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="error-state" class="hidden text-center py-16">
+        <div class="text-6xl mb-4">⚠️</div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Failed to load comparison</h3>
+        <p class="text-gray-500 mb-6">Please try again or select different startups</p>
+        <a href="Compare_Startups.html" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+          Back to Selection
         </a>
       </div>
-      <div id="header-user" class="flex items-center space-x-4"></div>
+
+      <!-- Company Headers -->
+      <div id="comparison-header" class="hidden grid gap-6 mb-8"></div>
+
+      <!-- Quick Stats Overview -->
+      <div id="quick-stats" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+        <h2 class="text-xl font-bold text-gray-900 mb-6">Quick Overview</h2>
+        <div id="quick-stats-content" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+      </div>
+
+      <!-- Visual Comparison Charts -->
+      <div id="charts-section" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Projected Returns</h3>
+          <canvas id="returns-chart"></canvas>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Risk vs Reward</h3>
+          <canvas id="risk-reward-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Detailed Comparison Table -->
+      <div id="comparison-table-section" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-8">
+        <div class="p-6 border-b border-gray-200">
+          <h2 class="text-xl font-bold text-gray-900">Detailed Comparison</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table id="comparison-table" class="w-full"></table>
+        </div>
+      </div>
     </div>
-  </div>
+  </main>
+
   <script>
-    function renderHeaderUser(user) {
-      const container = document.getElementById('header-user');
+    const API_BASE = 'http://127.0.0.1:8000';
+    const STARTUPS_ENDPOINT = `${API_BASE}/api/startups/`;
+    const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
+
+    let startupsData = [];
+    let returnsChart = null;
+    let riskRewardChart = null;
+
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
+
+    function authHeaders() {
+      const token = getAuthToken();
+      if (!token) return {};
+      return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+    }
+
+    function escapeHtml(unsafe) {
+      if (unsafe === null || unsafe === undefined) return '—';
+      return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function logoutUser() {
+      try {
+        await fetch(LOGOUT_ENDPOINT, { method: 'POST', headers: authHeaders() });
+      } catch (err) {
+        console.warn('Logout error:', err);
+      } finally {
+        localStorage.removeItem('authToken');
+        window.location.href = '/login';
+      }
+    }
+
+    async function fetchStartupById(id) {
+      try {
+        const response = await fetch(`${STARTUPS_ENDPOINT}${id}/`, {
+          headers: authHeaders()
+        });
+        if (!response.ok) throw new Error(`Failed to fetch startup ${id}`);
+        return await response.json();
+      } catch (error) {
+        console.error(`Error fetching startup ${id}:`, error);
+        return null;
+      }
+    }
+
+    async function loadComparison() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const startupsParam = urlParams.get('startups');
+
+      if (!startupsParam) {
+        showError('No startups selected for comparison');
+        return;
+      }
+
+      const startupIds = startupsParam.split(',').filter(id => id.trim());
+      
+      if (startupIds.length < 2) {
+        showError('Please select at least 2 startups to compare');
+        return;
+      }
+
+      document.getElementById('comparison-count').textContent = 
+        `Comparing ${startupIds.length} startup${startupIds.length > 1 ? 's' : ''}`;
+
+      try {
+        const promises = startupIds.map(id => fetchStartupById(id));
+        const results = await Promise.all(promises);
+        startupsData = results.filter(s => s !== null);
+
+        if (startupsData.length === 0) {
+          showError('Failed to load startup data');
+          return;
+        }
+
+        document.getElementById('loading-state').classList.add('hidden');
+        renderComparison();
+      } catch (error) {
+        console.error('Error loading comparison:', error);
+        showError('An error occurred while loading the comparison');
+      }
+    }
+
+    function showError(message) {
+      document.getElementById('loading-state').classList.add('hidden');
+      const errorState = document.getElementById('error-state');
+      errorState.classList.remove('hidden');
+      errorState.querySelector('p').textContent = message;
+    }
+
+    function renderComparison() {
+      renderHeaders();
+      renderQuickStats();
+      renderCharts();
+      renderComparisonTable();
+      
+      document.getElementById('comparison-header').classList.remove('hidden');
+      document.getElementById('quick-stats').classList.remove('hidden');
+      document.getElementById('charts-section').classList.remove('hidden');
+      document.getElementById('comparison-table-section').classList.remove('hidden');
+    }
+
+    function renderHeaders() {
+      const container = document.getElementById('comparison-header');
+      container.className = `grid grid-cols-1 md:grid-cols-${startupsData.length} gap-6 mb-8`;
       container.innerHTML = '';
-      if (!user || !user.name) return;
-      container.innerHTML = `
-        <span class="text-gray-700 text-sm">
-          Welcome, <span class="font-medium">${user.name}</span>
-        </span>
-        <a href="/logout.html"
-          class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-          Logout
-        </a>
-      `;
+
+      startupsData.forEach(startup => {
+        const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
+        const riskBadge = isDeck
+          ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>'
+          : (startup.data_source_confidence === 'High'
+              ? '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>'
+              : (startup.data_source_confidence === 'Medium'
+                  ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>'
+                  : '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>'));
+
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-sm border border-gray-200 p-6';
+        card.innerHTML = `
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">${escapeHtml(startup.company_name)}</h3>
+              <p class="text-sm text-gray-600">${escapeHtml(startup.industry || 'Not specified')}</p>
+            </div>
+            ${riskBadge}
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Projected Return</span>
+              <span class="text-sm font-bold ${startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">
+                ${startup.projected_return != null ? (startup.projected_return >= 0 ? '+' : '') + startup.projected_return + '%' : 'N/A'}
+              </span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Reward Potential</span>
+              <span class="text-sm font-bold text-gray-900">${getRewardValue(startup.reward_potential)}/5</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
+
+    function getRewardValue(reward) {
+      if (reward == null) return 'N/A';
+      if (typeof reward === 'string') return reward.split(',')[0].trim();
+      if (Array.isArray(reward)) return reward[0];
+      return String(reward);
+    }
+
+    function renderQuickStats() {
+      const container = document.getElementById('quick-stats-content');
+      container.innerHTML = '';
+
+      // Highest Projected Return
+      const highestReturn = [...startupsData].sort((a, b) => 
+        (b.projected_return || 0) - (a.projected_return || 0)
+      )[0];
+
+      // Best Reward Potential
+      const bestReward = [...startupsData].sort((a, b) => {
+        const aVal = parseFloat(getRewardValue(a.reward_potential)) || 0;
+        const bVal = parseFloat(getRewardValue(b.reward_potential)) || 0;
+        return bVal - aVal;
+      })[0];
+
+      // Lowest Risk
+      const lowestRisk = startupsData.find(s => s.data_source_confidence === 'High') || startupsData[0];
+
+      const stats = [
+        {
+          title: 'Highest Projected Return',
+          company: highestReturn.company_name,
+          value: highestReturn.projected_return != null ? `${highestReturn.projected_return >= 0 ? '+' : ''}${highestReturn.projected_return}%` : 'N/A',
+          color: 'text-green-600'
+        },
+        {
+          title: 'Best Reward Potential',
+          company: bestReward.company_name,
+          value: `${getRewardValue(bestReward.reward_potential)}/5`,
+          color: 'text-blue-600'
+        },
+        {
+          title: 'Lowest Risk',
+          company: lowestRisk.company_name,
+          value: lowestRisk.data_source_confidence === 'High' ? 'Low Risk' : 
+                 lowestRisk.data_source_confidence === 'Medium' ? 'Medium Risk' : 'High Risk',
+          color: 'text-purple-600'
+        }
+      ];
+
+      stats.forEach(stat => {
+        const statCard = document.createElement('div');
+        statCard.className = 'text-center p-4 bg-gray-50 rounded-lg';
+        statCard.innerHTML = `
+          <p class="text-sm text-gray-600 mb-1">${stat.title}</p>
+          <p class="text-lg font-bold text-gray-900 mb-1">${escapeHtml(stat.company)}</p>
+          <p class="text-2xl font-bold ${stat.color}">${stat.value}</p>
+        `;
+        container.appendChild(statCard);
+      });
+    }
+
+    function renderCharts() {
+      // Projected Returns Chart
+      const returnsCtx = document.getElementById('returns-chart').getContext('2d');
+      if (returnsChart) returnsChart.destroy();
+      
+      returnsChart = new Chart(returnsCtx, {
+        type: 'bar',
+        data: {
+          labels: startupsData.map(s => s.company_name),
+          datasets: [{
+            label: 'Projected Return (%)',
+            data: startupsData.map(s => s.projected_return || 0),
+            backgroundColor: startupsData.map(s => 
+              s.projected_return >= 0 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)'
+            ),
+            borderColor: startupsData.map(s => 
+              s.projected_return >= 0 ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)'
+            ),
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `Return: ${context.parsed.y >= 0 ? '+' : ''}${context.parsed.y}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return value + '%';
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // Risk vs Reward Scatter Chart
+      const riskRewardCtx = document.getElementById('risk-reward-chart').getContext('2d');
+      if (riskRewardChart) riskRewardChart.destroy();
+
+      const riskMap = { 'High': 1, 'Medium': 2, 'Low': 3 };
+      
+      riskRewardChart = new Chart(riskRewardCtx, {
+        type: 'scatter',
+        data: {
+          datasets: startupsData.map((s, idx) => ({
+            label: s.company_name,
+            data: [{
+              x: riskMap[s.data_source_confidence] || 2,
+              y: parseFloat(getRewardValue(s.reward_potential)) || 0
+            }],
+            backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)'][idx % 3],
+            borderColor: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)', 'rgb(245, 158, 11)'][idx % 3],
+            borderWidth: 2,
+            pointRadius: 8,
+            pointHoverRadius: 10
+          }))
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const riskLabels = ['', 'High Risk', 'Medium Risk', 'Low Risk'];
+                  return `${context.dataset.label}: ${riskLabels[context.parsed.x]}, Reward: ${context.parsed.y}/5`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Risk Level' },
+              min: 0.5,
+              max: 3.5,
+              ticks: {
+                callback: function(value) {
+                  const labels = ['', 'High Risk', 'Medium Risk', 'Low Risk'];
+                  return labels[value] || '';
+                },
+                stepSize: 1
+              }
+            },
+            y: {
+              title: { display: true, text: 'Reward Potential' },
+              min: 0,
+              max: 5,
+              ticks: {
+                stepSize: 1,
+                callback: function(value) {
+                  return value + '/5';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderComparisonTable() {
+      const table = document.getElementById('comparison-table');
+      table.innerHTML = '';
+
+      const metrics = [
+        { label: 'Company Name', key: 'company_name', format: v => escapeHtml(v) || '—' },
+        { label: 'Industry', key: 'industry', format: v => escapeHtml(v) || '—' },
+        { label: 'Risk Level', key: 'data_source_confidence', format: v => {
+          if (v === 'High') return '<span class="text-green-600 font-medium">Low Risk</span>';
+          if (v === 'Medium') return '<span class="text-yellow-600 font-medium">Medium Risk</span>';
+          return '<span class="text-red-600 font-medium">High Risk</span>';
+        }},
+        { label: 'Projected Return', key: 'projected_return', format: v => {
+          if (v == null) return '—';
+          const color = v >= 0 ? 'text-green-600' : 'text-red-600';
+          return `<span class="${color} font-semibold">${v >= 0 ? '+' : ''}${v}%</span>`;
+        }},
+        { label: 'Reward Potential', key: 'reward_potential', format: v => {
+          const val = getRewardValue(v);
+          return `<span class="font-semibold">${val}/5</span>`;
+        }},
+        { label: 'Funding Stage', key: 'funding_stage', format: v => escapeHtml(v) || '—' },
+        { label: 'Total Funding', key: 'total_funding', format: v => v ? `$${Number(v).toLocaleString()}` : '—' },
+        { label: 'Valuation', key: 'valuation', format: v => v ? `$${Number(v).toLocaleString()}` : '—' },
+        { label: 'Revenue', key: 'revenue', format: v => v ? `$${Number(v).toLocaleString()}` : '—' },
+        { label: 'Employee Count', key: 'employee_count', format: v => v ? Number(v).toLocaleString() : '—' },
+        { label: 'Founded Year', key: 'founded_year', format: v => escapeHtml(v) || '—' }
+      ];
+
+      // Header row
+      const thead = document.createElement('thead');
+      thead.className = 'bg-gray-50';
+      const headerRow = document.createElement('tr');
+      headerRow.innerHTML = '<th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-gray-50 z-10">Metric</th>';
+      startupsData.forEach(startup => {
+        const th = document.createElement('th');
+        th.className = 'px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+        th.textContent = startup.company_name;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // Body rows
+      const tbody = document.createElement('tbody');
+      tbody.className = 'bg-white divide-y divide-gray-200';
+      
+      metrics.forEach((metric, idx) => {
+        const row = document.createElement('tr');
+        row.className = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+        
+        const labelCell = document.createElement('td');
+        labelCell.className = 'px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 sticky left-0 z-10';
+        labelCell.style.backgroundColor = idx % 2 === 0 ? 'white' : '#f9fafb';
+        labelCell.textContent = metric.label;
+        row.appendChild(labelCell);
+
+        startupsData.forEach(startup => {
+          const cell = document.createElement('td');
+          cell.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-700';
+          cell.innerHTML = metric.format(startup[metric.key]);
+          row.appendChild(cell);
+        });
+
+        tbody.appendChild(row);
+      });
+      
+      table.appendChild(tbody);
+    }
+
+    // Event Listeners
+    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = getAuthToken();
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+      loadComparison();
+    });
   </script>
-</header>
-
-<main class="bg-gray-50 min-h-screen">
-  <div class="max-w-7xl mx-auto p-6">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900">Startup Comparison</h1>
-        <p id="comparison-count" class="text-gray-600 mt-1">Loading...</p>
-      </div>
-      <div class="flex gap-3">
-        <a href="../Module1/Dashboard.html" class="text-gray-600 hover:text-gray-800 font-medium flex items-center">
-          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          Dashboard
-        </a>
-      </div>
-    </div>
-
-    <!-- Company Headers -->
-    <div id="comparison-header" class="grid gap-6 mb-8"></div>
-
-    <!-- Comparison Table -->
-    <div id="comparison-table" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"></div>
-
-    <!-- Action Buttons -->
-    <div class="flex justify-center gap-4 mt-8">
-      <button id="export-btn"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-        </svg>
-        <span id="export-text">Export PDF Report</span>
-      </button>
-
-      <a href="/compare.html"
-        class="border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center">
-        Compare Different Startups
-      </a>
-    </div>
-  </div>
-
-  <!-- Loading Modal -->
-  <div id="loading-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-      <div class="flex items-center justify-center mb-4">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-      <p class="text-center text-gray-700 font-medium">Generating PDF Report...</p>
-      <p class="text-center text-gray-500 text-sm mt-2">This may take a few moments</p>
-    </div>
-  </div>
-</main>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const exportBtn = document.getElementById('export-btn');
-  const exportText = document.getElementById('export-text');
-  const loadingModal = document.getElementById('loading-modal');
-  const comparisonCount = document.getElementById('comparison-count');
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const startups = urlParams.get('startups');
-
-  if (startups) {
-    const startupList = startups.split(',').length;
-    comparisonCount.textContent = `${startupList} startup${startupList > 1 ? 's' : ''} selected for comparison`;
-  } else {
-    comparisonCount.textContent = 'No startups selected';
-  }
-
-  exportBtn.addEventListener('click', function () {
-    if (!startups) {
-      alert('No startups selected for comparison');
-      return;
-    }
-
-    exportBtn.disabled = true;
-    exportText.textContent = 'Generating PDF...';
-    loadingModal.classList.remove('hidden');
-
-    const exportUrl = `/export-startup-comparison-pdf/?startups=${startups}`;
-    const link = document.createElement('a');
-    link.href = exportUrl;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setTimeout(() => {
-      exportBtn.disabled = false;
-      exportText.textContent = 'Export PDF Report';
-      loadingModal.classList.add('hidden');
-    }, 3000);
-  });
-});
-</script>
-{% endblock %}
+</body>
+</html>

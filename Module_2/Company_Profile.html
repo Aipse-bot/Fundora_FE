@@ -91,13 +91,17 @@
 
         <!-- Action Buttons -->
         <div class="space-y-3">
-          <button id="watchlistBtn" class="w-full font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"></button>
-          <a href="../Module_2/Compare_Startups.html" class="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
+          <button id="watchlistBtn" class="w-full font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center" disabled>
+            <svg class="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Loading...
+          </button>
+          <a href="../Module_2/Compare_Startups.html?return=${encodeURIComponent(window.location.href)}" class="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
             Compare Startups
           </a>
-          <a id="downloadPdf" class="w-full bg-green-100 hover:bg-green-200 text-green-700 font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
-            Download Profile (PDF)
-          </a>
+
           <a id="investBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
             Invest
           </a>
@@ -107,20 +111,28 @@
   </div>
 
   <script>
-      const token = localStorage.getItem("authToken");
+      let currentWatchlistState = false; // Track watchlist state locally
+
+      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
       const params = new URLSearchParams(window.location.search);
-      const id = params.get("id");
+      const startupId = params.get("id");
+
+      function authHeaders() {
+          return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : {};
+      }
 
       async function loadCompany() {
-          if (!id || !token) {
+          if (!startupId || !token) {
               alert('Missing startup ID or authentication');
               window.location.href = '../Module_1/Dashboard.html';
               return;
           }
 
+          console.log('Loading company with ID:', startupId);
+
           try {
-              const res = await fetch(`http://127.0.0.1:8000/api/startups/${id}/`, {
-                  headers: { Authorization: `Bearer ${token}` },
+              const res = await fetch(`http://127.0.0.1:8000/api/startups/${startupId}/`, {
+                  headers: authHeaders(),
               });
               
               if (!res.ok) {
@@ -128,6 +140,8 @@
               }
               
               const data = await res.json();
+              console.log('Startup data loaded:', data);
+              console.log('Is in watchlist:', data.is_in_watchlist);
 
               document.title = `${data.company_name} - Company Profile`;
               document.getElementById("companyName").textContent = data.company_name;
@@ -174,36 +188,113 @@
                   <p class="text-sm text-gray-600">Confidence Level: <strong>${conf}</strong></p>
               `;
 
-              // Watchlist button with heart icon
-              const watchBtn = document.getElementById("watchlistBtn");
-              const inWatchlist = data.is_in_watchlist === true;
+              // Handle watchlist state - treat undefined/missing as false
+              const isInWatchlist = data.is_in_watchlist === true;
+              currentWatchlistState = isInWatchlist;
+              console.log('Setting watchlist state to:', isInWatchlist);
+              updateWatchlistButton(isInWatchlist);
 
-              if (inWatchlist) {
-                  watchBtn.innerHTML = `
-                      <svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                      </svg>
-                      In Watchlist
-                  `;
-                  watchBtn.className = "w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200";
-                  watchBtn.onclick = () => modifyWatchlist("remove");
-              } else {
-                  watchBtn.innerHTML = `
-                      <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                      </svg>
-                      Add to Watchlist
-                  `;
-                  watchBtn.className = "w-full bg-red-400 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200";
-                  watchBtn.onclick = () => modifyWatchlist("add");
-              }
-
-              document.getElementById("downloadPdf").href = `http://127.0.0.1:8000/api/startups/${id}/download/`;
-              document.getElementById("investBtn").href = `../Module_2/Investment_Simulation.html?startup_id=${id}`;
+              document.getElementById("investBtn").href = `../Module_2/Investment_Simulation.html?startup_id=${startupId}`;
           } catch (err) {
               console.error('Error loading company:', err);
               alert('Failed to load company profile');
           }
+      }
+
+      function updateWatchlistButton(inWatchlist) {
+          const watchBtn = document.getElementById("watchlistBtn");
+          watchBtn.disabled = false;
+
+          if (inWatchlist) {
+              watchBtn.innerHTML = `
+                  <svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                  In Watchlist
+              `;
+              watchBtn.className = "w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200";
+              watchBtn.onclick = () => toggleWatchlist(false);
+          } else {
+              watchBtn.innerHTML = `
+                  <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                  Add to Watchlist
+              `;
+              watchBtn.className = "w-full bg-red-400 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200";
+              watchBtn.onclick = () => toggleWatchlist(true);
+          }
+      }
+
+      async function toggleWatchlist(shouldAdd) {
+          const watchBtn = document.getElementById("watchlistBtn");
+          if (!watchBtn) return;
+          
+          watchBtn.disabled = true;
+          
+          // Show loading state
+          const originalHTML = watchBtn.innerHTML;
+          watchBtn.innerHTML = `
+              <svg class="w-5 h-5 mr-2 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Updating...
+          `;
+
+          try {
+              const action = shouldAdd ? 'add' : 'remove';
+              const method = shouldAdd ? 'POST' : 'DELETE';
+              
+              console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
+              
+              const res = await fetch(`http://127.0.0.1:8000/api/investor/watchlist/${action}/${startupId}/`, {
+                  method: method,
+                  headers: authHeaders()
+              });
+              
+              console.log('Response status:', res.status);
+              
+              if (!res.ok) {
+                  const errorText = await res.text();
+                  console.error('Response error:', errorText);
+                  throw new Error(`Failed to ${action} watchlist: ${res.status} ${errorText}`);
+              }
+
+              const result = await res.json();
+              console.log('Watchlist response:', result);
+              
+              // Update local state based on the response
+              // Check if the item was actually added or if it was already in watchlist
+              currentWatchlistState = result.added !== false && action === 'add' ? true : 
+                                    result.removed !== false && action === 'remove' ? false :
+                                    currentWatchlistState;
+              
+              showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');
+              
+              // Update button immediately with local state, don't reload
+              updateWatchlistButton(action === 'add');
+              
+          } catch (err) {
+              console.error('Watchlist toggle failed:', err);
+              showNotification(err.message || 'Failed to update watchlist. Please try again.', 'error');
+              
+              // Restore button
+              watchBtn.innerHTML = originalHTML;
+              watchBtn.disabled = false;
+          }
+      }
+
+      function showNotification(message, type) {
+          const div = document.createElement('div');
+          div.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+          div.textContent = message;
+          document.body.appendChild(div);
+          setTimeout(() => {
+              div.style.opacity = '0';
+              div.style.transition = 'opacity 300ms';
+              setTimeout(() => div.remove(), 300);
+          }, 3000);
       }
 
       function metric(color, label, value) {
@@ -235,32 +326,12 @@
               </div>`;
       }
 
-      async function modifyWatchlist(action) {
-        try {
-            const method = action === 'add' ? 'POST' : 'DELETE';
-            const endpoint = `http://127.0.0.1:8000/api/investor/watchlist/${action}/${id}/`;
-            
-            const res = await fetch(endpoint, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-            });
-            
-            if (res.ok) {
-                // Reload to update button state
-                await loadCompany();
-            } else {
-                const errorData = await res.json().catch(() => null);
-                console.error('Watchlist update failed:', errorData);
-                alert('Failed to update watchlist. Please try again.');
-            }
-        } catch (err) {
-            console.error('Error updating watchlist:', err);
-            alert('Failed to update watchlist. Please try again.');
+      const compareLink = document.querySelector('a[href*="Compare_Startups"]');
+        if (compareLink) {
+          // Pass just the pathname and search, not the full URL
+          const returnPath = window.location.pathname + window.location.search;
+          compareLink.href = `../Module_2/Compare_Startups.html?return=${encodeURIComponent(returnPath)}`;
         }
-      }
 
       document.addEventListener("DOMContentLoaded", loadCompany);
   </script>

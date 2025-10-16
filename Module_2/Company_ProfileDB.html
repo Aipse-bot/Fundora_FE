@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Company Profile</title>
+  <title>Pitch Deck Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -98,7 +98,15 @@
         <div class="w-full lg:w-80 space-y-6">
           <div class="px-4 py-6 bg-white border rounded">
             <h2 class="text-xl font-bold text-black mb-4">Actions</h2>
-            <div id="actions-panel" class="space-y-3"></div>
+            <div id="actions-panel" class="space-y-3">
+              <button class="w-full bg-gray-300 text-gray-500 font-medium py-3 px-4 rounded-lg flex items-center justify-center cursor-not-allowed" disabled>
+                <svg class="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Loading...
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -106,12 +114,12 @@
   </div>
 
   <script>
-    const token = localStorage.getItem("authToken");
+    const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
     const params = new URLSearchParams(window.location.search);
     const startupId = params.get("id");
 
     function authHeaders() {
-      const h = {};
+      const h = { 'Content-Type': 'application/json' };
       if (token) h['Authorization'] = `Bearer ${token}`;
       return h;
     }
@@ -120,7 +128,6 @@
       const merged = Object.assign({ headers: authHeaders() }, opts);
       const res = await fetch(url, merged);
       if (!res.ok) {
-        // return a rejected promise with status for upstream handling
         const text = await res.text().catch(() => '');
         const err = new Error(`API request failed: ${res.status} ${res.statusText} ${text}`);
         err.status = res.status;
@@ -139,18 +146,15 @@
     }
 
     async function loadHeaderUser() {
-      // Not all projects expose /api/users/me/ — don't hard-fail
       const user = await tryFetchJSON(`http://127.0.0.1:8000/api/users/me/`);
       const container = document.getElementById("header-user");
       container.innerHTML = '';
       if (!user) {
-        // Simple fallback UI (logged-in state assumed if token present)
         if (token) {
           container.innerHTML = `<a href="/logout.html" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100">Logout</a>`;
         }
         return;
       }
-      // If API returns user object, attempt to use `name` or `username`/`email`
       const displayName = user.name || user.username || user.email || "User";
       container.innerHTML = `
         <span class="text-gray-700 text-sm">Welcome, <span class="font-medium">${displayName}</span></span>
@@ -172,7 +176,6 @@
         askSection.innerHTML = `<p class="text-gray-500">No funding information available</p>`;
         return;
       }
-      // If amount is numeric, format it; else show as-is
       const amt = (ask.amount != null && !isNaN(Number(ask.amount))) ? `₱${Number(ask.amount).toLocaleString()}` : (ask.amount || "—");
       askSection.innerHTML = `
         <p class="text-lg font-semibold text-gray-800">Funding Goal: ${amt}</p>
@@ -195,9 +198,13 @@
       document.getElementById("solution-description").textContent = solutionText || "—";
     }
 
-    function buildActionsPanel(isInWatchlist, startupId) {
+    function buildActionsPanel(isInWatchlist, startupIdParam) {
       const actionsPanel = document.getElementById("actions-panel");
       const inWatchlist = !!isInWatchlist;
+      
+      // Get current URL for return navigation
+      const returnPath = window.location.pathname + window.location.search;
+      const currentUrl = encodeURIComponent(returnPath);
       
       const watchBtnText = inWatchlist 
           ? `<svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
@@ -215,37 +222,98 @@
           <button id="watchlistBtn" class="w-full ${watchBtnClass} text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200">
               ${watchBtnText}
           </button>
-          <a href="../Module_2/Compare_Startups.html" class="block w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg text-center transition-colors duration-200">
+          <a href="../Module_2/Compare_Startups.html?return=${currentUrl}" class="block w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg text-center transition-colors duration-200">
               Compare Startups
           </a>
-          <a href="../Module_2/Investment_Simulation.html?startup_id=${startupId}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors duration-200">
+          <a href="../Module_2/Investment_Simulation.html?startup_id=${startupIdParam}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors duration-200">
               Invest
           </a>
       `;
       
       document.getElementById("watchlistBtn").onclick = async () => {
-          try {
-              const action = inWatchlist ? 'remove' : 'add';
-              const method = action === 'add' ? 'POST' : 'DELETE';
-              
-              const res = await fetch(`http://127.0.0.1:8000/api/investor/watchlist/${action}/${startupId}/`, {
-                  method: method,
-                  headers: authHeaders()
-              });
-              
-              if (res.ok) {
-                  // Reload data to update button state
-                  await loadAllData();
-              } else {
-                  const errorData = await res.json().catch(() => null);
-                  console.error('Watchlist update failed:', errorData);
-                  alert('Unable to update watchlist. Please try again.');
-              }
-          } catch (err) {
-              console.error('Watchlist toggle failed:', err);
-              alert('Unable to update watchlist. Please try again.');
-          }
+          await toggleWatchlist(!inWatchlist);
       };
+    }
+
+    async function toggleWatchlist(shouldAdd) {
+      const watchBtn = document.getElementById("watchlistBtn");
+      if (!watchBtn) return;
+      
+      watchBtn.disabled = true;
+      
+      const originalHTML = watchBtn.innerHTML;
+      watchBtn.innerHTML = `<svg class="w-5 h-5 mr-2 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Updating...`;
+
+      try {
+          const action = shouldAdd ? 'add' : 'remove';
+          const method = shouldAdd ? 'POST' : 'DELETE';
+          
+          console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
+          
+          const res = await fetch(`http://127.0.0.1:8000/api/investor/watchlist/${action}/${startupId}/`, {
+              method: method,
+              headers: authHeaders()
+          });
+          
+          console.log('Response status:', res.status);
+          
+          if (!res.ok) {
+              const errorText = await res.text();
+              console.error('Response error:', errorText);
+              throw new Error(`Failed to ${action} watchlist: ${res.status} ${errorText}`);
+          }
+
+          const result = await res.json();
+          console.log('Watchlist response:', result);
+          
+          showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');
+          
+          // Update button immediately with the new state
+          const isNowInWatchlist = action === 'add';
+          updateWatchlistButtonState(isNowInWatchlist);
+          
+      } catch (err) {
+          console.error('Watchlist toggle failed:', err);
+          showNotification(err.message || 'Failed to update watchlist. Please try again.', 'error');
+          
+          watchBtn.innerHTML = originalHTML;
+          watchBtn.disabled = false;
+      }
+    }
+
+    function updateWatchlistButtonState(isInWatchlist) {
+      const watchBtn = document.getElementById("watchlistBtn");
+      watchBtn.disabled = false;
+
+      const watchBtnText = isInWatchlist 
+          ? `<svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg> In Watchlist`
+          : `<svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg> Add to Watchlist`;
+      
+      const watchBtnClass = isInWatchlist 
+          ? "bg-gray-500 hover:bg-gray-600" 
+          : "bg-red-400 hover:bg-red-500";
+
+      watchBtn.innerHTML = watchBtnText;
+      watchBtn.className = `w-full ${watchBtnClass} text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200`;
+      watchBtn.onclick = async () => {
+          await toggleWatchlist(!isInWatchlist);
+      };
+    }
+
+    function showNotification(message, type) {
+      const div = document.createElement('div');
+      div.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+      div.textContent = message;
+      document.body.appendChild(div);
+      setTimeout(() => {
+          div.style.opacity = '0';
+          div.style.transition = 'opacity 300ms';
+          setTimeout(() => div.remove(), 300);
+      }, 3000);
     }
 
     function renderFinancialTable(financials) {
@@ -276,11 +344,9 @@
           </thead><tbody>${rows}</tbody>
         </table>`;
 
-      // Chart heress
       const ctxEl = document.getElementById("revenueProfitChart");
       if (!ctxEl) return;
       const ctx = ctxEl.getContext("2d");
-      // destroy previous chart if any
       if (window._revenueProfitChart) {
         try { window._revenueProfitChart.destroy(); } catch(e){/*ignore*/ }
         window._revenueProfitChart = null;
@@ -304,12 +370,12 @@
       });
     }
 
-    async function loadDeckReport(startupId) {
-      return tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupId}/profile/`);
+    async function loadDeckReport(startupIdParam) {
+      return tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupIdParam}/profile/`);
     }
 
-    async function loadStartupProfile(startupId) {
-      return tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupId}/profile/`);
+    async function loadStartupProfile(startupIdParam) {
+      return tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupIdParam}/profile/`);
     }
 
     async function loadAllData() {
@@ -318,10 +384,8 @@
         return;
       }
 
-      // Try report (deck-backed) first
       let report = await loadDeckReport(startupId);
       if (report && report.report_type === 'deck') {
-        // Report returns deck info and nested fields (see DeckReportSerializer / DeckReportView)
         const deckInfo = report.deck_info || {};
         const problem = report.problem || null;
         const solution = report.solution || null;
@@ -333,7 +397,7 @@
         populateProblemSolution(problem, solution);
         populateMarket(market);
         populateAsk(ask);
-        const inWatchlist = report.is_in_watchlist ?? false;
+        const inWatchlist = report.is_in_watchlist === true;
         buildActionsPanel(inWatchlist, startupId);
         renderFinancialTable(financials);
         return;
@@ -345,11 +409,11 @@
         const fallback = await tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupId}/`);
         if (fallback) {
           populateHeaderFromStartup(fallback);
-          buildActionsPanel(fallback.is_in_watchlist, startupId);
+          const inWatchlist = fallback.is_in_watchlist === true;
+          buildActionsPanel(inWatchlist, startupId);
         } else {
           document.getElementById("deck-name").textContent = "Startup not found";
         }
-        // ensure no financials
         renderFinancialTable([]);
         populateProblemSolution(null, null);
         populateMarket(null);
@@ -358,12 +422,11 @@
       }
 
       const data = profile;
-
       const startupObj = data.startup || data;
       const deckObj = data.deck || null;
 
       populateHeaderFromStartup({
-        company_name: startupObj.company_name || startupObj.company_name, // both shapes attempt
+        company_name: startupObj.company_name || startupObj.company_name,
         company_description: startupObj.company_description || startupObj.company_description
       });
 
@@ -373,7 +436,6 @@
         populateAsk(deckObj.ask || {});
         renderFinancialTable(deckObj.financials || []);
       } else {
-        // If no deck edi deck deck
         populateProblemSolution(data.problem, data.solution);
         populateMarket({
           primary_market: data.primary_market,
@@ -388,15 +450,12 @@
         renderFinancialTable(data.financials || []);
       }
 
-      // Actions
-      const inWatchlist = data.is_in_watchlist ?? startupObj.is_in_watchlist ?? false;
+      const inWatchlist = data.is_in_watchlist === true || startupObj.is_in_watchlist === true;
       buildActionsPanel(inWatchlist, startupId);
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-      // auth enforce if requred dri
       if (!token) {
-        // window.location.href = '/login.html';
         console.warn('No auth token present — page will try to load public data where available.');
       }
 

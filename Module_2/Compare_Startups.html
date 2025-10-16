@@ -9,14 +9,14 @@
 <body class="bg-gray-50 min-h-screen">
   <div class="max-w-6xl mx-auto p-6">
     <div class="flex items-center mb-8">
-      <a href="../Module1/Dashboard.html" class="mr-4 p-2 hover:bg-gray-100 rounded-full">
+      <a href="#" id="back-button" class="mr-4 p-2 hover:bg-gray-100 rounded-full">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
       </a>
       <div>
         <h1 class="text-3xl font-bold text-gray-900">Compare Startups</h1>
-        <p class="text-gray-600 mt-1" id="compare-subtitle"></p>
+        <p class="text-gray-600 mt-1">Select 2-3 startups to compare side by side</p>
       </div>
     </div>
 
@@ -33,11 +33,13 @@
       <div class="relative">
         <select id="industry-filter" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
           <option value="">All Industries</option>
-          <option value="AI/Machine Learning">AI/Machine Learning</option>
-          <option value="E-Commerce">E-Commerce</option>
+          <option value="Technology">Technology</option>
           <option value="Finance">Finance</option>
           <option value="Healthcare">Healthcare</option>
-          <option value="Technology">Technology</option>
+          <option value="Retail">Retail</option>
+          <option value="Manufacturing">Manufacturing</option>
+          <option value="Energy">Energy</option>
+          <option value="Education">Education</option>
         </select>
         <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
           <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,15 +82,15 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No Startups in Watchlist</h3>
-        <p class="text-gray-600 mb-4">Add startups to your watchlist to compare them here.</p>
-        <a href="../Module1/Dashboard.html" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">Browse Startups</a>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No Startups Found</h3>
+        <p class="text-gray-600 mb-4">Try adjusting your filters or search criteria.</p>
+        <button id="back-to-dash" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">Go Back</button>
       </div>
     </div>
 
     <div class="flex justify-center">
       <button id="compare-btn" class="bg-gray-400 text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200 cursor-not-allowed" disabled>
-        Select Startups to Compare
+        Select at least 2-3 startups to compare
       </button>
     </div>
   </div>
@@ -99,7 +101,63 @@
     let selectedStartups = new Set();
     const maxSelections = 3;
 
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
+
+    // Get the referrer URL from query params or use default
+    function getBackUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const returnUrl = params.get('return');
+      
+      if (returnUrl) {
+        try {
+          const decoded = decodeURIComponent(returnUrl);
+          console.log('Decoded return URL:', decoded);
+          
+          // If it's a full URL, extract just the path and query string
+          if (decoded.startsWith('http://') || decoded.startsWith('https://')) {
+            const url = new URL(decoded);
+            return url.pathname + url.search;
+          }
+          
+          // If it already starts with /, it's an absolute path
+          if (decoded.startsWith('/')) {
+            return decoded;
+          }
+          
+          // Otherwise return as-is (relative path)
+          return decoded;
+        } catch (e) {
+          console.error('Failed to decode return URL:', e);
+        }
+      }
+      
+      // Default fallback
+      return '../Module_1/Dashboard.html';
+    }
+
+    // Set up back button navigation
     document.addEventListener("DOMContentLoaded", () => {
+      const backUrl = getBackUrl();
+      console.log('Using back URL:', backUrl);
+      
+      const backButton = document.getElementById("back-button");
+      const backToDash = document.getElementById("back-to-dash");
+      
+      backButton.href = backUrl;
+      backButton.onclick = (e) => {
+        e.preventDefault();
+        window.location.href = backUrl;
+      };
+      
+      backToDash.onclick = () => window.location.href = backUrl;
+
+      const token = getAuthToken();
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
       loadStartups();
       document.getElementById("industry-filter").addEventListener("change", filterStartups);
       document.getElementById("risk-filter").addEventListener("change", filterStartups);
@@ -108,13 +166,22 @@
 
     async function loadStartups() {
       try {
+        const token = getAuthToken();
+        if (!token) {
+          window.location.href = '/login';
+          return;
+        }
         const response = await fetch(`${apiBase}/startups/`, {
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("access_token") || ""}`
+            "Authorization": `Bearer ${token}`
           }
         });
         if (!response.ok) throw new Error("Failed to fetch startups");
-        startups = await response.json();
+        const data = await response.json();
+        startups = data.results || data.startups || data;
+        if (!Array.isArray(startups)) {
+          startups = [];
+        }
         renderStartups(startups);
       } catch (error) {
         console.error("Error loading startups:", error);
@@ -133,27 +200,75 @@
 
       data.forEach(startup => {
         const card = document.createElement("div");
-        card.className = "startup-card border border-gray-200 rounded-lg p-5 bg-white hover:shadow-md transition cursor-pointer";
+        card.className = "startup-card border border-gray-200 rounded-lg p-6 bg-white hover:shadow-md transition cursor-pointer";
         card.dataset.startupId = startup.id;
         card.dataset.startupName = startup.company_name;
         card.dataset.industry = startup.industry;
-        card.dataset.risk = startup.risk_level;
+        
+        const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
+        
+        const riskBadge = isDeck
+          ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>'
+          : (startup.data_source_confidence === 'High'
+              ? '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>'
+              : (startup.data_source_confidence === 'Medium'
+                  ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>'
+                  : '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>'));
+
+        const industry = startup.industry || '—';
+        let reward = 'N/A';
+        if (startup.reward_potential != null) {
+          if (typeof startup.reward_potential === 'string') {
+            reward = startup.reward_potential.split(',')[0].trim();
+          } else if (Array.isArray(startup.reward_potential)) {
+            reward = startup.reward_potential[0];
+          } else {
+            reward = String(startup.reward_potential);
+          }
+        }
+        const projected = (startup.projected_return != null && startup.projected_return !== '') 
+          ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` 
+          : 'N/A';
 
         card.innerHTML = `
-          <div class="flex justify-between items-center mb-3">
-            <h3 class="text-lg font-semibold text-gray-800">${startup.company_name}</h3>
-            <div class="selection-indicator border border-gray-300 rounded-full w-6 h-6 flex items-center justify-center">
-              <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(startup.company_name)}</h3>
+              <p class="text-sm text-gray-600">${escapeHtml(industry)}</p>
+            </div>
+            <div class="flex flex-col items-end space-y-2">
+              ${riskBadge}
+              <div class="selection-indicator border border-gray-300 rounded-full w-6 h-6 flex items-center justify-center">
+                <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
             </div>
           </div>
-          <p class="text-sm text-gray-600 mb-2">${startup.industry || "—"}</p>
-          <p class="text-sm text-gray-500">Risk: ${startup.risk_level || "—"}</p>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Reward Potential</span>
+              <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Projected Return</span>
+              <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
+            </div>
+          </div>
         `;
         card.addEventListener("click", () => toggleStartupSelection(card));
         grid.appendChild(card);
       });
+    }
+
+    function escapeHtml(unsafe) {
+      if (unsafe === null || unsafe === undefined) return '';
+      return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     function toggleStartupSelection(card) {
@@ -190,6 +305,7 @@
         list.innerHTML = "";
         selectedStartups.forEach(id => {
           const startup = startups.find(s => s.id == id);
+          if (!startup) return;
           const badge = document.createElement("span");
           badge.className = "bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full flex items-center";
           badge.innerHTML = `
@@ -221,13 +337,13 @@
         btn.textContent = `Compare Selected Startups (${selectedStartups.size})`;
         btn.onclick = () => {
           const ids = Array.from(selectedStartups);
-          window.location.href = `../Module2/Comparison_Result.html?startups=${ids.join(",")}`;
+          window.location.href = `Startup_Comparison.html?startups=${ids.join(",")}`;
         };
       } else {
         btn.disabled = true;
         btn.classList.remove("bg-blue-600", "hover:bg-blue-700");
         btn.classList.add("bg-gray-400", "cursor-not-allowed");
-        btn.textContent = "Select at least 2 startups to compare";
+        btn.textContent = "Select at least 2-3 startups to compare";
         btn.onclick = null;
       }
     }
@@ -236,13 +352,47 @@
       const searchTerm = document.getElementById("search-input").value.toLowerCase();
       const industry = document.getElementById("industry-filter").value;
       const risk = document.getElementById("risk-filter").value;
-      const filtered = startups.filter(s =>
-        (!searchTerm || s.company_name.toLowerCase().includes(searchTerm)) &&
-        (!industry || s.industry === industry) &&
-        (!risk || s.risk_level === risk)
-      );
+      
+      const filtered = startups.filter(s => {
+        const matchesSearch = !searchTerm || s.company_name.toLowerCase().includes(searchTerm);
+        const matchesIndustry = !industry || s.industry === industry;
+        
+        let matchesRisk = true;
+        if (risk) {
+          const isDeck = !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
+          if (isDeck) {
+            matchesRisk = risk === 'Medium';
+          } else {
+            const confidence = s.data_source_confidence;
+            if (risk === 'Low' && confidence !== 'High') matchesRisk = false;
+            if (risk === 'Medium' && confidence !== 'Medium') matchesRisk = false;
+            if (risk === 'High' && confidence !== 'Low') matchesRisk = false;
+          }
+        }
+        
+        return matchesSearch && matchesIndustry && matchesRisk;
+      });
+      
       renderStartups(filtered);
+      
+      // Re-apply selection state
+      selectedStartups.forEach(id => {
+        const card = document.querySelector(`[data-startup-id="${id}"]`);
+        if (card) {
+          const indicator = card.querySelector(".selection-indicator");
+          const checkmark = indicator.querySelector("svg");
+          card.classList.add("border-blue-500", "bg-blue-50");
+          indicator.classList.add("bg-blue-600", "border-blue-600");
+          checkmark.classList.remove("hidden");
+        }
+      });
     }
   </script>
+
+  <style>
+    .startup-card:hover {
+      transform: translateY(-2px);
+    }
+  </style>
 </body>
 </html>
