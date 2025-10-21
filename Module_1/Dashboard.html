@@ -80,17 +80,17 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-3">Risk Tolerance</label>
           <div class="grid grid-cols-3 gap-2">
-            <button type="button" onclick="setRiskLevel('low')" id="risk-low" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+            <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
               Low
             </button>
-            <button type="button" onclick="setRiskLevel('medium')" id="risk-medium" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-blue-500 bg-blue-50 rounded-md hover:border-blue-400 transition-all">
+            <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
               Medium
             </button>
-            <button type="button" onclick="setRiskLevel('high')" id="risk-high" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+            <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
               High
             </button>
           </div>
-          <input type="hidden" name="risk" id="risk-hidden" value="50">
+          <input type="hidden" name="risk_level" id="risk-hidden" value="">
         </div>
 
         <div>
@@ -277,33 +277,36 @@
         const sortVal = form.elements.sort_by?.value;
         if (sortVal) {
           params.set('sort_by', sortVal);
-          console.log('Sort by:', sortVal);
         }
 
         // Industry
         const industry = form.elements.industry?.value;
         if (industry) {
           params.set('industry', industry);
-          console.log('Industry:', industry);
         }
 
         // Minimum Return
         const minReturn = form.elements.min_return?.value;
         if (minReturn) {
           params.set('min_return', minReturn);
-          console.log('Min return:', minReturn);
         }
 
-        // Risk (hidden field)
-        const riskVal = document.getElementById('risk-hidden')?.value;
-        if (riskVal) {
-          params.set('risk', riskVal);
-          console.log('Risk value:', riskVal);
+        // Risk Level (hidden field)
+        const riskLevel = document.getElementById('risk-hidden')?.value;
+        if (riskLevel) {
+          params.set('risk_level', riskLevel);
         }
 
         // Build final URL
         const url = STARTUPS_ENDPOINT + (params.toString() ? `?${params.toString()}` : '');
-        console.log('Fetching from:', url);
+        console.log('=== FILTER DEBUG ===');
+        console.log('Full URL:', url);
+        console.log('Parameters:', {
+          sort_by: sortVal || 'none',
+          industry: industry || 'none',
+          min_return: minReturn || 'none',
+          risk_level: riskLevel || 'none'
+        });
 
         // Fetch startups AND refresh watchlist concurrently
         const [startupsData] = await Promise.allSettled([
@@ -326,7 +329,17 @@
           }
         }
 
-        console.log('Fetched startups:', startups.length);
+        console.log('Fetched startups count:', startups.length);
+        if (startups.length > 0) {
+          console.log('Sample startup:', {
+            name: startups[0].company_name,
+            risk: startups[0].risk_level,
+            return: startups[0].projected_return,
+            industry: startups[0].industry
+          });
+        }
+        console.log('===================');
+        
         return startups || [];
       } catch (error) {
         console.error('Error fetching startups:', error);
@@ -480,6 +493,39 @@
     }
 
     // ===========================
+    // Client-side filtering (fallback for when backend doesn't filter)
+    // ===========================
+    function applyClientSideFilters(startups) {
+      let filtered = [...startups];
+      
+      const form = document.getElementById('filterForm');
+      
+      // Risk Level filter (client-side fallback)
+      const riskLevel = document.getElementById('risk-hidden')?.value;
+      if (riskLevel) {
+        filtered = filtered.filter(s => {
+          if (!s.risk_level) return false;
+          return s.risk_level === riskLevel;
+        });
+        console.log(`Client-side filter: Risk=${riskLevel}, remaining: ${filtered.length}`);
+      }
+      
+      // Minimum Return filter (client-side enforcement)
+      const minReturn = form.elements.min_return?.value;
+      if (minReturn) {
+        const minReturnValue = parseFloat(minReturn);
+        filtered = filtered.filter(s => {
+          const projReturn = s.projected_return;
+          if (projReturn === null || projReturn === undefined) return false;
+          return projReturn >= minReturnValue;
+        });
+        console.log(`Client-side filter: MinReturn≥${minReturnValue}%, remaining: ${filtered.length}`);
+      }
+      
+      return filtered;
+    }
+
+    // ===========================
     // Render flow
     // ===========================
     async function renderStartups() {
@@ -492,8 +538,12 @@
       noStartups.classList.add('hidden');
       
       const startups = await fetchStartups();
+      
+      // Apply client-side filters (for risk_level since backend doesn't support it)
+      const clientFiltered = applyClientSideFilters(startups);
+      
       const sortBy = document.getElementById('filterForm').elements.sort_by?.value;
-      const sorted = sortStartups(startups, sortBy);
+      const sorted = sortStartups(clientFiltered, sortBy);
 
       const countSpan = document.getElementById('startup-count');
       const clearBtn = document.getElementById('clear-filters');
@@ -503,7 +553,7 @@
         noStartups.classList.remove('hidden');
         countSpan.textContent = '0';
         clearBtn.classList.add('hidden');
-        console.log('No startups found');
+        console.log('No startups found after filtering');
         return;
       }
 
@@ -531,33 +581,51 @@
       
       // Set active state on selected button
       const selectedBtn = document.getElementById(`risk-${level}`);
-      selectedBtn.classList.remove('border-gray-300');
-      selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('border-gray-300');
+        selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+      }
       
-      // Update hidden value
-      const riskValues = { 'low': 20, 'medium': 50, 'high': 80 };
-      document.getElementById('risk-hidden').value = riskValues[level];
+      // Update hidden value with the risk level name (Low, Medium, High)
+      document.getElementById('risk-hidden').value = level;
+      console.log('Risk level set to:', level);
     }
 
     function clearAllFilters() {
       const form = document.getElementById('filterForm');
       form.reset();
-      setRiskLevel('medium'); // Reset to medium
+      
+      // Clear all risk button highlights
+      document.querySelectorAll('.risk-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+        btn.classList.add('border-gray-300');
+      });
+      
+      // Clear the hidden risk value
+      document.getElementById('risk-hidden').value = '';
+      
       renderStartups();
     }
 
     function applyPreset(preset) {
       const form = document.getElementById('filterForm');
+      
+      // Reset other filters
+      form.elements.sort_by.value = '';
+      form.elements.industry.value = '';
+      form.elements.min_return.value = '';
+      
       if (preset === 'conservative') { 
-        setRiskLevel('low');
+        setRiskLevel('Low');
       }
       else if (preset === 'balanced') { 
-        setRiskLevel('medium');
+        setRiskLevel('Medium');
       }
       else if (preset === 'aggressive') { 
-        setRiskLevel('high');
+        setRiskLevel('High');
         form.elements.min_return.value = '20'; 
       }
+      
       renderStartups();
     }
 
