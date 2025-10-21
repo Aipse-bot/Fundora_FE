@@ -18,7 +18,7 @@
         </a>
         <div>
           <h1 class="text-2xl font-bold">Investment Simulation</h1>
-          <p id="startupName" class="text-lg text-gray-600">Loading...</p>
+          <p id="startupName" class="text-lg text-blue-100">Loading...</p>
         </div>
       </div>
       <span id="risk-badge" class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">Low Risk</span>
@@ -127,21 +127,70 @@
     let growthChart = null;
     let simulationData = null;
 
-    // Mock startup data (replace with backend data)
-    const startupData = {
-        company_name: "{{ startup.company_name|escapejs }}",
-        projected_return: 0.12,
-        risk_level: "High"
-    };
+    // Configuration
+    const API_BASE = 'http://127.0.0.1:8000';
+    const STARTUP_DETAIL_ENDPOINT = (id) => `${API_BASE}/api/startups/${id}/`;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const projectedReturn = startupData.projected_return;
-      const riskLevel = startupData.risk_level;
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
+
+    function authHeaders() {
+      const token = getAuthToken();
+      if (!token) return {};
+      return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+    }
+
+    // Fetch startup data from API
+    async function fetchStartupData(startupId) {
+      try {
+        const res = await fetch(STARTUP_DETAIL_ENDPOINT(startupId), {
+          method: 'GET',
+          headers: authHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to fetch startup data');
+        return await res.json();
+      } catch (err) {
+        console.error('Error fetching startup:', err);
+        return null;
+      }
+    }
+
+    let startupData = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Get startup ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const startupId = urlParams.get('startup_id');
+
+      if (!startupId) {
+        alert('No startup selected');
+        window.location.href = '../Module_1/Dashboard.html';
+        return;
+      }
+
+      // Fetch startup data
+      startupData = await fetchStartupData(startupId);
+      
+      if (!startupData) {
+        alert('Could not load startup information');
+        window.location.href = '../Module_1/Dashboard.html';
+        return;
+      }
+
+      // Update page with startup info
+      document.getElementById('startupName').textContent = startupData.company_name || 'Unknown Startup';
+      
+      const projectedReturn = startupData.projected_return ? (startupData.projected_return / 100) : 0.12;
+      const riskLevel = startupData.risk_level || 'Medium';
       const growthRate = calculateGrowthRate(projectedReturn, riskLevel);
 
       document.getElementById('growth-rate-display').textContent = (growthRate * 100).toFixed(2);
-      document.getElementById('risk-badge').textContent = `${riskLevel} Risk`;
-      document.getElementById('risk-badge').className =
+      
+      // Update risk badge
+      const riskBadge = document.getElementById('risk-badge');
+      riskBadge.textContent = `${riskLevel} Risk`;
+      riskBadge.className =
         riskLevel === 'High'
           ? 'bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full'
           : riskLevel === 'Medium'
@@ -167,6 +216,8 @@
       simulateBtn.onclick = () => runSimulation(growthRate);
     });
 
+    // CAPM formula - using projected return kaysa market return. Using CAPM is for simplification ra kay complex na investment simulation
+    // Expected Return = Risk-Free Rate + Beta × (Market Return - Risk-Free Rate)
     function calculateGrowthRate(projectedReturn, riskLevel) {
       const riskFreeRate = 0.03;
       const riskFactors = { Low: 0.8, Medium: 1.0, High: 1.4 };
@@ -251,6 +302,7 @@
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             tooltip: {
               callbacks: {

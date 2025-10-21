@@ -19,7 +19,11 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center">
-          <a href="../Module_1/Dashboard.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">Fundora</a>
+          <button id="backBtn" class="mr-4 p-2 hover:bg-gray-100 rounded-full">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
         </div>
         <div id="header-user" class="flex items-center space-x-4"></div>
       </div>
@@ -117,6 +121,10 @@
     const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
     const params = new URLSearchParams(window.location.search);
     const startupId = params.get("id");
+    const returnUrl = params.get("return");
+    
+    let watchlistIdsSet = new Set();
+    let currentWatchlistState = false;
 
     function authHeaders() {
       const h = { 'Content-Type': 'application/json' };
@@ -145,21 +153,17 @@
       }
     }
 
-    async function loadHeaderUser() {
-      const user = await tryFetchJSON(`http://127.0.0.1:8000/api/users/me/`);
-      const container = document.getElementById("header-user");
-      container.innerHTML = '';
-      if (!user) {
-        if (token) {
-          container.innerHTML = `<a href="/logout.html" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100">Logout</a>`;
+    async function refreshWatchlist() {
+      try {
+        const data = await tryFetchJSON('http://127.0.0.1:8000/api/investor/watchlist/');
+        if (data) {
+          const items = data.results || data.watchlist || [];
+          watchlistIdsSet = new Set(items.map(it => it.id));
+          console.log('Watchlist refreshed, IDs:', Array.from(watchlistIdsSet));
         }
-        return;
+      } catch (err) {
+        console.warn('Could not refresh watchlist:', err);
       }
-      const displayName = user.name || user.username || user.email || "User";
-      container.innerHTML = `
-        <span class="text-gray-700 text-sm">Welcome, <span class="font-medium">${displayName}</span></span>
-        <a href="/logout.html" class="inline-flex items-center px-3 py-2 border text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100">Logout</a>
-      `;
     }
 
     function populateHeaderFromStartup(startup) {
@@ -198,13 +202,14 @@
       document.getElementById("solution-description").textContent = solutionText || "—";
     }
 
-    function buildActionsPanel(isInWatchlist, startupIdParam) {
+    function buildActionsPanel(startupIdParam) {
       const actionsPanel = document.getElementById("actions-panel");
-      const inWatchlist = !!isInWatchlist;
       
-      // Get current URL for return navigation
-      const returnPath = window.location.pathname + window.location.search;
-      const currentUrl = encodeURIComponent(returnPath);
+      // Check if startup is in watchlist
+      const inWatchlist = watchlistIdsSet.has(Number(startupIdParam));
+      currentWatchlistState = inWatchlist;
+      
+      console.log('Building actions panel, startup', startupIdParam, 'in watchlist:', inWatchlist);
       
       const watchBtnText = inWatchlist 
           ? `<svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
@@ -222,16 +227,13 @@
           <button id="watchlistBtn" class="w-full ${watchBtnClass} text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200">
               ${watchBtnText}
           </button>
-          <a href="../Module_2/Compare_Startups.html?return=${currentUrl}" class="block w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg text-center transition-colors duration-200">
-              Compare Startups
-          </a>
           <a href="../Module_2/Investment_Simulation.html?startup_id=${startupIdParam}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors duration-200">
               Invest
           </a>
       `;
       
       document.getElementById("watchlistBtn").onclick = async () => {
-          await toggleWatchlist(!inWatchlist);
+          await toggleWatchlist(!currentWatchlistState);
       };
     }
 
@@ -266,11 +268,17 @@
           const result = await res.json();
           console.log('Watchlist response:', result);
           
+          // Update local state
+          if (shouldAdd) {
+              watchlistIdsSet.add(Number(startupId));
+          } else {
+              watchlistIdsSet.delete(Number(startupId));
+          }
+          currentWatchlistState = shouldAdd;
+          
           showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');
           
-          // Update button immediately with the new state
-          const isNowInWatchlist = action === 'add';
-          updateWatchlistButtonState(isNowInWatchlist);
+          updateWatchlistButton(shouldAdd);
           
       } catch (err) {
           console.error('Watchlist toggle failed:', err);
@@ -281,11 +289,14 @@
       }
     }
 
-    function updateWatchlistButtonState(isInWatchlist) {
+    function updateWatchlistButton(inWatchlist) {
       const watchBtn = document.getElementById("watchlistBtn");
+      if (!watchBtn) return;
+      
       watchBtn.disabled = false;
+      currentWatchlistState = inWatchlist;
 
-      const watchBtnText = isInWatchlist 
+      const watchBtnText = inWatchlist 
           ? `<svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg> In Watchlist`
@@ -293,14 +304,14 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
             </svg> Add to Watchlist`;
       
-      const watchBtnClass = isInWatchlist 
+      const watchBtnClass = inWatchlist 
           ? "bg-gray-500 hover:bg-gray-600" 
           : "bg-red-400 hover:bg-red-500";
 
       watchBtn.innerHTML = watchBtnText;
       watchBtn.className = `w-full ${watchBtnClass} text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200`;
       watchBtn.onclick = async () => {
-          await toggleWatchlist(!isInWatchlist);
+          await toggleWatchlist(!inWatchlist);
       };
     }
 
@@ -384,6 +395,9 @@
         return;
       }
 
+      // Refresh watchlist first
+      await refreshWatchlist();
+
       let report = await loadDeckReport(startupId);
       if (report && report.report_type === 'deck') {
         const deckInfo = report.deck_info || {};
@@ -397,8 +411,7 @@
         populateProblemSolution(problem, solution);
         populateMarket(market);
         populateAsk(ask);
-        const inWatchlist = report.is_in_watchlist === true;
-        buildActionsPanel(inWatchlist, startupId);
+        buildActionsPanel(startupId);
         renderFinancialTable(financials);
         return;
       }
@@ -409,8 +422,7 @@
         const fallback = await tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupId}/`);
         if (fallback) {
           populateHeaderFromStartup(fallback);
-          const inWatchlist = fallback.is_in_watchlist === true;
-          buildActionsPanel(inWatchlist, startupId);
+          buildActionsPanel(startupId);
         } else {
           document.getElementById("deck-name").textContent = "Startup not found";
         }
@@ -450,16 +462,23 @@
         renderFinancialTable(data.financials || []);
       }
 
-      const inWatchlist = data.is_in_watchlist === true || startupObj.is_in_watchlist === true;
-      buildActionsPanel(inWatchlist, startupId);
+      buildActionsPanel(startupId);
     }
+
+    // Setup back button navigation
+    document.getElementById('backBtn').addEventListener('click', () => {
+      if (returnUrl) {
+        window.location.href = returnUrl;
+      } else {
+        window.location.href = '../Module_1/Dashboard.html';
+      }
+    });
 
     document.addEventListener("DOMContentLoaded", async () => {
       if (!token) {
         console.warn('No auth token present — page will try to load public data where available.');
       }
 
-      await loadHeaderUser();
       await loadAllData();
     });
   </script>

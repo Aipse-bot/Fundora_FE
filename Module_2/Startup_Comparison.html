@@ -12,17 +12,33 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center">
-          <a href="../Module_1/Dashboard.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
-            Fundora
+          <a id="back-nav-link" href="#" class="flex items-center text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span id="back-nav-text">Back to Watchlist</span>
           </a>
-        </div>
-        <div id="header-user" class="flex items-center space-x-4">
-          <a href="../Module_1/Dashboard.html" class="text-gray-600 hover:text-gray-800 font-medium">Dashboard</a>
-          <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">Logout</button>
         </div>
       </div>
     </div>
   </header>
+
+  <!-- Notification Toast -->
+  <div id="notification" class="hidden fixed top-20 right-6 z-50 max-w-sm">
+    <div class="bg-white rounded-lg shadow-lg border-l-4 p-4">
+      <div class="flex items-center">
+        <div id="notification-icon" class="flex-shrink-0"></div>
+        <div class="ml-3">
+          <p id="notification-message" class="text-sm font-medium text-gray-900"></p>
+        </div>
+        <button onclick="hideNotification()" class="ml-auto flex-shrink-0 text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <main class="bg-gray-50 min-h-screen pb-12">
     <div class="max-w-7xl mx-auto p-6">
@@ -32,7 +48,7 @@
           <h1 class="text-3xl font-bold text-gray-900">Startup Comparison</h1>
           <p id="comparison-count" class="text-gray-600 mt-1">Loading comparison...</p>
         </div>
-        <div class="flex gap-3">
+        <div id="back-to-selection-container" class="hidden flex gap-3">
           <a href="Compare_Startups.html" class="text-gray-600 hover:text-gray-800 font-medium flex items-center">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -88,17 +104,30 @@
           <table id="comparison-table" class="w-full"></table>
         </div>
       </div>
+
+      <div class="flex justify-center">
+        <button id="save-comparison-btn" onclick="toggleSaveComparison()" class="hidden bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200 items-center shadow-sm">
+          <svg id="save-icon" class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          <span id="save-text">Save Comparison</span>
+        </button>
+      </div>
     </div>
   </main>
 
   <script>
     const API_BASE = 'http://127.0.0.1:8000';
     const STARTUPS_ENDPOINT = `${API_BASE}/api/startups/`;
-    const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
+    const SAVE_COMPARISON_ENDPOINT = `${API_BASE}/api/investor/comparisons/save/`;
+    const CHECK_COMPARISON_ENDPOINT = `${API_BASE}/api/investor/comparisons/`;
 
     let startupsData = [];
+    let currentComparisonIds = [];
     let returnsChart = null;
     let riskRewardChart = null;
+    let isComparisonSaved = false;
+    let savedComparisonId = null;
 
     function getAuthToken() {
       return localStorage.getItem('authToken');
@@ -120,14 +149,221 @@
         .replace(/'/g, "&#039;");
     }
 
-    async function logoutUser() {
+    function showNotification(message, type = 'success') {
+      const notification = document.getElementById('notification');
+      const notificationMessage = document.getElementById('notification-message');
+      const notificationIcon = document.getElementById('notification-icon');
+      
+      notificationMessage.textContent = message;
+      
+      if (type === 'success') {
+        notification.querySelector('.border-l-4').classList.remove('border-red-500', 'border-yellow-500');
+        notification.querySelector('.border-l-4').classList.add('border-green-500');
+        notificationIcon.innerHTML = `
+          <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+        `;
+      } else if (type === 'error') {
+        notification.querySelector('.border-l-4').classList.remove('border-green-500', 'border-yellow-500');
+        notification.querySelector('.border-l-4').classList.add('border-red-500');
+        notificationIcon.innerHTML = `
+          <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+          </svg>
+        `;
+      } else {
+        notification.querySelector('.border-l-4').classList.remove('border-green-500', 'border-red-500');
+        notification.querySelector('.border-l-4').classList.add('border-yellow-500');
+        notificationIcon.innerHTML = `
+          <svg class="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+          </svg>
+        `;
+      }
+      
+      notification.classList.remove('hidden');
+      
+      setTimeout(() => {
+        hideNotification();
+      }, 4000);
+    }
+
+    function hideNotification() {
+      document.getElementById('notification').classList.add('hidden');
+    }
+
+    async function checkIfComparisonExists() {
       try {
-        await fetch(LOGOUT_ENDPOINT, { method: 'POST', headers: authHeaders() });
-      } catch (err) {
-        console.warn('Logout error:', err);
-      } finally {
-        localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        const response = await fetch(CHECK_COMPARISON_ENDPOINT, {
+          method: 'GET',
+          headers: authHeaders()
+        });
+
+        if (!response.ok) return { exists: false, id: null };
+
+        const data = await response.json();
+        const comparisons = data.results || [];
+        
+        console.log('All comparisons:', comparisons);
+        
+        // Check if current comparison already exists
+        const sortedCurrent = [...currentComparisonIds].sort((a, b) => a - b);
+        console.log('Looking for comparison with startup IDs:', sortedCurrent);
+        
+        for (const comp of comparisons) {
+          const compIds = comp.startups.map(s => s.id).sort((a, b) => a - b);
+          console.log('Checking comparison ID', comp.id, 'with startup IDs:', compIds);
+          
+          if (JSON.stringify(sortedCurrent) === JSON.stringify(compIds)) {
+            console.log('Match found! Comparison ID:', comp.id);
+            return { exists: true, id: comp.id };
+          }
+        }
+        
+        console.log('No matching comparison found');
+        return { exists: false, id: null };
+      } catch (error) {
+        console.error('Error checking comparison:', error);
+        return { exists: false, id: null };
+      }
+    }
+
+    function updateSaveButton(isSaved) {
+      const saveBtn = document.getElementById('save-comparison-btn');
+      const saveText = document.getElementById('save-text');
+      const saveIcon = document.getElementById('save-icon');
+      
+      saveBtn.disabled = false;
+      
+      if (isSaved) {
+        saveText.textContent = 'Unsave Comparison';
+        saveIcon.innerHTML = `
+          <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        `;
+        saveBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+        saveBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+      } else {
+        saveText.textContent = 'Save Comparison';
+        saveIcon.innerHTML = `
+          <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        `;
+        saveBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+        saveBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+      }
+    }
+
+    async function toggleSaveComparison() {
+      if (isComparisonSaved) {
+        await unsaveComparison();
+      } else {
+        await saveComparison();
+      }
+    }
+
+    async function saveComparison() {
+      if (!currentComparisonIds || currentComparisonIds.length < 2) {
+        showNotification('Cannot save comparison: Not enough startups selected', 'error');
+        return;
+      }
+
+      const saveBtn = document.getElementById('save-comparison-btn');
+      const saveText = document.getElementById('save-text');
+      const saveIcon = document.getElementById('save-icon');
+      
+      saveBtn.disabled = true;
+      saveText.textContent = 'Saving...';
+      saveIcon.innerHTML = `
+        <svg class="animate-spin w-5 h-5 mr-2 inline" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      `;
+
+      try {
+        const response = await fetch(SAVE_COMPARISON_ENDPOINT, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ startup_ids: currentComparisonIds })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: 'Failed to save comparison' }));
+          throw new Error(errorData.error || 'Failed to save comparison');
+        }
+
+        const data = await response.json();
+        isComparisonSaved = true;
+        savedComparisonId = data.id || data.comparison_id;
+        
+        if (data.already_exists) {
+          showNotification('This comparison is already in your watchlist', 'info');
+        } else {
+          showNotification('Comparison saved to your watchlist!', 'success');
+        }
+        
+        updateSaveButton(true);
+      } catch (error) {
+        console.error('Error saving comparison:', error);
+        showNotification(error.message || 'Failed to save comparison', 'error');
+        updateSaveButton(false);
+      }
+    }
+
+    async function unsaveComparison() {
+      if (!savedComparisonId) {
+        showNotification('Cannot unsave: Comparison ID not found', 'error');
+        return;
+      }
+
+      console.log('Attempting to delete comparison with ID:', savedComparisonId);
+
+      const saveBtn = document.getElementById('save-comparison-btn');
+      const saveText = document.getElementById('save-text');
+      const saveIcon = document.getElementById('save-icon');
+      
+      saveBtn.disabled = true;
+      saveText.textContent = 'Removing...';
+      saveIcon.innerHTML = `
+        <svg class="animate-spin w-5 h-5 mr-2 inline" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      `;
+
+      try {
+        const deleteUrl = `${API_BASE}/api/investor/comparisons/delete/${savedComparisonId}/`;
+        console.log('DELETE URL:', deleteUrl);
+        
+        const response = await fetch(deleteUrl, {
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+
+        console.log('Delete response status:', response.status);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Delete error data:', errorData);
+          throw new Error(errorData.error || 'Failed to unsave comparison');
+        }
+
+        const result = await response.json().catch(() => ({}));
+        console.log('Delete success:', result);
+
+        isComparisonSaved = false;
+        savedComparisonId = null;
+        
+        showNotification('Comparison removed from your watchlist', 'success');
+        updateSaveButton(false);
+      } catch (error) {
+        console.error('Error unsaving comparison:', error);
+        showNotification(error.message || 'Failed to unsave comparison', 'error');
+        updateSaveButton(true);
       }
     }
 
@@ -154,6 +390,7 @@
       }
 
       const startupIds = startupsParam.split(',').filter(id => id.trim());
+      currentComparisonIds = startupIds.map(id => parseInt(id));
       
       if (startupIds.length < 2) {
         showError('Please select at least 2 startups to compare');
@@ -174,6 +411,23 @@
         }
 
         document.getElementById('loading-state').classList.add('hidden');
+        
+        // Check if comparison already exists
+        const result = await checkIfComparisonExists();
+        const saveBtn = document.getElementById('save-comparison-btn');
+        
+        saveBtn.classList.remove('hidden');
+        
+        if (result.exists) {
+          isComparisonSaved = true;
+          savedComparisonId = result.id;
+          updateSaveButton(true);
+        } else {
+          isComparisonSaved = false;
+          savedComparisonId = null;
+          updateSaveButton(false);
+        }
+        
         renderComparison();
       } catch (error) {
         console.error('Error loading comparison:', error);
@@ -201,46 +455,55 @@
     }
 
     function renderHeaders() {
-      const container = document.getElementById('comparison-header');
-      container.className = `grid grid-cols-1 md:grid-cols-${startupsData.length} gap-6 mb-8`;
-      container.innerHTML = '';
+    const container = document.getElementById('comparison-header');
+    container.className = `grid grid-cols-1 md:grid-cols-${startupsData.length} gap-6 mb-8`;
+    container.innerHTML = '';
 
-      startupsData.forEach(startup => {
-        const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
-        const riskBadge = isDeck
-          ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>'
-          : (startup.data_source_confidence === 'High'
-              ? '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>'
-              : (startup.data_source_confidence === 'Medium'
-                  ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>'
-                  : '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>'));
+    startupsData.forEach(startup => {
+      const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
+      
+      let riskBadge;
+      if (isDeck) {
+        riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>';
+      } else if (startup.risk_level) {
+        const riskLevel = startup.risk_level.toLowerCase();
+        if (riskLevel === 'low') {
+          riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>';
+        } else if (riskLevel === 'medium') {
+          riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>';
+        } else {
+          riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>';
+        }
+      } else {
+        riskBadge = '<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">Risk N/A</span>';
+      }
 
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-lg shadow-sm border border-gray-200 p-6';
-        card.innerHTML = `
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h3 class="text-xl font-bold text-gray-900 mb-2">${escapeHtml(startup.company_name)}</h3>
-              <p class="text-sm text-gray-600">${escapeHtml(startup.industry || 'Not specified')}</p>
-            </div>
-            ${riskBadge}
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-lg shadow-sm border border-gray-200 p-6';
+      card.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">${escapeHtml(startup.company_name)}</h3>
+            <p class="text-sm text-gray-600">${escapeHtml(startup.industry || 'Not specified')}</p>
           </div>
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span class="text-sm text-gray-600">Projected Return</span>
-              <span class="text-sm font-bold ${startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">
-                ${startup.projected_return != null ? (startup.projected_return >= 0 ? '+' : '') + startup.projected_return + '%' : 'N/A'}
-              </span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-sm text-gray-600">Reward Potential</span>
-              <span class="text-sm font-bold text-gray-900">${getRewardValue(startup.reward_potential)}/5</span>
-            </div>
+          ${riskBadge}
+        </div>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600">Projected Return</span>
+            <span class="text-sm font-bold ${startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">
+              ${startup.projected_return != null ? (startup.projected_return >= 0 ? '+' : '') + startup.projected_return + '%' : 'N/A'}
+            </span>
           </div>
-        `;
-        container.appendChild(card);
-      });
-    }
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600">Reward Potential</span>
+            <span class="text-sm font-bold text-gray-900">${getRewardValue(startup.reward_potential)}/5</span>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
 
     function getRewardValue(reward) {
       if (reward == null) return 'N/A';
@@ -250,200 +513,197 @@
     }
 
     function renderQuickStats() {
-      const container = document.getElementById('quick-stats-content');
-      container.innerHTML = '';
+    const container = document.getElementById('quick-stats-content');
+    container.innerHTML = '';
 
-      // Highest Projected Return
-      const highestReturn = [...startupsData].sort((a, b) => 
-        (b.projected_return || 0) - (a.projected_return || 0)
-      )[0];
+    const highestReturn = [...startupsData].sort((a, b) => 
+      (b.projected_return || 0) - (a.projected_return || 0)
+    )[0];
 
-      // Best Reward Potential
-      const bestReward = [...startupsData].sort((a, b) => {
-        const aVal = parseFloat(getRewardValue(a.reward_potential)) || 0;
-        const bVal = parseFloat(getRewardValue(b.reward_potential)) || 0;
-        return bVal - aVal;
-      })[0];
+    const bestReward = [...startupsData].sort((a, b) => {
+      const aVal = parseFloat(getRewardValue(a.reward_potential)) || 0;
+      const bVal = parseFloat(getRewardValue(b.reward_potential)) || 0;
+      return bVal - aVal;
+    })[0];
 
-      // Lowest Risk
-      const lowestRisk = startupsData.find(s => s.data_source_confidence === 'High') || startupsData[0];
+    const lowestRisk = startupsData.find(s => s.risk_level === 'Low') || startupsData[0];
 
-      const stats = [
-        {
-          title: 'Highest Projected Return',
-          company: highestReturn.company_name,
-          value: highestReturn.projected_return != null ? `${highestReturn.projected_return >= 0 ? '+' : ''}${highestReturn.projected_return}%` : 'N/A',
-          color: 'text-green-600'
-        },
-        {
-          title: 'Best Reward Potential',
-          company: bestReward.company_name,
-          value: `${getRewardValue(bestReward.reward_potential)}/5`,
-          color: 'text-blue-600'
-        },
-        {
-          title: 'Lowest Risk',
-          company: lowestRisk.company_name,
-          value: lowestRisk.data_source_confidence === 'High' ? 'Low Risk' : 
-                 lowestRisk.data_source_confidence === 'Medium' ? 'Medium Risk' : 'High Risk',
-          color: 'text-purple-600'
-        }
-      ];
+    const stats = [
+      {
+        title: 'Highest Projected Return',
+        company: highestReturn.company_name,
+        value: highestReturn.projected_return != null ? `${highestReturn.projected_return >= 0 ? '+' : ''}${highestReturn.projected_return}%` : 'N/A',
+        color: 'text-green-600'
+      },
+      {
+        title: 'Best Reward Potential',
+        company: bestReward.company_name,
+        value: `${getRewardValue(bestReward.reward_potential)}/5`,
+        color: 'text-blue-600'
+      },
+      {
+        title: 'Lowest Risk',
+        company: lowestRisk.company_name,
+        value: lowestRisk.risk_level || 'N/A',
+        color: 'text-purple-600'
+      }
+    ];
 
-      stats.forEach(stat => {
-        const statCard = document.createElement('div');
-        statCard.className = 'text-center p-4 bg-gray-50 rounded-lg';
-        statCard.innerHTML = `
-          <p class="text-sm text-gray-600 mb-1">${stat.title}</p>
-          <p class="text-lg font-bold text-gray-900 mb-1">${escapeHtml(stat.company)}</p>
-          <p class="text-2xl font-bold ${stat.color}">${stat.value}</p>
-        `;
-        container.appendChild(statCard);
-      });
-    }
+    stats.forEach(stat => {
+      const statCard = document.createElement('div');
+      statCard.className = 'text-center p-4 bg-gray-50 rounded-lg';
+      statCard.innerHTML = `
+        <p class="text-sm text-gray-600 mb-1">${stat.title}</p>
+        <p class="text-lg font-bold text-gray-900 mb-1">${escapeHtml(stat.company)}</p>
+        <p class="text-2xl font-bold ${stat.color}">${stat.value}</p>
+      `;
+      container.appendChild(statCard);
+    });
+  }
 
     function renderCharts() {
-      // Projected Returns Chart
-      const returnsCtx = document.getElementById('returns-chart').getContext('2d');
-      if (returnsChart) returnsChart.destroy();
-      
-      returnsChart = new Chart(returnsCtx, {
-        type: 'bar',
-        data: {
-          labels: startupsData.map(s => s.company_name),
-          datasets: [{
-            label: 'Projected Return (%)',
-            data: startupsData.map(s => s.projected_return || 0),
-            backgroundColor: startupsData.map(s => 
-              s.projected_return >= 0 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)'
-            ),
-            borderColor: startupsData.map(s => 
-              s.projected_return >= 0 ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)'
-            ),
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `Return: ${context.parsed.y >= 0 ? '+' : ''}${context.parsed.y}%`;
-                }
+    const returnsCtx = document.getElementById('returns-chart').getContext('2d');
+    if (returnsChart) returnsChart.destroy();
+    
+    returnsChart = new Chart(returnsCtx, {
+      type: 'bar',
+      data: {
+        labels: startupsData.map(s => s.company_name),
+        datasets: [{
+          label: 'Projected Return (%)',
+          data: startupsData.map(s => s.projected_return || 0),
+          backgroundColor: startupsData.map(s => 
+            s.projected_return >= 0 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)'
+          ),
+          borderColor: startupsData.map(s => 
+            s.projected_return >= 0 ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)'
+          ),
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Return: ${context.parsed.y >= 0 ? '+' : ''}${context.parsed.y}%`;
               }
             }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value + '%';
-                }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return value + '%';
               }
             }
           }
         }
-      });
+      }
+    });
 
-      // Risk vs Reward Scatter Chart
-      const riskRewardCtx = document.getElementById('risk-reward-chart').getContext('2d');
-      if (riskRewardChart) riskRewardChart.destroy();
+    const riskRewardCtx = document.getElementById('risk-reward-chart').getContext('2d');
+    if (riskRewardChart) riskRewardChart.destroy();
 
-      const riskMap = { 'High': 1, 'Medium': 2, 'Low': 3 };
-      
-      riskRewardChart = new Chart(riskRewardCtx, {
-        type: 'scatter',
-        data: {
-          datasets: startupsData.map((s, idx) => ({
-            label: s.company_name,
-            data: [{
-              x: riskMap[s.data_source_confidence] || 2,
-              y: parseFloat(getRewardValue(s.reward_potential)) || 0
-            }],
-            backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)'][idx % 3],
-            borderColor: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)', 'rgb(245, 158, 11)'][idx % 3],
-            borderWidth: 2,
-            pointRadius: 8,
-            pointHoverRadius: 10
-          }))
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { position: 'bottom' },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  const riskLabels = ['', 'High Risk', 'Medium Risk', 'Low Risk'];
-                  return `${context.dataset.label}: ${riskLabels[context.parsed.x]}, Reward: ${context.parsed.y}/5`;
-                }
+    const riskMap = { 'High': 1, 'Medium': 2, 'Low': 3 };
+    
+    riskRewardChart = new Chart(riskRewardCtx, {
+      type: 'scatter',
+      data: {
+        datasets: startupsData.map((s, idx) => ({
+          label: s.company_name,
+          data: [{
+            x: riskMap[s.risk_level] || 2,
+            y: parseFloat(getRewardValue(s.reward_potential)) || 0
+          }],
+          backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)'][idx % 3],
+          borderColor: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)', 'rgb(245, 158, 11)'][idx % 3],
+          borderWidth: 2,
+          pointRadius: 8,
+          pointHoverRadius: 10
+        }))
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const riskLabels = ['', 'High Risk', 'Medium Risk', 'Low Risk'];
+                return `${context.dataset.label}: ${riskLabels[context.parsed.x]}, Reward: ${context.parsed.y}/5`;
               }
             }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'Risk Level' },
+            min: 0.5,
+            max: 3.5,
+            ticks: {
+              callback: function(value) {
+                const labels = ['', 'High Risk', 'Medium Risk', 'Low Risk'];
+                return labels[value] || '';
+              },
+              stepSize: 1
+            }
           },
-          scales: {
-            x: {
-              title: { display: true, text: 'Risk Level' },
-              min: 0.5,
-              max: 3.5,
-              ticks: {
-                callback: function(value) {
-                  const labels = ['', 'High Risk', 'Medium Risk', 'Low Risk'];
-                  return labels[value] || '';
-                },
-                stepSize: 1
-              }
-            },
-            y: {
-              title: { display: true, text: 'Reward Potential' },
-              min: 0,
-              max: 5,
-              ticks: {
-                stepSize: 1,
-                callback: function(value) {
-                  return value + '/5';
-                }
+          y: {
+            title: { display: true, text: 'Reward Potential' },
+            min: 0,
+            max: 5,
+            ticks: {
+              stepSize: 1,
+              callback: function(value) {
+                return value + '/5';
               }
             }
           }
         }
-      });
-    }
+      }
+    });
+  }
 
     function renderComparisonTable() {
       const table = document.getElementById('comparison-table');
       table.innerHTML = '';
 
       const metrics = [
-        { label: 'Company Name', key: 'company_name', format: v => escapeHtml(v) || '—' },
-        { label: 'Industry', key: 'industry', format: v => escapeHtml(v) || '—' },
-        { label: 'Risk Level', key: 'data_source_confidence', format: v => {
-          if (v === 'High') return '<span class="text-green-600 font-medium">Low Risk</span>';
-          if (v === 'Medium') return '<span class="text-yellow-600 font-medium">Medium Risk</span>';
-          return '<span class="text-red-600 font-medium">High Risk</span>';
-        }},
-        { label: 'Projected Return', key: 'projected_return', format: v => {
-          if (v == null) return '—';
-          const color = v >= 0 ? 'text-green-600' : 'text-red-600';
-          return `<span class="${color} font-semibold">${v >= 0 ? '+' : ''}${v}%</span>`;
-        }},
-        { label: 'Reward Potential', key: 'reward_potential', format: v => {
-          const val = getRewardValue(v);
-          return `<span class="font-semibold">${val}/5</span>`;
-        }},
-        { label: 'Funding Stage', key: 'funding_stage', format: v => escapeHtml(v) || '—' },
-        { label: 'Total Funding', key: 'total_funding', format: v => v ? `$${Number(v).toLocaleString()}` : '—' },
-        { label: 'Valuation', key: 'valuation', format: v => v ? `$${Number(v).toLocaleString()}` : '—' },
-        { label: 'Revenue', key: 'revenue', format: v => v ? `$${Number(v).toLocaleString()}` : '—' },
-        { label: 'Employee Count', key: 'employee_count', format: v => v ? Number(v).toLocaleString() : '—' },
-        { label: 'Founded Year', key: 'founded_year', format: v => escapeHtml(v) || '—' }
-      ];
+      { label: 'Industry', key: 'industry', format: (v, startup) => {
+        const isDeck = !!(startup && (startup.is_deck_builder || startup.source_deck_id || startup.source_deck));
+        const hasNoIndustry = !v || v === '—' || v.trim() === '';
+        
+        if ((isDeck || hasNoIndustry) && startup && startup.tagline) {
+          return escapeHtml(startup.tagline);
+        }
+        return escapeHtml(v || '—');
+      }},
+      { label: 'Risk Level', key: 'risk_level', format: (v) => {
+        if (!v) return '—';
+        if (v === 'Low') return '<span class="text-green-600 font-medium">Low Risk</span>';
+        if (v === 'Medium') return '<span class="text-yellow-600 font-medium">Medium Risk</span>';
+        if (v === 'High') return '<span class="text-red-600 font-medium">High Risk</span>';
+        return escapeHtml(v);
+      }},
+      { label: 'Projected Return', key: 'projected_return', format: (v) => {
+        if (v == null) return '—';
+        const color = v >= 0 ? 'text-green-600' : 'text-red-600';
+        return `<span class="${color} font-semibold">${v >= 0 ? '+' : ''}${v}%</span>`;
+      }},
+      { label: 'Reward Potential', key: 'reward_potential', format: (v) => {
+        const val = getRewardValue(v);
+        return `<span class="font-semibold">${val}/5</span>`;
+      }},
+      { label: 'Revenue', key: 'revenue', format: (v) => v ? `${Number(v).toLocaleString()}` : '—' }
+    ];
 
-      // Header row
       const thead = document.createElement('thead');
       thead.className = 'bg-gray-50';
       const headerRow = document.createElement('tr');
@@ -457,7 +717,6 @@
       thead.appendChild(headerRow);
       table.appendChild(thead);
 
-      // Body rows
       const tbody = document.createElement('tbody');
       tbody.className = 'bg-white divide-y divide-gray-200';
       
@@ -474,7 +733,7 @@
         startupsData.forEach(startup => {
           const cell = document.createElement('td');
           cell.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-700';
-          cell.innerHTML = metric.format(startup[metric.key]);
+          cell.innerHTML = metric.format(startup[metric.key], startup);
           row.appendChild(cell);
         });
 
@@ -484,16 +743,37 @@
       table.appendChild(tbody);
     }
 
-    // Event Listeners
-    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
-
-    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       const token = getAuthToken();
       if (!token) {
         window.location.href = '/login';
         return;
       }
+      
+      // Setup dynamic back navigation based on 'from' parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const fromSource = urlParams.get('from');
+      const backNavLink = document.getElementById('back-nav-link');
+      const backNavText = document.getElementById('back-nav-text');
+      const backToSelectionContainer = document.getElementById('back-to-selection-container');
+      
+      console.log('From source:', fromSource);
+      console.log('Full URL:', window.location.href);
+      
+      if (fromSource === 'watchlist') {
+        // Came from watchlist -> show "Back to Watchlist" and hide "Back to Selection"
+        backNavLink.href = '../Module_1/Watchlist.html?tab=compared';
+        backNavText.textContent = 'Back to Watchlist';
+        backToSelectionContainer.classList.add('hidden');
+        console.log('Set navigation to: Back to Watchlist (no Back to Selection)');
+      } else {
+        // Came from compare startups page (dashboard flow) -> show "Dashboard" and "Back to Selection"
+        backNavLink.href = '../Module_1/Dashboard.html';
+        backNavText.textContent = 'Dashboard';
+        backToSelectionContainer.classList.remove('hidden');
+        console.log('Set navigation to: Dashboard (with Back to Selection)');
+      }
+      
       loadComparison();
     });
   </script>

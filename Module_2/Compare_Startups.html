@@ -16,7 +16,7 @@
       </a>
       <div>
         <h1 class="text-3xl font-bold text-gray-900">Compare Startups</h1>
-        <p class="text-gray-600 mt-1">Select 2-3 startups to compare side by side</p>
+        <p class="text-gray-600 mt-1">Select 2-3 startups to compare side by side (does not include pitch decks)</p>
       </div>
     </div>
 
@@ -84,7 +84,6 @@
         </div>
         <h3 class="text-lg font-medium text-gray-900 mb-2">No Startups Found</h3>
         <p class="text-gray-600 mb-4">Try adjusting your filters or search criteria.</p>
-        <button id="back-to-dash" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">Go Back</button>
       </div>
     </div>
 
@@ -143,15 +142,12 @@
       console.log('Using back URL:', backUrl);
       
       const backButton = document.getElementById("back-button");
-      const backToDash = document.getElementById("back-to-dash");
       
       backButton.href = backUrl;
       backButton.onclick = (e) => {
         e.preventDefault();
         window.location.href = backUrl;
       };
-      
-      backToDash.onclick = () => window.location.href = backUrl;
 
       const token = getAuthToken();
       if (!token) {
@@ -178,10 +174,22 @@
         });
         if (!response.ok) throw new Error("Failed to fetch startups");
         const data = await response.json();
-        startups = data.results || data.startups || data;
-        if (!Array.isArray(startups)) {
-          startups = [];
+        let allStartups = data.results || data.startups || data;
+        if (!Array.isArray(allStartups)) {
+          allStartups = [];
         }
+        
+        // Filter out pitch decks - only include startups with verified financial data
+        // Pitch decks have source_deck_id, regular startups don't
+        startups = allStartups.filter(s => {
+          // A startup is a pitch deck if it has source_deck_id OR if it lacks basic financial data
+          const hasDeckId = s.source_deck_id != null;
+          const lacksFinancials = s.revenue == null && s.net_income == null;
+          const isPitchDeck = hasDeckId || (lacksFinancials && s.funding_ask != null);
+          
+          return !isPitchDeck; // Only include non-pitch-deck startups
+        });
+        
         renderStartups(startups);
       } catch (error) {
         console.error("Error loading startups:", error);
@@ -207,13 +215,21 @@
         
         const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
         
-        const riskBadge = isDeck
-          ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>'
-          : (startup.data_source_confidence === 'High'
-              ? '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>'
-              : (startup.data_source_confidence === 'Medium'
-                  ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>'
-                  : '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>'));
+        let riskBadge;
+        if (isDeck) {
+          riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>';
+        } else if (startup.risk_level) {
+          const riskLevel = startup.risk_level.toLowerCase();
+          if (riskLevel === 'low') {
+            riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>';
+          } else if (riskLevel === 'medium') {
+            riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>';
+          } else {
+            riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>';
+          }
+        } else {
+          riskBadge = '<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">Risk N/A</span>';
+        }
 
         const industry = startup.industry || '—';
         let reward = 'N/A';
@@ -363,10 +379,10 @@
           if (isDeck) {
             matchesRisk = risk === 'Medium';
           } else {
-            const confidence = s.data_source_confidence;
-            if (risk === 'Low' && confidence !== 'High') matchesRisk = false;
-            if (risk === 'Medium' && confidence !== 'Medium') matchesRisk = false;
-            if (risk === 'High' && confidence !== 'Low') matchesRisk = false;
+            const riskLevel = s.risk_level;
+            if (risk === 'Low' && riskLevel !== 'Low') matchesRisk = false;
+            if (risk === 'Medium' && riskLevel !== 'Medium') matchesRisk = false;
+            if (risk === 'High' && riskLevel !== 'High') matchesRisk = false;
           }
         }
         

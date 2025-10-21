@@ -53,7 +53,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
           <select name="sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
-            <option value="">Recommended</option>
+            <option value="">All Startups</option>
             <option value="projected_return_desc">Highest Returns First</option>
             <option value="projected_return_asc">Lowest Returns First</option>
             <option value="reward_potential_desc">Best Reward Potential</option>
@@ -78,11 +78,18 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Risk Tolerance</label>
-          <input id="riskSlider" type="range" name="risk_slider" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" oninput="updateRiskLabel(this.value)">
-          <div class="flex justify-between text-xs text-gray-500 mt-1"><span>Low</span><span>Medium</span><span>High</span></div>
-          <div class="text-center mt-2"><span id="risk-value" class="text-sm font-medium text-gray-700">Medium</span></div>
-          <!-- hidden numeric value expected by backend (confidence threshold 0-100) -->
+          <label class="block text-sm font-medium text-gray-700 mb-3">Risk Tolerance</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="setRiskLevel('low')" id="risk-low" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              Low
+            </button>
+            <button type="button" onclick="setRiskLevel('medium')" id="risk-medium" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-blue-500 bg-blue-50 rounded-md hover:border-blue-400 transition-all">
+              Medium
+            </button>
+            <button type="button" onclick="setRiskLevel('high')" id="risk-high" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              High
+            </button>
+          </div>
           <input type="hidden" name="risk" id="risk-hidden" value="50">
         </div>
 
@@ -156,6 +163,11 @@
       return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
     }
 
+    function riskLevelToNum(riskLevel) {
+      const map = { 'Low': 1, 'Medium': 2, 'High': 3 };
+      return map[riskLevel] || 2;
+    }
+
     function confidenceToNum(confidence) {
       const map = { 'High': 3, 'Medium': 2, 'Low': 1 };
       return map[confidence] || 0;
@@ -167,14 +179,12 @@
     async function fetchJSON(url, options = {}) {
       const token = getAuthToken();
       if (!token) {
-        // not logged in
         window.location.href = '/login';
         throw new Error('No auth token');
       }
       options.headers = Object.assign({}, options.headers || {}, { 'Authorization': `Bearer ${token}` });
       const res = await fetch(url, options);
       if (res.status === 401 || res.status === 403) {
-        // token expired / invalid
         localStorage.removeItem('authToken');
         window.location.href = '/login';
         throw new Error('Unauthorized');
@@ -183,51 +193,26 @@
         const text = await res.text().catch(()=>null);
         throw new Error(`Request failed: ${res.status} ${text || ''}`);
       }
-      // Return parsed JSON safely
       const ct = res.headers.get('content-type') || '';
       if (ct.includes('application/json')) return await res.json();
       return null;
     }
 
     // ===========================
-    // Watchlist: fetch cached ids for current user
+    // Watchlist
     // ===========================
     let watchlistIdsSet = new Set();
     async function refreshWatchlist() {
         try {
             const data = await fetchJSON(WATCHLIST_ENDPOINT, { method: 'GET' });
-            // Handle both response formats
             const items = data.results || data.watchlist || [];
             watchlistIdsSet = new Set(items.map(it => it.id));
             
-            // update badge
             const badge = document.getElementById('watchlist-badge');
             badge.textContent = data.count ?? items.length ?? 0;
         } catch (err) {
             console.warn('Could not refresh watchlist:', err);
-            // leave existing set
         }
-    }
-
-    async function toggleWatchlist(startupId, button) {
-      const inWatchlist = watchlistIdsSet.has(Number(startupId));
-      button.disabled = true;
-      let success = false;
-      if (inWatchlist) {
-        success = await removeFromWatchlist(startupId);
-      } else {
-        success = await addToWatchlist(startupId);
-      }
-      button.disabled = false;
-
-      if (success) {
-        const newState = !inWatchlist;
-        button.innerHTML = watchIcon(newState);
-        button.title = newState ? 'Remove from watchlist' : 'Add to watchlist';
-        button.setAttribute('aria-pressed', newState ? 'true' : 'false');
-      } else {
-        alert('Failed to update watchlist.');
-      }
     }
 
     async function addToWatchlist(startupId, btn) {
@@ -237,14 +222,12 @@
           headers: authHeaders()
         });
         if (res.status === 201 || res.ok) {
-          // success
           watchlistIdsSet.add(Number(startupId));
           updateWatchlistBadge();
           btn && btn.classList.add('text-blue-600');
           return true;
         } else {
-          const json = await res.json().catch(()=>null);
-          console.warn('Add failed', res.status, json);
+          console.warn('Add failed', res.status);
           return false;
         }
       } catch (err) {
@@ -265,8 +248,7 @@
           btn && btn.classList.remove('text-blue-600');
           return true;
         } else {
-          const json = await res.json().catch(()=>null);
-          console.warn('Remove failed', res.status, json);
+          console.warn('Remove failed', res.status);
           return false;
         }
       } catch (err) {
@@ -281,7 +263,7 @@
     }
 
     // ===========================
-    // Fetch startups (list)
+    // Fetch startups
     // ===========================
     async function fetchStartups() {
       try {
@@ -289,33 +271,41 @@
         if (!token) throw new Error('No auth token found');
 
         const form = document.getElementById('filterForm');
-        const fd = new FormData(form);
-
-        // Build params: use the backend parameter names expected in StartupListView
-        // risk is numeric confidence threshold (0-100)
         const params = new URLSearchParams();
 
-        // include sort_by if provided (backend supports it)
+        // Sort By
         const sortVal = form.elements.sort_by?.value;
-        if (sortVal) params.set('sort_by', sortVal);
+        if (sortVal) {
+          params.set('sort_by', sortVal);
+          console.log('Sort by:', sortVal);
+        }
 
-        const industry = fd.get('industry') || '';
-        if (industry) params.set('industry', industry);
+        // Industry
+        const industry = form.elements.industry?.value;
+        if (industry) {
+          params.set('industry', industry);
+          console.log('Industry:', industry);
+        }
 
-        const minReturn = fd.get('min_return') || '';
-        if (minReturn) params.set('min_return', minReturn);
+        // Minimum Return
+        const minReturn = form.elements.min_return?.value;
+        if (minReturn) {
+          params.set('min_return', minReturn);
+          console.log('Min return:', minReturn);
+        }
 
-        // risk hidden numeric
-        const riskVal = document.getElementById('risk-hidden')?.value || '';
+        // Risk (hidden field)
+        const riskVal = document.getElementById('risk-hidden')?.value;
         if (riskVal) {
-          // send numeric 0-100
           params.set('risk', riskVal);
+          console.log('Risk value:', riskVal);
         }
 
         // Build final URL
         const url = STARTUPS_ENDPOINT + (params.toString() ? `?${params.toString()}` : '');
+        console.log('Fetching from:', url);
 
-        // fetch startups AND refresh watchlist concurrently
+        // Fetch startups AND refresh watchlist concurrently
         const [startupsData] = await Promise.allSettled([
           fetchJSON(url, { method: 'GET' }),
           refreshWatchlist()
@@ -324,11 +314,8 @@
         const startupPayload = (startupsData.status === 'fulfilled') ? (startupsData.value) : null;
         let startups = [];
         if (startupPayload) {
-          // StartupListView returns a queryset (serialized) normally; older views returned data.results
-          // Accept multiple shapes
           startups = startupPayload.results || startupPayload.startups || startupPayload;
           if (!Array.isArray(startups)) {
-            // If it's an object containing 'startups' key or mapping
             if (startupPayload.startups && Array.isArray(startupPayload.startups)) {
               startups = startupPayload.startups;
             } else if (Array.isArray(startupPayload)) {
@@ -339,6 +326,7 @@
           }
         }
 
+        console.log('Fetched startups:', startups.length);
         return startups || [];
       } catch (error) {
         console.error('Error fetching startups:', error);
@@ -357,7 +345,7 @@
         case 'projected_return_asc': return copy.sort((a, b) => (a.projected_return || 0) - (b.projected_return || 0));
         case 'reward_potential_desc': return copy.sort((a, b) => (b.reward_potential || 0) - (a.reward_potential || 0));
         case 'confidence_desc': return copy.sort((a, b) => (confidenceToNum(b.data_source_confidence) - confidenceToNum(a.data_source_confidence)));
-        case 'risk_asc': return copy.sort((a, b) => (a.reward_potential || 0) - (b.reward_potential || 0));
+        case 'risk_asc': return copy.sort((a, b) => riskLevelToNum(a.risk_level) - riskLevelToNum(b.risk_level));
         case 'company_name': return copy.sort((a, b) => (a.company_name || '').localeCompare(b.company_name || ''));
         default: return copy;
       }
@@ -373,15 +361,24 @@
       card.setAttribute('data-startup-id', startup.id);
       card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
 
-      const riskBadge = isDeck
-        ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>'
-        : (startup.data_source_confidence === 'High'
-            ? '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>'
-            : (startup.data_source_confidence === 'Medium'
-                ? '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>'
-                : '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>'));
+      // Display financial risk level if available
+      let riskBadge;
+      if (isDeck) {
+        riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>';
+      } else if (startup.risk_level) {
+        const riskLevel = startup.risk_level.toLowerCase();
+        if (riskLevel === 'low') {
+          riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>';
+        } else if (riskLevel === 'medium') {
+          riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>';
+        } else {
+          riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>';
+        }
+      } else {
+        riskBadge = '<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">Risk N/A</span>';
+      }
 
-      const industry = startup.industry || '—';
+      const industry = isDeck ? (startup.tagline || '—') : (startup.industry || '—');
       let reward = 'N/A';
       if (startup.reward_potential != null) {
         if (typeof startup.reward_potential === 'string') {
@@ -394,7 +391,6 @@
       }
       const projected = (startup.projected_return != null && startup.projected_return !== '') ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
 
-      // determine watchlist state
       const inWatchlist = watchlistIdsSet.has(Number(startup.id));
 
       card.innerHTML = `
@@ -426,24 +422,19 @@
         </div>
       `;
 
-      // click handlers
       card.querySelector('.view-details-btn').addEventListener('click', () => {
         const id = card.getAttribute('data-startup-id');
         const isDeckBuilder = card.getAttribute('data-is-deck-builder') === 'true';
-        // Keep previous behavior: open page (frontend will fetch profile from new API)
         const target = isDeckBuilder ? `${COMPANY_PROFILE_DB_PAGE}?id=${id}` : `${COMPANY_PROFILE_PAGE}?id=${id}`;
         window.location.href = target;
       });
 
-      // Watch toggle
       const watchBtn = card.querySelector('.watch-toggle');
       watchBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const sid = startup.id;
         const currently = watchlistIdsSet.has(Number(sid));
-        // optimistic UI toggle
         if (!currently) {
-          // Add
           watchBtn.disabled = true;
           const ok = await addToWatchlist(sid, watchBtn);
           watchBtn.disabled = false;
@@ -452,11 +443,9 @@
             watchBtn.title = 'Remove from watchlist';
             watchBtn.setAttribute('aria-pressed', 'true');
           } else {
-            // show feedback
             alert('Could not add to watchlist.');
           }
         } else {
-          // Remove
           watchBtn.disabled = true;
           const ok = await removeFromWatchlist(sid, watchBtn);
           watchBtn.disabled = false;
@@ -473,7 +462,6 @@
       return card;
     }
 
-    // small accessible watch icon markup generator
     function watchIcon(active) {
       if (active) {
         return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
@@ -481,7 +469,6 @@
       return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35l-0.45-0.41C6.4 15.36 3 12.28 3 8.5 3 6 5 4 7.5 4c1.54 0 3.04 .99 3.57 2.36h0.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5z"/></svg>`;
     }
 
-    // simple html-escape for safety (data may be untrusted)
     function escapeHtml(unsafe) {
       if (unsafe === null || unsafe === undefined) return '';
       return String(unsafe)
@@ -496,13 +483,19 @@
     // Render flow
     // ===========================
     async function renderStartups() {
+      console.log('Rendering startups...');
+      
+      // Show loading state
+      const grid = document.getElementById('startup-grid');
+      const noStartups = document.getElementById('no-startups');
+      grid.innerHTML = '<div class="col-span-full text-center py-16"><div class="text-4xl mb-4">⏳</div><p class="text-gray-600">Loading startups...</p></div>';
+      noStartups.classList.add('hidden');
+      
       const startups = await fetchStartups();
       const sortBy = document.getElementById('filterForm').elements.sort_by?.value;
       const sorted = sortStartups(startups, sortBy);
 
-      const grid = document.getElementById('startup-grid');
       const countSpan = document.getElementById('startup-count');
-      const noStartups = document.getElementById('no-startups');
       const clearBtn = document.getElementById('clear-filters');
       grid.innerHTML = '';
 
@@ -510,6 +503,7 @@
         noStartups.classList.remove('hidden');
         countSpan.textContent = '0';
         clearBtn.classList.add('hidden');
+        console.log('No startups found');
         return;
       }
 
@@ -518,6 +512,7 @@
       document.getElementById('startup-plural').textContent = sorted.length === 1 ? '' : 's';
       clearBtn.classList.remove('hidden');
 
+      console.log('Rendering', sorted.length, 'startup cards');
       for (const s of sorted) {
         const card = createStartupCard(s);
         grid.appendChild(card);
@@ -527,30 +522,42 @@
     // ===========================
     // Filters & UI helpers
     // ===========================
+    function setRiskLevel(level) {
+      // Remove active state from all buttons
+      document.querySelectorAll('.risk-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+        btn.classList.add('border-gray-300');
+      });
+      
+      // Set active state on selected button
+      const selectedBtn = document.getElementById(`risk-${level}`);
+      selectedBtn.classList.remove('border-gray-300');
+      selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+      
+      // Update hidden value
+      const riskValues = { 'low': 20, 'medium': 50, 'high': 80 };
+      document.getElementById('risk-hidden').value = riskValues[level];
+    }
+
     function clearAllFilters() {
       const form = document.getElementById('filterForm');
       form.reset();
-      const slider = document.getElementById('riskSlider');
-      slider.value = 50;
-      updateRiskLabel(50);
+      setRiskLevel('medium'); // Reset to medium
       renderStartups();
-    }
-
-    function updateRiskLabel(value) {
-      let label = 'Medium';
-      if (value === '' || value === null) value = 50;
-      const numeric = Number(value);
-      if (numeric < 33) label = 'Low';
-      else if (numeric > 66) label = 'High';
-      document.getElementById('risk-value').textContent = label;
-      document.getElementById('risk-hidden').value = numeric;
     }
 
     function applyPreset(preset) {
       const form = document.getElementById('filterForm');
-      if (preset === 'conservative') { document.getElementById('riskSlider').value = 20; updateRiskLabel(20); }
-      else if (preset === 'balanced') { document.getElementById('riskSlider').value = 50; updateRiskLabel(50); }
-      else if (preset === 'aggressive') { document.getElementById('riskSlider').value = 80; updateRiskLabel(80); form.elements.min_return.value = '20'; }
+      if (preset === 'conservative') { 
+        setRiskLevel('low');
+      }
+      else if (preset === 'balanced') { 
+        setRiskLevel('medium');
+      }
+      else if (preset === 'aggressive') { 
+        setRiskLevel('high');
+        form.elements.min_return.value = '20'; 
+      }
       renderStartups();
     }
 
@@ -564,7 +571,6 @@
         console.warn('Logout error (ignored):', err);
       } finally {
         localStorage.removeItem('authToken');
-        // Redirect to login
         window.location.href = '/login';
       }
     }
@@ -572,21 +578,20 @@
     // ===========================
     // DOM events
     // ===========================
-    document.getElementById('filterForm').addEventListener('submit', e => {
+    document.getElementById('filterForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      renderStartups();
+      console.log('Apply Filters clicked!');
+      await renderStartups();
     });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
       logoutUser();
     });
 
-    // initial boot
     document.addEventListener('DOMContentLoaded', async () => {
       const token = getAuthToken();
       if (!token) { window.location.href = '/login'; return; }
 
-      // Refresh watchlist then render
       try {
         await refreshWatchlist();
       } catch (e) { /* ignore */ }
@@ -594,7 +599,6 @@
       await renderStartups();
     });
 
-    // expose helpers for debugging (optional)
     window._fundora = {
       refreshWatchlist,
       fetchStartups,

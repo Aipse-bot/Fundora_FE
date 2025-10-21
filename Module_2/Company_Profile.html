@@ -20,11 +20,11 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center">
-        <a href="../Module_1/Dashboard.html" class="mr-6 p-2 hover:bg-gray-100 rounded-full">
+        <button id="backBtn" class="mr-6 p-2 hover:bg-gray-100 rounded-full">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
-        </a>
+        </button>
         <div class="flex items-center">
           <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center mr-4">
             <div class="w-8 h-8 bg-gradient-to-br from-orange-300 to-red-400 rounded"></div>
@@ -98,9 +98,9 @@
             </svg>
             Loading...
           </button>
-          <a href="../Module_2/Compare_Startups.html?return=${encodeURIComponent(window.location.href)}" class="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
+          <button id="compareBtn" class="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center">
             Compare Startups
-          </a>
+          </button>
 
           <a id="investBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
             Invest
@@ -111,11 +111,12 @@
   </div>
 
   <script>
-      let currentWatchlistState = false; // Track watchlist state locally
+      let currentWatchlistState = false;
 
       const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
       const params = new URLSearchParams(window.location.search);
       const startupId = params.get("id");
+      const returnUrl = params.get("return");
 
       function authHeaders() {
           return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : {};
@@ -150,13 +151,13 @@
                   data.company_description || "No description provided.";
 
               const badge = document.getElementById("riskBadge");
-              const conf = data.data_source_confidence || "Medium";
+              const riskLevel = data.risk_level || "Medium";
               const riskMap = {
-                  High: ["Low Risk", "bg-green-100 text-green-800"],
+                  Low: ["Low Risk", "bg-green-100 text-green-800"],
                   Medium: ["Medium Risk", "bg-yellow-100 text-yellow-800"],
-                  Low: ["High Risk", "bg-red-100 text-red-800"],
+                  High: ["High Risk", "bg-red-100 text-red-800"],
               };
-              const [label, classes] = riskMap[conf] || ["Unknown", "bg-gray-100 text-gray-800"];
+              const [label, classes] = riskMap[riskLevel] || ["Unknown", "bg-gray-100 text-gray-800"];
               badge.textContent = label;
               badge.className = `${classes} text-sm font-medium px-3 py-1 rounded-full`;
 
@@ -180,15 +181,15 @@
                   : 3;
               rr.innerHTML = bar("Risk Score", risk, "red") + bar("Reward Potential", reward, "blue");
 
+              const confidencePercentage = data.confidence_percentage ?? 50;
               const dc = document.getElementById("dataConfidence");
               dc.innerHTML = `
                   <div class="inline-flex items-center justify-center w-24 h-24 bg-blue-100 rounded-full mb-3">
-                      <span class="text-lg font-bold text-blue-600">${conf}</span>
+                      <span class="text-lg font-bold text-blue-600">${confidencePercentage}%</span>
                   </div>
-                  <p class="text-sm text-gray-600">Confidence Level: <strong>${conf}</strong></p>
+                  <p class="text-sm text-gray-600">Confidence Level: <strong>${confidencePercentage}%</strong></p>
               `;
 
-              // Handle watchlist state - treat undefined/missing as false
               const isInWatchlist = data.is_in_watchlist === true;
               currentWatchlistState = isInWatchlist;
               console.log('Setting watchlist state to:', isInWatchlist);
@@ -232,7 +233,6 @@
           
           watchBtn.disabled = true;
           
-          // Show loading state
           const originalHTML = watchBtn.innerHTML;
           watchBtn.innerHTML = `
               <svg class="w-5 h-5 mr-2 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -264,22 +264,18 @@
               const result = await res.json();
               console.log('Watchlist response:', result);
               
-              // Update local state based on the response
-              // Check if the item was actually added or if it was already in watchlist
               currentWatchlistState = result.added !== false && action === 'add' ? true : 
                                     result.removed !== false && action === 'remove' ? false :
                                     currentWatchlistState;
               
               showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');
               
-              // Update button immediately with local state, don't reload
               updateWatchlistButton(action === 'add');
               
           } catch (err) {
               console.error('Watchlist toggle failed:', err);
               showNotification(err.message || 'Failed to update watchlist. Please try again.', 'error');
               
-              // Restore button
               watchBtn.innerHTML = originalHTML;
               watchBtn.disabled = false;
           }
@@ -326,12 +322,20 @@
               </div>`;
       }
 
-      const compareLink = document.querySelector('a[href*="Compare_Startups"]');
-        if (compareLink) {
-          // Pass just the pathname and search, not the full URL
-          const returnPath = window.location.pathname + window.location.search;
-          compareLink.href = `../Module_2/Compare_Startups.html?return=${encodeURIComponent(returnPath)}`;
-        }
+      // Setup back button navigation
+      document.getElementById('backBtn').addEventListener('click', () => {
+          if (returnUrl) {
+              window.location.href = returnUrl;
+          } else {
+              window.location.href = '../Module_1/Dashboard.html';
+          }
+      });
+
+      // Setup compare button navigation
+      document.getElementById('compareBtn').addEventListener('click', () => {
+          const currentPath = window.location.pathname + window.location.search;
+          window.location.href = `../Module_2/Compare_Startups.html?return=${encodeURIComponent(currentPath)}`;
+      });
 
       document.addEventListener("DOMContentLoaded", loadCompany);
   </script>
