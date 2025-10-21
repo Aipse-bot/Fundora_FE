@@ -1,161 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Company Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'coral': '#e57373',
-                    }
-                }
-            }
-        }
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Company Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { coral: "#e57373" },
+        },
+      },
+    };
+  </script>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <div class="max-w-6xl mx-auto p-6">
-        <!-- Messages -->
-        <div id="alertBox" class="fixed top-6 right-6 z-50 space-y-4"></div>
-
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-8">
-            <div class="flex items-center">
-                <a href="/dashboard.html" class="mr-6 p-2 hover:bg-gray-100 rounded-full">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </a>
-
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center mr-4">
-                    <div class="w-8 h-8 bg-gradient-to-br from-orange-300 to-red-400 rounded"></div>
-                    </div>
-                    <div>
-                    <h1 id="startup-name" class="text-2xl font-bold text-gray-900">Loading...</h1>
-                    <span id="startup-industry" class="bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full">
-                        Loading...
-                    </span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Dynamic Risk Level Badge -->
-            <span id="risk-badge" class="text-sm font-medium px-3 py-1 rounded-full">Loading...</span>
+  <div class="max-w-6xl mx-auto p-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center">
+        <button id="backBtn" class="mr-6 p-2 hover:bg-gray-100 rounded-full">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center mr-4">
+            <div class="w-8 h-8 bg-gradient-to-br from-orange-300 to-red-400 rounded"></div>
+          </div>
+          <div>
+            <h1 id="companyName" class="text-2xl font-bold text-gray-900"></h1>
+            <span id="industry" class="bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full"></span>
+          </div>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column -->
-            <div class="lg:col-span-2 space-y-6">
-
-                <!-- Company Summary -->
-                <div class="bg-white rounded-lg p-6 shadow-sm">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Company Summary</h2>
-                    <p id="company-description" class="text-gray-700 leading-relaxed mb-6">Loading...</p>
-                </div>
-
-                <!-- Financial Metrics -->
-                <div class="bg-white rounded-lg p-6 shadow-sm">
-                    <div class="flex items-center mb-6">
-                    <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
-                    </svg>
-                    <h2 class="text-xl font-semibold text-gray-900">Financial Metrics</h2>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="metric-card bg-green-50 border-green-200 text-green-600" id="revenue-card"></div>
-                        <div class="metric-card bg-blue-50 border-blue-200 text-blue-600" id="net-income-card"></div>
-                        <div class="metric-card bg-orange-50 border-orange-200 text-orange-600" id="total-assets-card"></div>
-                        <div class="metric-card bg-purple-50 border-purple-200 text-purple-600" id="cash-flow-card"></div>
-                    </div>
-                </div>
-
-                <!-- Qualitative Insights -->
-                <div class="bg-white rounded-lg p-6 shadow-sm">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Qualitative Insights</h2>
-
-                    <div class="mb-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-gray-700 font-medium">Team Strength</span>
-                        </div>
-                        <p id="team-strength" class="text-gray-600 text-sm">Loading...</p>
-                    </div>
-
-                    <div class="mb-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-gray-700 font-medium">Market Position</span>
-                        </div>
-                    <p id="market-position" class="text-gray-600 text-sm">Loading...</p>
-                    </div>
-
-                    <div class="mb-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-gray-700 font-medium">Brand Reputation</span>
-                        </div>
-                    <p id="brand-reputation" class="text-gray-600 text-sm">Loading...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column -->
-            <div class="space-y-6">
-
-                <!-- Risk & Reward -->
-                <div class="bg-white rounded-lg p-6 shadow-sm">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-5 h-5 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="..." clip-rule="evenodd"></path>
-                        </svg>
-                        <h2 class="text-xl font-semibold text-gray-900">Risk & Reward</h2>
-                    </div>
-                    <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between text-sm mb-2">
-                            <p class="text-gray-700 font-medium">Risk Score</p>
-                            <p id="risk-score" class="font-semibold text-gray-900">—</p>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div id="risk-bar" class="bg-red-500 h-2 rounded-full" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-sm mb-2">
-                            <p class="text-gray-700 font-medium">Reward Potential</p>
-                            <p id="reward-score" class="font-semibold text-gray-900">—</p>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div id="reward-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-
-                <!-- Data Confidence -->
-                <div class="bg-white rounded-lg p-6 shadow-sm">
-                    <div class="flex items-center mb-4">
-                    <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="..." clip-rule="evenodd"></path>
-                    </svg>
-                    <h2 class="text-xl font-semibold text-gray-900">Data Confidence</h2>
-                    </div>
-                    <div class="text-center mb-4">
-                    <div class="inline-flex items-center justify-center w-24 h-24 bg-blue-100 rounded-full mb-3">
-                        <span id="confidence-badge" class="text-lg font-bold text-blue-600 px-2 text-center leading-tight">—</span>
-                    </div>
-                    <p class="text-sm text-gray-600">
-                        Confidence Level: <strong id="confidence-label">—</strong>
-                    </p>
-                    </div>
-                </div>
-                <!-- Action Buttons -->
-                <div class="space-y-3" id="action-buttons"></div>
-            </div>
-        </div>
+      </div>
+      <span id="riskBadge" class="text-sm font-medium px-3 py-1 rounded-full"></span>
     </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Company Summary -->
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Company Summary</h2>
+          <p id="companyDescription" class="text-gray-700 leading-relaxed mb-6"></p>
+        </div>
+
+        <!-- Financial Metrics -->
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+          <div class="flex items-center mb-6">
+            <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+            </svg>
+            <h2 class="text-xl font-semibold text-gray-900">Financial Metrics</h2>
+          </div>
+          <div id="financials" class="grid grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Qualitative Insights -->
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Qualitative Insights</h2>
+          <div id="qualitative"></div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <!-- Risk & Reward -->
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+          <div class="flex items-center mb-4">
+            <svg class="w-5 h-5 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            <h2 class="text-xl font-semibold text-gray-900">Risk & Reward</h2>
+          </div>
+          <div id="riskReward" class="space-y-4"></div>
+        </div>
+
+        <!-- Data Confidence -->
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+          <div class="flex items-center mb-4">
+            <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <h2 class="text-xl font-semibold text-gray-900">Data Confidence</h2>
+          </div>
+          <div id="dataConfidence" class="text-center mb-4"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-3">
+          <button id="watchlistBtn" class="w-full font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center" disabled>
+            <svg class="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Loading...
+          </button>
+          <button id="compareBtn" class="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center">
+            Compare Startups
+          </button>
+
+          <a id="investBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center block">
+            Invest
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+      let currentWatchlistState = false;
+
+      const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+      const params = new URLSearchParams(window.location.search);
+      const startupId = params.get("id");
+      const returnUrl = params.get("return");
+
+      function authHeaders() {
+          return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : {};
+      }
+
+      async function loadCompany() {
+          if (!startupId || !token) {
+              alert('Missing startup ID or authentication');
+              window.location.href = '../Module_1/Dashboard.html';
+              return;
+          }
+
+          console.log('Loading company with ID:', startupId);
+
+          try {
+              const res = await fetch(`http://127.0.0.1:8000/api/startups/${startupId}/`, {
+                  headers: authHeaders(),
+              });
+              
+              if (!res.ok) {
+                  throw new Error('Failed to load startup data');
+              }
+              
+              const data = await res.json();
+              console.log('Startup data loaded:', data);
+              console.log('Is in watchlist:', data.is_in_watchlist);
+
+              document.title = `${data.company_name} - Company Profile`;
+              document.getElementById("companyName").textContent = data.company_name;
+              document.getElementById("industry").textContent = data.industry || "—";
+              document.getElementById("companyDescription").textContent =
+                  data.company_description || "No description provided.";
+
+              const badge = document.getElementById("riskBadge");
+              const riskLevel = data.risk_level || "Medium";
+              const riskMap = {
+                  Low: ["Low Risk", "bg-green-100 text-green-800"],
+                  Medium: ["Medium Risk", "bg-yellow-100 text-yellow-800"],
+                  High: ["High Risk", "bg-red-100 text-red-800"],
+              };
+              const [label, classes] = riskMap[riskLevel] || ["Unknown", "bg-gray-100 text-gray-800"];
+              badge.textContent = label;
+              badge.className = `${classes} text-sm font-medium px-3 py-1 rounded-full`;
+
+              const fin = document.getElementById("financials");
+              fin.innerHTML = `
+                  ${metric("green","Revenue",data.revenue)}
+                  ${metric("blue","Net Income",data.net_income)}
+                  ${metric("orange","Total Assets",data.total_assets)}
+                  ${metric("purple","Cash Flow",data.cash_flow)}
+              `;
+
+              const qual = document.getElementById("qualitative");
+              qual.innerHTML = section("Team Strength", data.team_strength) +
+                              section("Market Position", data.market_position) +
+                              section("Brand Reputation", data.brand_reputation);
+
+              const rr = document.getElementById("riskReward");
+              const reward = data.reward_potential ?? 3;
+              const risk = data.confidence_percentage
+                  ? Math.max(1, 5 - Math.round(data.confidence_percentage / 20))
+                  : 3;
+              rr.innerHTML = bar("Risk Score", risk, "red") + bar("Reward Potential", reward, "blue");
+
+              const confidencePercentage = data.confidence_percentage ?? 50;
+              const dc = document.getElementById("dataConfidence");
+              dc.innerHTML = `
+                  <div class="inline-flex items-center justify-center w-24 h-24 bg-blue-100 rounded-full mb-3">
+                      <span class="text-lg font-bold text-blue-600">${confidencePercentage}%</span>
+                  </div>
+                  <p class="text-sm text-gray-600">Confidence Level: <strong>${confidencePercentage}%</strong></p>
+              `;
+
+              const isInWatchlist = data.is_in_watchlist === true;
+              currentWatchlistState = isInWatchlist;
+              console.log('Setting watchlist state to:', isInWatchlist);
+              updateWatchlistButton(isInWatchlist);
+
+              document.getElementById("investBtn").href = `../Module_2/Investment_Simulation.html?startup_id=${startupId}`;
+          } catch (err) {
+              console.error('Error loading company:', err);
+              alert('Failed to load company profile');
+          }
+      }
+
+      function updateWatchlistButton(inWatchlist) {
+          const watchBtn = document.getElementById("watchlistBtn");
+          watchBtn.disabled = false;
+
+          if (inWatchlist) {
+              watchBtn.innerHTML = `
+                  <svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                  In Watchlist
+              `;
+              watchBtn.className = "w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200";
+              watchBtn.onclick = () => toggleWatchlist(false);
+          } else {
+              watchBtn.innerHTML = `
+                  <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                  Add to Watchlist
+              `;
+              watchBtn.className = "w-full bg-red-400 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200";
+              watchBtn.onclick = () => toggleWatchlist(true);
+          }
+      }
+
+      async function toggleWatchlist(shouldAdd) {
+          const watchBtn = document.getElementById("watchlistBtn");
+          if (!watchBtn) return;
+          
+          watchBtn.disabled = true;
+          
+          const originalHTML = watchBtn.innerHTML;
+          watchBtn.innerHTML = `
+              <svg class="w-5 h-5 mr-2 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Updating...
+          `;
+
+          try {
+              const action = shouldAdd ? 'add' : 'remove';
+              const method = shouldAdd ? 'POST' : 'DELETE';
+              
+              console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
+              
+              const res = await fetch(`http://127.0.0.1:8000/api/investor/watchlist/${action}/${startupId}/`, {
+                  method: method,
+                  headers: authHeaders()
+              });
+              
+              console.log('Response status:', res.status);
+              
+              if (!res.ok) {
+                  const errorText = await res.text();
+                  console.error('Response error:', errorText);
+                  throw new Error(`Failed to ${action} watchlist: ${res.status} ${errorText}`);
+              }
+
+              const result = await res.json();
+              console.log('Watchlist response:', result);
+              
+              currentWatchlistState = result.added !== false && action === 'add' ? true : 
+                                    result.removed !== false && action === 'remove' ? false :
+                                    currentWatchlistState;
+              
+              showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');
+              
+              updateWatchlistButton(action === 'add');
+              
+          } catch (err) {
+              console.error('Watchlist toggle failed:', err);
+              showNotification(err.message || 'Failed to update watchlist. Please try again.', 'error');
+              
+              watchBtn.innerHTML = originalHTML;
+              watchBtn.disabled = false;
+          }
+      }
+
+      function showNotification(message, type) {
+          const div = document.createElement('div');
+          div.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+          div.textContent = message;
+          document.body.appendChild(div);
+          setTimeout(() => {
+              div.style.opacity = '0';
+              div.style.transition = 'opacity 300ms';
+              setTimeout(() => div.remove(), 300);
+          }, 3000);
+      }
+
+      function metric(color, label, value) {
+          return `
+              <div class="bg-${color}-50 border border-${color}-200 rounded-lg p-4 text-center">
+                  <div class="text-2xl font-bold text-${color}-600 mb-1">${value ?? "N/A"}</div>
+                  <div class="text-sm text-gray-600">${label}</div>
+              </div>`;
+      }
+
+      function section(title, text) {
+          return `
+              <div class="mb-4">
+                  <span class="text-gray-700 font-medium">${title}</span>
+                  <p class="text-gray-600 text-sm">${text ?? "No data"}</p>
+              </div>`;
+      }
+
+      function bar(label, score, color) {
+          return `
+              <div>
+                  <div class="flex justify-between text-sm mb-2">
+                      <p class="text-gray-700 font-medium">${label}</p>
+                      <p class="font-semibold text-gray-900">${score}/5</p>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-${color}-500 h-2 rounded-full" style="width:${(score / 5) * 100}%"></div>
+                  </div>
+              </div>`;
+      }
+
+      // Setup back button navigation
+      document.getElementById('backBtn').addEventListener('click', () => {
+          if (returnUrl) {
+              window.location.href = returnUrl;
+          } else {
+              window.location.href = '../Module_1/Dashboard.html';
+          }
+      });
+
+      // Setup compare button navigation
+      document.getElementById('compareBtn').addEventListener('click', () => {
+          const currentPath = window.location.pathname + window.location.search;
+          window.location.href = `../Module_2/Compare_Startups.html?return=${encodeURIComponent(currentPath)}`;
+      });
+
+      document.addEventListener("DOMContentLoaded", loadCompany);
+  </script>
 </body>
 </html>

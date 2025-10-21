@@ -70,54 +70,51 @@
   </div>
 
 <script>
-  document.getElementById('loginForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
 
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
+  const errorBox = document.getElementById('errorMessage');
+  const errorText = document.getElementById('errorText');
+  errorBox.classList.add('hidden');
 
-      const data = await response.json();
-      
-      if (response.ok) {
-        console.log('Login successful:', data);
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/login/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
 
-        // Store token and user data
-        if (data.token) {
-          localStorage.setItem('authToken', data.token);
-        }
-        if (data.user) {
-          localStorage.setItem('userData', JSON.stringify(data.user));
-        }
+    const data = await response.json();
 
-        // Redirect based on label
-        if (data.user.label === 'startup') {
-          window.location.href = '/Module_3/added-startups.html';
-        } else if (data.user.label === 'investor') {
-          window.location.href = '/Module_1/Dashboard.html';
-        } else {
-          // Fallback if label is missing or unexpected
-          console.error('Unexpected user label:', data.user.label);
-          //window.location.href = '/login.html';
-        }
+    if (response.ok) {
+      // ✅ Store token under standard key
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('userData', JSON.stringify(data.user));
+
+      // Redirect based on user label
+      if (data.user.label === 'startup') {
+        window.location.href = '/Module_3/added-startups.html';
+      } else if (data.user.label === 'investor') {
+        window.location.href = '/Module_1/Dashboard.html';
       } else {
-        throw new Error(data.detail || 'Invalid credentials');
+        console.error('Unexpected user label:', data.user.label);
+        alert('Unexpected user type. Contact support.');
       }
-    } catch (err) {
-      const errorBox = document.getElementById('errorMessage');
-      const errorText = document.getElementById('errorText');
-      errorText.textContent = err.message;
+    } else {
+      const msg = data.detail || data.error || 'Invalid credentials';
+      errorText.textContent = msg;
       errorBox.classList.remove('hidden');
     }
-  });
+
+  } catch (err) {
+    errorText.textContent = 'Login failed. Check your connection and try again.';
+    errorBox.classList.remove('hidden');
+    console.error(err);
+  }
+});
 </script>
 </body>
 </html>

@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fundora - My Watchlist</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="max-w-6xl mx-auto p-6">
-        <!-- Messages -->
-        <div id="notificationBox" class="fixed top-6 right-6 z-50 space-y-4"></div>
-
         <!-- Header -->
         <div class="flex items-center mb-8">
-            <a href="/dashboard.html" class="mr-4 p-2 hover:bg-gray-100 rounded-full">
+            <a href="Dashboard.html" class="mr-4 p-2 hover:bg-gray-100 rounded-full">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
             </a>
             <h1 class="text-3xl font-bold text-gray-900">My Watchlist</h1>
@@ -24,202 +21,381 @@
         <!-- Tab Navigation -->
         <div class="border-b border-gray-200 mb-8">
             <nav class="flex space-x-8">
-                <button
-                id="saved-tab"
-                class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200"
-                onclick="switchTab('saved')"
-                >
-                Saved (<span id="saved-count">0</span>)
+                <button id="saved-tab" class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200" onclick="switchTab('saved')">
+                    Saved (<span id="saved-count">0</span>)
                 </button>
-                <button
-                id="compared-tab"
-                class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200"
-                onclick="switchTab('compared')"
-                >
-                Compared (<span id="compared-count">0</span>)
-                </button>
-                <button
-                id="downloaded-tab"
-                class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200"
-                onclick="switchTab('downloaded')"
-                >
-                Downloaded (<span id="downloaded-count">0</span>)
+                <button id="compared-tab" class="tab-button py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200" onclick="switchTab('compared')">
+                    Compared (<span id="compared-count">0</span>)
                 </button>
             </nav>
         </div>
 
         <!-- Tab Content -->
         <div id="tab-content">
-            <!-- Saved Tab Content -->
+            <!-- Saved Tab -->
             <div id="saved-content" class="tab-content">
                 <div id="saved-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-                <!-- Empty State -->
                 <div id="saved-empty" class="text-center py-12 hidden">
                     <p class="text-gray-600">You have no startups in your watchlist yet.</p>
                 </div>
             </div>
 
-            <!-- Compared Tab Content -->
+            <!-- Compared Tab -->
             <div id="compared-content" class="tab-content hidden">
                 <div id="compared-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-            <!-- Empty State -->
                 <div id="compared-empty" class="text-center py-12 hidden">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
                     <h3 class="mt-2 text-sm font-medium text-gray-900">No comparisons yet</h3>
                     <p class="mt-1 text-sm text-gray-500">Compare startups to see them here.</p>
-                </div>
-            </div>
-
-            <!-- Downloaded Tab Content -->
-            <div id="downloaded-content" class="tab-content hidden">
-                <div id="downloaded-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-                <!-- Empty State -->
-                <div id="downloaded-empty" class="text-center py-12 hidden">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No downloads yet</h3>
-                    <p class="mt-1 text-sm text-gray-500">Start by downloading a company profile from your saved startups.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Tab switching functionality
-        function switchTab(tabName) {
-            // Hide all tab contents
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => {
-                content.classList.add('hidden');
-            });
-
-            // Remove active styles from all tabs
-            const tabButtons = document.querySelectorAll('.tab-button');
-            tabButtons.forEach(button => {
-                button.classList.remove('border-blue-500', 'text-blue-600');
-                button.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-            });
-
-            // Show selected tab content
-            document.getElementById(tabName + '-content').classList.remove('hidden');
-
-            // Add active styles to selected tab
-            const activeTab = document.getElementById(tabName + '-tab');
-            activeTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-            activeTab.classList.add('border-blue-500', 'text-blue-600');
+        function getAuthToken() {
+            return localStorage.getItem('authToken');
         }
 
-        // Remove from watchlist functionality
-        function removeFromWatchlist(startupId, companyName) {
-            if (confirm(`Are you sure you want to remove "${companyName}" from your watchlist?`)) {
-                // Show loading state (optional)
-                const button = event.target.closest('button');
-                const originalHTML = button.innerHTML;
-                button.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>';
-                button.disabled = true;
-                
-                fetch(`/watchlist/remove/${startupId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken'),
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Remove the card from the DOM with animation
-                        const card = button.closest('.bg-white');
-                        card.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.95)';
-                        
-                        setTimeout(() => {
-                            card.remove();
-                            
-                            // Update the saved count
-                            document.getElementById('saved-count').textContent = data.updated_count;
-                            
-                            // Show empty state if no items left
-                            if (data.updated_count === 0) {
-                                document.getElementById('saved-content').innerHTML = `
-                                    <div class="text-center py-12">
-                                        <p class="text-gray-600">You have no startups in your watchlist yet.</p>
-                                    </div>
-                                `;
-                            }
-                        }, 300);
-                        
-                        // Show success message (optional)
-                        showMessage(data.message, 'success');
-                    } else {
-                        // Reset button state
-                        button.innerHTML = originalHTML;
-                        button.disabled = false;
-                        
-                        // Show error message
-                        showMessage(data.message, 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    
-                    // Reset button state
-                    button.innerHTML = originalHTML;
-                    button.disabled = false;
-                    
-                    showMessage('An error occurred while removing the startup. Please try refreshing the page.', 'error');
-                });
-            }
+        function authHeaders() {
+            const token = getAuthToken();
+            if (!token) return {};
+            return {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
         }
-        
-        // Show message function (optional - for better UX)
+
         function showMessage(message, type) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg transition-all duration-300 ${
-                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-            }`;
-            messageDiv.textContent = message;
-            
-            document.body.appendChild(messageDiv);
-            
-            // Remove message after 3 seconds
+            const div = document.createElement('div');
+            div.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+            div.textContent = message;
+            document.body.appendChild(div);
             setTimeout(() => {
-                messageDiv.style.opacity = '0';
-                setTimeout(() => messageDiv.remove(), 300);
+                div.style.opacity = '0';
+                setTimeout(() => div.remove(), 300);
             }, 3000);
         }
 
-        // Helper function to get CSRF token
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = '/login';
+                return;
             }
-            return cookieValue;
+            
+            // Load both tab counts immediately
+            loadTabCounts();
+            
+            // Check URL parameters for tab
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('tab') || 'saved';
+            
+            switchTab(activeTab);
+        });
+
+        async function loadTabCounts() {
+            // Load watchlist count
+            try {
+                const watchlistRes = await fetch('http://127.0.0.1:8000/api/investor/watchlist/', {
+                    method: 'GET',
+                    headers: authHeaders()
+                });
+                if (watchlistRes.ok) {
+                    const watchlistData = await watchlistRes.json();
+                    const watchlistResults = watchlistData.results || watchlistData.watchlist || [];
+                    document.getElementById('saved-count').textContent = watchlistResults.length;
+                }
+            } catch (err) {
+                console.error('Error loading watchlist count:', err);
+            }
+
+            // Load comparisons count
+            try {
+                const comparisonsRes = await fetch('http://127.0.0.1:8000/api/investor/comparisons/', {
+                    method: 'GET',
+                    headers: authHeaders()
+                });
+                if (comparisonsRes.ok) {
+                    const comparisonsData = await comparisonsRes.json();
+                    const comparisonsResults = comparisonsData.results || [];
+                    document.getElementById('compared-count').textContent = comparisonsResults.length;
+                }
+            } catch (err) {
+                console.error('Error loading comparisons count:', err);
+            }
         }
 
-        // Initialize with saved tab active
-        document.addEventListener('DOMContentLoaded', function() {
-            switchTab('saved');
-        });
+        function loadWatchlist() {
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            fetch('http://127.0.0.1:8000/api/investor/watchlist/', {
+                method: 'GET',
+                headers: authHeaders()
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/login';
+                    throw new Error('Unauthorized');
+                }
+                return res.json();
+            })
+            .then(data => {
+                const savedGrid = document.getElementById('saved-grid');
+                const savedCount = document.getElementById('saved-count');
+                savedGrid.innerHTML = '';
+
+                const results = data.results || data.watchlist || [];
+                
+                if (!results || results.length === 0) {
+                    document.getElementById('saved-empty').classList.remove('hidden');
+                    savedCount.textContent = '0';
+                    return;
+                }
+
+                document.getElementById('saved-empty').classList.add('hidden');
+                savedCount.textContent = results.length;
+
+                results.forEach(startup => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white shadow rounded-lg p-5 transition hover:shadow-lg';
+                    
+                    let industryDisplay = startup.industry;
+                    let isPitchDeck = false;
+                    
+                    if (startup.tagline) {
+                        industryDisplay = startup.tagline;
+                        isPitchDeck = true;
+                    } else if (!industryDisplay || industryDisplay === '—') {
+                        industryDisplay = startup.company_description || 'N/A';
+                        isPitchDeck = true;
+                    }
+                    
+                    const profilePage = (startup.is_deck_builder || isPitchDeck) ? '../Module_2/Company_ProfileDB.html' : '../Module_2/Company_Profile.html';
+                    
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-3">
+                            <h2 class="text-xl font-semibold text-gray-900">${escapeHtml(startup.company_name)}</h2>
+                            <button onclick="removeFromWatchlist(${startup.id}, '${escapeHtml(startup.company_name)}')" 
+                                    class="text-gray-400 hover:text-red-500 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">${escapeHtml(industryDisplay)}</p>
+                        <div class="flex justify-between items-center">
+                            <a href="${profilePage}?id=${startup.id}&return=${encodeURIComponent(window.location.pathname + window.location.search)}" 
+                               class="text-blue-600 hover:underline text-sm font-medium">View Profile</a>
+                            <a href="../Module_2/Investment_Simulation.html?startup_id=${startup.id}" 
+                               class="text-sm text-gray-500 hover:text-blue-600">Invest</a>
+                        </div>
+                    `;
+                    savedGrid.appendChild(card);
+                });
+            })
+            .catch(err => {
+                console.error('Error loading watchlist:', err);
+                if (err.message !== 'Unauthorized') {
+                    showMessage('Error loading watchlist.', 'error');
+                }
+            });
+        }
+
+        function loadComparisons() {
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            fetch('http://127.0.0.1:8000/api/investor/comparisons/', {
+                method: 'GET',
+                headers: authHeaders()
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/login';
+                    throw new Error('Unauthorized');
+                }
+                return res.json();
+            })
+            .then(data => {
+                const comparedGrid = document.getElementById('compared-grid');
+                const comparedCount = document.getElementById('compared-count');
+                comparedGrid.innerHTML = '';
+
+                const results = data.results || [];
+                
+                if (!results || results.length === 0) {
+                    document.getElementById('compared-empty').classList.remove('hidden');
+                    comparedCount.textContent = '0';
+                    return;
+                }
+
+                document.getElementById('compared-empty').classList.add('hidden');
+                comparedCount.textContent = results.length;
+
+                results.forEach(comparison => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white shadow rounded-lg p-5 transition hover:shadow-lg flex flex-col';
+                    
+                    // Get startup names for display
+                    const startupNames = comparison.startups.map(s => s.company_name);
+                    const displayName = startupNames.length > 2 
+                        ? `${startupNames[0]} vs ${startupNames[1]} vs ${startupNames[2]}`
+                        : startupNames.join(' vs ');
+                    
+                    // Get startup IDs for the comparison link
+                    const startupIds = comparison.startups.map(s => s.id).join(',');
+                    
+                    // Format date
+                    const dateObj = new Date(comparison.created_at);
+                    const formattedDate = dateObj.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(displayName)}</h2>
+                            </div>
+                            <button onclick="removeComparison(${comparison.id}, '${escapeHtml(displayName)}')" 
+                                    class="text-gray-400 hover:text-red-500 transition ml-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-auto mb-4">${comparison.startup_count} startups • Saved on ${formattedDate}</p>
+                        <div class="pt-4 border-t border-gray-200">
+                            <a href="../Module_2/Startup_Comparison.html?startups=${startupIds}&from=watchlist" 
+                               class="text-blue-600 hover:underline text-sm font-medium flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                                View Comparison
+                            </a>
+                        </div>
+                    `;
+                    comparedGrid.appendChild(card);
+                });
+            })
+            .catch(err => {
+                console.error('Error loading comparisons:', err);
+                if (err.message !== 'Unauthorized') {
+                    showMessage('Error loading comparisons.', 'error');
+                }
+            });
+        }
+
+        function removeFromWatchlist(startupId, companyName) {
+            if (!confirm(`Remove "${companyName}" from your watchlist?`)) return;
+
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            fetch(`http://127.0.0.1:8000/api/investor/watchlist/remove/${startupId}/`, {
+                method: 'DELETE',
+                headers: authHeaders()
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/login';
+                    throw new Error('Unauthorized');
+                }
+                return res.json();
+            })
+            .then(data => {
+                showMessage(data.message || 'Removed from watchlist.', 'success');
+                loadWatchlist();
+            })
+            .catch(err => {
+                console.error('Error removing from watchlist:', err);
+                if (err.message !== 'Unauthorized') {
+                    showMessage('Failed to remove startup.', 'error');
+                }
+            });
+        }
+
+        function removeComparison(comparisonId, comparisonName) {
+            if (!confirm(`Remove "${comparisonName}" from your saved comparisons?`)) return;
+
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            fetch(`http://127.0.0.1:8000/api/investor/comparisons/delete/${comparisonId}/`, {
+                method: 'DELETE',
+                headers: authHeaders()
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/login';
+                    throw new Error('Unauthorized');
+                }
+                return res.json();
+            })
+            .then(data => {
+                showMessage(data.message || 'Comparison removed successfully.', 'success');
+                loadComparisons();
+            })
+            .catch(err => {
+                console.error('Error removing comparison:', err);
+                if (err.message !== 'Unauthorized') {
+                    showMessage('Failed to remove comparison.', 'error');
+                }
+            });
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'text-blue-600');
+                btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            });
+
+            document.getElementById(`${tabName}-content`).classList.remove('hidden');
+            const activeTab = document.getElementById(`${tabName}-tab`);
+            activeTab.classList.remove('border-transparent', 'text-gray-500');
+            activeTab.classList.add('border-blue-500', 'text-blue-600');
+
+            // Update URL without reloading the page
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabName);
+            window.history.pushState({}, '', url);
+
+            // Load data based on active tab
+            if (tabName === 'saved') {
+                loadWatchlist();
+            } else if (tabName === 'compared') {
+                loadComparisons();
+            }
+        }
+
+        function escapeHtml(unsafe) {
+            if (unsafe === null || unsafe === undefined) return '';
+            return String(unsafe)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
     </script>
 </body>
 </html>

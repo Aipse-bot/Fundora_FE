@@ -1,351 +1,717 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fundora - Investment Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'low-risk': '#10b981',
-                        'med-risk': '#f59e0b',
-                        'high-risk': '#ef4444'
-                    }
-                }
-            }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fundora - Investment Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'low-risk': '#10b981',
+            'med-risk': '#f59e0b',
+            'high-risk': '#ef4444'
+          }
         }
-    </script>
+      }
+    }
+  </script>
 </head>
 <body class="bg-gray-50 min-h-screen">
-        <!-- Enhanced Header -->
-    <header class="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-50">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <h1 class="text-2xl font-bold text-gray-900">Fundora</h1>
-                <div class="hidden md:flex items-center space-x-2 text-sm text-gray-600">
-                    <span id="startup-count" class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Loading...</span>
-                </div>
-            </div>
-            <div class="flex items-center space-x-4">
-                <a href="/watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">
-                    My Watchlist
-                </a>
-                <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">
-                    Logout
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <div class="flex">
-        <!-- Enhanced Sidebar -->
-         <aside class="w-80 bg-white border-r border-gray-200 p-6 min-h-screen overflow-y-auto">
-            <div class="mb-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-2">Investment Filters</h2>
-                <p class="text-sm text-gray-600">Customize your investment criteria</p>
-            </div>
-
-            <form id="filterForm" class="space-y-6">
-                <!-- Presets -->
-                <div class="bg-gray-50 p-4 rounded-lg">
-                <label class="block text-sm font-medium text-gray-700 mb-3">Quick Presets</label>
-                <div class="grid grid-cols-1 gap-2">
-                    <button type="button" onclick="applyPreset('conservative')">Conservative</button>
-                    <button type="button" onclick="applyPreset('balanced')">Balanced</button>
-                    <button type="button" onclick="applyPreset('aggressive')">Aggressive</button>
-                </div>
-                </div>
-
-                <!-- Sort By -->
-                <div>
-                <label>Sort By</label>
-                <select name="sort_by">
-                    <option value="recommended">Recommended</option>
-                    <option value="projected_return_desc">Highest Returns First</option>
-                    <option value="projected_return_asc">Lowest Returns First</option>
-                    <option value="reward_potential_desc">Best Reward Potential</option>
-                    <option value="confidence_desc">Highest Confidence</option>
-                    <option value="risk_asc">Lowest Risk First</option>
-                    <option value="company_name">Company Name A-Z</option>
-                </select>
-                </div>
-
-                <!-- Industry -->
-                <div>
-                <label>Industry</label>
-                <select name="industry">
-                    <option value="">All Industries</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Healthcare">Healthcare</option>
-                    <option value="Retail">Retail</option>
-                    <option value="Manufacturing">Manufacturing</option>
-                    <option value="Energy">Energy</option>
-                    <option value="Education">Education</option>
-                </select>
-                </div>
-
-                <!-- Risk -->
-                <div>
-                <label>Risk Tolerance</label>
-                <input type="range" name="risk" min="0" max="100" value="50" oninput="updateRiskLabel(this.value)">
-                <div id="risk-value">50%</div>
-                </div>
-
-                <!-- Minimum Return -->
-                <div>
-                <label>Minimum Projected Return</label>
-                <select name="min_return">
-                    <option value="">Any Return</option>
-                    <option value="5">5% or higher</option>
-                    <option value="10">10% or higher</option>
-                    <option value="15">15% or higher</option>
-                    <option value="20">20% or higher</option>
-                    <option value="25">25% or higher</option>
-                    <option value="50">50% or higher</option>
-                    <option value="75">75% or higher</option>
-                    <option value="100">100% or higher</option>
-                </select>
-                </div>
-
-                <!-- Submit -->
-                <div>
-                <button type="submit">Apply Filters</button>
-                </div>
-            </form>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-6">
-            <!-- Welcome Section -->
-            <div class="mb-8">
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Investment Opportunities</h2>
-                    <p class="text-gray-600">Discover startups tailored to your investment profile</p>
-                    </div>
-                </div>
-
-                <!-- Results Summary -->
-                <div class="mb-6 flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200">
-                    <div>
-                    <p class="text-sm text-gray-600">
-                        Showing <span id="startup-count" class="font-semibold text-gray-900">0</span> startup<span id="startup-plural">s</span>
-                        <span id="filter-match-label" class="hidden">matching your filters</span>
-                    </p>
-                    </div>
-                    <div class="text-sm text-blue-600 hidden" id="clear-filters">
-                    <button onclick="clearAllFilters()" class="hover:text-blue-800 transition-colors">Clear all filters</button>
-                    </div>
-                </div>
-
-                <!-- Active Filters Display -->
-                <div class="mb-6" id="active-filters" class="hidden">
-                    <div class="flex flex-wrap gap-2 items-center">
-                    <span class="text-sm font-medium text-gray-700">Active filters:</span>
-                    <!-- Filter tags will be injected here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Startup Cards Grid -->
-            <div id="startup-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 relative">
-                    <!-- Top Section -->
-                    <div id="startup-card" class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <h3 id="startup-name" class="text-lg font-semibold text-gray-900 mb-1">Loading...</h3>
-                            <p id="startup-industry" class="text-sm text-gray-600">Loading...</p>
-                        </div>
-                        <div class="flex flex-col items-end space-y-1">
-                            <span id="startup-risk" class="text-xs font-medium px-2 py-1 rounded-full">Loading...</span>
-                        </div>
-                    </div>
-                    <!-- Enhanced Metrics -->
-                    <div id="metrics" class="space-y-3 mb-4">
-                        <!-- Reward Potential -->
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600">Reward Potential</span>
-                            <span id="reward-potential" class="text-sm font-semibold">—</span>
-                        </div>
-
-                        <!-- Projected Return -->
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600">Projected Return</span>
-                            <span id="projected-return" class="text-sm font-semibold">—</span>
-                        </div>
-
-                        <!-- Confidence -->
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600">Confidence</span>
-                            <div class="flex items-center space-x-2">
-                            <div id="confidence-dots" class="flex space-x-1"></div>
-                            <span id="confidence-label" class="text-sm font-semibold">—</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Investment Performance Chart -->
-                   <div id="risk-chart-container" class="mb-4"></div>
-
-                    <!-- Action Buttons -->
-                    <div id="startup-list" class="grid gap-6"></div>
-                </div>
-            </div>
-            <!-- Empty State -->
-            <div id="no-startups" class="col-span-full text-center py-16 hidden">
-                <div class="text-6xl mb-4">🔍</div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">No startups found</h3>
-                <p class="text-gray-500 text-lg mb-6">No startups match your current filters.</p>
-                <div class="space-x-4">
-                    <button onclick="loadAllStartups()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">
-                        View All Startups
-                    </button>
-                    <button onclick="applyPreset('balanced')" class="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200 font-medium transition-colors">
-                        Try Balanced Filter
-                    </button>
-                </div>
-            </div>
-
-                <!-- Load More -->
-            <div id="load-more" class="mt-12 text-center hidden">
-                <button onclick="loadMoreStartups()" class="px-8 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition-colors shadow-sm hover:shadow">
-                    Load More Opportunities
-                </button>
-            </div>
-        </main>
+  <header class="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-50">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <h1 class="text-2xl font-bold text-gray-900">Fundora</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a id="watchlistLink" href="./Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">My Watchlist <span id="watchlist-badge" class="ml-2 inline-block bg-white text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">0</span></a>
+        <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">Logout</button>
+      </div>
     </div>
+  </header>
 
-    <script>
-        function updateRiskLabel(value) {
-            document.getElementById('risk-value').textContent = value + '%';
+  <div class="flex">
+    <aside class="fixed top-16 left-0 w-80 h-[calc(100vh-64px)] bg-white border-r border-gray-200 p-6 overflow-y-auto">
+      <form id="filterForm" class="space-y-6">
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Quick Presets</label>
+          <div class="grid grid-cols-1 gap-2">
+            <button type="button" onclick="applyPreset('conservative')" class="preset-btn w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition">
+              <div class="flex items-center justify-between"><span class="font-medium">Conservative</span><span class="text-xs text-gray-500">Low Risk</span></div>
+            </button>
+            <button type="button" onclick="applyPreset('balanced')" class="preset-btn w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition">
+              <div class="flex items-center justify-between"><span class="font-medium">Balanced</span><span class="text-xs text-gray-500">Mixed</span></div>
+            </button>
+            <button type="button" onclick="applyPreset('aggressive')" class="preset-btn w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition">
+              <div class="flex items-center justify-between"><span class="font-medium">Aggressive</span><span class="text-xs text-gray-500">High Risk</span></div>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Startup Type</label>
+          <select name="startup_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <option value="">All Types</option>
+            <option value="financial">Financial Data Only</option>
+            <option value="pitch_deck">Pitch Decks Only</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+          <select name="sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <option value="">Default Order</option>
+            <option value="projected_return_desc">Highest Returns First</option>
+            <option value="projected_return_asc">Lowest Returns First</option>
+            <option value="reward_potential_desc">Best Reward Potential</option>
+            <option value="confidence_desc">Highest Confidence</option>
+            <option value="risk_asc">Lowest Risk First</option>
+            <option value="company_name">Company Name A-Z</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
+          <select name="industry" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <option value="">All Industries</option>
+            <option value="Technology">Technology</option>
+            <option value="Finance">Finance</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Retail">Retail</option>
+            <option value="Manufacturing">Manufacturing</option>
+            <option value="Energy">Energy</option>
+            <option value="Education">Education</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-3">Risk Tolerance</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              Low
+            </button>
+            <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              Medium
+            </button>
+            <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              High
+            </button>
+          </div>
+          <input type="hidden" name="risk_level" id="risk-hidden" value="">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Projected Return</label>
+          <select name="min_return" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <option value="">Any Return</option>
+            <option value="5">5% or higher</option>
+            <option value="10">10% or higher</option>
+            <option value="15">15% or higher</option>
+            <option value="20">20% or higher</option>
+            <option value="25">25% or higher</option>
+            <option value="50">50% or higher</option>
+            <option value="75">75% or higher</option>
+            <option value="100">100% or higher</option>
+          </select>
+        </div>
+
+        <div class="space-y-3 pt-4 border-t border-gray-200">
+          <button type="submit" class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 font-medium transition">Apply Filters</button>
+          <button type="button" onclick="clearAllFilters()" class="w-full bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 font-medium transition">Clear All</button>
+        </div>
+      </form>
+    </aside>
+
+    <main class="flex-1 p-6 ml-80">
+      <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Investment Opportunities</h2>
+        <p class="text-gray-600">Discover startups tailored to your investment profile</p>
+      </div>
+
+      <div class="mb-6 flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200">
+        <p class="text-sm text-gray-600">Showing <span id="startup-count" class="font-semibold text-gray-900">0</span> startup<span id="startup-plural">s</span></p>
+        <div id="clear-filters" class="hidden"></div>
+      </div>
+
+      <div id="startup-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+      <div id="no-startups" class="col-span-full text-center py-16 hidden">
+        <div class="text-6xl mb-4">🔍</div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">No startups found</h3>
+        <p class="text-gray-500 text-lg mb-6">No startups match your current filters.</p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // =========================== 
+    // Configuration
+    // =========================== 
+    const API_BASE = 'http://127.0.0.1:8000';
+    const STARTUPS_ENDPOINT = `${API_BASE}/api/investor/startups/`;
+    const WATCHLIST_ENDPOINT = `${API_BASE}/api/investor/watchlist/`;
+    const ADD_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/add/${id}/`;
+    const REMOVE_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/remove/${id}/`;
+    const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
+    const COMPANY_PROFILE_PAGE = '../Module_2/Company_Profile.html';
+    const COMPANY_PROFILE_DB_PAGE = '../Module_2/Company_ProfileDB.html';
+    const INVEST_PAGE = '../Module_2/Investment_Simulation.html';
+
+    // ===========================
+    // Helpers
+    // ===========================
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
+
+    function authHeaders() {
+      const token = getAuthToken();
+      if (!token) return {};
+      return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+    }
+
+    function riskLevelToNum(riskLevel) {
+      const map = { 'Low': 1, 'Medium': 2, 'High': 3 };
+      return map[riskLevel] || 2;
+    }
+
+    function confidenceToNum(confidence) {
+      const map = { 'High': 3, 'Medium': 2, 'Low': 1 };
+      return map[confidence] || 0;
+    }
+
+    // ===========================
+    // Fetch helpers
+    // ===========================
+    async function fetchJSON(url, options = {}) {
+      const token = getAuthToken();
+      if (!token) {
+        window.location.href = '/login';
+        throw new Error('No auth token');
+      }
+      options.headers = Object.assign({}, options.headers || {}, { 'Authorization': `Bearer ${token}` });
+      const res = await fetch(url, options);
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('authToken');
+        window.location.href = '/login';
+        throw new Error('Unauthorized');
+      }
+      if (!res.ok) {
+        const text = await res.text().catch(()=>null);
+        throw new Error(`Request failed: ${res.status} ${text || ''}`);
+      }
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('application/json')) return await res.json();
+      return null;
+    }
+
+    // ===========================
+    // Watchlist
+    // ===========================
+    let watchlistIdsSet = new Set();
+    async function refreshWatchlist() {
+        try {
+            const data = await fetchJSON(WATCHLIST_ENDPOINT, { method: 'GET' });
+            const items = data.results || data.watchlist || [];
+            watchlistIdsSet = new Set(items.map(it => it.id));
+            
+            const badge = document.getElementById('watchlist-badge');
+            badge.textContent = data.count ?? items.length ?? 0;
+        } catch (err) {
+            console.warn('Could not refresh watchlist:', err);
         }
-        
-        // Initialize risk label on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const riskSlider = document.querySelector('input[name="risk"]');
-            if (riskSlider) {
-                updateRiskLabel(riskSlider.value);
-            }
+    }
+
+    async function addToWatchlist(startupId, btn) {
+      try {
+        const res = await fetch(ADD_WATCHLIST_ENDPOINT(startupId), {
+          method: 'POST',
+          headers: authHeaders()
+        });
+        if (res.status === 201 || res.ok) {
+          watchlistIdsSet.add(Number(startupId));
+          updateWatchlistBadge();
+          btn && btn.classList.add('text-blue-600');
+          return true;
+        } else {
+          console.warn('Add failed', res.status);
+          return false;
+        }
+      } catch (err) {
+        console.error('Error adding to watchlist', err);
+        return false;
+      }
+    }
+
+    async function removeFromWatchlist(startupId, btn) {
+      try {
+        const res = await fetch(REMOVE_WATCHLIST_ENDPOINT(startupId), {
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+        if (res.ok) {
+          watchlistIdsSet.delete(Number(startupId));
+          updateWatchlistBadge();
+          btn && btn.classList.remove('text-blue-600');
+          return true;
+        } else {
+          console.warn('Remove failed', res.status);
+          return false;
+        }
+      } catch (err) {
+        console.error('Error removing from watchlist', err);
+        return false;
+      }
+    }
+
+    function updateWatchlistBadge() {
+      const badge = document.getElementById('watchlist-badge');
+      badge.textContent = watchlistIdsSet.size;
+    }
+
+    // ===========================
+    // Fetch startups
+    // ===========================
+    async function fetchStartups() {
+      try {
+        const token = getAuthToken();
+        if (!token) throw new Error('No auth token found');
+
+        const form = document.getElementById('filterForm');
+        const params = new URLSearchParams();
+
+        // Sort By
+        const sortVal = form.elements.sort_by?.value;
+        if (sortVal) {
+          params.set('sort_by', sortVal);
+        }
+
+        // Industry
+        const industry = form.elements.industry?.value;
+        if (industry) {
+          params.set('industry', industry);
+        }
+
+        // Minimum Return
+        const minReturn = form.elements.min_return?.value;
+        if (minReturn) {
+          params.set('min_return', minReturn);
+        }
+
+        // Risk Level (hidden field)
+        const riskLevel = document.getElementById('risk-hidden')?.value;
+        if (riskLevel) {
+          params.set('risk_level', riskLevel);
+        }
+
+        // Build final URL
+        const url = STARTUPS_ENDPOINT + (params.toString() ? `?${params.toString()}` : '');
+        console.log('=== FILTER DEBUG ===');
+        console.log('Full URL:', url);
+        console.log('Parameters:', {
+          sort_by: sortVal || 'none',
+          industry: industry || 'none',
+          min_return: minReturn || 'none',
+          risk_level: riskLevel || 'none'
         });
 
-        // Preset functions
-        function applyPreset(type) {
-            const form = document.querySelector('form');
-            const industrySelect = form.querySelector('select[name="industry"]');
-            const riskSlider = form.querySelector('input[name="risk"]');
-            const sortSelect = form.querySelector('select[name="sort_by"]');
-            const minReturnSelect = form.querySelector('select[name="min_return"]');
+        // Fetch startups AND refresh watchlist concurrently
+        const [startupsData] = await Promise.allSettled([
+          fetchJSON(url, { method: 'GET' }),
+          refreshWatchlist()
+        ]);
 
-            // Reset all fields first
-            industrySelect.value = '';
-            
-            switch(type) {
-                case 'conservative':
-                    riskSlider.value = 20;
-                    sortSelect.value = 'confidence_desc';
-                    minReturnSelect.value = '5';
-                    break;
-                case 'balanced':
-                    riskSlider.value = 50;
-                    sortSelect.value = 'recommended';
-                    minReturnSelect.value = '15';
-                    break;
-                case 'aggressive':
-                    riskSlider.value = 80;
-                    sortSelect.value = 'projected_return_desc';
-                    minReturnSelect.value = '25';
-                    break;
+        const startupPayload = (startupsData.status === 'fulfilled') ? (startupsData.value) : null;
+        let startups = [];
+        if (startupPayload) {
+          startups = startupPayload.results || startupPayload.startups || startupPayload;
+          if (!Array.isArray(startups)) {
+            if (startupPayload.startups && Array.isArray(startupPayload.startups)) {
+              startups = startupPayload.startups;
+            } else if (Array.isArray(startupPayload)) {
+              startups = startupPayload;
+            } else {
+              startups = [];
             }
-            updateRiskLabel(riskSlider.value);
-            
-            // Auto-submit the form
-            form.submit();
+          }
         }
-    </script>
 
-    <style>
-        .startup-card {
-            transition: all 0.2s ease;
+        console.log('Fetched startups count:', startups.length);
+        if (startups.length > 0) {
+          console.log('Sample startup:', {
+            name: startups[0].company_name,
+            risk: startups[0].risk_level,
+            return: startups[0].projected_return,
+            industry: startups[0].industry
+          });
         }
         
-        .startup-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        return startups || [];
+      } catch (error) {
+        console.error('Error fetching startups:', error);
+        return [];
+      }
+    }
+
+    // ===========================
+    // Sorting (client fallback)
+    // ===========================
+    function sortStartups(startups, sortBy) {
+      const copy = [...startups];
+      if (!sortBy) return copy;
+      switch (sortBy) {
+        case 'projected_return_desc': return copy.sort((a, b) => (b.projected_return || 0) - (a.projected_return || 0));
+        case 'projected_return_asc': return copy.sort((a, b) => (a.projected_return || 0) - (b.projected_return || 0));
+        case 'reward_potential_desc': return copy.sort((a, b) => (b.reward_potential || 0) - (a.reward_potential || 0));
+        case 'confidence_desc': return copy.sort((a, b) => (confidenceToNum(b.data_source_confidence) - confidenceToNum(a.data_source_confidence)));
+        case 'risk_asc': return copy.sort((a, b) => riskLevelToNum(a.risk_level) - riskLevelToNum(b.risk_level));
+        case 'company_name': return copy.sort((a, b) => (a.company_name || '').localeCompare(b.company_name || ''));
+        default: return copy;
+      }
+    }
+
+    // ===========================
+    // Startup card creation
+    // ===========================
+    function createStartupCard(startup) {
+      const card = document.createElement('div');
+      card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition';
+      const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
+      card.setAttribute('data-startup-id', startup.id);
+      card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
+
+      // Display financial risk level if available
+      let riskBadge;
+      if (isDeck) {
+        riskBadge = '<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>';
+      } else if (startup.risk_level) {
+        const riskLevel = startup.risk_level.toLowerCase();
+        if (riskLevel === 'low') {
+          riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>';
+        } else if (riskLevel === 'medium') {
+          riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>';
+        } else {
+          riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>';
         }
-        
-        .preset-btn {
-            transition: all 0.2s ease;
+      } else {
+        riskBadge = '<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">Risk N/A</span>';
+      }
+
+      const industry = isDeck ? (startup.tagline || '—') : (startup.industry || '—');
+      let reward = 'N/A';
+      if (startup.reward_potential != null) {
+        if (typeof startup.reward_potential === 'string') {
+          reward = startup.reward_potential.split(',')[0].trim();
+        } else if (Array.isArray(startup.reward_potential)) {
+          reward = startup.reward_potential[0];
+        } else {
+          reward = String(startup.reward_potential);
         }
-        
-        .preset-btn:hover {
-            transform: translateY(-1px);
+      }
+      const projected = (startup.projected_return != null && startup.projected_return !== '') ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
+
+      const inWatchlist = watchlistIdsSet.has(Number(startup.id));
+
+      // Only show metrics for non-Pitch Deck startups
+      const metricsSection = isDeck ? '' : `
+        <div class="space-y-3 mb-4">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">Reward Potential</span>
+            <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">Projected Return</span>
+            <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
+          </div>
+        </div>
+      `;
+
+      card.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(startup.company_name)}</h3>
+            <p class="text-sm text-gray-600">${escapeHtml(industry)}</p>
+          </div>
+          <div class="flex flex-col items-end space-y-2">
+            ${riskBadge}
+            <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
+              ${inWatchlist ? watchIcon(true) : watchIcon(false)}
+            </button>
+          </div>
+        </div>
+        ${metricsSection}
+        <div class="flex gap-2">
+          <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
+          <a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>
+        </div>
+      `;
+
+      card.querySelector('.view-details-btn').addEventListener('click', () => {
+        const id = card.getAttribute('data-startup-id');
+        const isDeckBuilder = card.getAttribute('data-is-deck-builder') === 'true';
+        const target = isDeckBuilder ? `${COMPANY_PROFILE_DB_PAGE}?id=${id}` : `${COMPANY_PROFILE_PAGE}?id=${id}`;
+        window.location.href = target;
+      });
+
+      const watchBtn = card.querySelector('.watch-toggle');
+      watchBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const sid = startup.id;
+        const currently = watchlistIdsSet.has(Number(sid));
+        if (!currently) {
+          watchBtn.disabled = true;
+          const ok = await addToWatchlist(sid, watchBtn);
+          watchBtn.disabled = false;
+          if (ok) {
+            watchBtn.innerHTML = watchIcon(true);
+            watchBtn.title = 'Remove from watchlist';
+            watchBtn.setAttribute('aria-pressed', 'true');
+          } else {
+            alert('Could not add to watchlist.');
+          }
+        } else {
+          watchBtn.disabled = true;
+          const ok = await removeFromWatchlist(sid, watchBtn);
+          watchBtn.disabled = false;
+          if (ok) {
+            watchBtn.innerHTML = watchIcon(false);
+            watchBtn.title = 'Add to watchlist';
+            watchBtn.setAttribute('aria-pressed', 'false');
+          } else {
+            alert('Could not remove from watchlist.');
+          }
         }
-        
-        .risk-slider::-webkit-slider-thumb {
-            appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #3b82f6;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s ease;
+      });
+
+      return card;
+    }
+
+    function watchIcon(active) {
+      if (active) {
+        return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+      }
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35l-0.45-0.41C6.4 15.36 3 12.28 3 8.5 3 6 5 4 7.5 4c1.54 0 3.04 .99 3.57 2.36h0.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5z"/></svg>`;
+    }
+
+    function escapeHtml(unsafe) {
+      if (unsafe === null || unsafe === undefined) return '';
+      return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // ===========================
+    // Client-side filtering (fallback for when backend doesn't filter properly)
+    // ===========================
+    function applyClientSideFilters(startups) {
+      let filtered = [...startups];
+      
+      const form = document.getElementById('filterForm');
+      
+      // Startup Type filter (Pitch Deck vs Financial)
+      const startupType = form.elements.startup_type?.value;
+      if (startupType && startupType.trim() !== '') {
+        const beforeCount = filtered.length;
+        if (startupType === 'pitch_deck') {
+          filtered = filtered.filter(s => {
+            return !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
+          });
+        } else if (startupType === 'financial') {
+          filtered = filtered.filter(s => {
+            return !(s.is_deck_builder || s.source_deck_id || s.source_deck);
+          });
         }
-        
-        .risk-slider::-webkit-slider-thumb:hover {
-            background: #2563eb;
-            transform: scale(1.1);
-        }
-        
-        .risk-slider::-moz-range-thumb {
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #3b82f6;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Custom scrollbar for sidebar */
-        aside::-webkit-scrollbar {
-            width: 6px;
-        }
-        aside::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 3px;
-        }
-        aside::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-        aside::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        
-        /* Smooth transitions */
-        * {
-            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
-        }
-        
-        /* Focus states */
-        /* select:focus, input:focus {
-            outline: none;
-            ring: 2px;
-            ring-color: #3b82f6;
-            border-color: #3b82f6;
-        } */
-        
-        /* Loading animation for buttons */
-        button:active {
-            transform: scale(0.98);
-        }
-    </style>
+        console.log(`Client-side Type filter: ${startupType} | Before: ${beforeCount}, After: ${filtered.length}`);
+      }
+      
+      // Risk Level filter (client-side enforcement since backend may not filter correctly)
+      const riskLevel = document.getElementById('risk-hidden')?.value;
+      if (riskLevel && riskLevel.trim() !== '') {
+        const beforeCount = filtered.length;
+        filtered = filtered.filter(s => {
+          // Keep startups that match the risk level
+          return s.risk_level === riskLevel;
+        });
+        console.log(`Client-side Risk filter: ${riskLevel} | Before: ${beforeCount}, After: ${filtered.length}`);
+      }
+      
+      // Minimum Return filter (client-side enforcement since backend may not filter correctly)
+      const minReturn = form.elements.min_return?.value;
+      if (minReturn && minReturn.trim() !== '') {
+        const minReturnValue = parseFloat(minReturn);
+        const beforeCount = filtered.length;
+        filtered = filtered.filter(s => {
+          const projReturn = s.projected_return;
+          // Keep only startups that have a valid return value that meets threshold
+          return projReturn !== null && projReturn !== undefined && projReturn >= minReturnValue;
+        });
+        console.log(`Client-side MinReturn filter: ≥${minReturnValue}% | Before: ${beforeCount}, After: ${filtered.length}`);
+      }
+      
+      return filtered;
+    }
+
+    // ===========================
+    // Render flow
+    // ===========================
+    async function renderStartups() {
+      console.log('Rendering startups...');
+      
+      // Show loading state
+      const grid = document.getElementById('startup-grid');
+      const noStartups = document.getElementById('no-startups');
+      grid.innerHTML = '<div class="col-span-full text-center py-16"><div class="text-4xl mb-4">⏳</div><p class="text-gray-600">Loading startups...</p></div>';
+      noStartups.classList.add('hidden');
+      
+      const startups = await fetchStartups();
+      console.log('Raw startups from backend:', startups.length);
+      
+      // Apply client-side filters (to enforce filtering since backend may not filter properly)
+      const clientFiltered = applyClientSideFilters(startups);
+      const sortBy = document.getElementById('filterForm').elements.sort_by?.value;
+      const sorted = sortStartups(clientFiltered, sortBy);
+
+      const countSpan = document.getElementById('startup-count');
+      const clearBtn = document.getElementById('clear-filters');
+      grid.innerHTML = '';
+
+      if (!sorted || sorted.length === 0) {
+        noStartups.classList.remove('hidden');
+        countSpan.textContent = '0';
+        clearBtn.classList.add('hidden');
+        console.log('No startups found after filtering');
+        return;
+      }
+
+      noStartups.classList.add('hidden');
+      countSpan.textContent = sorted.length;
+      document.getElementById('startup-plural').textContent = sorted.length === 1 ? '' : 's';
+      clearBtn.classList.remove('hidden');
+
+      console.log('Rendering', sorted.length, 'startup cards');
+      for (const s of sorted) {
+        const card = createStartupCard(s);
+        grid.appendChild(card);
+      }
+    }
+
+    // ===========================
+    // Filters & UI helpers
+    // ===========================
+    function setRiskLevel(level) {
+      // Remove active state from all buttons
+      document.querySelectorAll('.risk-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+        btn.classList.add('border-gray-300');
+      });
+      
+      // Set active state on selected button
+      const selectedBtn = document.getElementById(`risk-${level}`);
+      if (selectedBtn) {
+        selectedBtn.classList.remove('border-gray-300');
+        selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+      }
+      
+      // Update hidden value with the risk level name (Low, Medium, High)
+      document.getElementById('risk-hidden').value = level;
+      console.log('Risk level set to:', level);
+    }
+
+    function clearAllFilters() {
+      const form = document.getElementById('filterForm');
+      form.reset();
+      
+      // Clear all risk button highlights
+      document.querySelectorAll('.risk-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+        btn.classList.add('border-gray-300');
+      });
+      
+      // Clear the hidden risk value
+      document.getElementById('risk-hidden').value = '';
+      
+      renderStartups();
+    }
+
+    function applyPreset(preset) {
+      const form = document.getElementById('filterForm');
+      
+      // Reset other filters
+      form.elements.sort_by.value = '';
+      form.elements.industry.value = '';
+      form.elements.min_return.value = '';
+      
+      if (preset === 'conservative') { 
+        setRiskLevel('Low');
+      }
+      else if (preset === 'balanced') { 
+        setRiskLevel('Medium');
+      }
+      else if (preset === 'aggressive') { 
+        setRiskLevel('High');
+        form.elements.min_return.value = '20'; 
+      }
+      
+      renderStartups();
+    }
+
+    // ===========================
+    // Logout
+    // ===========================
+    async function logoutUser() {
+      try {
+        await fetch(LOGOUT_ENDPOINT, { method: 'POST', headers: authHeaders() });
+      } catch (err) {
+        console.warn('Logout error (ignored):', err);
+      } finally {
+        localStorage.removeItem('authToken');
+        window.location.href = '/login';
+      }
+    }
+
+    // ===========================
+    // DOM events
+    // ===========================
+    document.getElementById('filterForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      console.log('Apply Filters clicked!');
+      await renderStartups();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      logoutUser();
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = getAuthToken();
+      if (!token) { window.location.href = '/login'; return; }
+
+      try {
+        await refreshWatchlist();
+      } catch (e) { /* ignore */ }
+
+      await renderStartups();
+    });
+
+    window._fundora = {
+      refreshWatchlist,
+      fetchStartups,
+      renderStartups,
+      addToWatchlist,
+      removeFromWatchlist
+    };
+  </script>
+
+  <style>
+    .startup-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+  </style>
 </body>
 </html>
