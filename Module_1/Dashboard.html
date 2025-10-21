@@ -51,9 +51,18 @@
         </div>
 
         <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Startup Type</label>
+          <select name="startup_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <option value="">All Types</option>
+            <option value="financial">Financial Data Only</option>
+            <option value="pitch_deck">Pitch Decks Only</option>
+          </select>
+        </div>
+
+        <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
           <select name="sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
-            <option value="">All Startups</option>
+            <option value="">Default Order</option>
             <option value="projected_return_desc">Highest Returns First</option>
             <option value="projected_return_asc">Lowest Returns First</option>
             <option value="reward_potential_desc">Best Reward Potential</option>
@@ -141,7 +150,7 @@
     // Configuration
     // =========================== 
     const API_BASE = 'http://127.0.0.1:8000';
-    const STARTUPS_ENDPOINT = `${API_BASE}/api/startups/`;
+    const STARTUPS_ENDPOINT = `${API_BASE}/api/investor/startups/`;
     const WATCHLIST_ENDPOINT = `${API_BASE}/api/investor/watchlist/`;
     const ADD_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/add/${id}/`;
     const REMOVE_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/remove/${id}/`;
@@ -338,7 +347,6 @@
             industry: startups[0].industry
           });
         }
-        console.log('===================');
         
         return startups || [];
       } catch (error) {
@@ -377,7 +385,7 @@
       // Display financial risk level if available
       let riskBadge;
       if (isDeck) {
-        riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>';
+        riskBadge = '<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>';
       } else if (startup.risk_level) {
         const riskLevel = startup.risk_level.toLowerCase();
         if (riskLevel === 'low') {
@@ -406,6 +414,20 @@
 
       const inWatchlist = watchlistIdsSet.has(Number(startup.id));
 
+      // Only show metrics for non-Pitch Deck startups
+      const metricsSection = isDeck ? '' : `
+        <div class="space-y-3 mb-4">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">Reward Potential</span>
+            <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">Projected Return</span>
+            <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
+          </div>
+        </div>
+      `;
+
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="flex-1">
@@ -419,16 +441,7 @@
             </button>
           </div>
         </div>
-        <div class="space-y-3 mb-4">
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Reward Potential</span>
-            <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Projected Return</span>
-            <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
-          </div>
-        </div>
+        ${metricsSection}
         <div class="flex gap-2">
           <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
           <a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>
@@ -493,33 +506,51 @@
     }
 
     // ===========================
-    // Client-side filtering (fallback for when backend doesn't filter)
+    // Client-side filtering (fallback for when backend doesn't filter properly)
     // ===========================
     function applyClientSideFilters(startups) {
       let filtered = [...startups];
       
       const form = document.getElementById('filterForm');
       
-      // Risk Level filter (client-side fallback)
-      const riskLevel = document.getElementById('risk-hidden')?.value;
-      if (riskLevel) {
-        filtered = filtered.filter(s => {
-          if (!s.risk_level) return false;
-          return s.risk_level === riskLevel;
-        });
-        console.log(`Client-side filter: Risk=${riskLevel}, remaining: ${filtered.length}`);
+      // Startup Type filter (Pitch Deck vs Financial)
+      const startupType = form.elements.startup_type?.value;
+      if (startupType && startupType.trim() !== '') {
+        const beforeCount = filtered.length;
+        if (startupType === 'pitch_deck') {
+          filtered = filtered.filter(s => {
+            return !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
+          });
+        } else if (startupType === 'financial') {
+          filtered = filtered.filter(s => {
+            return !(s.is_deck_builder || s.source_deck_id || s.source_deck);
+          });
+        }
+        console.log(`Client-side Type filter: ${startupType} | Before: ${beforeCount}, After: ${filtered.length}`);
       }
       
-      // Minimum Return filter (client-side enforcement)
+      // Risk Level filter (client-side enforcement since backend may not filter correctly)
+      const riskLevel = document.getElementById('risk-hidden')?.value;
+      if (riskLevel && riskLevel.trim() !== '') {
+        const beforeCount = filtered.length;
+        filtered = filtered.filter(s => {
+          // Keep startups that match the risk level
+          return s.risk_level === riskLevel;
+        });
+        console.log(`Client-side Risk filter: ${riskLevel} | Before: ${beforeCount}, After: ${filtered.length}`);
+      }
+      
+      // Minimum Return filter (client-side enforcement since backend may not filter correctly)
       const minReturn = form.elements.min_return?.value;
-      if (minReturn) {
+      if (minReturn && minReturn.trim() !== '') {
         const minReturnValue = parseFloat(minReturn);
+        const beforeCount = filtered.length;
         filtered = filtered.filter(s => {
           const projReturn = s.projected_return;
-          if (projReturn === null || projReturn === undefined) return false;
-          return projReturn >= minReturnValue;
+          // Keep only startups that have a valid return value that meets threshold
+          return projReturn !== null && projReturn !== undefined && projReturn >= minReturnValue;
         });
-        console.log(`Client-side filter: MinReturn≥${minReturnValue}%, remaining: ${filtered.length}`);
+        console.log(`Client-side MinReturn filter: ≥${minReturnValue}% | Before: ${beforeCount}, After: ${filtered.length}`);
       }
       
       return filtered;
@@ -538,10 +569,10 @@
       noStartups.classList.add('hidden');
       
       const startups = await fetchStartups();
+      console.log('Raw startups from backend:', startups.length);
       
-      // Apply client-side filters (for risk_level since backend doesn't support it)
+      // Apply client-side filters (to enforce filtering since backend may not filter properly)
       const clientFiltered = applyClientSideFilters(startups);
-      
       const sortBy = document.getElementById('filterForm').elements.sort_by?.value;
       const sorted = sortStartups(clientFiltered, sortBy);
 
