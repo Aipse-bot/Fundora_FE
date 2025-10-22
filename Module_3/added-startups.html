@@ -19,18 +19,25 @@
   <!-- Header will be injected via JS or static include -->
     <header class="p-6 bg-white shadow-md flex justify-between items-center">
       <h1 class="text-4xl font-bold">My Added Startups</h1>
-      <button onclick="toggleModal()"class="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600">
-        + Add New Startup
+      <button onclick="logout()"class="py-2 px-4 rounded bg-red-500 text-white font-semibold hover:bg-red-600">
+        Logout
       </button>
     </header>
 
   <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-    <div class="mb-6">
-      <a href="/deck-builder.html" class="inline-flex items-center space-x-2 py-2 px-4 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 font-medium transition duration-200 ease-in-out">
+    <div class="flex justify-between items-center mb-6">
+      <div class="mb-6">
+        <a href="/deck-builder.html" class="inline-flex items-center space-x-2 py-2 px-4 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 font-medium transition duration-200 ease-in-out">
 
-        <span>Go to my Pitch Decks -></span>
-      </a>
+          <span>Go to my Pitch Decks -></span>
+        </a>
+      </div>
+
+      <button onclick="toggleModal()"class="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600">
+        + Add New Startup
+      </button>
     </div>
+
 
     <!-- Message container for dynamic alerts -->
     <div id="messageContainer" class="mb-6"></div>
@@ -598,7 +605,7 @@
         }
     }
 
-        window.onload = loadStartups;
+    window.onload = loadStartups;
       
     function editStartup(startupId) {
       // Validate startupId
@@ -668,6 +675,12 @@
         alert('Unable to load report. Please try again.');
       }
     }
+
+    function logout() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userData');
+      window.location.href = '/login.html'; // or wherever your login page lives
+  }
 
     </script>
 </body>
