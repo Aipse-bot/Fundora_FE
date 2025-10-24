@@ -284,6 +284,10 @@
             const completenessText = document.getElementById('completeness-text');
             const completenessHiddenInput = document.getElementById('data-completeness-level');
             let tooltipElement;
+            
+            // Submission state management
+            let isSubmitting = false;
+            let hasSuccessfulSubmission = false;
 
             // --- Load User Information ---
             async function loadUserInfo() {
@@ -596,6 +600,9 @@
 
             // --- API Call Function ---
             async function submitStartupData(companyData) {
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+                
                 try {
                     // Get auth token
                     const token = localStorage.getItem('authToken');
@@ -609,11 +616,11 @@
                         return;
                     }
                     
-                    // Show loading state
-                    const submitButton = form.querySelector('button[type="submit"]');
-                    const originalText = submitButton.innerHTML;
+                    // Show loading state and disable button
                     submitButton.disabled = true;
                     submitButton.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Saving...';
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    lucide.createIcons(); // Recreate icons for the spinner
                     
                     // Make DRF-compliant API call
                     const response = await fetch('http://127.0.0.1:8000/api/startup/add/', {
@@ -654,8 +661,16 @@
                     
                     // Handle DRF success response
                     if (result.success) {
+                        // Mark successful submission
+                        hasSuccessfulSubmission = true;
+                        
                         // Success handling with DRF response structure
                         showSuccessMessage(result.message, result.startup_id);
+                        
+                        // Update button to show success state
+                        submitButton.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Successfully Submitted';
+                        submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                        submitButton.classList.add('bg-green-600', 'cursor-not-allowed');
                         
                         // Log the saved data for verification
                         console.log('=== STARTUP SAVED SUCCESSFULLY ===');
@@ -663,10 +678,10 @@
                         console.log('Saved Data:', result.data);
                         console.log('================================');
                         
-                        // Optionally redirect to another page after success
-                        // setTimeout(() => {
-                        //     window.location.href = `/dashboard/`;
-                        // }, 2000);
+                        // Redirect to added startups page after success
+                        setTimeout(() => {
+                            window.location.href = 'added-startups.html';
+                        }, 2000);
                     } else {
                         // Handle non-success response
                         showErrorMessage(result.error || 'An unexpected error occurred.');
@@ -681,13 +696,19 @@
                         showErrorMessage('An unexpected error occurred. Please try again.');
                     }
                 } finally {
-                    // Reset button state
-                    const submitButton = form.querySelector('button[type="submit"]');
-                    if (submitButton) {
-                        submitButton.disabled = false;
-                        submitButton.innerHTML = originalText;
-                        lucide.createIcons(); // Recreate icons after innerHTML change
+                    // Reset submission state only if there was an error (not on success)
+                    if (!hasSuccessfulSubmission) {
+                        isSubmitting = false;
+                        
+                        // Reset button state only on error
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = originalText;
+                            submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                            lucide.createIcons(); // Recreate icons after innerHTML change
+                        }
                     }
+                    // If successful, keep the button disabled permanently
                 }
             }
 
@@ -701,7 +722,6 @@
                         <div>
                             <div class="font-semibold">Success!</div>
                             <div class="text-sm">${message}</div>
-                            ${startupId ? `<div class="text-sm mt-1">Startup ID: ${startupId}</div>` : ''}
                         </div>
                     </div>
                 `;
@@ -740,6 +760,18 @@
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
+                // Prevent duplicate submissions
+                if (isSubmitting) {
+                    console.log('Submission already in progress, ignoring duplicate attempt');
+                    return;
+                }
+                
+                // Prevent resubmission after successful submission
+                if (hasSuccessfulSubmission) {
+                    showErrorMessage('Form has already been submitted successfully. Please refresh the page to submit a new entry.');
+                    return;
+                }
+                
                 if (!form.checkValidity()) {
                     form.reportValidity();
                     return;
@@ -756,6 +788,9 @@
                     showErrorMessage('Please fill in all required fields (Company Name and Industry).');
                     return;
                 }
+                
+                // Set submission state
+                isSubmitting = true;
                 
                 // Submit to API
                 submitStartupData(companyData);
