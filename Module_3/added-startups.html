@@ -17,11 +17,18 @@
 </head>
 <body>
   <!-- Header will be injected via JS or static include -->
-    <header class="p-6 bg-white shadow-md flex justify-between items-center">
-      <h1 class="text-4xl font-bold">My Added Startups</h1>
-      <button onclick="toggleModal()"class="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600">
-        + Add New Startup
-      </button>
+    <header class="p-6 bg-white shadow-md">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-4xl font-bold">My Added Startups</h1>
+          <p class="text-slate-600 mt-2">
+            Welcome, <span class="font-semibold text-slate-800" id="user-email">Loading...</span>
+          </p>
+        </div>
+        <button onclick="toggleModal()" class="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600">
+          + Add New Startup
+        </button>
+      </div>
     </header>
 
   <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -126,6 +133,107 @@
 
 
     <script>
+      // Load user information
+      async function loadUserInfo() {
+          const token = localStorage.getItem('authToken');
+          const userEmailElement = document.getElementById('user-email');
+
+          if (!token) {
+              userEmailElement.textContent = 'No user logged in';
+              userEmailElement.className = 'font-semibold text-red-600';
+              return;
+          }
+
+          // First try to get stored user data from login
+          const storedUserData = localStorage.getItem('userData');
+          if (storedUserData) {
+              try {
+                  const user = JSON.parse(storedUserData);
+                  if (user.email) {
+                      userEmailElement.textContent = user.email;
+                      userEmailElement.className = 'font-semibold text-green-600';
+                      return;
+                  }
+              } catch (error) {
+                  console.error('Error parsing stored user data:', error);
+              }
+          }
+
+          // If no stored user data, try to fetch from API
+          try {
+              console.log('Fetching user profile from API...');
+              
+              // Try the profile endpoint first
+              let response = await fetch('http://127.0.0.1:8000/api/auth/profile/', {
+                  method: 'GET',
+                  headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                      'Accept': 'application/json'
+                  }
+              });
+
+              // If profile endpoint fails, try alternative endpoints
+              if (!response.ok) {
+                  console.log('Profile endpoint failed, trying user endpoint...');
+                  response = await fetch('http://127.0.0.1:8000/api/auth/user/', {
+                      method: 'GET',
+                      headers: {
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json'
+                      }
+                  });
+              }
+
+              // If user endpoint also fails, try me endpoint
+              if (!response.ok) {
+                  console.log('User endpoint failed, trying me endpoint...');
+                  response = await fetch('http://127.0.0.1:8000/api/auth/me/', {
+                      method: 'GET',
+                      headers: {
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json'
+                      }
+                  });
+              }
+
+              if (response.ok) {
+                  const userData = await response.json();
+                  console.log('User profile fetched:', userData);
+                  
+                  // Display user email - try different possible field names
+                  const displayEmail = userData.email || 
+                                     userData.user?.email || 
+                                     userData.username || 
+                                     userData.user?.username ||
+                                     'Unknown user';
+                  userEmailElement.textContent = displayEmail;
+                  userEmailElement.className = 'font-semibold text-green-600';
+                  
+                  // Store user data for future use
+                  localStorage.setItem('userData', JSON.stringify(userData));
+                  
+              } else if (response.status === 401) {
+                  // Token is invalid
+                  userEmailElement.textContent = 'Please log in again';
+                  userEmailElement.className = 'font-semibold text-red-600';
+                  console.warn('Invalid token, user needs to log in again');
+              } else {
+                  // API error but token exists
+                  userEmailElement.textContent = 'Logged in user';
+                  userEmailElement.className = 'font-semibold text-blue-600';
+                  console.warn(`API returned ${response.status}, but token exists`);
+              }
+          } catch (error) {
+              console.error('Error fetching user profile:', error);
+              // Show fallback text if API fails
+              userEmailElement.textContent = 'Logged in user';
+              userEmailElement.className = 'font-semibold text-blue-600';
+          }
+      }
+
       // Add New Startup button event listener - only if button exists
       const createDeckBtn = document.getElementById('createDeckBtn');
       if (createDeckBtn) {
@@ -626,7 +734,7 @@
             ` : ''}
 
             <div class="flex gap-2">
-                <button onclick="editStartup(${startupId}, ${hasDeckInfo}, '${startup.deck_info?.deck_id || startup.source_deck_id || startup.deck_id || ''}')"
+                <button onclick="editStartup(${startupId})"
                         class="flex-1 bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -693,6 +801,10 @@
         
         // Use DOMContentLoaded instead of window.onload to prevent duplicate calls
         document.addEventListener('DOMContentLoaded', function() {
+            // Load user information first
+            loadUserInfo();
+            
+            // Then load startups
             loadStartups();
         });
 
@@ -741,7 +853,7 @@
       window.location.href = '/base.html'; // redirect to deck builder
     }
 
-    async function editStartup(startupId, hasDeckInfo = false, deckId = '') {
+    async function editStartup(startupId) {
       // Validate startupId
       if (!startupId || startupId === 'unknown') {
         alert('Invalid startup ID. Cannot edit startup.');
@@ -754,68 +866,8 @@
         return;
       }
 
-      if (hasDeckInfo) {
-        // This is a pitch deck - first try the deck ID we already have
-        console.log('✅ Editing pitch deck startup with ID:', startupId);
-        console.log('🔍 Available deck ID from card:', deckId);
-        
-        if (deckId && deckId !== '' && deckId !== 'undefined') {
-          console.log('✅ Using deck ID from card data:', deckId);
-          loadDeckEditor(parseInt(deckId));
-          return;
-        }
-        
-        // If no deck ID from card, try fetching from API
-        console.log('⚠️ No deck ID from card, fetching from API...');
-        try {
-          const response = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/report/`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            }
-          });
+      window.location.href = `Edit_Startup.html?id=${startupId}`;
 
-          if (!response.ok) {
-            if (response.status === 401) {
-              alert('Authentication failed. Please log in again.');
-              return;
-            } else if (response.status === 404) {
-              alert('Startup not found or you do not have access to it.');
-              return;
-            }
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          const startup = await response.json();
-          console.log('📦 Full startup data from API:', startup);
-          console.log('🔍 Deck info from API:', startup.deck_info);
-          console.log('🔍 All possible deck ID fields:', {
-            'deck_info.deck_id': startup.deck_info?.deck_id,
-            'source_deck_id': startup.source_deck_id,
-            'deck_id': startup.deck_id,
-            'is_deck_builder': startup.is_deck_builder
-          });
-          
-          const apiDeckId = startup.deck_info?.deck_id || startup.source_deck_id || startup.deck_id;
-          
-          if (apiDeckId) {
-            console.log('✅ Using deck ID from API:', apiDeckId);
-            loadDeckEditor(parseInt(apiDeckId));
-          } else {
-            console.error('❌ No deck ID found in API response');
-            alert('Unable to find deck information. This startup may not be associated with a pitch deck.');
-          }
-        } catch (error) {
-          console.error('Failed to fetch deck ID from API:', error);
-          alert(`Unable to edit deck: ${error.message}`);
-        }
-      } else {
-        // This is a regular startup - redirect to edit form
-        console.log('✅ Editing regular startup with ID:', startupId);
-        localStorage.setItem('editStartupId', startupId);
-        window.location.href = `Edit_Startup.html?id=${startupId}`;
-      }
     }
 
     async function startupReport(startupId) {
