@@ -491,7 +491,7 @@
             
             if (!token) {
                 alert('Please log in to edit startup information.');
-                window.location.href = 'login.html';
+                window.location.href = '../login.html';
                 return;
             }
 
@@ -513,7 +513,7 @@
                     if (response.status === 401) {
                         alert('Authentication failed. Please log in again.');
                         localStorage.removeItem('authToken');
-                        window.location.href = 'login.html';
+                        window.location.href = '../login.html';
                         return;
                     } else if (response.status === 403) {
                         alert('Access denied. You can only edit your own startups.');
@@ -631,7 +631,7 @@
                     if (response.status === 401) {
                         alert('Authentication failed. Please log in again.');
                         localStorage.removeItem('authToken');
-                        window.location.href = 'login.html';
+                        window.location.href = '../login.html';
                         return;
                     } else if (response.status === 403) {
                         alert('Access denied. You can only update your own startups.');

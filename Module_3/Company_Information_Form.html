@@ -295,7 +295,7 @@
                     userEmailElement.className = 'font-semibold text-red-600';
                     // Redirect to login if no token
                     alert('Please log in to access this page.');
-                    window.location.href = 'login.html';
+                    window.location.href = '../login.html';
                     return;
                 }
 
@@ -604,7 +604,7 @@
                         showErrorMessage('Authentication required. Please log in again.');
                         // Redirect to login
                         setTimeout(() => {
-                            window.location.href = 'login.html';
+                            window.location.href = '../login.html';
                         }, 2000);
                         return;
                     }
@@ -640,7 +640,7 @@
                             showErrorMessage('Authentication failed. Please log in again.');
                             // Redirect to login
                             setTimeout(() => {
-                                window.location.href = 'login.html';
+                                window.location.href = '../login.html';
                             }, 2000);
                         } else if (response.status === 403) {
                             showErrorMessage('Access denied. Only startup users can submit company information.');

@@ -159,7 +159,7 @@
       const token = localStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to create a pitch deck.');
-        window.location.href = 'login.html';
+        window.location.href = '../login.html';
         return;
       }
 
@@ -192,14 +192,26 @@
       const token = localStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to add your business.');
-        window.location.href = 'login.html';
+        window.location.href = '../login.html';
         return;
       }
       // Use the correct path for the Company Information Form
       window.location.href = 'Company_Information_Form.html';
     }
 
+    // Add loading flag to prevent duplicate calls
+    let isLoadingStartups = false;
+
     async function loadStartups() {
+        // Prevent multiple simultaneous calls
+        if (isLoadingStartups) {
+            console.log('Already loading startups, skipping...');
+            return;
+        }
+        
+        isLoadingStartups = true;
+        console.log('🔄 loadStartups() called at:', new Date().toISOString());
+        
         const token = localStorage.getItem('authToken');
         const grid = document.getElementById('startupsGrid');
         const messageContainer = document.getElementById('messageContainer');
@@ -210,7 +222,7 @@
         if (!token) {
             showMessage('Please log in to view your startups.', 'error');
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = '../login.html';
             }, 2000);
             return;
         }
@@ -385,6 +397,9 @@
                 </div>
             `;
             showMessage(`Failed to load startups: ${error.message}`, 'error');
+        } finally {
+            // Always reset the loading flag
+            isLoadingStartups = false;
         }
     }
 
@@ -596,11 +611,49 @@
                 }
             }, 5000);
         }
-    }
+        }
+        
+        // Use DOMContentLoaded instead of window.onload to prevent duplicate calls
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStartups();
+        });
 
-        window.onload = loadStartups;
-      
-    function editStartup(startupId) {
+        // Add page visibility listener to reload data when returning to the page
+        document.addEventListener('visibilitychange', function() {
+            // When the page becomes visible again (user returns from another page)
+            if (!document.hidden && !isLoadingStartups) {
+                // Check if we're returning from viewing a startup
+                const wasViewingStartup = localStorage.getItem('startupBeingViewed');
+                const startupWasViewed = localStorage.getItem('startupViewed');
+                
+                if (wasViewingStartup || startupWasViewed) {
+                    console.log('🔄 Returned from viewing startup, reloading to reflect updated view counts...');
+                    localStorage.removeItem('startupBeingViewed');
+                    localStorage.removeItem('startupViewed');
+                    loadStartups();
+                } else {
+                    console.log('🔄 Page became visible, reloading startups to reflect latest data...');
+                    loadStartups();
+                }
+            }
+        });
+
+        // Also reload when the page gains focus (additional fallback)
+        window.addEventListener('focus', function() {
+            if (!isLoadingStartups) {
+                console.log('🔄 Page gained focus, reloading startups...');
+                loadStartups();
+            }
+        });
+
+        // Listen for when a startup report is viewed (to refresh data when returning)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'startupViewed' && !isLoadingStartups) {
+                console.log('🔄 Startup was viewed, refreshing data...');
+                localStorage.removeItem('startupViewed'); // Clean up
+                setTimeout(() => loadStartups(), 500); // Small delay to ensure backend is updated
+            }
+        });    function editStartup(startupId) {
       // Validate startupId
       if (!startupId || startupId === 'unknown') {
         alert('Invalid startup ID. Cannot edit startup.');
@@ -661,6 +714,8 @@
         if (startup && startup.deck_info) {
           window.location.href = `/components/report-modal.html?id=${startupId}`;
         } else {
+          // Mark that we're about to view a startup (for refresh tracking)
+          localStorage.setItem('startupBeingViewed', startupId);
           window.location.href = `View_Startup_Report.html?id=${startupId}`;
         }
       } catch (error) {
