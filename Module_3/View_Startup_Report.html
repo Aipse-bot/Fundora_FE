@@ -321,87 +321,15 @@
             `;
         }
 
-        // Deck editor function (same as deck-builder.html)
-        function loadDeckEditor(deckId) {
-            if (!deckId || isNaN(deckId)) {
-                console.error('Invalid deck ID');
+        // Edit startup function - simplified
+        function editStartup(startupId) {
+            if (!startupId || startupId === 'unknown') {
+                alert('Invalid startup ID. Cannot edit startup.');
                 return;
             }
-
-            localStorage.setItem('deck_id', deckId); // persist for other sections
-            window.location.href = '/base.html'; // redirect to deck builder
-        }
-
-        // Edit startup function with deck detection
-        function editStartup(startupData) {
-            const startupId = startupData.id;
             
-            console.log('🔍 Edit startup function called with data:', startupData);
-            console.log('🔍 Full startup object keys:', Object.keys(startupData));
-            console.log('🔍 Searching for deck indicators in all properties...');
-            
-            // Log all properties that might contain "deck" or related info
-            Object.keys(startupData).forEach(key => {
-                if (key.toLowerCase().includes('deck') || key.toLowerCase().includes('source') || key.toLowerCase().includes('builder')) {
-                    console.log(`🔍 Found potential deck property: ${key} =`, startupData[key]);
-                }
-            });
-            
-            // Check if startup is from pitch deck or regular form - check all possible sources
-            const hasDeckInfo = startupData && (
-                (startupData.deck_info && startupData.deck_info.deck_id) ||
-                startupData.source_deck_id ||
-                startupData.is_deck_builder ||
-                startupData.deck_id ||
-                // Additional checks for variations
-                startupData.deckId ||
-                startupData.deck_builder ||
-                startupData.from_deck ||
-                startupData.pitch_deck_id ||
-                (startupData.source && startupData.source === 'deck')
-            );
-
-            console.log('🔍 Edit startup - Comprehensive deck info check:', {
-                'startup_id': startupId,
-                'has_deck_info': hasDeckInfo,
-                'deck_info': startupData.deck_info,
-                'source_deck_id': startupData.source_deck_id,
-                'is_deck_builder': startupData.is_deck_builder,
-                'deck_id': startupData.deck_id,
-                'deckId': startupData.deckId,
-                'deck_builder': startupData.deck_builder,
-                'from_deck': startupData.from_deck,
-                'pitch_deck_id': startupData.pitch_deck_id,
-                'source': startupData.source
-            });
-
-            if (hasDeckInfo) {
-                // This is a pitch deck - get the deck ID and redirect to deck builder
-                const deckId = startupData.deck_info?.deck_id || 
-                              startupData.source_deck_id || 
-                              startupData.deck_id ||
-                              startupData.deckId ||
-                              startupData.pitch_deck_id;
-                
-                console.log('✅ Detected as pitch deck startup');
-                console.log('🔍 Available deck ID:', deckId);
-                
-                if (deckId) {
-                    console.log('✅ Redirecting to deck builder with deck ID:', deckId);
-                    alert(`Redirecting to deck builder with deck ID: ${deckId}`); // Temporary alert for debugging
-                    loadDeckEditor(parseInt(deckId));
-                } else {
-                    console.error('❌ No deck ID found for pitch deck startup');
-                    console.error('Startup data:', startupData);
-                    alert('Unable to find deck information. This startup appears to be from a pitch deck but the deck ID is missing.');
-                }
-            } else {
-                // This is a regular startup - redirect to edit form
-                console.log('✅ Detected as regular startup - redirecting to edit form');
-                alert(`No deck info detected. Redirecting to regular edit form for startup ID: ${startupId}`); // Temporary alert for debugging
-                localStorage.setItem('editStartupId', startupId);
-                window.location.href = `Edit_Startup.html?id=${startupId}`;
-            }
+            // Redirect to edit form
+            window.location.href = `Edit_Startup.html?id=${startupId}`;
         }
 
         // Delete confirmation functionality
@@ -552,23 +480,6 @@
                 const startup = report.startup || {};
                 const data = report.company_data || report.data || report;
 
-                console.log('🔍 Full report data:', report);
-                console.log('🔍 Startup data:', startup);
-                console.log('🔍 Data object:', data);
-                console.log('🔍 Available fields for deck detection:', {
-                    'startup.deck_info': startup.deck_info,
-                    'startup.source_deck_id': startup.source_deck_id,
-                    'startup.is_deck_builder': startup.is_deck_builder,
-                    'startup.deck_id': startup.deck_id,
-                    'report.deck_info': report.deck_info,
-                    'data.deck_info': data.deck_info
-                });
-
-                // Log all properties in startup object that might contain deck info
-                console.log('🔍 All startup properties:', Object.keys(startup));
-                console.log('🔍 All report properties:', Object.keys(report));
-                console.log('🔍 All data properties:', Object.keys(data));
-
                 // Populate Company Profile
                 const companyName = startup.company_name || startup.name || 'N/A';
                 document.getElementById('company-name').textContent = companyName;
@@ -659,52 +570,12 @@
                 document.getElementById('confidence-level').textContent = confidenceText;
                 document.getElementById('confidence-level').className = `text-sm font-medium mt-1 ${confidenceLevel === 'High' ? 'text-green-600' : confidenceLevel === 'Medium' ? 'text-yellow-600' : 'text-red-600'}`;
 
-                // Set up edit button functionality
-                console.log('Setting up edit button for startup:', startup);
-                
-                // Enhanced deck detection - check multiple levels of the response
-                const mergedStartupData = {
-                    ...startup,
-                    // Merge in any deck info from the top-level report and data
-                    deck_info: startup.deck_info || report.deck_info || data.deck_info,
-                    source_deck_id: startup.source_deck_id || report.source_deck_id || data.source_deck_id,
-                    is_deck_builder: startup.is_deck_builder || report.is_deck_builder || data.is_deck_builder,
-                    deck_id: startup.deck_id || report.deck_id || data.deck_id,
-                    // Additional possible field names
-                    deckId: startup.deckId || report.deckId || data.deckId,
-                    deck_builder: startup.deck_builder || report.deck_builder || data.deck_builder,
-                    from_deck: startup.from_deck || report.from_deck || data.from_deck,
-                    pitch_deck_id: startup.pitch_deck_id || report.pitch_deck_id || data.pitch_deck_id,
-                    source: startup.source || report.source || data.source
-                };
-
-                console.log('🔍 Merged startup data for edit button:', mergedStartupData);
-                console.log('🔍 Checking merged data for deck indicators...');
-                
-                // Test the deck detection logic with merged data
-                const testHasDeckInfo = mergedStartupData && (
-                    (mergedStartupData.deck_info && mergedStartupData.deck_info.deck_id) ||
-                    mergedStartupData.source_deck_id ||
-                    mergedStartupData.is_deck_builder ||
-                    mergedStartupData.deck_id ||
-                    mergedStartupData.deckId ||
-                    mergedStartupData.deck_builder ||
-                    mergedStartupData.from_deck ||
-                    mergedStartupData.pitch_deck_id ||
-                    (mergedStartupData.source && mergedStartupData.source === 'deck')
-                );
-                
-                console.log('🔍 Test deck detection result:', testHasDeckInfo);
-                
-                // Store merged startup data globally for the edit function
-                window.currentStartupData = mergedStartupData;
-                
-                // Update edit button to use the editStartup function
+                // Set up edit button functionality - simplified
                 const editButton = document.getElementById('edit-startup-link');
-                editButton.href = '#'; // Prevent default navigation
+                editButton.href = '#';
                 editButton.onclick = function(e) {
                     e.preventDefault();
-                    editStartup(window.currentStartupData);
+                    editStartup(startupId);
                     return false;
                 };
 
