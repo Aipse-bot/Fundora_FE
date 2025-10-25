@@ -77,9 +77,10 @@
             display: none;
         }
         
-        /* Non-scrollable form container */
+        /* Scrollable form container */
         .form-container {
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
         
         /* Financial section styling */
@@ -140,8 +141,8 @@
                     </h2>
                 </div>
                 
-                <!-- Form Content - Full Screen -->
-                <div class="form-container flex-1 px-6 py-4 overflow-hidden">
+                <!-- Form Content - Scrollable -->
+                <div class="form-container flex-1 px-6 py-4 overflow-y-auto overflow-x-hidden">
 
                 <div class="grid lg:grid-cols-5 gap-6 h-full">
 
@@ -420,6 +421,61 @@
                             </div>
                         </div>
 
+                        <!-- Qualitative Assessment Section -->
+                        <div class="financial-section rounded-lg p-5 border-purple-500 flex-1 bg-gradient-to-br from-purple-50 to-blue-50">
+                            <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
+                                <i data-lucide="users" class="w-5 h-5 text-purple-600"></i>
+                                <span>Qualitative Assessment</span>
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="team-strength" class="flex items-center text-sm font-medium text-slate-700 mb-2">
+                                        Team Strength
+                                        <button type="button" class="tooltip-trigger ml-1.5 text-slate-400 hover:text-slate-600" data-tooltip-text="Describe the leadership team's experience, skills, and track record">
+                                            <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </label>
+                                    <textarea 
+                                        id="team-strength" 
+                                        name="team-strength" 
+                                        rows="3" 
+                                        class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg focus:outline-none resize-none" 
+                                        placeholder="Describe the team's expertise, experience, and key strengths..."
+                                    ></textarea>
+                                </div>
+                                <div>
+                                    <label for="market-position" class="flex items-center text-sm font-medium text-slate-700 mb-2">
+                                        Market Position
+                                        <button type="button" class="tooltip-trigger ml-1.5 text-slate-400 hover:text-slate-600" data-tooltip-text="Describe the company's competitive position and market share">
+                                            <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </label>
+                                    <textarea 
+                                        id="market-position" 
+                                        name="market-position" 
+                                        rows="3" 
+                                        class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg focus:outline-none resize-none" 
+                                        placeholder="Explain the company's standing in the market, competitive advantages..."
+                                    ></textarea>
+                                </div>
+                                <div>
+                                    <label for="brand-reputation" class="flex items-center text-sm font-medium text-slate-700 mb-2">
+                                        Brand Reputation
+                                        <button type="button" class="tooltip-trigger ml-1.5 text-slate-400 hover:text-slate-600" data-tooltip-text="Assess the company's brand value and public perception">
+                                            <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </label>
+                                    <textarea 
+                                        id="brand-reputation" 
+                                        name="brand-reputation" 
+                                        rows="3" 
+                                        class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg focus:outline-none resize-none" 
+                                        placeholder="Describe brand recognition, customer loyalty, reputation..."
+                                    ></textarea>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Action Buttons -->
                         <div class="flex flex-col sm:flex-row gap-4 pt-4">
                             <button 
@@ -571,6 +627,11 @@
                 document.getElementById('cash-flow').value = startup.cash_flow || '';
                 document.getElementById('investment-flow').value = startup.investment_flow || '';
                 document.getElementById('financing-flow').value = startup.financing_flow || '';
+
+                // Qualitative Assessment
+                document.getElementById('team-strength').value = startup.team_strength || '';
+                document.getElementById('market-position').value = startup.market_position || '';
+                document.getElementById('brand-reputation').value = startup.brand_reputation || '';
 
                 // Calculate shareholder equity
                 calculateEquity();
@@ -728,9 +789,9 @@
                     financing_flow: parseNumericValue(document.getElementById('financing-flow').value),
                     reporting_period: document.getElementById('income-period').value || 'yearly',
                     
-                    team_strength: '',
-                    market_position: '',
-                    brand_reputation: '',
+                    team_strength: document.getElementById('team-strength').value.trim(),
+                    market_position: document.getElementById('market-position').value.trim(),
+                    brand_reputation: document.getElementById('brand-reputation').value.trim(),
                     
                     data_source_confidence: confidenceLevel,
                     confidence_percentage: actualPercentage,
