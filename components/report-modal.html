@@ -156,7 +156,7 @@
 
         async function loadData() {
           try {
-            const res = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/report/`, {
+            const res = await fetch(`https://fundora-be.onrender.com/api/startup/${startupId}/report/`, {
               headers: { Authorization: `Bearer ${token}` }
             });
 
