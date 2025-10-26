@@ -17,27 +17,34 @@
 </head>
 <body>
   <!-- Header will be injected via JS or static include -->
-    <header class="p-6 bg-white shadow-md flex justify-between items-center">
-      <h1 class="text-4xl font-bold">My Added Startups</h1>
-      <button onclick="logout()"class="py-2 px-4 rounded bg-red-500 text-white font-semibold hover:bg-red-600">
-        Logout
-      </button>
+    <header class="p-6 bg-white shadow-md">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-4xl font-bold">My Added Startups</h1>
+          <p class="text-slate-600 mt-2">
+            Welcome, <span class="font-semibold text-slate-800" id="user-email">Loading...</span>
+          </p>
+        </div>
+        <button onclick="toggleModal()" class="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600">
+          + Add New Startup
+        </button>
+      </div>
     </header>
 
   <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-    <div class="flex justify-between items-center mb-6">
-      <div class="mb-6">
+    <div class="mb-6">
+      <div class="flex flex-col sm:flex-row gap-4">
         <a href="/deck-builder.html" class="inline-flex items-center space-x-2 py-2 px-4 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 font-medium transition duration-200 ease-in-out">
-
           <span>Go to my Pitch Decks -></span>
         </a>
+        <a href="startup-analytics.html" class="inline-flex items-center space-x-2 py-2 px-4 rounded bg-blue-100 hover:bg-blue-200 text-blue-700 hover:text-blue-900 font-medium transition duration-200 ease-in-out">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          <span>View Analytics Dashboard</span>
+        </a>
       </div>
-
-      <button onclick="toggleModal()"class="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600">
-        + Add New Startup
-      </button>
     </div>
-
 
     <!-- Message container for dynamic alerts -->
     <div id="messageContainer" class="mb-6"></div>
@@ -126,6 +133,107 @@
 
 
     <script>
+      // Load user information
+      async function loadUserInfo() {
+          const token = localStorage.getItem('authToken');
+          const userEmailElement = document.getElementById('user-email');
+
+          if (!token) {
+              userEmailElement.textContent = 'No user logged in';
+              userEmailElement.className = 'font-semibold text-red-600';
+              return;
+          }
+
+          // First try to get stored user data from login
+          const storedUserData = localStorage.getItem('userData');
+          if (storedUserData) {
+              try {
+                  const user = JSON.parse(storedUserData);
+                  if (user.email) {
+                      userEmailElement.textContent = user.email;
+                      userEmailElement.className = 'font-semibold text-green-600';
+                      return;
+                  }
+              } catch (error) {
+                  console.error('Error parsing stored user data:', error);
+              }
+          }
+
+          // If no stored user data, try to fetch from API
+          try {
+              console.log('Fetching user profile from API...');
+              
+              // Try the profile endpoint first
+              let response = await fetch('http://127.0.0.1:8000/api/auth/profile/', {
+                  method: 'GET',
+                  headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                      'Accept': 'application/json'
+                  }
+              });
+
+              // If profile endpoint fails, try alternative endpoints
+              if (!response.ok) {
+                  console.log('Profile endpoint failed, trying user endpoint...');
+                  response = await fetch('http://127.0.0.1:8000/api/auth/user/', {
+                      method: 'GET',
+                      headers: {
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json'
+                      }
+                  });
+              }
+
+              // If user endpoint also fails, try me endpoint
+              if (!response.ok) {
+                  console.log('User endpoint failed, trying me endpoint...');
+                  response = await fetch('http://127.0.0.1:8000/api/auth/me/', {
+                      method: 'GET',
+                      headers: {
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json'
+                      }
+                  });
+              }
+
+              if (response.ok) {
+                  const userData = await response.json();
+                  console.log('User profile fetched:', userData);
+                  
+                  // Display user email - try different possible field names
+                  const displayEmail = userData.email || 
+                                     userData.user?.email || 
+                                     userData.username || 
+                                     userData.user?.username ||
+                                     'Unknown user';
+                  userEmailElement.textContent = displayEmail;
+                  userEmailElement.className = 'font-semibold text-green-600';
+                  
+                  // Store user data for future use
+                  localStorage.setItem('userData', JSON.stringify(userData));
+                  
+              } else if (response.status === 401) {
+                  // Token is invalid
+                  userEmailElement.textContent = 'Please log in again';
+                  userEmailElement.className = 'font-semibold text-red-600';
+                  console.warn('Invalid token, user needs to log in again');
+              } else {
+                  // API error but token exists
+                  userEmailElement.textContent = 'Logged in user';
+                  userEmailElement.className = 'font-semibold text-blue-600';
+                  console.warn(`API returned ${response.status}, but token exists`);
+              }
+          } catch (error) {
+              console.error('Error fetching user profile:', error);
+              // Show fallback text if API fails
+              userEmailElement.textContent = 'Logged in user';
+              userEmailElement.className = 'font-semibold text-blue-600';
+          }
+      }
+
       // Add New Startup button event listener - only if button exists
       const createDeckBtn = document.getElementById('createDeckBtn');
       if (createDeckBtn) {
@@ -166,7 +274,7 @@
       const token = localStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to create a pitch deck.');
-        window.location.href = 'login.html';
+        window.location.href = '../login.html';
         return;
       }
 
@@ -199,14 +307,26 @@
       const token = localStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to add your business.');
-        window.location.href = 'login.html';
+        window.location.href = '../login.html';
         return;
       }
       // Use the correct path for the Company Information Form
       window.location.href = 'Company_Information_Form.html';
     }
 
+    // Add loading flag to prevent duplicate calls
+    let isLoadingStartups = false;
+
     async function loadStartups() {
+        // Prevent multiple simultaneous calls
+        if (isLoadingStartups) {
+            console.log('Already loading startups, skipping...');
+            return;
+        }
+        
+        isLoadingStartups = true;
+        console.log('🔄 loadStartups() called at:', new Date().toISOString());
+        
         const token = localStorage.getItem('authToken');
         const grid = document.getElementById('startupsGrid');
         const messageContainer = document.getElementById('messageContainer');
@@ -217,7 +337,7 @@
         if (!token) {
             showMessage('Please log in to view your startups.', 'error');
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = '../login.html';
             }, 2000);
             return;
         }
@@ -295,6 +415,9 @@
             // Clear loading indicator
             grid.innerHTML = '';
 
+            // Update header button visibility based on startup count
+            updateHeaderButtonVisibility(startups.length);
+
             if (startups.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12">
@@ -319,6 +442,8 @@
 
             // Render each startup with comprehensive error handling
             let successfulRenders = 0;
+            let skippedPitchDecks = 0;
+            let failedRenders = 0;
             startups.forEach((startup, index) => {
                 try {
                     console.log(`🚀 Rendering startup ${index + 1}/${startups.length}:`, {
@@ -331,12 +456,27 @@
                         throw new Error(`Startup ${index + 1} is not a valid object`);
                     }
                     
+                    // Check if startup is from pitch deck - skip if it is
+                    const hasDeckInfo = startup && (
+                        (startup.deck_info && startup.deck_info.deck_id) ||
+                        startup.source_deck_id ||
+                        startup.is_deck_builder ||
+                        startup.deck_id
+                    );
+                    
+                    if (hasDeckInfo) {
+                        console.log(`⏭️ Skipping pitch deck startup: ${startup?.company_name}`);
+                        skippedPitchDecks++;
+                        return; // Skip this startup (continue to next iteration)
+                    }
+                    
                     renderStartupCard(startup, grid);
                     successfulRenders++;
                     
                 } catch (error) {
                     console.error(`❌ Error rendering startup ${index + 1}:`, error);
                     console.error('Problematic startup data:', startup);
+                    failedRenders++;
                     
                     // Show a placeholder card for problematic startups
                     const errorCard = document.createElement('div');
@@ -358,13 +498,18 @@
             });
 
             // Show success message with statistics
+            const regularStartupsCount = startups.length - skippedPitchDecks;
+            
             if (successfulRenders > 0) {
-                const failedRenders = startups.length - successfulRenders;
-                let message = `Successfully loaded ${successfulRenders} startup${successfulRenders === 1 ? '' : 's'}`;
+                let message = `Successfully loaded ${successfulRenders} regular startup${successfulRenders === 1 ? '' : 's'}`;
+                
                 if (failedRenders > 0) {
                     message += ` (${failedRenders} failed to render)`;
                 }
-                showMessage(message, successfulRenders === startups.length ? 'success' : 'warning');
+                
+                showMessage(message, (successfulRenders === regularStartupsCount && failedRenders === 0) ? 'success' : 'warning');
+            } else if (skippedPitchDecks > 0 && regularStartupsCount === 0) {
+                showMessage('No regular startups found.', 'info');
             } else {
                 showMessage('No startups could be rendered due to data issues.', 'error');
             }
@@ -372,6 +517,9 @@
         } catch (error) {
             console.error('💥 Error loading startups:', error);
             console.error('Error stack:', error.stack);
+            
+            // Hide header button when there's an error
+            updateHeaderButtonVisibility(0);
             
             grid.innerHTML = `
                 <div class="col-span-full text-center py-12">
@@ -392,6 +540,21 @@
                 </div>
             `;
             showMessage(`Failed to load startups: ${error.message}`, 'error');
+        } finally {
+            // Always reset the loading flag
+            isLoadingStartups = false;
+        }
+    }
+
+    // Function to control header button visibility
+    function updateHeaderButtonVisibility(startupCount) {
+        const headerButton = document.querySelector('header button[onclick="toggleModal()"]');
+        if (headerButton) {
+            if (startupCount > 0) {
+                headerButton.style.display = 'block';
+            } else {
+                headerButton.style.display = 'none';
+            }
         }
     }
 
@@ -442,8 +605,33 @@
             }
         };
 
-        // Safe ID extraction with fallback
+        // Safe ID extraction with fallback - prioritize user-relative ID
+        const userStartupId = startup.user_startup_id || 'N/A';
         const startupId = startup.id || startup.pk || 'unknown';
+
+        // Check if startup is from pitch deck or regular form
+        const hasDeckInfo = startup && (
+            (startup.deck_info && startup.deck_info.deck_id) ||
+            startup.source_deck_id ||
+            startup.is_deck_builder ||
+            startup.deck_id
+        );
+
+        // Debug logging for deck info
+        if (hasDeckInfo) {
+            console.log(`🔍 Deck info for ${companyName}:`, {
+                'deck_info': startup.deck_info,
+                'source_deck_id': startup.source_deck_id,
+                'is_deck_builder': startup.is_deck_builder,
+                'deck_id': startup.deck_id,
+                'startup_id': startupId
+            });
+        }
+
+        const sourceType = hasDeckInfo ? 'pitch-deck' : 'company-form';
+        const sourceLabel = hasDeckInfo ? 'Pitch Deck' : 'Company Form';
+        const sourceIcon = hasDeckInfo ? '📊' : '📝';
+        const sourceBadgeColor = hasDeckInfo ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
 
         const card = document.createElement('div');
         card.className = "startup-card bg-white rounded-xl shadow-md p-6 relative group hover:shadow-lg transition-shadow";
@@ -456,10 +644,16 @@
                     <div>
                         <h3 class="text-lg font-semibold text-slate-800">${companyName}</h3>
                         <p class="text-sm text-slate-500">${industry}</p>
+                        <!-- Source Type Indicator -->
+                        <div class="flex items-center gap-1 mt-1">
+                            <span class="text-xs px-2 py-1 rounded-full ${sourceBadgeColor}">
+                                ${sourceIcon} ${sourceLabel}
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="text-xs text-slate-400">
-                    ID: ${startupId}
+                    ID: ${userStartupId}
                 </div>
             </div>
 
@@ -545,7 +739,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    Edit
+                    Edit ${hasDeckInfo ? 'Deck' : 'Info'}
                 </button>
                 <button onclick="startupReport(${startupId})"
                         class="flex-1 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
@@ -603,11 +797,63 @@
                 }
             }, 5000);
         }
+        }
+        
+        // Use DOMContentLoaded instead of window.onload to prevent duplicate calls
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load user information first
+            loadUserInfo();
+            
+            // Then load startups
+            loadStartups();
+        });
+
+        // Add page visibility listener to reload data when returning to the page
+        document.addEventListener('visibilitychange', function() {
+            // When the page becomes visible again (user returns from another page)
+            if (!document.hidden && !isLoadingStartups) {
+                // Check if we're returning from viewing a startup
+                const wasViewingStartup = localStorage.getItem('startupBeingViewed');
+                const startupWasViewed = localStorage.getItem('startupViewed');
+                
+                if (wasViewingStartup || startupWasViewed) {
+                    console.log('🔄 Returned from viewing startup, reloading to reflect updated view counts...');
+                    localStorage.removeItem('startupBeingViewed');
+                    localStorage.removeItem('startupViewed');
+                    loadStartups();
+                } else {
+                    console.log('🔄 Page became visible, reloading startups to reflect latest data...');
+                    loadStartups();
+                }
+            }
+        });
+
+        // Also reload when the page gains focus (additional fallback)
+        window.addEventListener('focus', function() {
+            if (!isLoadingStartups) {
+                console.log('🔄 Page gained focus, reloading startups...');
+                loadStartups();
+            }
+        });
+
+        // Listen for when a startup report is viewed (to refresh data when returning)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'startupViewed' && !isLoadingStartups) {
+                console.log('🔄 Startup was viewed, refreshing data...');
+                localStorage.removeItem('startupViewed'); // Clean up
+                setTimeout(() => loadStartups(), 500); // Small delay to ensure backend is updated
+            }
+        });    function loadDeckEditor(deckId) {
+      if (!deckId || isNaN(deckId)) {
+        console.error('Invalid deck ID');
+        return;
+      }
+
+      localStorage.setItem('deck_id', deckId); // persist for other sections
+      window.location.href = '/base.html'; // redirect to deck builder
     }
 
-    window.onload = loadStartups;
-      
-    function editStartup(startupId) {
+    async function editStartup(startupId) {
       // Validate startupId
       if (!startupId || startupId === 'unknown') {
         alert('Invalid startup ID. Cannot edit startup.');
@@ -620,11 +866,8 @@
         return;
       }
 
-      // Store the startup ID for the edit page
-      localStorage.setItem('editStartupId', startupId);
-      
-      // Navigate to the edit page
       window.location.href = `Edit_Startup.html?id=${startupId}`;
+
     }
 
     async function startupReport(startupId) {
@@ -668,6 +911,8 @@
         if (startup && startup.deck_info) {
           window.location.href = `/components/report-modal.html?id=${startupId}`;
         } else {
+          // Mark that we're about to view a startup (for refresh tracking)
+          localStorage.setItem('startupBeingViewed', startupId);
           window.location.href = `View_Startup_Report.html?id=${startupId}`;
         }
       } catch (error) {

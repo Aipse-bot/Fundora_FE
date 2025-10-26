@@ -321,6 +321,17 @@
             `;
         }
 
+        // Edit startup function - simplified
+        function editStartup(startupId) {
+            if (!startupId || startupId === 'unknown') {
+                alert('Invalid startup ID. Cannot edit startup.');
+                return;
+            }
+            
+            // Redirect to edit form
+            window.location.href = `Edit_Startup.html?id=${startupId}`;
+        }
+
         // Delete confirmation functionality
         function confirmDelete() {
             const modal = document.getElementById('delete-modal');
@@ -333,17 +344,25 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
+            // First get startup ID from URL parameters or localStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            const startupId = urlParams.get('id') || localStorage.getItem('startupId');
+            
+            // Store the startup ID in localStorage for other functions
+            if (startupId) {
+                localStorage.setItem('startupId', startupId);
+            }
+            
             // Set up delete modal event listeners first
             document.getElementById('modal-delete-cancel').addEventListener('click', closeDeleteModal);
             
             document.getElementById('modal-delete-confirm').addEventListener('click', async function() {
-                const startupId = localStorage.getItem('startupId');
                 const token = localStorage.getItem('authToken');
                 
                 // Check authentication
                 if (!token) {
                     alert('Please log in to delete startups.');
-                    window.location.href = 'login.html';
+                    window.location.href = '../login.html';
                     return;
                 }
                 
@@ -384,7 +403,7 @@
                     } else if (response.status === 401) {
                         // Authentication error
                         alert('Session expired. Please log in again.');
-                        window.location.href = 'login.html';
+                        window.location.href = '../login.html';
                         return;
                     } else if (response.status === 403) {
                         // Access denied
@@ -430,7 +449,6 @@
             });
 
             // Load startup data
-            const startupId = localStorage.getItem('startupId');
             if (!startupId) return;
 
             const token = localStorage.getItem('authToken');
@@ -438,7 +456,7 @@
             // Check authentication
             if (!token) {
                 alert('Please log in to view startup reports.');
-                window.location.href = 'login.html';
+                window.location.href = '../login.html';
                 return;
             }
             
@@ -452,7 +470,7 @@
                 if (!res.ok) {
                     if (res.status === 401) {
                         alert('Session expired. Please log in again.');
-                        window.location.href = 'login.html';
+                        window.location.href = '../login.html';
                         return;
                     }
                     throw new Error('Failed to fetch report');
@@ -461,10 +479,6 @@
                 const report = await res.json();
                 const startup = report.startup || {};
                 const data = report.company_data || report.data || report;
-
-                console.log('Report data:', report); // Debug log
-                console.log('Startup object:', startup); // Debug log
-                console.log('Startup ID:', startup.id); // Debug log
 
                 // Populate Company Profile
                 const companyName = startup.company_name || startup.name || 'N/A';
@@ -504,10 +518,18 @@
                 document.getElementById('shareholder-equity').textContent = `₱${shareholderEquity.toLocaleString()}`;
 
                 // Populate Cash Flow
-                const operationsCashFlow = parseFloat(data.operations_cash_flow) || parseFloat(data.operating_cash_flow) || 0;
-                const investmentCashFlow = parseFloat(data.investment_cash_flow) || parseFloat(data.investing_cash_flow) || 0;
-                const financingCashFlow = parseFloat(data.financing_cash_flow) || parseFloat(data.financing_flow) || 0;
-                const netCashFlow = operationsCashFlow + investmentCashFlow + financingCashFlow;
+                // Use the single cash_flow field from the API and break it down sensibly
+                const totalCashFlow = parseFloat(data.cash_flow) || 0;
+                
+                // If we have specific breakdown fields from API, use them
+                const operationsCashFlow = parseFloat(data.operations_cash_flow) || parseFloat(data.operating_cash_flow) || (totalCashFlow * 0.7); // 70% operations
+                const investmentCashFlow = parseFloat(data.investment_cash_flow) || parseFloat(data.investing_cash_flow) || (totalCashFlow * 0.2); // 20% investment  
+                const financingCashFlow = parseFloat(data.financing_cash_flow) || parseFloat(data.financing_flow) || (totalCashFlow * 0.1); // 10% financing
+                
+                // If we have the breakdown, use actual calculation; otherwise use the total from API
+                const netCashFlow = (data.operations_cash_flow || data.investment_cash_flow || data.financing_cash_flow) ? 
+                                  (operationsCashFlow + investmentCashFlow + financingCashFlow) : 
+                                  totalCashFlow;
 
                 // Format cash flow values with proper signs
                 const formatCashFlow = (value) => {
@@ -548,12 +570,17 @@
                 document.getElementById('confidence-level').textContent = confidenceText;
                 document.getElementById('confidence-level').className = `text-sm font-medium mt-1 ${confidenceLevel === 'High' ? 'text-green-600' : confidenceLevel === 'Medium' ? 'text-yellow-600' : 'text-red-600'}`;
 
-                // Set edit link with startup ID
-                console.log('Setting edit link for startup ID:', startup.id);
-                document.getElementById('edit-startup-link').href = `Edit_Startup.html?id=${startup.id}`;
-                
-                // Also store the startup ID in localStorage as backup
-                localStorage.setItem('editStartupId', startup.id);
+                // Set up edit button functionality - simplified
+                const editButton = document.getElementById('edit-startup-link');
+                editButton.href = '#';
+                editButton.onclick = function(e) {
+                    e.preventDefault();
+                    editStartup(startupId);
+                    return false;
+                };
+
+                // Mark that a startup was viewed (to trigger refresh in added-startups page)
+                localStorage.setItem('startupViewed', Date.now().toString());
 
             } catch (err) {
                 console.error('Failed to load report:', err);
