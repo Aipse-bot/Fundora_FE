@@ -132,7 +132,7 @@
           console.log('Loading company with ID:', startupId);
 
           try {
-              const res = await fetch(`http://127.0.0.1:8000/api/startups/${startupId}/`, {
+              const res = await fetch(`https://fundora-be.onrender.com/api/startups/${startupId}/`, {
                   headers: authHeaders(),
               });
               
@@ -248,7 +248,7 @@
               
               console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
               
-              const res = await fetch(`http://127.0.0.1:8000/api/investor/watchlist/${action}/${startupId}/`, {
+              const res = await fetch(`https://fundora-be.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
                   method: method,
                   headers: authHeaders()
               });
