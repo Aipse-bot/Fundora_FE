@@ -96,7 +96,20 @@
   </div>
 
   <script>
-    document.getElementById('createAccountForm').addEventListener('submit', async function (e) {e.preventDefault();
+    document.getElementById('createAccountForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const box = document.getElementById('messageBox');
+        const text = document.getElementById('messageText');
+        const submitButton = document.querySelector('button[type="submit"]');
+
+        // Disable submit button to prevent multiple submissions
+        submitButton.disabled = true;
+        submitButton.textContent = 'Creating Account...';
+        submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+        // Hide any previous messages
+        box.classList.add('hidden');
 
         // Capture form data
         const payload = {
@@ -106,29 +119,54 @@
             password: document.getElementById('password').value,
             confirm_password: document.getElementById('confirm_password').value,
             label: 'startup',
-            terms: document.getElementById('terms').checked  // Ensure the checkbox for terms is included
+            terms: document.getElementById('terms').checked
         };
 
-        // Passwords don't match
+        // Client-side validation
+        let errors = [];
+
+        // Check if all fields are filled
+        if (!payload.first_name) errors.push('First name is required.');
+        if (!payload.last_name) errors.push('Last name is required.');
+        if (!payload.email) errors.push('Email is required.');
+        if (!payload.password) errors.push('Password is required.');
+        if (!payload.confirm_password) errors.push('Please confirm your password.');
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (payload.email && !emailRegex.test(payload.email)) {
+            errors.push('Please enter a valid email address.');
+        }
+
+        // Validate password strength
+        if (payload.password && payload.password.length < 8) {
+            errors.push('Password must be at least 8 characters long.');
+        }
+
+        // Check if passwords match
         if (payload.password !== payload.confirm_password) {
-            const box = document.getElementById('messageBox');
-            const text = document.getElementById('messageText');
-            text.textContent = 'Passwords do not match.';
-            text.className = 'bg-red-100 border border-red-400 text-red-700';
-            box.classList.remove('hidden');
-            return;
+            errors.push('Passwords do not match.');
         }
 
-        // Check if the user agreed to the terms
+        // Check if terms are agreed
         if (!payload.terms) {
-            const box = document.getElementById('messageBox');
-            const text = document.getElementById('messageText');
-            text.textContent = 'You must agree to the Terms of Service and Privacy Policy.';
-            text.className = 'bg-red-100 border border-red-400 text-red-700';
-            box.classList.remove('hidden');
-            return;
+            errors.push('You must agree to the Terms of Service and Privacy Policy.');
         }
 
+        // If there are validation errors, display them and stop
+        if (errors.length > 0) {
+            text.textContent = errors.join(' ');
+            text.className = 'bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg text-sm';
+            box.classList.remove('hidden');
+            
+            // Re-enable submit button
+            submitButton.disabled = false;
+            submitButton.textContent = 'Create Account';
+            submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            return; // Stop execution - DO NOT proceed to API call
+        }
+
+        // All validations passed - proceed with API call
         try {
             const res = await fetch('https://fundora-be.onrender.com/api/startup/register/', {
                 method: 'POST',
@@ -137,26 +175,57 @@
             });
 
             const data = await res.json();
-            const box = document.getElementById('messageBox');
-            const text = document.getElementById('messageText');
 
             if (res.ok) {
                 text.textContent = 'Account created successfully!';
-                text.className = 'bg-green-100 border border-green-400 text-green-700';
+                text.className = 'bg-green-100 border border-green-400 text-green-700 p-4 rounded-lg text-sm';
                 box.classList.remove('hidden');
                 setTimeout(() => window.location.href = '/login.html', 1500);
             } else {
                 console.log(data);  // Log errors for debugging
-                text.textContent = data.errors ? data.errors : 'Registration failed. Please check your input.';
-                text.className = 'bg-red-100 border border-red-400 text-red-700';
+                
+                // Format error messages properly
+                let errorMessage = 'Registration failed. Please check your input.';
+                
+                if (data.errors) {
+                    // If errors is an object, extract all error messages
+                    if (typeof data.errors === 'object') {
+                        const errorMessages = [];
+                        for (const [field, messages] of Object.entries(data.errors)) {
+                            if (Array.isArray(messages)) {
+                                errorMessages.push(...messages);
+                            } else {
+                                errorMessages.push(messages);
+                            }
+                        }
+                        errorMessage = errorMessages.join(' ');
+                    } else {
+                        errorMessage = data.errors;
+                    }
+                } else if (data.message) {
+                    errorMessage = data.message;
+                } else if (data.error) {
+                    errorMessage = data.error;
+                }
+                
+                text.textContent = errorMessage;
+                text.className = 'bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg text-sm';
                 box.classList.remove('hidden');
+                
+                // Re-enable submit button on error
+                submitButton.disabled = false;
+                submitButton.textContent = 'Create Account';
+                submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         } catch (err) {
-            const box = document.getElementById('messageBox');
-            const text = document.getElementById('messageText');
             text.textContent = 'Something went wrong. Please try again.';
-            text.className = 'bg-red-100 border border-red-400 text-red-700';
+            text.className = 'bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg text-sm';
             box.classList.remove('hidden');
+            
+            // Re-enable submit button on error
+            submitButton.disabled = false;
+            submitButton.textContent = 'Create Account';
+            submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
         }
     });
 </script>

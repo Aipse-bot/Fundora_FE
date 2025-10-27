@@ -461,7 +461,8 @@
             }
             
             try {
-                const res = await fetch(`https://fundora-be.onrender.com/api/startup/${startupId}/report/`, {
+                // Use the same endpoint as Edit page - this returns the actual startup data
+                const res = await fetch(`https://fundora-be.onrender.com/api/startup/${startupId}/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -473,31 +474,70 @@
                         window.location.href = '../login.html';
                         return;
                     }
-                    throw new Error('Failed to fetch report');
+                    throw new Error('Failed to fetch startup data');
                 }
 
-                const report = await res.json();
-                const startup = report.startup || {};
-                const data = report.company_data || report.data || report;
+                const response = await res.json();
+                
+                // Debug: Log the entire response to see the structure
+                console.log('📊 Full API Response:', response);
+                console.log('📊 Response keys:', Object.keys(response));
+                
+                // The response structure should be { startup: {...} } or just the startup object
+                const startup = response.startup || response;
+                const data = startup; // Use the startup object directly for financial data
+                
+                // Debug: Log extracted data
+                console.log('🏢 Startup object:', startup);
+                console.log('💰 Data object:', data);
+                console.log('💰 All available fields:', Object.keys(data));
 
                 // Populate Company Profile
-                const companyName = startup.company_name || startup.name || 'N/A';
+                const companyName = startup.company_name || data.company_name || 'N/A';
                 document.getElementById('company-name').textContent = companyName;
-                document.getElementById('company-industry').textContent = startup.industry || startup.sector || 'N/A';
+                document.getElementById('company-industry').textContent = startup.industry || data.industry || 'N/A';
                 document.getElementById('company-description').textContent = 
+                    startup.company_description || 
                     data.company_description || 
-                    data.description || 
                     startup.description || 
+                    data.description || 
                     'No company description available.';
 
                 // Update modal with company name
                 document.getElementById('modal-company-name').textContent = companyName;
 
                 // Populate Income Statement
-                const currentRevenue = parseFloat(data.current_revenue) || parseFloat(data.revenue) || 0;
-                const priorRevenue = parseFloat(data.prior_revenue) || (currentRevenue > 0 ? currentRevenue * 0.8 : 0);
-                const netIncome = parseFloat(data.net_income) || parseFloat(data.profit) || 0;
+                // Match the Edit page field names exactly
+                const currentRevenue = parseFloat(
+                    data.revenue || 
+                    data.current_revenue
+                ) || 0;
+                
+                const priorRevenue = parseFloat(
+                    data.previous_revenue || 
+                    data.prior_revenue
+                ) || (currentRevenue > 0 ? currentRevenue * 0.8 : 0);
+                
+                const netIncome = parseFloat(
+                    data.net_income
+                ) || 0;
+                
                 const revenueGrowth = priorRevenue > 0 ? ((currentRevenue - priorRevenue) / priorRevenue * 100) : 0;
+                
+                // Debug: Log financial values
+                console.log('💵 Financial Data:', {
+                    currentRevenue,
+                    priorRevenue,
+                    netIncome,
+                    revenueGrowth,
+                    rawData: {
+                        revenue: data.revenue,
+                        current_revenue: data.current_revenue,
+                        previous_revenue: data.previous_revenue,
+                        prior_revenue: data.prior_revenue,
+                        net_income: data.net_income
+                    }
+                });
 
                 document.getElementById('prior-revenue').textContent = `₱${priorRevenue.toLocaleString()}`;
                 document.getElementById('current-revenue').textContent = `₱${currentRevenue.toLocaleString()}`;
@@ -506,10 +546,28 @@
                 document.getElementById('net-income').textContent = `₱${netIncome.toLocaleString()}`;
 
                 // Populate Balance Sheet
-                const totalAssets = parseFloat(data.total_assets) || parseFloat(data.assets) || 1;
-                const totalLiabilities = parseFloat(data.total_liabilities) || parseFloat(data.liabilities) || 0;
+                const totalAssets = parseFloat(
+                    data.total_assets
+                ) || 1;
+                
+                const totalLiabilities = parseFloat(
+                    data.total_liabilities
+                ) || 0;
+                
                 const shareholderEquity = totalAssets - totalLiabilities;
                 const liabilityPercentage = totalAssets > 0 ? (totalLiabilities / totalAssets * 100) : 0;
+                
+                // Debug: Log balance sheet values
+                console.log('📊 Balance Sheet:', {
+                    totalAssets,
+                    totalLiabilities,
+                    shareholderEquity,
+                    liabilityPercentage,
+                    rawData: {
+                        total_assets: data.total_assets,
+                        total_liabilities: data.total_liabilities
+                    }
+                });
 
                 document.getElementById('total-assets').textContent = `₱${totalAssets.toLocaleString()}`;
                 document.getElementById('total-liabilities').textContent = `₱${totalLiabilities.toLocaleString()}`;
@@ -519,17 +577,45 @@
 
                 // Populate Cash Flow
                 // Use the single cash_flow field from the API and break it down sensibly
-                const totalCashFlow = parseFloat(data.cash_flow) || 0;
+                const totalCashFlow = parseFloat(
+                    data.cash_flow
+                ) || 0;
                 
                 // If we have specific breakdown fields from API, use them
-                const operationsCashFlow = parseFloat(data.operations_cash_flow) || parseFloat(data.operating_cash_flow) || (totalCashFlow * 0.7); // 70% operations
-                const investmentCashFlow = parseFloat(data.investment_cash_flow) || parseFloat(data.investing_cash_flow) || (totalCashFlow * 0.2); // 20% investment  
-                const financingCashFlow = parseFloat(data.financing_cash_flow) || parseFloat(data.financing_flow) || (totalCashFlow * 0.1); // 10% financing
+                const operationsCashFlow = parseFloat(
+                    data.operations_cash_flow || 
+                    data.operating_cash_flow
+                ) || (totalCashFlow !== 0 ? totalCashFlow * 0.7 : 0); // 70% operations
+                
+                const investmentCashFlow = parseFloat(
+                    data.investment_cash_flow || 
+                    data.investing_cash_flow ||
+                    data.investment_flow
+                ) || (totalCashFlow !== 0 ? totalCashFlow * 0.2 : 0); // 20% investment  
+                
+                const financingCashFlow = parseFloat(
+                    data.financing_cash_flow || 
+                    data.financing_flow
+                ) || (totalCashFlow !== 0 ? totalCashFlow * 0.1 : 0); // 10% financing
                 
                 // If we have the breakdown, use actual calculation; otherwise use the total from API
-                const netCashFlow = (data.operations_cash_flow || data.investment_cash_flow || data.financing_cash_flow) ? 
+                const netCashFlow = (data.operations_cash_flow || data.investment_cash_flow || data.financing_cash_flow || data.investment_flow || data.financing_flow) ? 
                                   (operationsCashFlow + investmentCashFlow + financingCashFlow) : 
                                   totalCashFlow;
+                
+                // Debug: Log cash flow values
+                console.log('💸 Cash Flow:', {
+                    totalCashFlow,
+                    operationsCashFlow,
+                    investmentCashFlow,
+                    financingCashFlow,
+                    netCashFlow,
+                    rawData: {
+                        cash_flow: data.cash_flow,
+                        investment_flow: data.investment_flow,
+                        financing_flow: data.financing_flow
+                    }
+                });
 
                 // Format cash flow values with proper signs
                 const formatCashFlow = (value) => {
@@ -549,26 +635,57 @@
                 document.getElementById('net-cash-flow').className = `text-xl font-bold ${netCashFlow >= 0 ? 'text-blue-600' : 'text-red-600'}`;
 
                 // Populate Report Confidence
-                const confidenceLevel = data.data_source_confidence || data.confidence || 'Low';
-                let confidencePercent = 8;
+                // Use the stored confidence data from the backend (saved when editing)
+                const confidenceLevel = data.data_source_confidence || data.data_completeness_level || 'Low';
+                const storedPercentage = data.confidence_percentage;
+                
+                // Use the stored percentage if available, otherwise calculate it
+                let confidencePercent = 0;
+                
+                if (storedPercentage !== null && storedPercentage !== undefined) {
+                    // Use the exact percentage stored in the database
+                    confidencePercent = Math.round(storedPercentage);
+                } else {
+                    // Fallback: Calculate based on confidence level
+                    if (confidenceLevel === 'High') {
+                        confidencePercent = 95;
+                    } else if (confidenceLevel === 'Medium') {
+                        confidencePercent = 75;
+                    } else {
+                        confidencePercent = 8;
+                    }
+                }
+                
+                // Determine color and text based on confidence level (not percentage)
                 let confidenceColor = 'bg-red-500';
-                let confidenceText = 'Low Confidence';
+                let confidenceText = 'Low';
 
                 if (confidenceLevel === 'High') {
-                    confidencePercent = 95;
                     confidenceColor = 'bg-green-500';
-                    confidenceText = 'High Confidence';
+                    confidenceText = 'High';
                 } else if (confidenceLevel === 'Medium') {
-                    confidencePercent = 75;
                     confidenceColor = 'bg-yellow-500';
-                    confidenceText = 'Medium Confidence';
+                    confidenceText = 'Medium';
+                } else {
+                    confidenceColor = 'bg-red-500';
+                    confidenceText = 'Low';
                 }
+
+                console.log('🔍 Confidence data:', {
+                    data_source_confidence: data.data_source_confidence,
+                    data_completeness_level: data.data_completeness_level,
+                    confidence_percentage: data.confidence_percentage,
+                    resolved_level: confidenceLevel,
+                    stored_percentage: storedPercentage,
+                    display_percentage: confidencePercent,
+                    display_text: confidenceText
+                });
 
                 document.getElementById('confidence-percentage').textContent = `${confidencePercent}%`;
                 document.getElementById('confidence-bar').style.width = `${confidencePercent}%`;
                 document.getElementById('confidence-bar').className = `${confidenceColor} h-2 rounded-full progress-bar`;
                 document.getElementById('confidence-level').textContent = confidenceText;
-                document.getElementById('confidence-level').className = `text-sm font-medium mt-1 ${confidenceLevel === 'High' ? 'text-green-600' : confidenceLevel === 'Medium' ? 'text-yellow-600' : 'text-red-600'}`;
+                document.getElementById('confidence-level').className = `text-sm font-medium mt-1 ${confidenceText === 'High' ? 'text-green-600' : confidenceText === 'Medium' ? 'text-yellow-600' : 'text-red-600'}`;
 
                 // Set up edit button functionality - simplified
                 const editButton = document.getElementById('edit-startup-link');
