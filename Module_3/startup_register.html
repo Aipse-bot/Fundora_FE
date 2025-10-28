@@ -199,13 +199,39 @@
                             }
                         }
                         errorMessage = errorMessages.join(' ');
+                        
+                        // Check specifically for email duplicate errors
+                        if (data.errors.email) {
+                            const emailError = Array.isArray(data.errors.email) 
+                                ? data.errors.email.join(' ') 
+                                : data.errors.email;
+                            if (emailError.toLowerCase().includes('already') || 
+                                emailError.toLowerCase().includes('exists') ||
+                                emailError.toLowerCase().includes('taken')) {
+                                errorMessage = 'This email is already registered. Please use a different email or log in to your existing account.';
+                            }
+                        }
                     } else {
                         errorMessage = data.errors;
                     }
                 } else if (data.message) {
                     errorMessage = data.message;
+                    // Check for duplicate email in message
+                    if (errorMessage.toLowerCase().includes('email') && 
+                        (errorMessage.toLowerCase().includes('already') || 
+                         errorMessage.toLowerCase().includes('exists') ||
+                         errorMessage.toLowerCase().includes('taken'))) {
+                        errorMessage = 'This email is already registered. Please use a different email or log in to your existing account.';
+                    }
                 } else if (data.error) {
                     errorMessage = data.error;
+                    // Check for duplicate email in error
+                    if (errorMessage.toLowerCase().includes('email') && 
+                        (errorMessage.toLowerCase().includes('already') || 
+                         errorMessage.toLowerCase().includes('exists') ||
+                         errorMessage.toLowerCase().includes('taken'))) {
+                        errorMessage = 'This email is already registered. Please use a different email or log in to your existing account.';
+                    }
                 }
                 
                 text.textContent = errorMessage;
