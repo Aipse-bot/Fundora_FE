@@ -34,7 +34,8 @@
     <div class="max-w-screen-xl mx-auto space-y-8 p-4 sm:p-6 lg:p-8">
       <div class="bg-blue-600 text-white px-4 sm:px-6 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg">
         <div class="flex items-center space-x-4">
-          <div id="deck-initial" class="bg-white text-blue-600 font-bold w-10 h-10 flex items-center justify-center text-xl">L</div>
+          <!-- Todo: company logo if ganahan -->
+          <!-- <div id="deck-initial" class="bg-white text-blue-600 font-bold w-10 h-10 flex items-center justify-center text-xl">L</div> -->
           <div>
             <h1 id="deck-name" class="text-2xl sm:text-3xl font-semibold">Loading...</h1>
             <p id="deck-tagline" class="text-lg sm:text-xl text-blue-100">Loading...</p>
@@ -169,7 +170,7 @@
     function populateHeaderFromStartup(startup) {
       const initial = (startup.company_name || "—").charAt(0).toUpperCase() || "L";
       document.title = startup.company_name || "Company Profile";
-      document.getElementById("deck-initial").textContent = initial;
+      // document.getElementById("deck-initial").textContent = initial;
       document.getElementById("deck-name").textContent = startup.company_name || "—";
       document.getElementById("deck-tagline").textContent = startup.company_description || "—";
     }

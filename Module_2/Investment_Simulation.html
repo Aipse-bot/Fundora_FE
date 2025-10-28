@@ -118,7 +118,7 @@
     <section id="assumptions-section" class="hidden bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 rounded-xl p-8 mb-8">
       <h4 class="text-lg font-semibold text-yellow-800 mb-4">Important Assumptions</h4>
       <p class="text-sm text-yellow-700 italic leading-relaxed">
-        <strong>Disclaimer:</strong> This simulation uses a risk-adjusted return model. Actual results depend on market conditions and startup performance.
+        <strong>Disclaimer:</strong> This simulation uses a canonical CAPM-based risk-adjusted return model. Actual results depend on market conditions and startup performance.
       </p>
     </section>
   </main>
@@ -181,21 +181,27 @@
       // Update page with startup info
       document.getElementById('startupName').textContent = startupData.company_name || 'Unknown Startup';
       
-      const projectedReturn = startupData.projected_return ? (startupData.projected_return / 100) : 0.12;
-      const riskLevel = startupData.risk_level || 'Medium';
-      const growthRate = calculateGrowthRate(projectedReturn, riskLevel);
+      const projectedReturn = startupData.projected_return || 10;
+      const riskLevel = startupData.risk_level || 'Pitch Deck';
+      const growthRate = calculateCanonicalGrowthRate(projectedReturn, riskLevel);
 
       document.getElementById('growth-rate-display').textContent = (growthRate * 100).toFixed(2);
       
-      // Update risk badge
+      // Update risk badge - handle "Pitch Deck" case
       const riskBadge = document.getElementById('risk-badge');
-      riskBadge.textContent = `${riskLevel} Risk`;
-      riskBadge.className =
-        riskLevel === 'High'
-          ? 'bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full'
-          : riskLevel === 'Medium'
-          ? 'bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full'
-          : 'bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full';
+      
+      if (riskLevel === 'Pitch Deck') {
+        riskBadge.textContent = 'Pitch Deck';
+        riskBadge.className = 'bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full';
+      } else {
+        riskBadge.textContent = `${riskLevel} Risk`;
+        riskBadge.className =
+          riskLevel === 'High'
+            ? 'bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full'
+            : riskLevel === 'Medium'
+            ? 'bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full'
+            : 'bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full';
+      }
 
       const investmentInput = document.getElementById('investment-amount');
       const durationSelect = document.getElementById('duration-years');
@@ -216,14 +222,26 @@
       simulateBtn.onclick = () => runSimulation(growthRate);
     });
 
-    // CAPM formula - using projected return kaysa market return. Using CAPM is for simplification ra kay complex na investment simulation
-    // Expected Return = Risk-Free Rate + Beta × (Market Return - Risk-Free Rate)
-    function calculateGrowthRate(projectedReturn, riskLevel) {
-      const riskFreeRate = 0.03;
-      const riskFactors = { Low: 0.8, Medium: 1.0, High: 1.4 };
-      const beta = riskFactors[riskLevel] || 1.0;
-      const rate = riskFreeRate + beta * (projectedReturn - riskFreeRate);
-      return Math.max(rate, 0.01);
+    // Canonical CAPM-based growth rate calculation matching views.py
+    function calculateCanonicalGrowthRate(projectedReturn, riskLevel) {
+      // Convert projected_return from percentage to decimal
+      const projectedReturnDecimal = projectedReturn / 100;
+      
+      // Canonical CAPM parameters
+      const RISK_FREE_RATE = 0.03;
+      const MARKET_RETURN = 0.10;
+      const BETA_VALUES = { "Low": 0.8, "Medium": 1.0, "High": 1.3, "Pitch Deck": 1.0 };
+      
+      const beta = BETA_VALUES[riskLevel] || 1.0;
+      const capmRate = RISK_FREE_RATE + beta * (MARKET_RETURN - RISK_FREE_RATE);
+      
+      // Blend CAPM with startup projected return (weighted realism)
+      let growthRate = (0.6 * capmRate) + (0.4 * projectedReturnDecimal);
+      
+      // Clamp realistic annual growth rate between 2% and 25%
+      growthRate = Math.max(Math.min(growthRate, 0.25), 0.02);
+      
+      return growthRate;
     }
 
     function runSimulation(growthRate) {
