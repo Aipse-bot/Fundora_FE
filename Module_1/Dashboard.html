@@ -376,47 +376,70 @@
     // Startup card creation
     // ===========================
     function createStartupCard(startup) {
-      const card = document.createElement('div');
-      card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition';
-      const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
-      card.setAttribute('data-startup-id', startup.id);
-      card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
+    const card = document.createElement('div');
+    card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition flex flex-col';
+    const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
+    card.setAttribute('data-startup-id', startup.id);
+    card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
 
-      // Display financial risk level if available
-      let riskBadge;
-      if (isDeck) {
-        riskBadge = '<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>';
-      } else if (startup.risk_level) {
-        const riskLevel = startup.risk_level.toLowerCase();
-        if (riskLevel === 'low') {
-          riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>';
-        } else if (riskLevel === 'medium') {
-          riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>';
-        } else {
-          riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">High Risk</span>';
-        }
+    // Display badge based on type
+    let riskBadge;
+    if (isDeck) {
+      // Pitch decks get a special badge - not risk-based
+      riskBadge = '<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-1 rounded-full">🚀 Early Stage</span>';
+    } else if (startup.risk_level) {
+      // Financial startups show actual calculated risk
+      const riskLevel = startup.risk_level.toLowerCase();
+      if (riskLevel === 'low') {
+        riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">✓ Low Risk</span>';
+      } else if (riskLevel === 'medium') {
+        riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full">⚡ Medium Risk</span>';
       } else {
-        riskBadge = '<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">Risk N/A</span>';
+        riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full">⚠️ High Risk</span>';
       }
+    } else {
+      // No risk data available
+      riskBadge = '<span class="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full">Data Pending</span>';
+    }
 
-      const industry = isDeck ? (startup.tagline || '—') : (startup.industry || '—');
-      let reward = 'N/A';
-      if (startup.reward_potential != null) {
-        if (typeof startup.reward_potential === 'string') {
-          reward = startup.reward_potential.split(',')[0].trim();
-        } else if (Array.isArray(startup.reward_potential)) {
-          reward = startup.reward_potential[0];
-        } else {
-          reward = String(startup.reward_potential);
-        }
+    const industry = isDeck ? (startup.tagline || '—') : (startup.industry || '—');
+    let reward = 'N/A';
+    if (startup.reward_potential != null) {
+      if (typeof startup.reward_potential === 'string') {
+        reward = startup.reward_potential.split(',')[0].trim();
+      } else if (Array.isArray(startup.reward_potential)) {
+        reward = startup.reward_potential[0];
+      } else {
+        reward = String(startup.reward_potential);
       }
-      const projected = (startup.projected_return != null && startup.projected_return !== '') ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
+    }
+    const projected = (startup.projected_return != null && startup.projected_return !== '') ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
 
-      const inWatchlist = watchlistIdsSet.has(Number(startup.id));
+    const inWatchlist = watchlistIdsSet.has(Number(startup.id));
 
-      // Only show metrics for non-Pitch Deck startups
-      const metricsSection = isDeck ? '' : `
-        <div class="space-y-3 mb-4">
+    // Different metrics for Pitch Deck vs Financial startups
+    let metricsSection;
+    if (isDeck) {
+      // Extract pitch deck specific info
+      const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
+      const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
+      const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
+      
+      metricsSection = `
+        <div class="space-y-3 mb-4 flex-grow">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">Funding Ask</span>
+            <span class="text-sm font-semibold text-purple-600">${escapeHtml(fundingAmount)}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">Market Growth</span>
+            <span class="text-sm font-semibold text-green-600">${escapeHtml(marketGrowthDisplay)}</span>
+          </div>
+        </div>
+      `;
+    } else {
+      metricsSection = `
+        <div class="space-y-3 mb-4 flex-grow">
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-600">Reward Potential</span>
             <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
@@ -427,26 +450,27 @@
           </div>
         </div>
       `;
+    }
 
-      card.innerHTML = `
-        <div class="flex justify-between items-start mb-4">
-          <div class="flex-1">
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(startup.company_name)}</h3>
-            <p class="text-sm text-gray-600">${escapeHtml(industry)}</p>
-          </div>
-          <div class="flex flex-col items-end space-y-2">
-            ${riskBadge}
-            <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
-              ${inWatchlist ? watchIcon(true) : watchIcon(false)}
-            </button>
-          </div>
+    card.innerHTML = `
+      <div class="flex justify-between items-start mb-4">
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(startup.company_name)}</h3>
+          <p class="text-sm text-gray-600">${escapeHtml(industry)}</p>
         </div>
-        ${metricsSection}
-        <div class="flex gap-2">
-          <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
-          <a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>
+        <div class="flex flex-col items-end space-y-2">
+          ${riskBadge}
+          <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
+            ${inWatchlist ? watchIcon(true) : watchIcon(false)}
+          </button>
         </div>
-      `;
+      </div>
+      ${metricsSection}
+      <div class="flex gap-2 mt-auto">
+        <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
+        <a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>
+      </div>
+    `;
 
       card.querySelector('.view-details-btn').addEventListener('click', () => {
         const id = card.getAttribute('data-startup-id');
@@ -509,52 +533,53 @@
     // Client-side filtering (fallback for when backend doesn't filter properly)
     // ===========================
     function applyClientSideFilters(startups) {
-      let filtered = [...startups];
-      
-      const form = document.getElementById('filterForm');
-      
-      // Startup Type filter (Pitch Deck vs Financial)
-      const startupType = form.elements.startup_type?.value;
-      if (startupType && startupType.trim() !== '') {
-        const beforeCount = filtered.length;
-        if (startupType === 'pitch_deck') {
-          filtered = filtered.filter(s => {
-            return !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
-          });
-        } else if (startupType === 'financial') {
-          filtered = filtered.filter(s => {
-            return !(s.is_deck_builder || s.source_deck_id || s.source_deck);
-          });
-        }
-        console.log(`Client-side Type filter: ${startupType} | Before: ${beforeCount}, After: ${filtered.length}`);
-      }
-      
-      // Risk Level filter (client-side enforcement since backend may not filter correctly)
-      const riskLevel = document.getElementById('risk-hidden')?.value;
-      if (riskLevel && riskLevel.trim() !== '') {
-        const beforeCount = filtered.length;
+    let filtered = [...startups];
+    
+    const form = document.getElementById('filterForm');
+    
+    // Startup Type filter (Pitch Deck vs Financial)
+    const startupType = form.elements.startup_type?.value;
+    if (startupType && startupType.trim() !== '') {
+      const beforeCount = filtered.length;
+      if (startupType === 'pitch_deck') {
         filtered = filtered.filter(s => {
-          // Keep startups that match the risk level
-          return s.risk_level === riskLevel;
+          return !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
         });
-        console.log(`Client-side Risk filter: ${riskLevel} | Before: ${beforeCount}, After: ${filtered.length}`);
-      }
-      
-      // Minimum Return filter (client-side enforcement since backend may not filter correctly)
-      const minReturn = form.elements.min_return?.value;
-      if (minReturn && minReturn.trim() !== '') {
-        const minReturnValue = parseFloat(minReturn);
-        const beforeCount = filtered.length;
+      } else if (startupType === 'financial') {
         filtered = filtered.filter(s => {
-          const projReturn = s.projected_return;
-          // Keep only startups that have a valid return value that meets threshold
-          return projReturn !== null && projReturn !== undefined && projReturn >= minReturnValue;
+          return !(s.is_deck_builder || s.source_deck_id || s.source_deck);
         });
-        console.log(`Client-side MinReturn filter: ≥${minReturnValue}% | Before: ${beforeCount}, After: ${filtered.length}`);
       }
-      
-      return filtered;
+      console.log(`Client-side Type filter: ${startupType} | Before: ${beforeCount}, After: ${filtered.length}`);
     }
+    
+    // Risk Level filter - ONLY apply to financial startups (exclude pitch decks)
+    const riskLevel = document.getElementById('risk-hidden')?.value;
+    if (riskLevel && riskLevel.trim() !== '') {
+      const beforeCount = filtered.length;
+      filtered = filtered.filter(s => {
+        // Pitch decks have risk_level = null, so they're automatically excluded
+        // Only keep financial startups that match the selected risk level
+        return s.risk_level === riskLevel;
+      });
+      console.log(`Client-side Risk filter: ${riskLevel} | Before: ${beforeCount}, After: ${filtered.length}`);
+    }
+    
+    // Minimum Return filter - ONLY apply to startups with projected_return data
+    const minReturn = form.elements.min_return?.value;
+    if (minReturn && minReturn.trim() !== '') {
+      const minReturnValue = parseFloat(minReturn);
+      const beforeCount = filtered.length;
+      filtered = filtered.filter(s => {
+        const projReturn = s.projected_return;
+        // Keep only startups that have a valid return value that meets threshold
+        return projReturn !== null && projReturn !== undefined && projReturn >= minReturnValue;
+      });
+      console.log(`Client-side MinReturn filter: ≥${minReturnValue}% | Before: ${beforeCount}, After: ${filtered.length}`);
+    }
+    
+    return filtered;
+  }
 
     // ===========================
     // Render flow
@@ -670,7 +695,7 @@
         console.warn('Logout error (ignored):', err);
       } finally {
         localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        window.location.href = '/login.html';
       }
     }
 
