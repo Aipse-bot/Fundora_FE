@@ -377,7 +377,7 @@
     // ===========================
     function createStartupCard(startup) {
       const card = document.createElement('div');
-      card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition';
+      card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition flex flex-col';
       const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
       card.setAttribute('data-startup-id', startup.id);
       card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
@@ -414,19 +414,39 @@
 
       const inWatchlist = watchlistIdsSet.has(Number(startup.id));
 
-      // Only show metrics for non-Pitch Deck startups
-      const metricsSection = isDeck ? '' : `
-        <div class="space-y-3 mb-4">
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Reward Potential</span>
-            <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
+      // Different metrics for Pitch Deck vs Financial startups
+      let metricsSection;
+      if (isDeck) {
+        // Extract pitch deck specific info
+        const fundingAmount = startup.funding_ask ? `${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
+        const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
+        
+        metricsSection = `
+          <div class="space-y-3 mb-4 flex-grow">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Funding Ask</span>
+              <span class="text-sm font-semibold text-purple-600">${escapeHtml(fundingAmount)}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Market Growth Rate</span>
+              <span class="text-sm font-semibold text-green-600">${escapeHtml(marketGrowth)}</span>
+            </div>
           </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Projected Return</span>
-            <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
+        `;
+      } else {
+        metricsSection = `
+          <div class="space-y-3 mb-4 flex-grow">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Reward Potential</span>
+              <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Projected Return</span>
+              <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
 
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
@@ -442,7 +462,7 @@
           </div>
         </div>
         ${metricsSection}
-        <div class="flex gap-2">
+        <div class="flex gap-2 mt-auto">
           <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
           <a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>
         </div>
@@ -670,7 +690,7 @@
         console.warn('Logout error (ignored):', err);
       } finally {
         localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        window.location.href = '/login.html';
       }
     }
 
