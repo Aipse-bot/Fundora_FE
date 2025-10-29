@@ -26,7 +26,18 @@
         <h1 class="text-2xl font-bold text-gray-900">Fundora</h1>
       </div>
       <div class="flex items-center space-x-4">
-        <a id="watchlistLink" href="/Module_1/Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors">My Watchlist <span id="watchlist-badge" class="ml-2 inline-block bg-white text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">0</span></a>
+        <a href="/Module_2/Compare_Startups.html?return=/Module_1/Dashboard.html" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-medium transition-colors flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          Compare Startups
+        </a>
+        <a id="watchlistLink" href="/Module_1/Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+          My Watchlist
+        </a>
         <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">Logout</button>
       </div>
     </div>
@@ -319,7 +330,9 @@
 
     function updateWatchlistBadge() {
       const badge = document.getElementById('watchlist-badge');
-      badge.textContent = watchlistIdsSet.size;
+      if (badge) {
+        badge.textContent = watchlistIdsSet.size;
+      }
     }
 
     function setStartupType(type) {
@@ -453,18 +466,20 @@
       card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
 
       let riskBadge;
+      let hasDataPending = false;
       if (isDeck) {
         riskBadge = '<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-1 rounded-full">Pitch Deck</span>';
       } else if (startup.risk_level) {
         const riskLevel = startup.risk_level.toLowerCase();
         if (riskLevel === 'low') {
-          riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">✓ Low Risk</span>';
+          riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">Low Risk</span>';
         } else if (riskLevel === 'medium') {
-          riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full">⚡ Medium Risk</span>';
+          riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full">Medium Risk</span>';
         } else {
-          riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full">⚠️ High Risk</span>';
+          riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full">High Risk</span>';
         }
       } else {
+        hasDataPending = true;
         riskBadge = '<span class="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full">Data Pending</span>';
       }
 
@@ -479,6 +494,8 @@
           reward = String(startup.reward_potential);
         }
       }
+
+      const rewardDisplay = reward === 'N/A' ? 'N/A' : `${reward}/5`;
       const projected = (startup.projected_return != null && startup.projected_return !== '') ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
 
       const inWatchlist = watchlistIdsSet.has(Number(startup.id));
@@ -506,7 +523,7 @@
           <div class="space-y-3 mb-4 flex-grow">
             <div class="flex justify-between items-center">
               <span class="text-sm text-gray-600">Reward Potential</span>
-              <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
+              <span class="text-sm font-semibold">${escapeHtml(rewardDisplay)}</span>
             </div>
             <div class="flex justify-between items-center">
               <span class="text-sm text-gray-600">Projected Return</span>
@@ -532,7 +549,10 @@
         ${metricsSection}
         <div class="flex gap-2 mt-auto">
           <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
-          <a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>
+          ${hasDataPending 
+          ? '<button class="invest-btn flex-1 px-3 py-2 bg-gray-300 text-gray-500 rounded-md text-sm text-center cursor-not-allowed" disabled title="Cannot invest - data pending">Invest</button>'
+          : `<a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>`
+        }
         </div>
       `;
 

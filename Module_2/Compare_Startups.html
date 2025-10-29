@@ -179,15 +179,19 @@
           allStartups = [];
         }
         
-        // Filter out pitch decks - only include startups with verified financial data
-        // Pitch decks have source_deck_id, regular startups don't
+        // Filter out pitch decks and startups with data pending
+        // Only include startups with verified financial data and risk levels
         startups = allStartups.filter(s => {
           // A startup is a pitch deck if it has source_deck_id OR if it lacks basic financial data
           const hasDeckId = s.source_deck_id != null;
           const lacksFinancials = s.revenue == null && s.net_income == null;
           const isPitchDeck = hasDeckId || (lacksFinancials && s.funding_ask != null);
           
-          return !isPitchDeck; // Only include non-pitch-deck startups
+          // Check if startup has data pending (no risk level)
+          const hasDataPending = !s.risk_level;
+          
+          // Only include startups that are NOT pitch decks AND do NOT have pending data
+          return !isPitchDeck && !hasDataPending;
         });
         
         renderStartups(startups);
