@@ -51,70 +51,133 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Startup Type</label>
-          <select name="startup_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
-            <option value="">All Types</option>
-            <option value="financial">Financial Data Only</option>
-            <option value="pitch_deck">Pitch Decks Only</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
-          <select name="sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
-            <option value="">Default Order</option>
-            <option value="projected_return_desc">Highest Returns First</option>
-            <option value="projected_return_asc">Lowest Returns First</option>
-            <option value="reward_potential_desc">Best Reward Potential</option>
-            <option value="confidence_desc">Highest Confidence</option>
-            <option value="risk_asc">Lowest Risk First</option>
-            <option value="company_name">Company Name A-Z</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
-          <select name="industry" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
-            <option value="">All Industries</option>
-            <option value="Technology">Technology</option>
-            <option value="Finance">Finance</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Retail">Retail</option>
-            <option value="Manufacturing">Manufacturing</option>
-            <option value="Energy">Energy</option>
-            <option value="Education">Education</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-3">Risk Tolerance</label>
-          <div class="grid grid-cols-3 gap-2">
-            <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
-              Low
+          <label class="block text-sm font-medium text-gray-700 mb-3">Startup Type</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="setStartupType('financial')" id="type-financial" class="type-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              Financial Data
             </button>
-            <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
-              Medium
-            </button>
-            <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
-              High
+            <button type="button" onclick="setStartupType('pitch_deck')" id="type-pitch_deck" class="type-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              Pitch Decks
             </button>
           </div>
-          <input type="hidden" name="risk_level" id="risk-hidden" value="">
+          <input type="hidden" name="startup_type" id="type-hidden" value="">
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Projected Return</label>
-          <select name="min_return" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
-            <option value="">Any Return</option>
-            <option value="5">5% or higher</option>
-            <option value="10">10% or higher</option>
-            <option value="15">15% or higher</option>
-            <option value="20">20% or higher</option>
-            <option value="25">25% or higher</option>
-            <option value="50">50% or higher</option>
-            <option value="75">75% or higher</option>
-            <option value="100">100% or higher</option>
-          </select>
+        <!-- Financial Data Filters -->
+        <div id="financial-filters" class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+            <select name="sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+              <option value="">Default Order</option>
+              <option value="projected_return_desc">Highest Returns First</option>
+              <option value="projected_return_asc">Lowest Returns First</option>
+              <option value="reward_potential_desc">Best Reward Potential</option>
+              <option value="confidence_desc">Highest Confidence</option>
+              <option value="risk_asc">Lowest Risk First</option>
+              <option value="company_name">Company Name A-Z</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
+            <select name="industry" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+              <option value="">All Industries</option>
+              <option value="Technology">Technology</option>
+              <option value="Finance">Finance</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Retail">Retail</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Energy">Energy</option>
+              <option value="Education">Education</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">Risk Tolerance</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+                Low
+              </button>
+              <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+                Medium
+              </button>
+              <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+                High
+              </button>
+            </div>
+            <input type="hidden" name="risk_level" id="risk-hidden" value="">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Projected Return</label>
+            <select name="min_return" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+              <option value="">Any Return</option>
+              <option value="5">5% or higher</option>
+              <option value="10">10% or higher</option>
+              <option value="15">15% or higher</option>
+              <option value="20">20% or higher</option>
+              <option value="25">25% or higher</option>
+              <option value="50">50% or higher</option>
+              <option value="75">75% or higher</option>
+              <option value="100">100% or higher</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Pitch Deck Filters -->
+        <div id="pitch-deck-filters" class="space-y-6 hidden">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+            <select name="deck_sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+              <option value="">Default Order</option>
+              <option value="funding_ask_desc">Highest Funding Ask</option>
+              <option value="funding_ask_asc">Lowest Funding Ask</option>
+              <option value="market_growth_desc">Highest Market Growth</option>
+              <option value="market_growth_asc">Lowest Market Growth</option>
+              <option value="company_name">Company Name A-Z</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Funding Ask Range</label>
+            <select name="funding_ask_range" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+              <option value="">Any Amount</option>
+              <option value="0-100000">Up to $100K</option>
+              <option value="100000-500000">$100K - $500K</option>
+              <option value="500000-1000000">$500K - $1M</option>
+              <option value="1000000-5000000">$1M - $5M</option>
+              <option value="5000000+">$5M+</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">Market Growth Rate</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" onclick="setMarketGrowth('Low')" id="growth-Low" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+                0-10%
+              </button>
+              <button type="button" onclick="setMarketGrowth('Medium')" id="growth-Medium" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+                10-30%
+              </button>
+              <button type="button" onclick="setMarketGrowth('High')" id="growth-High" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+                30%+
+              </button>
+            </div>
+            <input type="hidden" name="market_growth_filter" id="growth-hidden" value="">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Market Growth</label>
+            <select name="min_market_growth" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+              <option value="">Any Growth Rate</option>
+              <option value="5">5% or higher</option>
+              <option value="10">10% or higher</option>
+              <option value="15">15% or higher</option>
+              <option value="20">20% or higher</option>
+              <option value="30">30% or higher</option>
+              <option value="50">50% or higher</option>
+            </select>
+          </div>
         </div>
 
         <div class="space-y-3 pt-4 border-t border-gray-200">
@@ -146,22 +209,16 @@
   </div>
 
   <script>
-    // =========================== 
-    // Configuration
-    // =========================== 
     const API_BASE = 'https://fundora-be.onrender.com';
     const STARTUPS_ENDPOINT = `${API_BASE}/api/investor/startups/`;
-    const WATCHLIST_ENDPOINT = `${API_BASE}/api/investor/watchlist/`;
-    const ADD_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/add/${id}/`;
+    const WATCHLIST_ENDPOINT = `${API_BASE}/api/api/investor/watchlist/`;
+    const ADD_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/api/investor/watchlist/add/${id}/`;
     const REMOVE_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/remove/${id}/`;
     const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
     const COMPANY_PROFILE_PAGE = '../Module_2/Company_Profile.html';
     const COMPANY_PROFILE_DB_PAGE = '../Module_2/Company_ProfileDB.html';
     const INVEST_PAGE = '../Module_2/Investment_Simulation.html';
 
-    // ===========================
-    // Helpers
-    // ===========================
     function getAuthToken() {
       return localStorage.getItem('authToken');
     }
@@ -182,9 +239,6 @@
       return map[confidence] || 0;
     }
 
-    // ===========================
-    // Fetch helpers
-    // ===========================
     async function fetchJSON(url, options = {}) {
       const token = getAuthToken();
       if (!token) {
@@ -207,9 +261,6 @@
       return null;
     }
 
-    // ===========================
-    // Watchlist
-    // ===========================
     let watchlistIdsSet = new Set();
     async function refreshWatchlist() {
         try {
@@ -271,9 +322,50 @@
       badge.textContent = watchlistIdsSet.size;
     }
 
-    // ===========================
-    // Fetch startups
-    // ===========================
+    function setStartupType(type) {
+      document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+        btn.classList.add('border-gray-300');
+      });
+      
+      const selectedBtn = document.getElementById(`type-${type}`);
+      if (selectedBtn) {
+        selectedBtn.classList.remove('border-gray-300');
+        selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+      }
+      
+      document.getElementById('type-hidden').value = type;
+      
+      const financialFilters = document.getElementById('financial-filters');
+      const pitchDeckFilters = document.getElementById('pitch-deck-filters');
+      
+      if (type === 'pitch_deck') {
+        financialFilters.classList.add('hidden');
+        pitchDeckFilters.classList.remove('hidden');
+      } else {
+        financialFilters.classList.remove('hidden');
+        pitchDeckFilters.classList.add('hidden');
+      }
+      
+      console.log('Startup type set to:', type);
+    }
+
+    function setMarketGrowth(level) {
+      document.querySelectorAll('.growth-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+        btn.classList.add('border-gray-300');
+      });
+      
+      const selectedBtn = document.getElementById(`growth-${level}`);
+      if (selectedBtn) {
+        selectedBtn.classList.remove('border-gray-300');
+        selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+      }
+      
+      document.getElementById('growth-hidden').value = level;
+      console.log('Market growth set to:', level);
+    }
+
     async function fetchStartups() {
       try {
         const token = getAuthToken();
@@ -282,42 +374,29 @@
         const form = document.getElementById('filterForm');
         const params = new URLSearchParams();
 
-        // Sort By
         const sortVal = form.elements.sort_by?.value;
         if (sortVal) {
           params.set('sort_by', sortVal);
         }
 
-        // Industry
         const industry = form.elements.industry?.value;
         if (industry) {
           params.set('industry', industry);
         }
 
-        // Minimum Return
         const minReturn = form.elements.min_return?.value;
         if (minReturn) {
           params.set('min_return', minReturn);
         }
 
-        // Risk Level (hidden field)
         const riskLevel = document.getElementById('risk-hidden')?.value;
         if (riskLevel) {
           params.set('risk_level', riskLevel);
         }
 
-        // Build final URL
         const url = STARTUPS_ENDPOINT + (params.toString() ? `?${params.toString()}` : '');
-        console.log('=== FILTER DEBUG ===');
         console.log('Full URL:', url);
-        console.log('Parameters:', {
-          sort_by: sortVal || 'none',
-          industry: industry || 'none',
-          min_return: minReturn || 'none',
-          risk_level: riskLevel || 'none'
-        });
 
-        // Fetch startups AND refresh watchlist concurrently
         const [startupsData] = await Promise.allSettled([
           fetchJSON(url, { method: 'GET' }),
           refreshWatchlist()
@@ -339,15 +418,6 @@
         }
 
         console.log('Fetched startups count:', startups.length);
-        if (startups.length > 0) {
-          console.log('Sample startup:', {
-            name: startups[0].company_name,
-            risk: startups[0].risk_level,
-            return: startups[0].projected_return,
-            industry: startups[0].industry
-          });
-        }
-        
         return startups || [];
       } catch (error) {
         console.error('Error fetching startups:', error);
@@ -355,12 +425,15 @@
       }
     }
 
-    // ===========================
-    // Sorting (client fallback)
-    // ===========================
     function sortStartups(startups, sortBy) {
       const copy = [...startups];
       if (!sortBy) return copy;
+      
+      if (sortBy === 'funding_ask_desc') return copy.sort((a, b) => (parseFloat(b.funding_ask) || 0) - (parseFloat(a.funding_ask) || 0));
+      if (sortBy === 'funding_ask_asc') return copy.sort((a, b) => (parseFloat(a.funding_ask) || 0) - (parseFloat(b.funding_ask) || 0));
+      if (sortBy === 'market_growth_desc') return copy.sort((a, b) => (parseFloat(b.market_growth_rate ?? b.market_growth) || 0) - (parseFloat(a.market_growth_rate ?? a.market_growth) || 0));
+      if (sortBy === 'market_growth_asc') return copy.sort((a, b) => (parseFloat(a.market_growth_rate ?? a.market_growth) || 0) - (parseFloat(b.market_growth_rate ?? b.market_growth) || 0));
+      
       switch (sortBy) {
         case 'projected_return_desc': return copy.sort((a, b) => (b.projected_return || 0) - (a.projected_return || 0));
         case 'projected_return_asc': return copy.sort((a, b) => (a.projected_return || 0) - (b.projected_return || 0));
@@ -372,105 +445,96 @@
       }
     }
 
-    // ===========================
-    // Startup card creation
-    // ===========================
     function createStartupCard(startup) {
-    const card = document.createElement('div');
-    card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition flex flex-col';
-    const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
-    card.setAttribute('data-startup-id', startup.id);
-    card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
+      const card = document.createElement('div');
+      card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition flex flex-col';
+      const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
+      card.setAttribute('data-startup-id', startup.id);
+      card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
 
-    // Display badge based on type
-    let riskBadge;
-    if (isDeck) {
-      // Pitch decks get a special badge - not risk-based
-      riskBadge = '<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-1 rounded-full">Pitch Deck</span>';
-    } else if (startup.risk_level) {
-      // Financial startups show actual calculated risk
-      const riskLevel = startup.risk_level.toLowerCase();
-      if (riskLevel === 'low') {
-        riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">✓ Low Risk</span>';
-      } else if (riskLevel === 'medium') {
-        riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full">⚡ Medium Risk</span>';
+      let riskBadge;
+      if (isDeck) {
+        riskBadge = '<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-1 rounded-full">Pitch Deck</span>';
+      } else if (startup.risk_level) {
+        const riskLevel = startup.risk_level.toLowerCase();
+        if (riskLevel === 'low') {
+          riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">✓ Low Risk</span>';
+        } else if (riskLevel === 'medium') {
+          riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full">⚡ Medium Risk</span>';
+        } else {
+          riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full">⚠️ High Risk</span>';
+        }
       } else {
-        riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full">⚠️ High Risk</span>';
+        riskBadge = '<span class="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full">Data Pending</span>';
       }
-    } else {
-      // No risk data available
-      riskBadge = '<span class="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full">Data Pending</span>';
-    }
 
-    const industry = isDeck ? (startup.tagline || '—') : (startup.industry || '—');
-    let reward = 'N/A';
-    if (startup.reward_potential != null) {
-      if (typeof startup.reward_potential === 'string') {
-        reward = startup.reward_potential.split(',')[0].trim();
-      } else if (Array.isArray(startup.reward_potential)) {
-        reward = startup.reward_potential[0];
+      const industry = isDeck ? (startup.tagline || '—') : (startup.industry || '—');
+      let reward = 'N/A';
+      if (startup.reward_potential != null) {
+        if (typeof startup.reward_potential === 'string') {
+          reward = startup.reward_potential.split(',')[0].trim();
+        } else if (Array.isArray(startup.reward_potential)) {
+          reward = startup.reward_potential[0];
+        } else {
+          reward = String(startup.reward_potential);
+        }
+      }
+      const projected = (startup.projected_return != null && startup.projected_return !== '') ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
+
+      const inWatchlist = watchlistIdsSet.has(Number(startup.id));
+
+      let metricsSection;
+      if (isDeck) {
+        const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
+        const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
+        const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
+        
+        metricsSection = `
+          <div class="space-y-3 mb-4 flex-grow">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Funding Ask</span>
+              <span class="text-sm font-semibold text-purple-600">${escapeHtml(fundingAmount)}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Market Growth</span>
+              <span class="text-sm font-semibold text-green-600">${escapeHtml(marketGrowthDisplay)}</span>
+            </div>
+          </div>
+        `;
       } else {
-        reward = String(startup.reward_potential);
+        metricsSection = `
+          <div class="space-y-3 mb-4 flex-grow">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Reward Potential</span>
+              <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Projected Return</span>
+              <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
+            </div>
+          </div>
+        `;
       }
-    }
-    const projected = (startup.projected_return != null && startup.projected_return !== '') ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` : 'N/A';
 
-    const inWatchlist = watchlistIdsSet.has(Number(startup.id));
-
-    // Different metrics for Pitch Deck vs Financial startups
-    let metricsSection;
-    if (isDeck) {
-      // Extract pitch deck specific info
-      const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
-      const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
-      const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
-      
-      metricsSection = `
-        <div class="space-y-3 mb-4 flex-grow">
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Funding Ask</span>
-            <span class="text-sm font-semibold text-purple-600">${escapeHtml(fundingAmount)}</span>
+      card.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(startup.company_name)}</h3>
+            <p class="text-sm text-gray-600">${escapeHtml(industry)}</p>
           </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Market Growth</span>
-            <span class="text-sm font-semibold text-green-600">${escapeHtml(marketGrowthDisplay)}</span>
+          <div class="flex flex-col items-end space-y-2">
+            ${riskBadge}
+            <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
+              ${inWatchlist ? watchIcon(true) : watchIcon(false)}
+            </button>
           </div>
+        </div>
+        ${metricsSection}
+        <div class="flex gap-2 mt-auto">
+          <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
+          <a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>
         </div>
       `;
-    } else {
-      metricsSection = `
-        <div class="space-y-3 mb-4 flex-grow">
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Reward Potential</span>
-            <span class="text-sm font-semibold">${escapeHtml(reward)}/5</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-600">Projected Return</span>
-            <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
-          </div>
-        </div>
-      `;
-    }
-
-    card.innerHTML = `
-      <div class="flex justify-between items-start mb-4">
-        <div class="flex-1">
-          <h3 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(startup.company_name)}</h3>
-          <p class="text-sm text-gray-600">${escapeHtml(industry)}</p>
-        </div>
-        <div class="flex flex-col items-end space-y-2">
-          ${riskBadge}
-          <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
-            ${inWatchlist ? watchIcon(true) : watchIcon(false)}
-          </button>
-        </div>
-      </div>
-      ${metricsSection}
-      <div class="flex gap-2 mt-auto">
-        <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
-        <a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>
-      </div>
-    `;
 
       card.querySelector('.view-details-btn').addEventListener('click', () => {
         const id = card.getAttribute('data-startup-id');
@@ -529,65 +593,86 @@
         .replace(/'/g, "&#039;");
     }
 
-    // ===========================
-    // Client-side filtering (fallback for when backend doesn't filter properly)
-    // ===========================
     function applyClientSideFilters(startups) {
-    let filtered = [...startups];
-    
-    const form = document.getElementById('filterForm');
-    
-    // Startup Type filter (Pitch Deck vs Financial)
-    const startupType = form.elements.startup_type?.value;
-    if (startupType && startupType.trim() !== '') {
-      const beforeCount = filtered.length;
-      if (startupType === 'pitch_deck') {
-        filtered = filtered.filter(s => {
-          return !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
-        });
-      } else if (startupType === 'financial') {
-        filtered = filtered.filter(s => {
-          return !(s.is_deck_builder || s.source_deck_id || s.source_deck);
-        });
+      let filtered = [...startups];
+      
+      const form = document.getElementById('filterForm');
+      
+      const startupType = document.getElementById('type-hidden')?.value;
+      if (startupType && startupType.trim() !== '') {
+        const beforeCount = filtered.length;
+        if (startupType === 'pitch_deck') {
+          filtered = filtered.filter(s => {
+            return !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
+          });
+          
+          const fundingAskRange = form.elements.funding_ask_range?.value;
+          if (fundingAskRange && fundingAskRange !== '') {
+            filtered = filtered.filter(s => {
+              const fundingAsk = parseFloat(s.funding_ask);
+              if (isNaN(fundingAsk)) return false;
+              
+              if (fundingAskRange === '0-100000') return fundingAsk <= 100000;
+              if (fundingAskRange === '100000-500000') return fundingAsk >= 100000 && fundingAsk <= 500000;
+              if (fundingAskRange === '500000-1000000') return fundingAsk >= 500000 && fundingAsk <= 1000000;
+              if (fundingAskRange === '1000000-5000000') return fundingAsk >= 1000000 && fundingAsk <= 5000000;
+              if (fundingAskRange === '5000000+') return fundingAsk >= 5000000;
+              return true;
+            });
+          }
+          
+          const marketGrowthFilter = document.getElementById('growth-hidden')?.value;
+          if (marketGrowthFilter && marketGrowthFilter !== '') {
+            filtered = filtered.filter(s => {
+              const growth = parseFloat(s.market_growth_rate ?? s.market_growth);
+              if (isNaN(growth)) return false;
+              
+              if (marketGrowthFilter === 'Low') return growth >= 0 && growth < 10;
+              if (marketGrowthFilter === 'Medium') return growth >= 10 && growth < 30;
+              if (marketGrowthFilter === 'High') return growth >= 30;
+              return true;
+            });
+          }
+          
+          const minMarketGrowth = form.elements.min_market_growth?.value;
+          if (minMarketGrowth && minMarketGrowth !== '') {
+            const minGrowthValue = parseFloat(minMarketGrowth);
+            filtered = filtered.filter(s => {
+              const growth = parseFloat(s.market_growth_rate ?? s.market_growth);
+              return !isNaN(growth) && growth >= minGrowthValue;
+            });
+          }
+          
+        } else if (startupType === 'financial') {
+          filtered = filtered.filter(s => {
+            return !(s.is_deck_builder || s.source_deck_id || s.source_deck);
+          });
+          
+          const riskLevel = document.getElementById('risk-hidden')?.value;
+          if (riskLevel && riskLevel.trim() !== '') {
+            filtered = filtered.filter(s => {
+              return s.risk_level === riskLevel;
+            });
+          }
+          
+          const minReturn = form.elements.min_return?.value;
+          if (minReturn && minReturn.trim() !== '') {
+            const minReturnValue = parseFloat(minReturn);
+            filtered = filtered.filter(s => {
+              const projReturn = s.projected_return;
+              return projReturn !== null && projReturn !== undefined && projReturn >= minReturnValue;
+            });
+          }
+        }
+        console.log(`Client-side Type filter: ${startupType} | Before: ${beforeCount}, After: ${filtered.length}`);
       }
-      console.log(`Client-side Type filter: ${startupType} | Before: ${beforeCount}, After: ${filtered.length}`);
+      
+      return filtered;
     }
-    
-    // Risk Level filter - ONLY apply to financial startups (exclude pitch decks)
-    const riskLevel = document.getElementById('risk-hidden')?.value;
-    if (riskLevel && riskLevel.trim() !== '') {
-      const beforeCount = filtered.length;
-      filtered = filtered.filter(s => {
-        // Pitch decks have risk_level = null, so they're automatically excluded
-        // Only keep financial startups that match the selected risk level
-        return s.risk_level === riskLevel;
-      });
-      console.log(`Client-side Risk filter: ${riskLevel} | Before: ${beforeCount}, After: ${filtered.length}`);
-    }
-    
-    // Minimum Return filter - ONLY apply to startups with projected_return data
-    const minReturn = form.elements.min_return?.value;
-    if (minReturn && minReturn.trim() !== '') {
-      const minReturnValue = parseFloat(minReturn);
-      const beforeCount = filtered.length;
-      filtered = filtered.filter(s => {
-        const projReturn = s.projected_return;
-        // Keep only startups that have a valid return value that meets threshold
-        return projReturn !== null && projReturn !== undefined && projReturn >= minReturnValue;
-      });
-      console.log(`Client-side MinReturn filter: ≥${minReturnValue}% | Before: ${beforeCount}, After: ${filtered.length}`);
-    }
-    
-    return filtered;
-  }
 
-    // ===========================
-    // Render flow
-    // ===========================
     async function renderStartups() {
       console.log('Rendering startups...');
       
-      // Show loading state
       const grid = document.getElementById('startup-grid');
       const noStartups = document.getElementById('no-startups');
       grid.innerHTML = '<div class="col-span-full text-center py-16"><div class="text-4xl mb-4">⏳</div><p class="text-gray-600">Loading startups...</p></div>';
@@ -596,9 +681,17 @@
       const startups = await fetchStartups();
       console.log('Raw startups from backend:', startups.length);
       
-      // Apply client-side filters (to enforce filtering since backend may not filter properly)
       const clientFiltered = applyClientSideFilters(startups);
-      const sortBy = document.getElementById('filterForm').elements.sort_by?.value;
+      
+      const form = document.getElementById('filterForm');
+      const startupType = document.getElementById('type-hidden')?.value;
+      let sortBy;
+      if (startupType === 'pitch_deck') {
+        sortBy = form.elements.deck_sort_by?.value;
+      } else {
+        sortBy = form.elements.sort_by?.value;
+      }
+      
       const sorted = sortStartups(clientFiltered, sortBy);
 
       const countSpan = document.getElementById('startup-count');
@@ -625,24 +718,18 @@
       }
     }
 
-    // ===========================
-    // Filters & UI helpers
-    // ===========================
     function setRiskLevel(level) {
-      // Remove active state from all buttons
       document.querySelectorAll('.risk-btn').forEach(btn => {
         btn.classList.remove('border-blue-500', 'bg-blue-50');
         btn.classList.add('border-gray-300');
       });
       
-      // Set active state on selected button
       const selectedBtn = document.getElementById(`risk-${level}`);
       if (selectedBtn) {
         selectedBtn.classList.remove('border-gray-300');
         selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
       }
       
-      // Update hidden value with the risk level name (Low, Medium, High)
       document.getElementById('risk-hidden').value = level;
       console.log('Risk level set to:', level);
     }
@@ -651,14 +738,27 @@
       const form = document.getElementById('filterForm');
       form.reset();
       
-      // Clear all risk button highlights
+      document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+        btn.classList.add('border-gray-300');
+      });
+      document.getElementById('type-hidden').value = '';
+      
+      document.getElementById('financial-filters').classList.remove('hidden');
+      document.getElementById('pitch-deck-filters').classList.add('hidden');
+      
       document.querySelectorAll('.risk-btn').forEach(btn => {
         btn.classList.remove('border-blue-500', 'bg-blue-50');
         btn.classList.add('border-gray-300');
       });
       
-      // Clear the hidden risk value
+      document.querySelectorAll('.growth-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+        btn.classList.add('border-gray-300');
+      });
+      
       document.getElementById('risk-hidden').value = '';
+      document.getElementById('growth-hidden').value = '';
       
       renderStartups();
     }
@@ -666,7 +766,8 @@
     function applyPreset(preset) {
       const form = document.getElementById('filterForm');
       
-      // Reset other filters
+      setStartupType('financial');
+      
       form.elements.sort_by.value = '';
       form.elements.industry.value = '';
       form.elements.min_return.value = '';
@@ -685,9 +786,6 @@
       renderStartups();
     }
 
-    // ===========================
-    // Logout
-    // ===========================
     async function logoutUser() {
       try {
         await fetch(LOGOUT_ENDPOINT, { method: 'POST', headers: authHeaders() });
@@ -699,9 +797,6 @@
       }
     }
 
-    // ===========================
-    // DOM events
-    // ===========================
     document.getElementById('filterForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       console.log('Apply Filters clicked!');

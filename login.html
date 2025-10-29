@@ -111,7 +111,6 @@
     let activeToasts = new Set();
     
     function showToast(message, type = 'success') {
-        // Prevent duplicate toasts
         if (activeToasts.has(message)) {
             return;
         }
@@ -143,6 +142,45 @@
                 activeToasts.delete(message);
             }, 300);
         }, 3000);
+    }
+
+    // Enhanced email validation
+    function isValidEmail(email) {
+        // More strict email validation
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        
+        if (!emailRegex.test(email)) {
+            return false;
+        }
+        
+        // Extract domain part
+        const parts = email.split('@');
+        if (parts.length !== 2) {
+            return false;
+        }
+        
+        const domain = parts[1];
+        
+        // Check if domain has at least one dot
+        if (!domain.includes('.')) {
+            return false;
+        }
+        
+        // Check TLD (top-level domain) is at least 2 characters
+        const domainParts = domain.split('.');
+        const tld = domainParts[domainParts.length - 1];
+        
+        if (tld.length < 2) {
+            return false;
+        }
+        
+        // Disallow common typos
+        const invalidTLDs = ['co', 'cm', 'con', 'cmo', 'comm', 'om', 'ocm'];
+        if (invalidTLDs.includes(tld.toLowerCase())) {
+            return false;
+        }
+        
+        return true;
     }
 
     // Password visibility toggle
@@ -213,8 +251,9 @@
         // Client-side validation
         let hasError = false;
 
-        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-            showError('email', 'Please enter a valid email address');
+        // Enhanced email validation
+        if (!isValidEmail(email)) {
+            showError('email', 'Please enter a valid email address (e.g., user@example.com)');
             hasError = true;
         }
 
