@@ -152,13 +152,14 @@
                   data.company_description || "No description provided.";
 
               const badge = document.getElementById("riskBadge");
-              const riskLevel = data.risk_level || "Medium";
+              const riskLevel = data.risk_level || "Data Pending";
+              const hasDataPending = !data.risk_level;
               const riskMap = {
                   Low: ["Low Risk", "bg-green-100 text-green-800"],
                   Medium: ["Medium Risk", "bg-yellow-100 text-yellow-800"],
                   High: ["High Risk", "bg-red-100 text-red-800"],
               };
-              const [label, classes] = riskMap[riskLevel] || ["Unknown", "bg-gray-100 text-gray-800"];
+              const [label, classes] = riskMap[riskLevel] || ["Data Pending", "bg-gray-100 text-gray-800"];
               badge.textContent = label;
               badge.className = `${classes} text-sm font-medium px-3 py-1 rounded-full`;
 
@@ -196,7 +197,23 @@
               console.log('Setting watchlist state to:', isInWatchlist);
               updateWatchlistButton(isInWatchlist);
 
-              document.getElementById("investBtn").href = `../Module_2/Investment_Simulation.html?startup_id=${startupId}`;
+              const investBtn = document.getElementById("investBtn");
+              if (hasDataPending) {
+                  investBtn.className = "w-full bg-gray-300 text-gray-500 font-medium py-3 px-4 rounded-lg cursor-not-allowed text-center block";
+                  investBtn.style.pointerEvents = "none";
+                  investBtn.title = "Cannot invest - data pending";
+                  investBtn.removeAttribute("href");
+              } else {
+                  const currentPath = window.location.pathname + window.location.search;
+                  investBtn.href = `../Module_2/Investment_Simulation.html?startup_id=${startupId}&return=${encodeURIComponent(currentPath)}`;
+              }
+              const compareBtn = document.getElementById("compareBtn");
+              if (hasDataPending) {
+                  compareBtn.className = "w-full border border-gray-300 bg-gray-100 text-gray-400 font-medium py-3 px-4 rounded-lg cursor-not-allowed text-center";
+                  compareBtn.disabled = true;
+                  compareBtn.title = "Cannot compare - data pending";
+                  compareBtn.style.pointerEvents = "none";
+              }
           } catch (err) {
               console.error('Error loading company:', err);
               alert('Failed to load company profile');

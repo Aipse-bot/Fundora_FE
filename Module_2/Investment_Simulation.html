@@ -11,7 +11,7 @@
   <header class="bg-blue-600 text-white shadow-lg">
     <div class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
       <div class="flex items-center">
-        <a href="../Module_1/Dashboard.html" class="mr-4 p-2 hover:bg-blue-700 rounded-lg transition-colors">
+        <a href="#" id="back-button" class="mr-4 p-2 hover:bg-blue-700 rounded-lg transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
@@ -161,7 +161,18 @@
     document.addEventListener('DOMContentLoaded', async () => {
       // Get startup ID from URL
       const urlParams = new URLSearchParams(window.location.search);
+      const returnUrl = urlParams.get('return');
+      const backButton = document.getElementById('back-button');
       const startupId = urlParams.get('startup_id');
+
+      backButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (returnUrl) {
+          window.location.href = decodeURIComponent(returnUrl);
+        } else {
+          window.location.href = '../Module_1/Dashboard.html';
+        }
+      });
 
       if (!startupId) {
         alert('No startup selected');
@@ -182,17 +193,28 @@
       document.getElementById('startupName').textContent = startupData.company_name || 'Unknown Startup';
       
       const projectedReturn = startupData.projected_return || 10;
-      const riskLevel = startupData.risk_level || 'Pitch Deck';
-      const growthRate = calculateCanonicalGrowthRate(projectedReturn, riskLevel);
+      const riskLevel = startupData.risk_level;
+      const isPitchDeck = startupData.is_pitch_deck === true;
+      
+      // Determine effective risk level for calculations
+      let effectiveRiskLevel = riskLevel;
+      if (!riskLevel) {
+        effectiveRiskLevel = isPitchDeck ? 'Pitch Deck' : 'Medium';
+      }
+      
+      const growthRate = calculateCanonicalGrowthRate(projectedReturn, effectiveRiskLevel);
 
       document.getElementById('growth-rate-display').textContent = (growthRate * 100).toFixed(2);
       
-      // Update risk badge - handle "Pitch Deck" case
+      // Update risk badge - handle all cases
       const riskBadge = document.getElementById('risk-badge');
       
-      if (riskLevel === 'Pitch Deck') {
+      if (isPitchDeck && !riskLevel) {
         riskBadge.textContent = 'Pitch Deck';
         riskBadge.className = 'bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full';
+      } else if (!riskLevel) {
+        riskBadge.textContent = 'Data Pending';
+        riskBadge.className = 'bg-gray-100 text-gray-600 text-sm font-medium px-3 py-1 rounded-full';
       } else {
         riskBadge.textContent = `${riskLevel} Risk`;
         riskBadge.className =

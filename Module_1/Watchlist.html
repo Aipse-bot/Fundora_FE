@@ -125,32 +125,57 @@
             }
         }
 
-        function loadWatchlist() {
+        async function loadWatchlist() {
             const token = getAuthToken();
             if (!token) {
                 window.location.href = '/login';
                 return;
             }
 
-            fetch('https://fundora-be.onrender.com/api/investor/watchlist/', {
-                method: 'GET',
-                headers: authHeaders()
-            })
-            .then(res => {
-                if (res.status === 401 || res.status === 403) {
+            try {
+                // First get the watchlist IDs
+                const watchlistRes = await fetch('https://fundora-be.onrender.com/api/investor/watchlist/', {
+                    method: 'GET',
+                    headers: authHeaders()
+                });
+                
+                if (watchlistRes.status === 401 || watchlistRes.status === 403) {
                     localStorage.removeItem('authToken');
                     window.location.href = '/login';
-                    throw new Error('Unauthorized');
+                    return;
                 }
-                return res.json();
-            })
-            .then(data => {
+                
+                const watchlistData = await watchlistRes.json();
+                const watchlistItems = watchlistData.results || watchlistData.watchlist || [];
+                
+                if (!watchlistItems || watchlistItems.length === 0) {
+                    document.getElementById('saved-empty').classList.remove('hidden');
+                    document.getElementById('saved-count').textContent = '0';
+                    document.getElementById('saved-grid').innerHTML = '';
+                    return;
+                }
+                
+                // Then get all startups data
+                const startupsRes = await fetch('https://fundora-be.onrender.com/api/investor/startups/', {
+                    method: 'GET',
+                    headers: authHeaders()
+                });
+                
+                if (!startupsRes.ok) {
+                    throw new Error('Failed to fetch startups data');
+                }
+                
+                const startupsData = await startupsRes.json();
+                const allStartups = startupsData.results || startupsData.startups || startupsData;
+                
+                // Match watchlist items with full startup data
+                const watchlistIds = new Set(watchlistItems.map(item => item.id));
+                const results = allStartups.filter(startup => watchlistIds.has(startup.id));
+                
                 const savedGrid = document.getElementById('saved-grid');
                 const savedCount = document.getElementById('saved-count');
                 savedGrid.innerHTML = '';
 
-                const results = data.results || data.watchlist || [];
-                
                 if (!results || results.length === 0) {
                     document.getElementById('saved-empty').classList.remove('hidden');
                     savedCount.textContent = '0';
@@ -162,70 +187,149 @@
 
                 results.forEach(startup => {
                     const card = document.createElement('div');
-                    card.className = 'bg-white shadow rounded-lg p-5 transition hover:shadow-lg';
+                    card.className = 'bg-white shadow rounded-lg p-5 transition hover:shadow-lg flex flex-col';
                     
-                    let industryDisplay = startup.industry;
-                    let isPitchDeck = false;
+                    const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
+                    const hasDataPending = !isDeck && !startup.risk_level;
                     
-                    if (startup.tagline) {
-                        industryDisplay = startup.tagline;
-                        isPitchDeck = true;
-                    } else if (!industryDisplay || industryDisplay === '—') {
-                        industryDisplay = startup.company_description || 'N/A';
-                        isPitchDeck = true;
+                    // Determine risk badge
+                    let riskBadge;
+                    if (isDeck) {
+                        riskBadge = '<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-1 rounded-full">Pitch Deck</span>';
+                    } else if (startup.risk_level) {
+                        const riskLevel = startup.risk_level.toLowerCase();
+                        if (riskLevel === 'low') {
+                            riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">Low Risk</span>';
+                        } else if (riskLevel === 'medium') {
+                            riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full">Medium Risk</span>';
+                        } else {
+                            riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full">High Risk</span>';
+                        }
+                    } else {
+                        riskBadge = '<span class="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full">Data Pending</span>';
                     }
                     
-                    const profilePage = (startup.is_deck_builder || isPitchDeck) ? '../Module_2/Company_ProfileDB.html' : '../Module_2/Company_Profile.html';
+                    // Determine industry display
+                    let industryDisplay = startup.industry;
+                    if (startup.tagline) {
+                        industryDisplay = startup.tagline;
+                    } else if (!industryDisplay || industryDisplay === '—') {
+                        industryDisplay = startup.company_description || 'N/A';
+                    }
+                    
+                    // Build metrics section with more details
+                    let metricsSection;
+                    if (isDeck) {
+                        const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
+                        const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
+                        const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
+                        
+                        metricsSection = `
+                            <div class="space-y-3 mb-4 flex-grow">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Funding Ask</span>
+                                    <span class="text-sm font-semibold text-purple-600">${escapeHtml(fundingAmount)}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Market Growth</span>
+                                    <span class="text-sm font-semibold text-green-600">${escapeHtml(marketGrowthDisplay)}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        let reward = 'N/A';
+                        if (startup.reward_potential != null) {
+                            if (typeof startup.reward_potential === 'string') {
+                                reward = startup.reward_potential.split(',')[0].trim();
+                            } else if (Array.isArray(startup.reward_potential)) {
+                                reward = startup.reward_potential[0];
+                            } else {
+                                reward = String(startup.reward_potential);
+                            }
+                        }
+
+                        const rewardDisplay = reward === 'N/A' ? 'N/A' : `${reward}/5`;
+                        const projected = (startup.projected_return != null && startup.projected_return !== '') 
+                            ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` 
+                            : 'N/A';
+                        
+                        metricsSection = `
+                            <div class="space-y-3 mb-4 flex-grow">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Reward Potential</span>
+                                    <span class="text-sm font-semibold">${escapeHtml(rewardDisplay)}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Projected Return</span>
+                                    <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    const profilePage = isDeck ? '../Module_2/Company_ProfileDB.html' : '../Module_2/Company_Profile.html';
+                    const returnPath = window.location.pathname + window.location.search;
                     
                     card.innerHTML = `
                         <div class="flex justify-between items-start mb-3">
-                            <h2 class="text-xl font-semibold text-gray-900">${escapeHtml(startup.company_name)}</h2>
-                            <button onclick="removeFromWatchlist(${startup.id}, '${escapeHtml(startup.company_name)}')" 
-                                    class="text-gray-400 hover:text-red-500 transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            </button>
+                            <div class="flex-1">
+                                <h2 class="text-xl font-semibold text-gray-900 mb-1">${escapeHtml(startup.company_name)}</h2>
+                                <p class="text-sm text-gray-600">${escapeHtml(industryDisplay)}</p>
+                            </div>
+                            <div class="flex flex-col items-end space-y-2">
+                                ${riskBadge}
+                                <button onclick="removeFromWatchlist(${startup.id}, '${escapeHtml(startup.company_name).replace(/'/g, "\\'")}')" 
+                                        class="text-gray-400 hover:text-red-500 transition"
+                                        title="Remove from watchlist">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                        <p class="text-sm text-gray-600 mb-3">${escapeHtml(industryDisplay)}</p>
-                        <div class="flex justify-between items-center">
-                            <a href="${profilePage}?id=${startup.id}&return=${encodeURIComponent(window.location.pathname + window.location.search)}" 
-                               class="text-blue-600 hover:underline text-sm font-medium">View Profile</a>
-                            <a href="../Module_2/Investment_Simulation.html?startup_id=${startup.id}" 
-                               class="text-sm text-gray-500 hover:text-blue-600">Invest</a>
+                        ${metricsSection}
+                        <div class="flex gap-2 mt-auto">
+                            <a href="${profilePage}?id=${startup.id}&return=${encodeURIComponent(returnPath)}" 
+                               class="flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all">
+                                View Details
+                            </a>
+                            ${hasDataPending 
+                                ? '<button class="flex-1 px-3 py-2 bg-gray-300 text-gray-500 rounded-md text-sm text-center cursor-not-allowed" disabled title="Cannot invest - data pending">Invest</button>'
+                                : `<a href="../Module_2/Investment_Simulation.html?startup_id=${startup.id}&return=${encodeURIComponent(returnPath)}" 
+                                      class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700 transition-all">Invest</a>`
+                            }
                         </div>
                     `;
                     savedGrid.appendChild(card);
                 });
-            })
-            .catch(err => {
+            } catch (err) {
                 console.error('Error loading watchlist:', err);
                 if (err.message !== 'Unauthorized') {
                     showMessage('Error loading watchlist.', 'error');
                 }
-            });
+            }
         }
 
-        function loadComparisons() {
+        async function loadComparisons() {
             const token = getAuthToken();
             if (!token) {
                 window.location.href = '/login';
                 return;
             }
 
-            fetch('https://fundora-be.onrender.com/api/investor/comparisons/', {
-                method: 'GET',
-                headers: authHeaders()
-            })
-            .then(res => {
+            try {
+                const res = await fetch('https://fundora-be.onrender.com/api/investor/comparisons/', {
+                    method: 'GET',
+                    headers: authHeaders()
+                });
+                
                 if (res.status === 401 || res.status === 403) {
                     localStorage.removeItem('authToken');
                     window.location.href = '/login';
-                    throw new Error('Unauthorized');
+                    return;
                 }
-                return res.json();
-            })
-            .then(data => {
+                
+                const data = await res.json();
                 const comparedGrid = document.getElementById('compared-grid');
                 const comparedCount = document.getElementById('compared-count');
                 comparedGrid.innerHTML = '';
@@ -267,7 +371,7 @@
                             <div class="flex-1">
                                 <h2 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(displayName)}</h2>
                             </div>
-                            <button onclick="removeComparison(${comparison.id}, '${escapeHtml(displayName)}')" 
+                            <button onclick="removeComparison(${comparison.id}, '${escapeHtml(displayName).replace(/'/g, "\\'")}')" 
                                     class="text-gray-400 hover:text-red-500 transition ml-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -287,16 +391,15 @@
                     `;
                     comparedGrid.appendChild(card);
                 });
-            })
-            .catch(err => {
+            } catch (err) {
                 console.error('Error loading comparisons:', err);
                 if (err.message !== 'Unauthorized') {
                     showMessage('Error loading comparisons.', 'error');
                 }
-            });
+            }
         }
 
-        function removeFromWatchlist(startupId, companyName) {
+        async function removeFromWatchlist(startupId, companyName) {
             if (!confirm(`Remove "${companyName}" from your watchlist?`)) return;
 
             const token = getAuthToken();
@@ -305,31 +408,30 @@
                 return;
             }
 
-            fetch(`https://fundora-be.onrender.com/api/investor/watchlist/remove/${startupId}/`, {
-                method: 'DELETE',
-                headers: authHeaders()
-            })
-            .then(res => {
+            try {
+                const res = await fetch(`https://fundora-be.onrender.com/api/investor/watchlist/remove/${startupId}/`, {
+                    method: 'DELETE',
+                    headers: authHeaders()
+                });
+                
                 if (res.status === 401 || res.status === 403) {
                     localStorage.removeItem('authToken');
                     window.location.href = '/login';
-                    throw new Error('Unauthorized');
+                    return;
                 }
-                return res.json();
-            })
-            .then(data => {
+                
+                const data = await res.json();
                 showMessage(data.message || 'Removed from watchlist.', 'success');
                 loadWatchlist();
-            })
-            .catch(err => {
+            } catch (err) {
                 console.error('Error removing from watchlist:', err);
                 if (err.message !== 'Unauthorized') {
                     showMessage('Failed to remove startup.', 'error');
                 }
-            });
+            }
         }
 
-        function removeComparison(comparisonId, comparisonName) {
+        async function removeComparison(comparisonId, comparisonName) {
             if (!confirm(`Remove "${comparisonName}" from your saved comparisons?`)) return;
 
             const token = getAuthToken();
@@ -338,28 +440,27 @@
                 return;
             }
 
-            fetch(`https://fundora-be.onrender.com/api/investor/comparisons/delete/${comparisonId}/`, {
-                method: 'DELETE',
-                headers: authHeaders()
-            })
-            .then(res => {
+            try {
+                const res = await fetch(`https://fundora-be.onrender.com/api/investor/comparisons/delete/${comparisonId}/`, {
+                    method: 'DELETE',
+                    headers: authHeaders()
+                });
+                
                 if (res.status === 401 || res.status === 403) {
                     localStorage.removeItem('authToken');
                     window.location.href = '/login';
-                    throw new Error('Unauthorized');
+                    return;
                 }
-                return res.json();
-            })
-            .then(data => {
+                
+                const data = await res.json();
                 showMessage(data.message || 'Comparison removed successfully.', 'success');
                 loadComparisons();
-            })
-            .catch(err => {
+            } catch (err) {
                 console.error('Error removing comparison:', err);
                 if (err.message !== 'Unauthorized') {
                     showMessage('Failed to remove comparison.', 'error');
                 }
-            });
+            }
         }
 
         function switchTab(tabName) {
