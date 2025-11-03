@@ -192,7 +192,7 @@
 
         // Show summary message
         if (successfulRenders > 0) {
-          let msg = `Successfully loaded ${successfulRenders} deck${successfulRenders === 1 ? '' : 's'}`;
+          let msg = `Successfully loaded ${successfulRenders} pitch deck${successfulRenders === 1 ? '' : 's'}`;
           if (failedRenders > 0) msg += ` (${failedRenders} failed to render)`;
           showMessage(msg, failedRenders === 0 ? 'success' : 'warning');
         } else {
@@ -249,9 +249,23 @@
       }
     }
 
+    // function showMessage(text, type) {
+    //   const container = document.getElementById('messageContainer');
+    //   container.innerHTML = `<div class="p-4 text-sm ${type === 'error' ? 'text-red-700 bg-red-100' : 'text-green-700 bg-green-100'} rounded-lg">${text}</div>`;
+    // }
+
     function showMessage(text, type) {
       const container = document.getElementById('messageContainer');
-      container.innerHTML = `<div class="p-4 text-sm ${type === 'error' ? 'text-red-700 bg-red-100' : 'text-green-700 bg-green-100'} rounded-lg">${text}</div>`;
+      container.innerHTML = `
+        <div class="p-4 text-sm ${type === 'error' ? 'text-red-700 bg-red-100' : type === 'warning' ? 'text-yellow-700 bg-yellow-100' : 'text-green-700 bg-green-100'} rounded-lg">
+          ${text}
+        </div>
+      `;
+
+      // Auto-clear after 5 seconds
+      setTimeout(() => {
+        container.innerHTML = '';
+      }, 5000);
     }
 
     function loadDeckEditor(deckId) {

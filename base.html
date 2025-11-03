@@ -324,7 +324,6 @@
         const data = await response.json();
 
         if (response.ok) {
-          alert('Cover page saved successfully!');
           localStorage.setItem('deck_id', data.deck_id);
           loadSection('the-problem', deckId);
         } else {
@@ -398,7 +397,6 @@
 
         if (res.ok) {
           errorElem.classList.add('hidden');
-          alert('Problem section saved successfully!');
           localStorage.setItem('deck_id', data.deck_id);
           loadSection('the-solution', deckId);
         } else {
@@ -467,7 +465,6 @@
 
         if (res.ok) {
           errorElem.classList.add('hidden');
-          alert('Solution section saved successfully!');
           localStorage.setItem('deck_id', data.deck_id);
           loadSection('market-analysis', deckId);
         } else {
@@ -590,7 +587,6 @@
 
         if (res.ok) {
           [errorPrimaryMarket, errorTargetAudience, errorMarketGrowthRate, errorCompetitiveAdvantage].forEach(el => el.classList.add('hidden'));
-          alert('Market analysis saved successfully!');
           localStorage.setItem('deck_id', data.deck_id);
           loadSection('the-team', deckId);
         } else {
@@ -703,8 +699,6 @@
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Failed to save team');
-
-        alert('Team saved successfully!');
         localStorage.setItem('deck_id', data.deck_id);
         loadSection('financials', deckId);
       } catch (err) {
@@ -799,8 +793,6 @@
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Failed to save financials');
-
-        alert('Financials saved successfully!');
         localStorage.setItem('deck_id', data.deck_id); // persist deck ID for next sections
         loadSection('the-ask', deckId); // redirect to next section
         // loadFinancialPreview(deckId); // Refresh preview
@@ -1022,11 +1014,9 @@
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Failed to save ask');
-
-        alert('Funding request saved!');
         localStorage.setItem('deck_id', data.deck_id);
         loadAskData(); // Refresh preview
-        window.location.href = 'Module_3/added-startups.html';
+        window.location.href = 'deck-builder.html';
       } catch (err) {
         console.error('Ask submit error:', err);
         alert('Something went wrong while saving your funding request.');
