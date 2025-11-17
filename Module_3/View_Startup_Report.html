@@ -371,7 +371,7 @@
                 this.textContent = 'Deleting...';
                 
                 try {
-                    const response = await fetch(`https://fundora-be.onrender.com/api/startup/${startupId}/`, {
+                    const response = await fetch(`https://fundora-be-mjvs.onrender.com/api/startup/${startupId}/`, {
                         method: 'DELETE',
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -462,7 +462,7 @@
             
             try {
                 // Use the same endpoint as Edit page - this returns the actual startup data
-                const res = await fetch(`https://fundora-be.onrender.com/api/startup/${startupId}/`, {
+                const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/startup/${startupId}/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

@@ -156,7 +156,7 @@
 
     async function refreshWatchlist() {
       try {
-        const data = await tryFetchJSON('https://fundora-be.onrender.com/api/investor/watchlist/');
+        const data = await tryFetchJSON('https://fundora-be-mjvs.onrender.com/api/investor/watchlist/');
         if (data) {
           const items = data.results || data.watchlist || [];
           watchlistIdsSet = new Set(items.map(it => it.id));
@@ -253,7 +253,7 @@
           
           console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
           
-          const res = await fetch(`https://fundora-be.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
+          const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
               method: method,
               headers: authHeaders()
           });
@@ -383,11 +383,11 @@
     }
 
     async function loadDeckReport(startupIdParam) {
-      return tryFetchJSON(`https://fundora-be.onrender.com/api/startups/${startupIdParam}/profile/`);
+      return tryFetchJSON(`https://fundora-be-mjvs.onrender.com/api/startups/${startupIdParam}/profile/`);
     }
 
     async function loadStartupProfile(startupIdParam) {
-      return tryFetchJSON(`https://fundora-be.onrender.com/api/startups/${startupIdParam}/profile/`);
+      return tryFetchJSON(`https://fundora-be-mjvs.onrender.com/api/startups/${startupIdParam}/profile/`);
     }
 
     async function loadAllData() {
@@ -420,7 +420,7 @@
       const profile = await loadStartupProfile(startupId);
       if (!profile) {
         console.warn('No profile or deck report available for startup', startupId);
-        const fallback = await tryFetchJSON(`https://fundora-be.onrender.com/api/startups/${startupId}/`);
+        const fallback = await tryFetchJSON(`https://fundora-be-mjvs.onrender.com/api/startups/${startupId}/`);
         if (fallback) {
           populateHeaderFromStartup(fallback);
           buildActionsPanel(startupId);

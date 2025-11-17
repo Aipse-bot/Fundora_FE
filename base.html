@@ -191,7 +191,7 @@
     const deckId = localStorage.getItem('deck_id');
 
     try {
-      const res = await fetch('https://fundora-be.onrender.com/api/deck/section-list/', {
+      const res = await fetch('https://fundora-be-mjvs.onrender.com/api/deck/section-list/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -277,7 +277,7 @@
 
     // Load existing data if available
     try {
-      const res = await fetch(`https://fundora-be.onrender.com/api/deck/cover/?deck_id=${deckId}`, {
+      const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/cover/?deck_id=${deckId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -315,7 +315,7 @@
       formData.append('deck_id', deckId);
 
       try {
-        const response = await fetch(`https://fundora-be.onrender.com/api/deck/cover/`, {
+        const response = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/cover/`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` },
           body: formData
@@ -354,7 +354,7 @@
 
     // Load existing problem data
     try {
-      const res = await fetch(`https://fundora-be.onrender.com/api/deck/problem/?deck_id=${deckId}`, {
+      const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/problem/?deck_id=${deckId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -384,7 +384,7 @@
       const description = descriptionInput.value.trim();
 
       try {
-        const res = await fetch(`https://fundora-be.onrender.com/api/deck/problem/`, {
+        const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/problem/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -422,7 +422,7 @@
 
     // Load existing solution data
     try {
-      const res = await fetch(`https://fundora-be.onrender.com/api/deck/solution/?deck_id=${deckId}`, {
+      const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/solution/?deck_id=${deckId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -452,7 +452,7 @@
       const description = descriptionInput.value.trim();
 
       try {
-        const res = await fetch(`https://fundora-be.onrender.com/api/deck/solution/`, {
+        const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/solution/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -502,7 +502,7 @@
 
     // Load existing market analysis data
     try {
-      const res = await fetch(`https://fundora-be.onrender.com/api/deck/market-analysis/?deck_id=${deckId}`, {
+      const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/market-analysis/?deck_id=${deckId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -574,7 +574,7 @@
       };
 
       try {
-        const res = await fetch(`https://fundora-be.onrender.com/api/deck/market-analysis/`, {
+        const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/market-analysis/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -621,7 +621,7 @@
 
     // 🧠 Load existing team data
     try {
-      const res = await fetch(`https://fundora-be.onrender.com/api/deck/team/?deck_id=${deckId}`, {
+      const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/team/?deck_id=${deckId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -688,7 +688,7 @@
       }
 
       try {
-        const res = await fetch(`https://fundora-be.onrender.com/api/deck/team/`, {
+        const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/team/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -782,7 +782,7 @@
       }
 
       try {
-        const res = await fetch(`https://fundora-be.onrender.com/api/deck/financial/`, {
+        const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/financial/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -921,7 +921,7 @@
     // 📊 Load Preview + Chart
     async function loadFinancials(deckId) {
       try {
-        const res = await fetch(`https://fundora-be.onrender.com/api/deck/financial-list/?deck_id=${deckId}`, {
+        const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/financial-list/?deck_id=${deckId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const financials = await res.json();
@@ -968,7 +968,7 @@
     // 🔄 Load existing Ask data
     async function loadAskData() {
       try {
-        const res = await fetch(`https://fundora-be.onrender.com/api/deck/ask/?deck_id=${deckId}`, {
+        const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/ask/?deck_id=${deckId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -1003,7 +1003,7 @@
       }
 
       try {
-        const res = await fetch(`https://fundora-be.onrender.com/api/deck/ask/`, {
+        const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/ask/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -1045,7 +1045,7 @@
     console.log('Loading report for deck ID:', deckId);
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`https://fundora-be.onrender.com/api/deck/report/${deckId}`, {
+      const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/deck/report/${deckId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();

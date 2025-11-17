@@ -96,7 +96,7 @@
         async function loadTabCounts() {
             // Load watchlist count
             try {
-                const watchlistRes = await fetch('https://fundora-be.onrender.com/api/investor/watchlist/', {
+                const watchlistRes = await fetch('https://fundora-be-mjvs.onrender.com/api/investor/watchlist/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -111,7 +111,7 @@
 
             // Load comparisons count
             try {
-                const comparisonsRes = await fetch('https://fundora-be.onrender.com/api/investor/comparisons/', {
+                const comparisonsRes = await fetch('https://fundora-be-mjvs.onrender.com/api/investor/comparisons/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -134,7 +134,7 @@
 
             try {
                 // First get the watchlist IDs
-                const watchlistRes = await fetch('https://fundora-be.onrender.com/api/investor/watchlist/', {
+                const watchlistRes = await fetch('https://fundora-be-mjvs.onrender.com/api/investor/watchlist/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -156,7 +156,7 @@
                 }
                 
                 // Then get all startups data
-                const startupsRes = await fetch('https://fundora-be.onrender.com/api/investor/startups/', {
+                const startupsRes = await fetch('https://fundora-be-mjvs.onrender.com/api/investor/startups/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -318,7 +318,7 @@
             }
 
             try {
-                const res = await fetch('https://fundora-be.onrender.com/api/investor/comparisons/', {
+                const res = await fetch('https://fundora-be-mjvs.onrender.com/api/investor/comparisons/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -409,7 +409,7 @@
             }
 
             try {
-                const res = await fetch(`https://fundora-be.onrender.com/api/investor/watchlist/remove/${startupId}/`, {
+                const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/investor/watchlist/remove/${startupId}/`, {
                     method: 'DELETE',
                     headers: authHeaders()
                 });
@@ -441,7 +441,7 @@
             }
 
             try {
-                const res = await fetch(`https://fundora-be.onrender.com/api/investor/comparisons/delete/${comparisonId}/`, {
+                const res = await fetch(`https://fundora-be-mjvs.onrender.com/api/investor/comparisons/delete/${comparisonId}/`, {
                     method: 'DELETE',
                     headers: authHeaders()
                 });
