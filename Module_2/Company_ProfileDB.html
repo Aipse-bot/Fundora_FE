@@ -45,7 +45,6 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(148, 163, 184, 0.1); }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .fade-in { animation: fadeIn 0.5s ease-out; }
     .delay-1 { animation-delay: 0.1s; }
@@ -70,18 +69,18 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Left Column -->
-      <div class="lg:col-span-2 space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- Left Column - Main Content -->
+      <div class="lg:col-span-3 space-y-6">
         <!-- Problem & Solution -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in delay-1">
           <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-2xl font-semibold mb-4">The Problem</h2>
-            <p id="problem-description" class="text-gray-300 leading-relaxed">—</p>
+            <h2 class="text-xl font-semibold mb-4">The Problem</h2>
+            <p id="problem-description" class="text-gray-300 leading-relaxed text-sm">—</p>
           </div>
           <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-2xl font-semibold mb-4">The Solution</h2>
-            <p id="solution-description" class="text-gray-300 leading-relaxed">—</p>
+            <h2 class="text-xl font-semibold mb-4">The Solution</h2>
+            <p id="solution-description" class="text-gray-300 leading-relaxed text-sm">—</p>
           </div>
         </div>
 
@@ -93,24 +92,24 @@
                 <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
               </svg>
             </div>
-            <h2 class="text-2xl font-semibold">Market Analysis</h2>
+            <h2 class="text-xl font-semibold">Market Analysis</h2>
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div class="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4">
-              <div class="text-sm text-gray-400 mb-1">Primary Market</div>
-              <div id="primary-market" class="text-lg font-semibold text-brand-400">—</div>
+              <div class="text-xs text-gray-400 mb-1">Primary Market</div>
+              <div id="primary-market" class="text-base font-semibold text-brand-400">—</div>
             </div>
             <div class="bg-accent-500/10 border border-accent-500/30 rounded-lg p-4">
-              <div class="text-sm text-gray-400 mb-1">Target Audience</div>
-              <div id="target-audience" class="text-lg font-semibold text-accent-400">—</div>
+              <div class="text-xs text-gray-400 mb-1">Target Audience</div>
+              <div id="target-audience" class="text-base font-semibold text-accent-400">—</div>
             </div>
             <div class="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
-              <div class="text-sm text-gray-400 mb-1">Market Growth (YOY)</div>
-              <div id="market-growth" class="text-lg font-semibold text-orange-400">—</div>
+              <div class="text-xs text-gray-400 mb-1">Market Growth (YOY)</div>
+              <div id="market-growth" class="text-base font-semibold text-orange-400">—</div>
             </div>
             <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4">
-              <div class="text-sm text-gray-400 mb-1">Competitive Advantage</div>
-              <div id="competitive-advantage" class="text-lg font-semibold text-purple-400">—</div>
+              <div class="text-xs text-gray-400 mb-1">Competitive Advantage</div>
+              <div id="competitive-advantage" class="text-base font-semibold text-purple-400 line-clamp-2">—</div>
             </div>
           </div>
         </div>
@@ -123,37 +122,40 @@
                 <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
               </svg>
             </div>
-            <h2 class="text-2xl font-semibold">Financial Projections</h2>
+            <h2 class="text-xl font-semibold">Financial Projections</h2>
           </div>
           <div id="financial-table-container" class="mb-6"></div>
           <div class="mt-6">
-            <canvas id="revenueProfitChart" class="w-full" style="height: 300px;"></canvas>
+            <canvas id="revenueProfitChart" class="w-full" style="height: 250px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Sidebar -->
+      <div class="space-y-6">
+        <!-- Action Buttons -->
+        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-1">
+          <h2 class="text-lg font-semibold mb-4">Actions</h2>
+          <div class="space-y-3">
+            <button id="watchlistBtn" class="w-full font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center text-sm" disabled>
+              <svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Loading...
+            </button>
+            <a id="investBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 text-center block text-sm">
+              Invest
+            </a>
           </div>
         </div>
 
         <!-- The Ask -->
         <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-3">
-          <h2 class="text-2xl font-semibold mb-6">The Ask</h2>
+          <h2 class="text-lg font-semibold mb-4">The Ask</h2>
           <div id="ask-section" class="space-y-3">
-            <p class="text-gray-400">No funding information available</p>
+            <p class="text-gray-400 text-sm">No funding information available</p>
           </div>
-        </div>
-      </div>
-
-      <!-- Right Column -->
-      <div class="space-y-6">
-        <!-- Action Buttons -->
-        <div class="space-y-3 fade-in delay-1">
-          <button id="watchlistBtn" class="w-full font-semibold py-3.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center" disabled>
-            <svg class="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Loading...
-          </button>
-          <a id="investBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-all duration-200 text-center block">
-            Invest
-          </a>
         </div>
       </div>
     </div>
@@ -218,16 +220,16 @@
     function populateAsk(ask) {
       const askSection = document.getElementById("ask-section");
       if (!ask) {
-        askSection.innerHTML = `<p class="text-gray-400">No funding information available</p>`;
+        askSection.innerHTML = `<p class="text-gray-400 text-sm">No funding information available</p>`;
         return;
       }
       const amt = (ask.amount != null && !isNaN(Number(ask.amount))) ? `₱${Number(ask.amount).toLocaleString()}` : (ask.amount || "—");
       askSection.innerHTML = `
         <div class="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4">
-          <div class="text-sm text-gray-400 mb-1">Funding Goal</div>
-          <div class="text-2xl font-bold text-brand-400 mb-3">${amt}</div>
-          <div class="text-sm text-gray-400 mb-1">Use of Funds</div>
-          <p class="text-gray-300">${ask.usage_description || "—"}</p>
+          <div class="text-xs text-gray-400 mb-1">Funding Goal</div>
+          <div class="text-xl font-bold text-brand-400 mb-3">${amt}</div>
+          <div class="text-xs text-gray-400 mb-1">Use of Funds</div>
+          <p class="text-gray-300 text-sm">${ask.usage_description || "—"}</p>
         </div>
       `;
     }
@@ -256,21 +258,21 @@
 
       if (inWatchlist) {
         watchBtn.innerHTML = `
-          <svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
           </svg>
           In Watchlist
         `;
-        watchBtn.className = "w-full bg-slate-800/50 hover:bg-slate-700/50 text-white font-semibold py-3.5 px-4 rounded-lg flex items-center justify-center transition-all duration-200 border border-slate-700";
+        watchBtn.className = "w-full bg-slate-800/50 hover:bg-slate-700/50 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-200 border border-slate-700 text-sm";
         watchBtn.onclick = () => toggleWatchlist(false);
       } else {
         watchBtn.innerHTML = `
-          <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
           </svg>
           Add to Watchlist
         `;
-        watchBtn.className = "w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3.5 px-4 rounded-lg flex items-center justify-center transition-all duration-200";
+        watchBtn.className = "w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-200 text-sm";
         watchBtn.onclick = () => toggleWatchlist(true);
       }
     }
@@ -283,7 +285,7 @@
       
       const originalHTML = watchBtn.innerHTML;
       watchBtn.innerHTML = `
-        <svg class="w-5 h-5 mr-2 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 mr-2 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
@@ -348,7 +350,7 @@
     function renderFinancialTable(financials) {
       const container = document.getElementById("financial-table-container");
       if (!financials || financials.length === 0) {
-        container.innerHTML = "<p class='text-gray-400 text-center'>No financial data available.</p>";
+        container.innerHTML = "<p class='text-gray-400 text-center text-sm'>No financial data available.</p>";
         return;
       }
 
@@ -360,9 +362,9 @@
 
       const rows = parsed.map(f => `
         <tr class="border-b border-slate-800">
-          <td class="py-3 px-3 text-gray-300">${f.year}</td>
-          <td class="py-3 px-3 text-brand-400 font-semibold">₱${f.revenue.toLocaleString()}</td>
-          <td class="py-3 px-3 text-accent-400 font-semibold">₱${f.profit.toLocaleString()}</td>
+          <td class="py-2 px-3 text-gray-300 text-sm">${f.year}</td>
+          <td class="py-2 px-3 text-brand-400 font-semibold text-sm">₱${f.revenue.toLocaleString()}</td>
+          <td class="py-2 px-3 text-accent-400 font-semibold text-sm">₱${f.profit.toLocaleString()}</td>
         </tr>
       `).join('');
 
@@ -371,9 +373,9 @@
           <table class="min-w-full text-sm">
             <thead class="bg-slate-800/50 font-semibold text-gray-300">
               <tr>
-                <th class="py-3 px-3 text-left rounded-tl-lg">Year</th>
-                <th class="py-3 px-3 text-left">Revenue</th>
-                <th class="py-3 px-3 text-left rounded-tr-lg">Profit</th>
+                <th class="py-2 px-3 text-left rounded-tl-lg text-xs">Year</th>
+                <th class="py-2 px-3 text-left text-xs">Revenue</th>
+                <th class="py-2 px-3 text-left rounded-tr-lg text-xs">Profit</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -403,18 +405,19 @@
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              labels: { color: '#fff' }
+              labels: { color: '#fff', font: { size: 11 } }
             }
           },
           scales: {
             x: {
-              ticks: { color: '#9ca3af' },
+              ticks: { color: '#9ca3af', font: { size: 10 } },
               grid: { color: 'rgba(148, 163, 184, 0.1)' }
             },
             y: {
               beginAtZero: true,
               ticks: {
                 color: '#9ca3af',
+                font: { size: 10 },
                 callback: v => "₱" + Number(v).toLocaleString()
               },
               grid: { color: 'rgba(148, 163, 184, 0.1)' }
