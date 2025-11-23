@@ -5,69 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fundora - Investment Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            'low-risk': '#10b981',
-            'med-risk': '#f59e0b',
-            'high-risk': '#ef4444'
-          }
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            },
+            accent: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
         }
       }
     }
   </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(148, 163, 184, 0.1); }
+    .startup-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+    }
+    .startup-card {
+      transition: all 0.3s ease;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-  <header class="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-50">
-    <div class="flex justify-between items-center">
-      <div class="flex items-center space-x-4">
-        <h1 class="text-2xl font-bold text-gray-900">Fundora</h1>
-      </div>
-      <div class="flex items-center space-x-4">
-        <a href="/Module_2/Compare_Startups.html?return=/Module_1/Dashboard.html" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-medium transition-colors flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-          </svg>
-          Compare Startups
-        </a>
-        <a id="watchlistLink" href="/Module_1/Watchlist.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-          </svg>
-          My Watchlist
-        </a>
-        <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium transition-colors">Logout</button>
+<body class="bg-slate-950 text-white min-h-screen hero-gradient">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+    <div class="max-w-[1920px] mx-auto px-6 py-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+          <div class="relative w-10 h-10">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)" stroke="#3b82f6" stroke-width="2"/>
+              <path d="M20 10 L20 30 M12 20 L28 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="20" cy="12" r="2" fill="white"/>
+              <circle cx="20" cy="28" r="2" fill="white"/>
+              <circle cx="12" cy="20" r="2" fill="white"/>
+              <circle cx="28" cy="20" r="2" fill="white"/>
+              <defs>
+                <linearGradient id="logo-gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#3b82f6"/>
+                  <stop offset="100%" stop-color="#10b981"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold">Fundora</h1>
+        </div>
+        <div class="flex items-center space-x-3">
+          <a href="/Module_2/Compare_Startups.html?return=/Module_1/Dashboard.html" class="bg-accent-600 hover:bg-accent-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <span>Compare Startups</span>
+          </a>
+          <a id="watchlistLink" href="/Module_1/Watchlist.html" class="relative bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+            <span>My Watchlist</span>
+            <span id="watchlist-badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">0</span>
+          </a>
+          <button id="logoutBtn" class="bg-slate-800/50 hover:bg-slate-700/50 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-slate-700">Logout</button>
+        </div>
       </div>
     </div>
   </header>
 
-  <div class="flex">
-    <aside class="fixed top-16 left-0 w-80 h-[calc(100vh-64px)] bg-white border-r border-gray-200 p-6 overflow-y-auto">
+  <div class="flex max-w-[1920px] mx-auto">
+    <!-- Sidebar -->
+    <aside class="sticky top-20 h-[calc(100vh-80px)] w-80 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800 p-6 overflow-y-auto">
       <form id="filterForm" class="space-y-6">
-        <div class="bg-gray-50 p-4 rounded-lg">
-          <label class="block text-sm font-medium text-gray-700 mb-3">Quick Presets</label>
+        <!-- Quick Presets -->
+        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+          <label class="block text-sm font-semibold text-gray-300 mb-3">Quick Presets</label>
           <div class="grid grid-cols-1 gap-2">
-            <button type="button" onclick="applyPreset('conservative')" class="preset-btn w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition">
-              <div class="flex items-center justify-between"><span class="font-medium">Conservative</span><span class="text-xs text-gray-500">Low Risk</span></div>
+            <button type="button" onclick="applyPreset('conservative')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-700/50 hover:border-brand-500 transition-all">
+              <div class="flex items-center justify-between">
+                <span class="font-medium text-white">Conservative</span>
+                <span class="text-xs text-gray-400">Low Risk</span>
+              </div>
             </button>
-            <button type="button" onclick="applyPreset('balanced')" class="preset-btn w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition">
-              <div class="flex items-center justify-between"><span class="font-medium">Balanced</span><span class="text-xs text-gray-500">Mixed</span></div>
+            <button type="button" onclick="applyPreset('balanced')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-700/50 hover:border-brand-500 transition-all">
+              <div class="flex items-center justify-between">
+                <span class="font-medium text-white">Balanced</span>
+                <span class="text-xs text-gray-400">Mixed</span>
+              </div>
             </button>
-            <button type="button" onclick="applyPreset('aggressive')" class="preset-btn w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition">
-              <div class="flex items-center justify-between"><span class="font-medium">Aggressive</span><span class="text-xs text-gray-500">High Risk</span></div>
+            <button type="button" onclick="applyPreset('aggressive')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-700/50 hover:border-brand-500 transition-all">
+              <div class="flex items-center justify-between">
+                <span class="font-medium text-white">Aggressive</span>
+                <span class="text-xs text-gray-400">High Risk</span>
+              </div>
             </button>
           </div>
         </div>
 
+        <!-- Startup Type -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-3">Startup Type</label>
+          <label class="block text-sm font-semibold text-gray-300 mb-3">Startup Type</label>
           <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="setStartupType('financial')" id="type-financial" class="type-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+            <button type="button" onclick="setStartupType('financial')" id="type-financial" class="type-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
               Financial Data
             </button>
-            <button type="button" onclick="setStartupType('pitch_deck')" id="type-pitch_deck" class="type-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+            <button type="button" onclick="setStartupType('pitch_deck')" id="type-pitch_deck" class="type-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
               Pitch Decks
             </button>
           </div>
@@ -77,8 +144,8 @@
         <!-- Financial Data Filters -->
         <div id="financial-filters" class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
-            <select name="sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Sort By</label>
+            <select name="sort_by" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Default Order</option>
               <option value="projected_return_desc">Highest Returns First</option>
               <option value="projected_return_asc">Lowest Returns First</option>
@@ -90,8 +157,8 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
-            <select name="industry" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Industry</label>
+            <select name="industry" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">All Industries</option>
               <option value="Technology">Technology</option>
               <option value="Finance">Finance</option>
@@ -104,15 +171,15 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-3">Risk Tolerance</label>
+            <label class="block text-sm font-semibold text-gray-300 mb-3">Risk Tolerance</label>
             <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-accent-500 transition-all">
                 Low
               </button>
-              <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-yellow-500 transition-all">
                 Medium
               </button>
-              <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-red-500 transition-all">
                 High
               </button>
             </div>
@@ -120,8 +187,8 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Projected Return</label>
-            <select name="min_return" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Minimum Projected Return</label>
+            <select name="min_return" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Any Return</option>
               <option value="5">5% or higher</option>
               <option value="10">10% or higher</option>
@@ -138,8 +205,8 @@
         <!-- Pitch Deck Filters -->
         <div id="pitch-deck-filters" class="space-y-6 hidden">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
-            <select name="deck_sort_by" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Sort By</label>
+            <select name="deck_sort_by" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Default Order</option>
               <option value="funding_ask_desc">Highest Funding Ask</option>
               <option value="funding_ask_asc">Lowest Funding Ask</option>
@@ -150,8 +217,8 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Funding Ask Range</label>
-            <select name="funding_ask_range" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Funding Ask Range</label>
+            <select name="funding_ask_range" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Any Amount</option>
               <option value="0-100000">Up to $100K</option>
               <option value="100000-500000">$100K - $500K</option>
@@ -162,15 +229,15 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-3">Market Growth Rate</label>
+            <label class="block text-sm font-semibold text-gray-300 mb-3">Market Growth Rate</label>
             <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="setMarketGrowth('Low')" id="growth-Low" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              <button type="button" onclick="setMarketGrowth('Low')" id="growth-Low" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
                 0-10%
               </button>
-              <button type="button" onclick="setMarketGrowth('Medium')" id="growth-Medium" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              <button type="button" onclick="setMarketGrowth('Medium')" id="growth-Medium" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
                 10-30%
               </button>
-              <button type="button" onclick="setMarketGrowth('High')" id="growth-High" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-gray-300 rounded-md hover:border-blue-400 transition-all">
+              <button type="button" onclick="setMarketGrowth('High')" id="growth-High" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
                 30%+
               </button>
             </div>
@@ -178,8 +245,8 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Market Growth</label>
-            <select name="min_market_growth" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Minimum Market Growth</label>
+            <select name="min_market_growth" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Any Growth Rate</option>
               <option value="5">5% or higher</option>
               <option value="10">10% or higher</option>
@@ -191,21 +258,22 @@
           </div>
         </div>
 
-        <div class="space-y-3 pt-4 border-t border-gray-200">
-          <button type="submit" class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 font-medium transition">Apply Filters</button>
-          <button type="button" onclick="clearAllFilters()" class="w-full bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 font-medium transition">Clear All</button>
+        <div class="space-y-3 pt-4 border-t border-slate-800">
+          <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-all">Apply Filters</button>
+          <button type="button" onclick="clearAllFilters()" class="w-full bg-slate-800/50 hover:bg-slate-700/50 text-white py-2.5 px-4 rounded-lg font-medium transition-all border border-slate-700">Clear All</button>
         </div>
       </form>
     </aside>
 
-    <main class="flex-1 p-6 ml-80">
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
       <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">Investment Opportunities</h2>
-        <p class="text-gray-600">Discover startups tailored to your investment profile</p>
+        <h2 class="text-4xl font-bold mb-2">Investment Opportunities</h2>
+        <p class="text-gray-400 text-lg">Discover startups tailored to your investment profile</p>
       </div>
 
-      <div class="mb-6 flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200">
-        <p class="text-sm text-gray-600">Showing <span id="startup-count" class="font-semibold text-gray-900">0</span> startup<span id="startup-plural">s</span></p>
+      <div class="mb-6 bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-4 rounded-xl flex items-center justify-between">
+        <p class="text-sm text-gray-300">Showing <span id="startup-count" class="font-semibold text-white text-lg">0</span> startup<span id="startup-plural">s</span></p>
         <div id="clear-filters" class="hidden"></div>
       </div>
 
@@ -213,8 +281,8 @@
 
       <div id="no-startups" class="col-span-full text-center py-16 hidden">
         <div class="text-6xl mb-4">🔍</div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">No startups found</h3>
-        <p class="text-gray-500 text-lg mb-6">No startups match your current filters.</p>
+        <h3 class="text-2xl font-semibold mb-2">No startups found</h3>
+        <p class="text-gray-400 text-lg mb-6">No startups match your current filters.</p>
       </div>
     </main>
   </div>
@@ -253,14 +321,14 @@
     async function fetchJSON(url, options = {}) {
       const token = getAuthToken();
       if (!token) {
-        window.location.href = '/login';
+        window.location.href = '/login.html';
         throw new Error('No auth token');
       }
       options.headers = Object.assign({}, options.headers || {}, { 'Authorization': `Bearer ${token}` });
       const res = await fetch(url, options);
       if (res.status === 401 || res.status === 403) {
         localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        window.location.href = '/login.html';
         throw new Error('Unauthorized');
       }
       if (!res.ok) {
@@ -295,7 +363,7 @@
         if (res.status === 201 || res.ok) {
           watchlistIdsSet.add(Number(startupId));
           updateWatchlistBadge();
-          btn && btn.classList.add('text-blue-600');
+          btn && btn.classList.add('text-brand-400');
           return true;
         } else {
           console.warn('Add failed', res.status);
@@ -316,7 +384,7 @@
         if (res.ok) {
           watchlistIdsSet.delete(Number(startupId));
           updateWatchlistBadge();
-          btn && btn.classList.remove('text-blue-600');
+          btn && btn.classList.remove('text-brand-400');
           return true;
         } else {
           console.warn('Remove failed', res.status);
@@ -337,14 +405,14 @@
 
     function setStartupType(type) {
       document.querySelectorAll('.type-btn').forEach(btn => {
-        btn.classList.remove('border-blue-500', 'bg-blue-50');
-        btn.classList.add('border-gray-300');
+        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
+        btn.classList.add('border-slate-700');
       });
       
       const selectedBtn = document.getElementById(`type-${type}`);
       if (selectedBtn) {
-        selectedBtn.classList.remove('border-gray-300');
-        selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+        selectedBtn.classList.remove('border-slate-700');
+        selectedBtn.classList.add('border-brand-500', 'bg-brand-500/20');
       }
       
       document.getElementById('type-hidden').value = type;
@@ -365,14 +433,14 @@
 
     function setMarketGrowth(level) {
       document.querySelectorAll('.growth-btn').forEach(btn => {
-        btn.classList.remove('border-blue-500', 'bg-blue-50');
-        btn.classList.add('border-gray-300');
+        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
+        btn.classList.add('border-slate-700');
       });
       
       const selectedBtn = document.getElementById(`growth-${level}`);
       if (selectedBtn) {
-        selectedBtn.classList.remove('border-gray-300');
-        selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+        selectedBtn.classList.remove('border-slate-700');
+        selectedBtn.classList.add('border-brand-500', 'bg-brand-500/20');
       }
       
       document.getElementById('growth-hidden').value = level;
@@ -460,7 +528,7 @@
 
     function createStartupCard(startup) {
       const card = document.createElement('div');
-      card.className = 'startup-card bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition flex flex-col';
+      card.className = 'startup-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 hover:shadow-2xl transition-all flex flex-col';
       const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
       card.setAttribute('data-startup-id', startup.id);
       card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
@@ -468,19 +536,19 @@
       let riskBadge;
       let hasDataPending = false;
       if (isDeck) {
-        riskBadge = '<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-1 rounded-full">Pitch Deck</span>';
+        riskBadge = '<span class="bg-purple-500/20 text-purple-300 text-xs font-medium px-3 py-1 rounded-full border border-purple-500/30">Pitch Deck</span>';
       } else if (startup.risk_level) {
         const riskLevel = startup.risk_level.toLowerCase();
         if (riskLevel === 'low') {
-          riskBadge = '<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">Low Risk</span>';
+          riskBadge = '<span class="bg-green-500/20 text-green-300 text-xs font-medium px-3 py-1 rounded-full border border-green-500/30">Low Risk</span>';
         } else if (riskLevel === 'medium') {
-          riskBadge = '<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full">Medium Risk</span>';
+          riskBadge = '<span class="bg-yellow-500/20 text-yellow-300 text-xs font-medium px-3 py-1 rounded-full border border-yellow-500/30">Medium Risk</span>';
         } else {
-          riskBadge = '<span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full">High Risk</span>';
+          riskBadge = '<span class="bg-red-500/20 text-red-300 text-xs font-medium px-3 py-1 rounded-full border border-red-500/30">High Risk</span>';
         }
       } else {
         hasDataPending = true;
-        riskBadge = '<span class="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full">Data Pending</span>';
+        riskBadge = '<span class="bg-gray-500/20 text-gray-300 text-xs font-medium px-3 py-1 rounded-full border border-gray-500/30">Data Pending</span>';
       }
 
       const industry = isDeck ? (startup.tagline || '—') : (startup.industry || '—');
@@ -502,19 +570,19 @@
 
       let metricsSection;
       if (isDeck) {
-        const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
+        const fundingAmount = startup.funding_ask ? `${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
         const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
         const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
         
         metricsSection = `
           <div class="space-y-3 mb-4 flex-grow">
             <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-600">Funding Ask</span>
-              <span class="text-sm font-semibold text-purple-600">${escapeHtml(fundingAmount)}</span>
+              <span class="text-sm text-gray-400">Funding Ask</span>
+              <span class="text-sm font-semibold text-purple-400">${escapeHtml(fundingAmount)}</span>
             </div>
             <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-600">Market Growth</span>
-              <span class="text-sm font-semibold text-green-600">${escapeHtml(marketGrowthDisplay)}</span>
+              <span class="text-sm text-gray-400">Market Growth</span>
+              <span class="text-sm font-semibold text-accent-400">${escapeHtml(marketGrowthDisplay)}</span>
             </div>
           </div>
         `;
@@ -522,12 +590,12 @@
         metricsSection = `
           <div class="space-y-3 mb-4 flex-grow">
             <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-600">Reward Potential</span>
-              <span class="text-sm font-semibold">${escapeHtml(rewardDisplay)}</span>
+              <span class="text-sm text-gray-400">Reward Potential</span>
+              <span class="text-sm font-semibold text-white">${escapeHtml(rewardDisplay)}</span>
             </div>
             <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-600">Projected Return</span>
-              <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-green-600' : 'text-red-600'}">${escapeHtml(projected)}</span>
+              <span class="text-sm text-gray-400">Projected Return</span>
+              <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(projected)}</span>
             </div>
           </div>
         `;
@@ -536,8 +604,8 @@
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="flex-1">
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">${escapeHtml(startup.company_name)}</h3>
-            <p class="text-sm text-gray-600">${escapeHtml(industry)}</p>
+            <h3 class="text-lg font-semibold text-white mb-1">${escapeHtml(startup.company_name)}</h3>
+            <p class="text-sm text-gray-400">${escapeHtml(industry)}</p>
           </div>
           <div class="flex flex-col items-end space-y-2">
             ${riskBadge}
@@ -548,10 +616,10 @@
         </div>
         ${metricsSection}
         <div class="flex gap-2 mt-auto">
-          <button class="view-details-btn flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
+          <button class="view-details-btn flex-1 px-4 py-2.5 border border-slate-700 bg-slate-800/50 text-white rounded-lg hover:bg-slate-700/50 hover:border-slate-600 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
           ${hasDataPending 
-          ? '<button class="invest-btn flex-1 px-3 py-2 bg-gray-300 text-gray-500 rounded-md text-sm text-center cursor-not-allowed" disabled title="Cannot invest - data pending">Invest</button>'
-          : `<a class="invest-btn flex-1 px-3 py-2 bg-blue-600 text-white rounded-md text-sm text-center hover:bg-blue-700" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>`
+          ? '<button class="invest-btn flex-1 px-4 py-2.5 bg-gray-500/20 text-gray-400 rounded-lg text-sm text-center cursor-not-allowed border border-gray-500/30" disabled title="Cannot invest - data pending">Invest</button>'
+          : `<a class="invest-btn flex-1 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm text-center font-medium transition-all" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>`
         }
         </div>
       `;
@@ -598,7 +666,7 @@
 
     function watchIcon(active) {
       if (active) {
-        return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+        return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
       }
       return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35l-0.45-0.41C6.4 15.36 3 12.28 3 8.5 3 6 5 4 7.5 4c1.54 0 3.04 .99 3.57 2.36h0.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5z"/></svg>`;
     }
@@ -695,7 +763,7 @@
       
       const grid = document.getElementById('startup-grid');
       const noStartups = document.getElementById('no-startups');
-      grid.innerHTML = '<div class="col-span-full text-center py-16"><div class="text-4xl mb-4">⏳</div><p class="text-gray-600">Loading startups...</p></div>';
+      grid.innerHTML = '<div class="col-span-full text-center py-16"><div class="text-4xl mb-4">⏳</div><p class="text-gray-400">Loading startups...</p></div>';
       noStartups.classList.add('hidden');
       
       const startups = await fetchStartups();
@@ -740,14 +808,20 @@
 
     function setRiskLevel(level) {
       document.querySelectorAll('.risk-btn').forEach(btn => {
-        btn.classList.remove('border-blue-500', 'bg-blue-50');
-        btn.classList.add('border-gray-300');
+        btn.classList.remove('border-accent-500', 'bg-accent-500/20', 'border-yellow-500', 'bg-yellow-500/20', 'border-red-500', 'bg-red-500/20');
+        btn.classList.add('border-slate-700');
       });
       
       const selectedBtn = document.getElementById(`risk-${level}`);
       if (selectedBtn) {
-        selectedBtn.classList.remove('border-gray-300');
-        selectedBtn.classList.add('border-blue-500', 'bg-blue-50');
+        selectedBtn.classList.remove('border-slate-700');
+        if (level === 'Low') {
+          selectedBtn.classList.add('border-accent-500', 'bg-accent-500/20');
+        } else if (level === 'Medium') {
+          selectedBtn.classList.add('border-yellow-500', 'bg-yellow-500/20');
+        } else {
+          selectedBtn.classList.add('border-red-500', 'bg-red-500/20');
+        }
       }
       
       document.getElementById('risk-hidden').value = level;
@@ -759,8 +833,8 @@
       form.reset();
       
       document.querySelectorAll('.type-btn').forEach(btn => {
-        btn.classList.remove('border-blue-500', 'bg-blue-50');
-        btn.classList.add('border-gray-300');
+        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
+        btn.classList.add('border-slate-700');
       });
       document.getElementById('type-hidden').value = '';
       
@@ -768,13 +842,13 @@
       document.getElementById('pitch-deck-filters').classList.add('hidden');
       
       document.querySelectorAll('.risk-btn').forEach(btn => {
-        btn.classList.remove('border-blue-500', 'bg-blue-50');
-        btn.classList.add('border-gray-300');
+        btn.classList.remove('border-accent-500', 'bg-accent-500/20', 'border-yellow-500', 'bg-yellow-500/20', 'border-red-500', 'bg-red-500/20');
+        btn.classList.add('border-slate-700');
       });
       
       document.querySelectorAll('.growth-btn').forEach(btn => {
-        btn.classList.remove('border-blue-500', 'bg-blue-50');
-        btn.classList.add('border-gray-300');
+        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
+        btn.classList.add('border-slate-700');
       });
       
       document.getElementById('risk-hidden').value = '';
@@ -829,7 +903,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       const token = getAuthToken();
-      if (!token) { window.location.href = '/login'; return; }
+      if (!token) { window.location.href = '/login.html'; return; }
 
       try {
         await refreshWatchlist();
@@ -846,12 +920,5 @@
       removeFromWatchlist
     };
   </script>
-
-  <style>
-    .startup-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-  </style>
 </body>
 </html>
