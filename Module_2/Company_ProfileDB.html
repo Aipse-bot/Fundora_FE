@@ -6,113 +6,154 @@
   <title>Pitch Deck Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            },
+            accent: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
   <style>
-    body {
-      font-family: "Inter", sans-serif;
-      background-color: #f8fafc;
-    }
+    body { font-family: 'Inter', sans-serif; }
+    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(148, 163, 184, 0.1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
   </style>
 </head>
-<body class="bg-gray-50 text-black min-h-screen">
-  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center">
-          <button id="backBtn" class="mr-4 p-2 hover:bg-gray-100 rounded-full">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-          </button>
+<body class="bg-slate-950 text-white min-h-screen hero-gradient">
+  <div class="max-w-7xl mx-auto p-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8 fade-in">
+      <div class="flex items-center">
+        <button id="backBtn" class="mr-6 p-2.5 hover:bg-slate-800/50 rounded-lg transition-all border border-slate-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <div>
+          <h1 id="deck-name" class="text-3xl font-bold mb-2">Loading...</h1>
+          <p id="deck-tagline" class="text-lg text-gray-400">Loading...</p>
         </div>
-        <div id="header-user" class="flex items-center space-x-4"></div>
       </div>
     </div>
-  </header>
 
-  <div class="py-0">
-    <div class="max-w-screen-xl mx-auto space-y-8 p-4 sm:p-6 lg:p-8">
-      <div class="bg-blue-600 text-white px-4 sm:px-6 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg">
-        <div class="flex items-center space-x-4">
-          <!-- Todo: company logo if ganahan -->
-          <!-- <div id="deck-initial" class="bg-white text-blue-600 font-bold w-10 h-10 flex items-center justify-center text-xl">L</div> -->
-          <div>
-            <h1 id="deck-name" class="text-2xl sm:text-3xl font-semibold">Loading...</h1>
-            <p id="deck-tagline" class="text-lg sm:text-xl text-blue-100">Loading...</p>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left Column -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Problem & Solution -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in delay-1">
+          <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+            <h2 class="text-2xl font-semibold mb-4">The Problem</h2>
+            <p id="problem-description" class="text-gray-300 leading-relaxed">—</p>
+          </div>
+          <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+            <h2 class="text-2xl font-semibold mb-4">The Solution</h2>
+            <p id="solution-description" class="text-gray-300 leading-relaxed">—</p>
           </div>
         </div>
-        <div id="deck-nav" class="flex flex-col sm:flex-row gap-2 sm:gap-3"></div>
+
+        <!-- Market Analysis -->
+        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-2">
+          <div class="flex items-center mb-6">
+            <div class="w-10 h-10 bg-brand-500/20 rounded-lg flex items-center justify-center mr-3">
+              <svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+              </svg>
+            </div>
+            <h2 class="text-2xl font-semibold">Market Analysis</h2>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4">
+              <div class="text-sm text-gray-400 mb-1">Primary Market</div>
+              <div id="primary-market" class="text-lg font-semibold text-brand-400">—</div>
+            </div>
+            <div class="bg-accent-500/10 border border-accent-500/30 rounded-lg p-4">
+              <div class="text-sm text-gray-400 mb-1">Target Audience</div>
+              <div id="target-audience" class="text-lg font-semibold text-accent-400">—</div>
+            </div>
+            <div class="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
+              <div class="text-sm text-gray-400 mb-1">Market Growth (YOY)</div>
+              <div id="market-growth" class="text-lg font-semibold text-orange-400">—</div>
+            </div>
+            <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4">
+              <div class="text-sm text-gray-400 mb-1">Competitive Advantage</div>
+              <div id="competitive-advantage" class="text-lg font-semibold text-purple-400">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Projections -->
+        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-2">
+          <div class="flex items-center mb-6">
+            <div class="w-10 h-10 bg-accent-500/20 rounded-lg flex items-center justify-center mr-3">
+              <svg class="w-5 h-5 text-accent-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+              </svg>
+            </div>
+            <h2 class="text-2xl font-semibold">Financial Projections</h2>
+          </div>
+          <div id="financial-table-container" class="mb-6"></div>
+          <div class="mt-6">
+            <canvas id="revenueProfitChart" class="w-full" style="height: 300px;"></canvas>
+          </div>
+        </div>
+
+        <!-- The Ask -->
+        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-3">
+          <h2 class="text-2xl font-semibold mb-6">The Ask</h2>
+          <div id="ask-section" class="space-y-3">
+            <p class="text-gray-400">No funding information available</p>
+          </div>
+        </div>
       </div>
 
-      <div class="flex flex-col lg:flex-row gap-6">
-        <div class="flex-1 space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="px-4 py-6 bg-white border rounded">
-              <h2 class="text-xl font-bold text-black mb-2">The Problem</h2>
-              <div class="w-full h-1 bg-blue-500 mb-4"></div>
-              <p id="problem-description" class="text-gray-500 text-lg">—</p>
-            </div>
-            <div class="px-4 py-6 bg-white border rounded">
-              <h2 class="text-xl font-bold text-black mb-2">The Solution</h2>
-              <div class="w-full h-1 bg-blue-500 mb-4"></div>
-              <p id="solution-description" class="text-gray-500 text-lg">—</p>
-            </div>
-          </div>
-
-          <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-4 sm:p-6 rounded shadow text-left">
-              <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Market Analysis</h2>
-              <div class="space-y-3">
-                <div class="flex justify-between">
-                  <span class="text-gray-600 font-medium">Primary Market:</span>
-                  <span id="primary-market" class="text-gray-900 font-semibold">—</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600 font-medium">Target Audience:</span>
-                  <span id="target-audience" class="text-gray-900 font-semibold">—</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600 font-medium">Market Growth (YOY):</span>
-                  <span id="market-growth" class="text-green-600 font-semibold">—</span>
-                </div>
-                <div class="mt-4">
-                  <span class="text-gray-600 font-medium">Our Advantage:</span>
-                  <p id="competitive-advantage" class="text-blue-600 mt-1">—</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white p-4 sm:p-6 rounded shadow">
-              <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Financial Projection</h2>
-              <div id="financial-table-container" class="overflow-x-auto mb-4"></div>
-              <div class="mt-4">
-                <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">Revenue & Profit Chart</h3>
-                <canvas id="revenueProfitChart" class="w-full h-64"></canvas>
-              </div>
-            </div>
-          </section>
-
-          <div class="px-4 py-6 bg-white border rounded text-center">
-            <h2 class="text-xl font-bold text-black mb-4">THE ASK</h2>
-            <div id="ask-section" class="space-y-3">
-              <p class="text-gray-500">No funding information available</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="w-full lg:w-80 space-y-6">
-          <div class="px-4 py-6 bg-white border rounded">
-            <h2 class="text-xl font-bold text-black mb-4">Actions</h2>
-            <div id="actions-panel" class="space-y-3">
-              <button class="w-full bg-gray-300 text-gray-500 font-medium py-3 px-4 rounded-lg flex items-center justify-center cursor-not-allowed" disabled>
-                <svg class="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Loading...
-              </button>
-            </div>
-          </div>
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <!-- Action Buttons -->
+        <div class="space-y-3 fade-in delay-1">
+          <button id="watchlistBtn" class="w-full font-semibold py-3.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center" disabled>
+            <svg class="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Loading...
+          </button>
+          <a id="investBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-all duration-200 text-center block">
+            Invest
+          </a>
         </div>
       </div>
     </div>
@@ -170,7 +211,6 @@
     function populateHeaderFromStartup(startup) {
       const initial = (startup.company_name || "—").charAt(0).toUpperCase() || "L";
       document.title = startup.company_name || "Company Profile";
-      // document.getElementById("deck-initial").textContent = initial;
       document.getElementById("deck-name").textContent = startup.company_name || "—";
       document.getElementById("deck-tagline").textContent = startup.company_description || "—";
     }
@@ -178,13 +218,17 @@
     function populateAsk(ask) {
       const askSection = document.getElementById("ask-section");
       if (!ask) {
-        askSection.innerHTML = `<p class="text-gray-500">No funding information available</p>`;
+        askSection.innerHTML = `<p class="text-gray-400">No funding information available</p>`;
         return;
       }
       const amt = (ask.amount != null && !isNaN(Number(ask.amount))) ? `₱${Number(ask.amount).toLocaleString()}` : (ask.amount || "—");
       askSection.innerHTML = `
-        <p class="text-lg font-semibold text-gray-800">Funding Goal: ${amt}</p>
-        <p class="text-gray-600">Use of Funds: ${ask.usage_description || "—"}</p>
+        <div class="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4">
+          <div class="text-sm text-gray-400 mb-1">Funding Goal</div>
+          <div class="text-2xl font-bold text-brand-400 mb-3">${amt}</div>
+          <div class="text-sm text-gray-400 mb-1">Use of Funds</div>
+          <p class="text-gray-300">${ask.usage_description || "—"}</p>
+        </div>
       `;
     }
 
@@ -203,39 +247,32 @@
       document.getElementById("solution-description").textContent = solutionText || "—";
     }
 
-    function buildActionsPanel(startupIdParam) {
-      const actionsPanel = document.getElementById("actions-panel");
+    function updateWatchlistButton(inWatchlist) {
+      const watchBtn = document.getElementById("watchlistBtn");
+      if (!watchBtn) return;
       
-      // Check if startup is in watchlist
-      const inWatchlist = watchlistIdsSet.has(Number(startupIdParam));
+      watchBtn.disabled = false;
       currentWatchlistState = inWatchlist;
-      
-      console.log('Building actions panel, startup', startupIdParam, 'in watchlist:', inWatchlist);
-      
-      const watchBtnText = inWatchlist 
-          ? `<svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg> In Watchlist`
-          : `<svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-            </svg> Add to Watchlist`;
-      
-      const watchBtnClass = inWatchlist 
-          ? "bg-gray-500 hover:bg-gray-600" 
-          : "bg-red-400 hover:bg-red-500";
 
-      actionsPanel.innerHTML = `
-          <button id="watchlistBtn" class="w-full ${watchBtnClass} text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200">
-              ${watchBtnText}
-          </button>
-          <a href="../Module_2/Investment_Simulation.html?startup_id=${startupIdParam}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors duration-200">
-              Invest
-          </a>
-      `;
-      
-      document.getElementById("watchlistBtn").onclick = async () => {
-          await toggleWatchlist(!currentWatchlistState);
-      };
+      if (inWatchlist) {
+        watchBtn.innerHTML = `
+          <svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          In Watchlist
+        `;
+        watchBtn.className = "w-full bg-slate-800/50 hover:bg-slate-700/50 text-white font-semibold py-3.5 px-4 rounded-lg flex items-center justify-center transition-all duration-200 border border-slate-700";
+        watchBtn.onclick = () => toggleWatchlist(false);
+      } else {
+        watchBtn.innerHTML = `
+          <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+          Add to Watchlist
+        `;
+        watchBtn.className = "w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3.5 px-4 rounded-lg flex items-center justify-center transition-all duration-200";
+        watchBtn.onclick = () => toggleWatchlist(true);
+      }
     }
 
     async function toggleWatchlist(shouldAdd) {
@@ -245,93 +282,73 @@
       watchBtn.disabled = true;
       
       const originalHTML = watchBtn.innerHTML;
-      watchBtn.innerHTML = `<svg class="w-5 h-5 mr-2 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Updating...`;
+      watchBtn.innerHTML = `
+        <svg class="w-5 h-5 mr-2 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Updating...
+      `;
 
       try {
-          const action = shouldAdd ? 'add' : 'remove';
-          const method = shouldAdd ? 'POST' : 'DELETE';
-          
-          console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
-          
-          const res = await fetch(`https://fundora-be-singapore.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
-              method: method,
-              headers: authHeaders()
-          });
-          
-          console.log('Response status:', res.status);
-          
-          if (!res.ok) {
-              const errorText = await res.text();
-              console.error('Response error:', errorText);
-              throw new Error(`Failed to ${action} watchlist: ${res.status} ${errorText}`);
-          }
+        const action = shouldAdd ? 'add' : 'remove';
+        const method = shouldAdd ? 'POST' : 'DELETE';
+        
+        console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
+        
+        const res = await fetch(`https://fundora-be-singapore.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
+          method: method,
+          headers: authHeaders()
+        });
+        
+        console.log('Response status:', res.status);
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('Response error:', errorText);
+          throw new Error(`Failed to ${action} watchlist: ${res.status} ${errorText}`);
+        }
 
-          const result = await res.json();
-          console.log('Watchlist response:', result);
-          
-          // Update local state
-          if (shouldAdd) {
-              watchlistIdsSet.add(Number(startupId));
-          } else {
-              watchlistIdsSet.delete(Number(startupId));
-          }
-          currentWatchlistState = shouldAdd;
-          
-          showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');
-          
-          updateWatchlistButton(shouldAdd);
-          
+        const result = await res.json();
+        console.log('Watchlist response:', result);
+        
+        if (shouldAdd) {
+          watchlistIdsSet.add(Number(startupId));
+        } else {
+          watchlistIdsSet.delete(Number(startupId));
+        }
+        currentWatchlistState = shouldAdd;
+        
+        showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');
+        
+        updateWatchlistButton(shouldAdd);
+        
       } catch (err) {
-          console.error('Watchlist toggle failed:', err);
-          showNotification(err.message || 'Failed to update watchlist. Please try again.', 'error');
-          
-          watchBtn.innerHTML = originalHTML;
-          watchBtn.disabled = false;
+        console.error('Watchlist toggle failed:', err);
+        showNotification(err.message || 'Failed to update watchlist. Please try again.', 'error');
+        
+        watchBtn.innerHTML = originalHTML;
+        watchBtn.disabled = false;
       }
-    }
-
-    function updateWatchlistButton(inWatchlist) {
-      const watchBtn = document.getElementById("watchlistBtn");
-      if (!watchBtn) return;
-      
-      watchBtn.disabled = false;
-      currentWatchlistState = inWatchlist;
-
-      const watchBtnText = inWatchlist 
-          ? `<svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg> In Watchlist`
-          : `<svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-            </svg> Add to Watchlist`;
-      
-      const watchBtnClass = inWatchlist 
-          ? "bg-gray-500 hover:bg-gray-600" 
-          : "bg-red-400 hover:bg-red-500";
-
-      watchBtn.innerHTML = watchBtnText;
-      watchBtn.className = `w-full ${watchBtnClass} text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200`;
-      watchBtn.onclick = async () => {
-          await toggleWatchlist(!inWatchlist);
-      };
     }
 
     function showNotification(message, type) {
       const div = document.createElement('div');
-      div.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+      div.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl font-medium ${type === 'success' ? 'bg-accent-600' : 'bg-red-600'} text-white`;
       div.textContent = message;
+      div.style.opacity = '0';
       document.body.appendChild(div);
+      setTimeout(() => div.style.opacity = '1', 10);
       setTimeout(() => {
-          div.style.opacity = '0';
-          div.style.transition = 'opacity 300ms';
-          setTimeout(() => div.remove(), 300);
+        div.style.opacity = '0';
+        setTimeout(() => div.remove(), 300);
       }, 3000);
     }
 
     function renderFinancialTable(financials) {
       const container = document.getElementById("financial-table-container");
       if (!financials || financials.length === 0) {
-        container.innerHTML = "<p class='text-gray-500 text-center'>No financial data available.</p>";
+        container.innerHTML = "<p class='text-gray-400 text-center'>No financial data available.</p>";
         return;
       }
 
@@ -342,19 +359,27 @@
       })).sort((a,b) => (Number(a.year) || 0) - (Number(b.year) || 0));
 
       const rows = parsed.map(f => `
-        <tr class="border-b">
-          <td class="py-2 px-3">${f.year}</td>
-          <td class="py-2 px-3 text-blue-600 font-semibold">₱${f.revenue.toLocaleString()}</td>
-          <td class="py-2 px-3 text-green-600 font-semibold">₱${f.profit.toLocaleString()}</td>
+        <tr class="border-b border-slate-800">
+          <td class="py-3 px-3 text-gray-300">${f.year}</td>
+          <td class="py-3 px-3 text-brand-400 font-semibold">₱${f.revenue.toLocaleString()}</td>
+          <td class="py-3 px-3 text-accent-400 font-semibold">₱${f.profit.toLocaleString()}</td>
         </tr>
       `).join('');
 
       container.innerHTML = `
-        <table class="min-w-full text-sm text-left">
-          <thead class="bg-gray-100 font-semibold text-gray-700">
-            <tr><th class="py-2 px-3">Year</th><th class="py-2 px-3">Revenue</th><th class="py-2 px-3">Profit</th></tr>
-          </thead><tbody>${rows}</tbody>
-        </table>`;
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-slate-800/50 font-semibold text-gray-300">
+              <tr>
+                <th class="py-3 px-3 text-left rounded-tl-lg">Year</th>
+                <th class="py-3 px-3 text-left">Revenue</th>
+                <th class="py-3 px-3 text-left rounded-tr-lg">Profit</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
 
       const ctxEl = document.getElementById("revenueProfitChart");
       if (!ctxEl) return;
@@ -375,8 +400,25 @@
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#fff' }
+            }
+          },
           scales: {
-            y: { beginAtZero: true, ticks: { callback: v => "₱" + Number(v).toLocaleString() } }
+            x: {
+              ticks: { color: '#9ca3af' },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#9ca3af',
+                callback: v => "₱" + Number(v).toLocaleString()
+              },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+            }
           }
         }
       });
@@ -396,7 +438,6 @@
         return;
       }
 
-      // Refresh watchlist first
       await refreshWatchlist();
 
       let report = await loadDeckReport(startupId);
@@ -412,8 +453,15 @@
         populateProblemSolution(problem, solution);
         populateMarket(market);
         populateAsk(ask);
-        buildActionsPanel(startupId);
         renderFinancialTable(financials);
+        
+        const inWatchlist = watchlistIdsSet.has(Number(startupId));
+        currentWatchlistState = inWatchlist;
+        updateWatchlistButton(inWatchlist);
+        
+        const investBtn = document.getElementById("investBtn");
+        const currentPath = window.location.pathname + window.location.search;
+        investBtn.href = `../Module_2/Investment_Simulation.html?startup_id=${startupId}&return=${encodeURIComponent(currentPath)}`;
         return;
       }
 
@@ -423,7 +471,9 @@
         const fallback = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`);
         if (fallback) {
           populateHeaderFromStartup(fallback);
-          buildActionsPanel(startupId);
+          const inWatchlist = watchlistIdsSet.has(Number(startupId));
+          currentWatchlistState = inWatchlist;
+          updateWatchlistButton(inWatchlist);
         } else {
           document.getElementById("deck-name").textContent = "Startup not found";
         }
@@ -463,10 +513,15 @@
         renderFinancialTable(data.financials || []);
       }
 
-      buildActionsPanel(startupId);
+      const inWatchlist = watchlistIdsSet.has(Number(startupId));
+      currentWatchlistState = inWatchlist;
+      updateWatchlistButton(inWatchlist);
+      
+      const investBtn = document.getElementById("investBtn");
+      const currentPath = window.location.pathname + window.location.search;
+      investBtn.href = `../Module_2/Investment_Simulation.html?startup_id=${startupId}&return=${encodeURIComponent(currentPath)}`;
     }
 
-    // Setup back button navigation
     document.getElementById('backBtn').addEventListener('click', () => {
       if (returnUrl) {
         window.location.href = returnUrl;

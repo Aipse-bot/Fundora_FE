@@ -6,41 +6,88 @@
   <title>Investment Simulation - Fundora Platform</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            },
+            accent: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-  <header class="bg-blue-600 text-white shadow-lg">
-    <div class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+<body class="bg-slate-950 text-white min-h-screen hero-gradient">
+  <!-- Header -->
+  <header class="border-b border-slate-800 fade-in">
+    <div class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
       <div class="flex items-center">
-        <a href="#" id="back-button" class="mr-4 p-2 hover:bg-blue-700 rounded-lg transition-colors">
+        <button id="back-button" class="mr-6 p-2.5 hover:bg-slate-800/50 rounded-lg transition-all border border-slate-700">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
-        </a>
+        </button>
         <div>
           <h1 class="text-2xl font-bold">Investment Simulation</h1>
-          <p id="startupName" class="text-lg text-blue-100">Loading...</p>
+          <p id="startupName" class="text-lg text-gray-400 mt-1">Loading...</p>
         </div>
       </div>
-      <span id="risk-badge" class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">Low Risk</span>
+      <span id="risk-badge" class="bg-green-500/20 text-green-300 text-sm font-medium px-4 py-2 rounded-full border border-green-500/30">Low Risk</span>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-6 py-8">
-    <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
-      <h2 class="text-xl font-semibold text-gray-900 mb-6">Simulation Parameters</h2>
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Parameters Section -->
+    <section class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 mb-8 fade-in delay-1">
+      <h2 class="text-2xl font-semibold mb-6">Simulation Parameters</h2>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <label class="text-sm font-medium text-gray-700 mb-3 block">Investment Amount</label>
+          <label class="text-sm font-medium text-gray-300 mb-3 block">Investment Amount</label>
           <div class="relative">
-            <span class="absolute left-4 top-4 text-gray-500 font-medium">₱</span>
-            <input type="number" id="investment-amount" class="w-full pl-10 pr-4 py-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg font-semibold" placeholder="Enter amount" min="1000" step="1000" />
+            <span class="absolute left-4 top-4 text-gray-400 font-medium">₱</span>
+            <input type="number" id="investment-amount" class="w-full pl-10 pr-4 py-4 bg-slate-800/50 border border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent text-lg font-semibold text-white placeholder-gray-500" placeholder="Enter amount" min="1000" step="1000" />
           </div>
         </div>
 
         <div>
-          <label class="text-sm font-medium text-gray-700 mb-3 block">Simulation Duration</label>
-          <select id="duration-years" class="w-full px-4 py-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg font-semibold bg-white">
+          <label class="text-sm font-medium text-gray-300 mb-3 block">Simulation Duration</label>
+          <select id="duration-years" class="w-full px-4 py-4 bg-slate-800/50 border border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 text-lg font-semibold text-white">
             <option value="" disabled selected>Select duration</option>
             <option value="1">1 Year</option>
             <option value="2">2 Years</option>
@@ -51,73 +98,76 @@
         </div>
 
         <div>
-          <label class="text-sm font-medium text-gray-700 mb-3 block">Estimated Growth Rate</label>
+          <label class="text-sm font-medium text-gray-300 mb-3 block">Estimated Growth Rate</label>
           <div class="flex">
             <div id="growth-rate-display"
-                 class="flex-1 px-4 py-4 border-2 border-gray-300 rounded-l-lg bg-gray-100 text-lg font-semibold text-gray-700">
+                 class="flex-1 px-4 py-4 bg-slate-800/50 border border-slate-700 rounded-l-lg text-lg font-semibold text-brand-400">
               0
             </div>
-            <span class="px-4 py-4 bg-gray-200 border-2 border-l-0 border-gray-300 rounded-r-lg text-gray-500 font-medium">% per year (Auto)</span>
+            <span class="px-4 py-4 bg-slate-800/30 border border-l-0 border-slate-700 rounded-r-lg text-gray-400 font-medium">% per year (Auto)</span>
           </div>
         </div>
       </div>
 
       <div class="flex justify-center mt-8">
-        <button id="simulate-btn" onclick="runSimulation()" class="bg-blue-600 text-white font-semibold py-4 px-12 rounded-lg shadow-lg hover:shadow-xl opacity-50 cursor-not-allowed" disabled>
+        <button id="simulate-btn" onclick="runSimulation()" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold py-4 px-12 rounded-lg shadow-lg transition-all duration-200 opacity-50 cursor-not-allowed" disabled>
           Run Simulation
         </button>
       </div>
     </section>
 
-    <section id="results-section" class="hidden grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6">Projection Summary</h3>
+    <!-- Results Section -->
+    <section id="results-section" class="hidden grid-cols-1 lg:grid-cols-2 gap-8 mb-8 fade-in delay-2">
+      <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8">
+        <h3 class="text-2xl font-semibold mb-6">Projection Summary</h3>
         <div class="space-y-6">
-          <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-            <span class="text-gray-700 font-medium">Initial Investment</span>
-            <span id="initial-investment" class="font-bold text-xl text-gray-900">₱0</span>
+          <div class="flex justify-between items-center p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+            <span class="text-gray-300 font-medium">Initial Investment</span>
+            <span id="initial-investment" class="font-bold text-xl text-white">₱0</span>
           </div>
-          <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg">
-            <span class="text-gray-700 font-medium">Projected Value (<span id="duration-display">0</span> years)</span>
-            <span id="final-value" class="font-bold text-xl text-green-600">₱0</span>
+          <div class="flex justify-between items-center p-4 bg-accent-500/10 rounded-lg border border-accent-500/30">
+            <span class="text-gray-300 font-medium">Projected Value (<span id="duration-display">0</span> years)</span>
+            <span id="final-value" class="font-bold text-xl text-accent-400">₱0</span>
           </div>
-          <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg">
-            <span class="text-gray-700 font-medium">Total Gain</span>
-            <span id="total-gain" class="font-bold text-xl text-blue-600">₱0</span>
+          <div class="flex justify-between items-center p-4 bg-brand-500/10 rounded-lg border border-brand-500/30">
+            <span class="text-gray-300 font-medium">Total Gain</span>
+            <span id="total-gain" class="font-bold text-xl text-brand-400">₱0</span>
           </div>
-          <div class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl p-6 text-center">
+          <div class="bg-gradient-to-r from-accent-500 to-accent-600 text-white rounded-xl p-6 text-center shadow-lg">
             <div class="text-sm font-medium opacity-90 mb-1">ROI Percentage</div>
             <div id="roi-percentage" class="text-3xl font-bold">0%</div>
           </div>
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6">Growth Projection</h3>
+      <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8">
+        <h3 class="text-2xl font-semibold mb-6">Growth Projection</h3>
         <div style="height: 300px;"><canvas id="growthChart"></canvas></div>
       </div>
     </section>
 
-    <section id="breakdown-section" class="hidden bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
-      <h3 class="text-xl font-semibold text-gray-900 mb-6">Annual Breakdown</h3>
+    <!-- Breakdown Section -->
+    <section id="breakdown-section" class="hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 mb-8 fade-in delay-3">
+      <h3 class="text-2xl font-semibold mb-6">Annual Breakdown</h3>
       <div class="overflow-x-auto">
         <table class="w-full">
           <thead>
-            <tr class="bg-gray-50">
-              <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Year</th>
-              <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Starting Value</th>
-              <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Growth</th>
-              <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Ending Value</th>
+            <tr class="bg-slate-800/50">
+              <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300 rounded-tl-lg">Year</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Starting Value</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Growth</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300 rounded-tr-lg">Ending Value</th>
             </tr>
           </thead>
-          <tbody id="breakdown-table" class="divide-y divide-gray-100"></tbody>
+          <tbody id="breakdown-table" class="divide-y divide-slate-800"></tbody>
         </table>
       </div>
     </section>
 
-    <section id="assumptions-section" class="hidden bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 rounded-xl p-8 mb-8">
-      <h4 class="text-lg font-semibold text-yellow-800 mb-4">Important Assumptions</h4>
-      <p class="text-sm text-yellow-700 italic leading-relaxed">
+    <!-- Assumptions Section -->
+    <section id="assumptions-section" class="hidden bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-l-4 border-yellow-500/50 rounded-xl p-8 mb-8 fade-in delay-3">
+      <h4 class="text-lg font-semibold text-yellow-300 mb-4">Important Assumptions</h4>
+      <p class="text-sm text-gray-300 italic leading-relaxed">
         <strong>Disclaimer:</strong> This simulation uses a canonical CAPM-based risk-adjusted return model. Actual results depend on market conditions and startup performance.
       </p>
     </section>
@@ -211,18 +261,18 @@
       
       if (isPitchDeck && !riskLevel) {
         riskBadge.textContent = 'Pitch Deck';
-        riskBadge.className = 'bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full';
+        riskBadge.className = 'bg-purple-500/20 text-purple-300 text-sm font-medium px-4 py-2 rounded-full border border-purple-500/30';
       } else if (!riskLevel) {
         riskBadge.textContent = 'Data Pending';
-        riskBadge.className = 'bg-gray-100 text-gray-600 text-sm font-medium px-3 py-1 rounded-full';
+        riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
       } else {
         riskBadge.textContent = `${riskLevel} Risk`;
         riskBadge.className =
           riskLevel === 'High'
-            ? 'bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full'
+            ? 'bg-red-500/20 text-red-300 text-sm font-medium px-4 py-2 rounded-full border border-red-500/30'
             : riskLevel === 'Medium'
-            ? 'bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full'
-            : 'bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full';
+            ? 'bg-yellow-500/20 text-yellow-300 text-sm font-medium px-4 py-2 rounded-full border border-yellow-500/30'
+            : 'bg-green-500/20 text-green-300 text-sm font-medium px-4 py-2 rounded-full border border-green-500/30';
       }
 
       const investmentInput = document.getElementById('investment-amount');
@@ -234,9 +284,11 @@
           if (investmentInput.value && durationSelect.value) {
             simulateBtn.disabled = false;
             simulateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            simulateBtn.classList.add('hover:bg-brand-700');
           } else {
             simulateBtn.disabled = true;
             simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            simulateBtn.classList.remove('hover:bg-brand-700');
           }
         });
       });
@@ -311,10 +363,10 @@
       yearlyBreakdown.forEach(y => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="px-6 py-4 text-sm font-medium text-gray-900">Year ${y.year}</td>
-          <td class="px-6 py-4 text-sm text-gray-700">₱${Math.round(y.start).toLocaleString()}</td>
-          <td class="px-6 py-4 text-sm font-semibold text-green-600">+₱${Math.round(y.growth).toLocaleString()}</td>
-          <td class="px-6 py-4 text-sm font-bold text-gray-900">₱${Math.round(y.end).toLocaleString()}</td>`;
+          <td class="px-6 py-4 text-sm font-medium text-white">Year ${y.year}</td>
+          <td class="px-6 py-4 text-sm text-gray-300">₱${Math.round(y.start).toLocaleString()}</td>
+          <td class="px-6 py-4 text-sm font-semibold text-accent-400">+₱${Math.round(y.growth).toLocaleString()}</td>
+          <td class="px-6 py-4 text-sm font-bold text-white">₱${Math.round(y.end).toLocaleString()}</td>`;
         tbody.appendChild(tr);
       });
     }
@@ -334,8 +386,8 @@
           datasets: [{
             label: 'Investment Growth (₱)',
             data: values,
-            borderColor: '#16a34a',
-            backgroundColor: 'rgba(34,197,94,0.2)',
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
             tension: 0.3,
             fill: true,
           }]
@@ -344,6 +396,9 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
+            legend: {
+              labels: { color: '#fff' }
+            },
             tooltip: {
               callbacks: {
                 label: context => `₱${context.parsed.y.toLocaleString()}`
@@ -351,9 +406,17 @@
             }
           },
           scales: {
+            x: {
+              ticks: { color: '#9ca3af' },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+            },
             y: {
               beginAtZero: true,
-              ticks: { callback: value => `₱${value.toLocaleString()}` }
+              ticks: { 
+                color: '#9ca3af',
+                callback: value => `₱${value.toLocaleString()}` 
+              },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
             }
           }
         }
