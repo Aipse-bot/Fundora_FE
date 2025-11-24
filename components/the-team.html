@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/decks/{deckId}/team/', {
+      const res = await fetch('https://fundora-be-singapore.onrender.com/api/decks/{deckId}/team/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
