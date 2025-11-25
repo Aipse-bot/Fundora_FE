@@ -216,11 +216,14 @@
                               section("Brand Reputation", data.brand_reputation);
 
               const rr = document.getElementById("riskReward");
-              const reward = data.reward_potential ?? 3;
-              const risk = data.confidence_percentage
-                  ? Math.max(1, 5 - Math.round(data.confidence_percentage / 20))
-                  : 3;
-              rr.innerHTML = bar("Risk Score", risk, "red") + bar("Reward Potential", reward, "brand");
+              const reward = data.reward_potential;
+              const riskScore = data.risk_score ?? 3; 
+              
+              console.log('Risk Score from backend:', riskScore);
+              console.log('Reward Potential from backend:', reward);
+              
+              rr.innerHTML = barWithNull("Risk Score", riskScore, "red") + 
+                            barWithNull("Reward Potential", reward, "brand");
 
               const confidencePercentage = data.confidence_percentage ?? 50;
               const dc = document.getElementById("dataConfidence");
@@ -246,6 +249,7 @@
                   const currentPath = window.location.pathname + window.location.search;
                   investBtn.href = `../Module_2/Investment_Simulation.html?startup_id=${startupId}&return=${encodeURIComponent(currentPath)}`;
               }
+              
               const compareBtn = document.getElementById("compareBtn");
               if (hasDataPending) {
                   compareBtn.className = "w-full border border-gray-500/30 bg-gray-500/20 text-gray-400 font-semibold py-3.5 px-4 rounded-lg cursor-not-allowed text-center";
@@ -371,6 +375,37 @@
               <div class="mb-5 pb-5 border-b border-slate-800 last:border-0 last:pb-0 last:mb-0">
                   <span class="text-white font-semibold text-sm block mb-2">${title}</span>
                   <p class="text-gray-400 text-sm">${text ?? "No data"}</p>
+              </div>`;
+      }
+
+      function barWithNull(label, score, color) {
+          const colorClass = color === 'red' ? 'bg-red-500' : 'bg-brand-500';
+          
+          // Handle null/undefined values
+          if (score === null || score === undefined) {
+              return `
+                  <div>
+                      <div class="flex justify-between text-sm mb-2">
+                          <p class="text-gray-300 font-medium">${label}</p>
+                          <p class="font-semibold text-gray-500">N/A</p>
+                      </div>
+                      <div class="w-full bg-slate-800/50 rounded-full h-2.5">
+                          <div class="bg-gray-600 h-2.5 rounded-full" style="width:0%"></div>
+                      </div>
+                      <p class="text-xs text-gray-500 mt-1.5">Insufficient data</p>
+                  </div>`;
+          }
+          
+          // Normal display for valid scores
+          return `
+              <div>
+                  <div class="flex justify-between text-sm mb-2">
+                      <p class="text-gray-300 font-medium">${label}</p>
+                      <p class="font-semibold text-white">${score}/5</p>
+                  </div>
+                  <div class="w-full bg-slate-800/50 rounded-full h-2.5">
+                      <div class="${colorClass} h-2.5 rounded-full transition-all duration-500" style="width:${(score / 5) * 100}%"></div>
+                  </div>
               </div>`;
       }
 

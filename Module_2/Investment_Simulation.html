@@ -242,17 +242,12 @@
       // Update page with startup info
       document.getElementById('startupName').textContent = startupData.company_name || 'Unknown Startup';
       
-      const projectedReturn = startupData.projected_return || 10;
+      const projectedReturn = startupData.projected_return || 7; // Already a percentage
       const riskLevel = startupData.risk_level;
       const isPitchDeck = startupData.is_pitch_deck === true;
-      
-      // Determine effective risk level for calculations
-      let effectiveRiskLevel = riskLevel;
-      if (!riskLevel) {
-        effectiveRiskLevel = isPitchDeck ? 'Pitch Deck' : 'Medium';
-      }
-      
-      const growthRate = calculateCanonicalGrowthRate(projectedReturn, effectiveRiskLevel);
+
+      // Convert percentage to decimal for calculations
+      const growthRate = projectedReturn / 100;
 
       document.getElementById('growth-rate-display').textContent = (growthRate * 100).toFixed(2);
       
@@ -295,28 +290,6 @@
 
       simulateBtn.onclick = () => runSimulation(growthRate);
     });
-
-    // Canonical CAPM-based growth rate calculation matching views.py
-    function calculateCanonicalGrowthRate(projectedReturn, riskLevel) {
-      // Convert projected_return from percentage to decimal
-      const projectedReturnDecimal = projectedReturn / 100;
-      
-      // Canonical CAPM parameters
-      const RISK_FREE_RATE = 0.03;
-      const MARKET_RETURN = 0.10;
-      const BETA_VALUES = { "Low": 0.8, "Medium": 1.0, "High": 1.3, "Pitch Deck": 1.0 };
-      
-      const beta = BETA_VALUES[riskLevel] || 1.0;
-      const capmRate = RISK_FREE_RATE + beta * (MARKET_RETURN - RISK_FREE_RATE);
-      
-      // Blend CAPM with startup projected return (weighted realism)
-      let growthRate = (0.6 * capmRate) + (0.4 * projectedReturnDecimal);
-      
-      // Clamp realistic annual growth rate between 2% and 25%
-      growthRate = Math.max(Math.min(growthRate, 0.25), 0.02);
-      
-      return growthRate;
-    }
 
     function runSimulation(growthRate) {
       const investmentAmount = parseFloat(document.getElementById('investment-amount').value);
