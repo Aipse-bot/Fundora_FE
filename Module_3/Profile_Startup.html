@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fundora - My Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            },
+            accent: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(148, 163, 184, 0.1); }
+    .stat-card {
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen hero-gradient">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+    <div class="max-w-[1920px] mx-auto px-6 py-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+          <div class="relative w-10 h-10">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)" stroke="#3b82f6" stroke-width="2"/>
+              <path d="M20 10 L20 30 M12 20 L28 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="20" cy="12" r="2" fill="white"/>
+              <circle cx="20" cy="28" r="2" fill="white"/>
+              <circle cx="12" cy="20" r="2" fill="white"/>
+              <circle cx="28" cy="20" r="2" fill="white"/>
+              <defs>
+                <linearGradient id="logo-gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#3b82f6"/>
+                  <stop offset="100%" stop-color="#10b981"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold">Fundora</h1>
+        </div>
+        <div class="flex items-center space-x-3">
+          <a href="/Module_3/Startup_Dashboard.html" class="bg-slate-800/50 hover:bg-slate-700/50 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-slate-700 flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            <span>Dashboard</span>
+          </a>
+          <button id="logoutBtn" class="bg-red-600/80 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-red-500/50 flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Profile Header -->
+    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 mb-6">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center space-x-6">
+          <div class="w-24 h-24 rounded-full bg-gradient-to-br from-accent-500 to-brand-500 flex items-center justify-center text-3xl font-bold">
+            <span id="userInitials">?</span>
+          </div>
+          <div>
+            <h2 class="text-3xl font-bold mb-2" id="userName">Loading...</h2>
+            <p class="text-gray-400 text-lg mb-1" id="userEmail">Loading...</p>
+            <span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mt-2 bg-accent-500/20 text-accent-300 border border-accent-500/30">Startup</span>
+          </div>
+        </div>
+        <button id="editProfileBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+          <span>Edit Profile</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Startups Registered -->
+      <div class="stat-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-xl bg-accent-500/20 flex items-center justify-center">
+            <svg class="w-6 h-6 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <span class="text-3xl font-bold" id="startupsCount">0</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-1">My Startups</h3>
+        <p class="text-sm text-gray-400">Companies registered</p>
+      </div>
+
+      <!-- Pitch Decks Created -->
+      <div class="stat-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <span class="text-3xl font-bold" id="decksCount">0</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-1">Pitch Decks</h3>
+        <p class="text-sm text-gray-400">Decks created</p>
+      </div>
+
+      <!-- Profile Views -->
+      <div class="stat-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
+            <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+          </div>
+          <span class="text-3xl font-bold" id="viewsCount">0</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-1">Profile Views</h3>
+        <p class="text-sm text-gray-400">Total investor views</p>
+      </div>
+    </div>
+
+    <!-- My Companies Section -->
+    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 mb-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold">My Companies</h3>
+        <a href="/Module_3/Register_Startup.html" class="bg-accent-600 hover:bg-accent-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          <span>Add New Startup</span>
+        </a>
+      </div>
+      <div id="companiesList" class="space-y-3">
+        <div class="text-center py-8 text-gray-400">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Pitch Decks Section -->
+    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 mb-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold">My Pitch Decks</h3>
+        <a href="/Module_3/Deck_Builder.html" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          <span>Create Pitch Deck</span>
+        </a>
+      </div>
+      <div id="decksList" class="space-y-3">
+        <div class="text-center py-8 text-gray-400">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold">Recent Activity</h3>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div id="recentActivity" class="space-y-3">
+        <div class="text-center py-8 text-gray-400">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="editModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full">
+      <h3 class="text-2xl font-bold mb-6">Edit Profile</h3>
+      <form id="editForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+          <input type="text" id="editFirstName" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+          <input type="text" id="editLastName" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+          <input type="email" id="editEmail" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required>
+        </div>
+        <div class="flex space-x-3 pt-4">
+          <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-all">Save Changes</button>
+          <button type="button" id="cancelEdit" class="flex-1 bg-slate-800/50 hover:bg-slate-700/50 text-white py-2.5 px-4 rounded-lg font-medium transition-all border border-slate-700">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://fundora-be-singapore.onrender.com';
+    const PROFILE_ENDPOINT = `${API_BASE}/api/startup/profile/`;
+    const UPDATE_PROFILE_ENDPOINT = `${API_BASE}/api/profile/update/`;
+    const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
+
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
+
+    function authHeaders() {
+      const token = getAuthToken();
+      if (!token) return {};
+      return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+    }
+
+    async function fetchJSON(url, options = {}) {
+      const token = getAuthToken();
+      if (!token) {
+        window.location.href = '/login.html';
+        throw new Error('No auth token');
+      }
+      options.headers = Object.assign({}, options.headers || {}, { 'Authorization': `Bearer ${token}` });
+      const res = await fetch(url, options);
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('authToken');
+        window.location.href = '/login.html';
+        throw new Error('Unauthorized');
+      }
+      if (!res.ok) {
+        const text = await res.text().catch(()=>null);
+        throw new Error(`Request failed: ${res.status} ${text || ''}`);
+      }
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('application/json')) return await res.json();
+      return null;
+    }
+
+    function getInitials(firstName, lastName) {
+      const first = (firstName || '?').charAt(0).toUpperCase();
+      const last = (lastName || '').charAt(0).toUpperCase();
+      return first + last;
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffDays < 7) return `${diffDays}d ago`;
+      
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    async function loadProfile() {
+      try {
+        const data = await fetchJSON(PROFILE_ENDPOINT);
+        
+        document.getElementById('userName').textContent = `${data.first_name} ${data.last_name}`;
+        document.getElementById('userEmail').textContent = data.email;
+        document.getElementById('userInitials').textContent = getInitials(data.first_name, data.last_name);
+        
+        document.getElementById('startupsCount').textContent = data.startups_count || 0;
+        document.getElementById('decksCount').textContent = data.decks_count || 0;
+        document.getElementById('viewsCount').textContent = data.views_count || 0;
+
+        renderCompanies(data.startups || []);
+        renderDecks(data.decks || []);
+        renderActivity(data.recent_activity || []);
+
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        alert('Failed to load profile data');
+      }
+    }
+
+    function renderCompanies(companies) {
+      const container = document.getElementById('companiesList');
+      
+      if (!companies || companies.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-gray-400">No companies registered yet</div>';
+        return;
+      }
+
+      container.innerHTML = companies.map(company => `
+        <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-all">
+          <div class="flex-1">
+            <h4 class="font-semibold text-white mb-1">${escapeHtml(company.company_name || 'Untitled')}</h4>
+            <p class="text-sm text-gray-400">${escapeHtml(company.industry || 'N/A')}</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <span class="text-sm text-gray-500">${formatDate(company.created_at)}</span>
+            <a href="/Module_3/Edit_Startup.html?id=${company.id}" class="text-brand-400 hover:text-brand-300 text-sm font-medium">Edit</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderDecks(decks) {
+      const container = document.getElementById('decksList');
+      
+      if (!decks || decks.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-gray-400">No pitch decks created yet</div>';
+        return;
+      }
+
+      container.innerHTML = decks.map(deck => `
+        <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-all">
+          <div class="flex-1">
+            <h4 class="font-semibold text-white mb-1">${escapeHtml(deck.company_name || 'Untitled Deck')}</h4>
+            <p class="text-sm text-gray-400">${escapeHtml(deck.tagline || 'No tagline')}</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <span class="text-sm text-gray-500">${formatDate(deck.created_at)}</span>
+            <a href="/Module_3/View_Deck.html?id=${deck.id}" class="text-purple-400 hover:text-purple-300 text-sm font-medium">View</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderActivity(activities) {
+      const container = document.getElementById('recentActivity');
+      
+      if (!activities || activities.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-gray-400">No recent activity</div>';
+        return;
+      }
+
+      container.innerHTML = activities.slice(0, 10).map(activity => `
+        <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg">
+          <div class="flex items-center space-x-3 flex-1">
+            <div class="w-2 h-2 rounded-full ${activity.type === 'view' ? 'bg-brand-400' : activity.type === 'deck' ? 'bg-purple-400' : 'bg-accent-400'}"></div>
+            <p class="text-sm text-gray-300">${escapeHtml(activity.description || 'Activity')}</p>
+          </div>
+          <span class="text-sm text-gray-500">${formatDate(activity.timestamp)}</span>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(unsafe) {
+      if (unsafe === null || unsafe === undefined) return '';
+      return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function logoutUser() {
+      try {
+        await fetch(LOGOUT_ENDPOINT, { method: 'POST', headers: authHeaders() });
+      } catch (err) {
+        console.warn('Logout error (ignored):', err);
+      } finally {
+        localStorage.removeItem('authToken');
+        window.location.href = '/login.html';
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+
+    document.getElementById('editProfileBtn').addEventListener('click', async () => {
+      try {
+        const data = await fetchJSON(PROFILE_ENDPOINT);
+        document.getElementById('editFirstName').value = data.first_name || '';
+        document.getElementById('editLastName').value = data.last_name || '';
+        document.getElementById('editEmail').value = data.email || '';
+        document.getElementById('editModal').classList.remove('hidden');
+      } catch (error) {
+        console.error('Error loading profile for edit:', error);
+      }
+    });
+
+    document.getElementById('cancelEdit').addEventListener('click', () => {
+      document.getElementById('editModal').classList.add('hidden');
+    });
+
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = {
+        first_name: document.getElementById('editFirstName').value,
+        last_name: document.getElementById('editLastName').value,
+        email: document.getElementById('editEmail').value
+      };
+
+      try {
+        await fetchJSON(UPDATE_PROFILE_ENDPOINT, {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(formData)
+        });
+
+        document.getElementById('editModal').classList.add('hidden');
+        await loadProfile();
+        alert('Profile updated successfully!');
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Failed to update profile');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = getAuthToken();
+      if (!token) {
+        window.location.href = '/login.html';
+        return;
+      }
+      loadProfile();
+    });
+  </script>
+</body>
+</html>
