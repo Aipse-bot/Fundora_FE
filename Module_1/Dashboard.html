@@ -801,6 +801,8 @@
     }
 
     function setRiskLevel(level) {
+      setStartupType('financial');
+      
       document.querySelectorAll('.risk-btn').forEach(btn => {
         btn.classList.remove('border-accent-500', 'bg-accent-500/20', 'border-yellow-500', 'bg-yellow-500/20', 'border-red-500', 'bg-red-500/20');
         btn.classList.add('border-slate-700');
