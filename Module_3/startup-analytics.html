@@ -1,173 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Startup Analytics Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Startup Analytics Dashboard | Fundora</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#3B82F6',
+              emerald: '#10B981'
+            }
+          },
+          backgroundImage: {
+            'gradient-dark': 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)',
+          }
         }
-    </style>
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
 </head>
-<body>
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="/index.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
-                        Fundora
-                    </a>
-                </div>
-                <div id="header-user" class="flex items-center space-x-4"></div>
-            </div>
-        </div>
-    </header>
-
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <!-- Page Header -->
-        <div class="mb-6 flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Startup Analytics Dashboard</h1>
-                <p class="text-gray-600">Track performance and engagement across all your startups</p>
-            </div>
-            <a href="added-startups.html" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                ← Back to Startups
-            </a>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loading-state" class="flex items-center justify-center py-12">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-
-        <!-- Analytics Content -->
-        <div id="analytics-content" class="hidden">
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm text-gray-500">Total Startups</p>
-                            <p id="total-startups" class="text-2xl font-semibold text-gray-900">-</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-green-100 text-green-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm text-gray-500">Total Views</p>
-                            <p id="total-views" class="text-2xl font-semibold text-gray-900">-</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-purple-100 text-purple-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm text-gray-500">Total Comparisons</p>
-                            <p id="total-comparisons" class="text-2xl font-semibold text-gray-900">-</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-orange-100 text-orange-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm text-gray-500">Unique Viewers</p>
-                            <p id="unique-viewers" class="text-2xl font-semibold text-gray-900">-</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <!-- Views Chart -->
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Views by Startup</h3>
-                    <div class="h-48">
-                        <canvas id="viewsChart" class="w-full h-full"></canvas>
-                    </div>
-                </div>
-
-                <!-- Comparisons Chart -->
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Comparisons by Startup</h3>
-                    <div class="h-48">
-                        <canvas id="comparisonsChart" class="w-full h-full"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Detailed Startup Analytics Table -->
-            <div class="bg-white rounded-lg shadow">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">Detailed Analytics by Startup</h3>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Startup</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Views</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unique Viewers</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Comparisons</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recent Activity (30 days)</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="analytics-table-body" class="bg-white divide-y divide-gray-200">
-                            <!-- Populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- No Data State -->
-            <div id="no-data-state" class="hidden text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">No analytics data</h3>
-                <p class="mt-1 text-sm text-gray-500">Start by adding some startups to see analytics data.</p>
-                <div class="mt-6">
-                    <a href="Company_Information_Form.html" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                        Add Your First Startup
-                    </a>
-                </div>
-            </div>
-        </div>
+<body class="bg-gradient-dark text-gray-100 min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="backdrop-blur-xl bg-slate-900/80 border-b border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <a href="/index.html" class="text-2xl font-bold bg-gradient-to-r from-brand.blue to-brand.emerald bg-clip-text text-transparent">
+          Fundora
+        </a>
+        <div id="header-user" class="flex items-center space-x-4"></div>
+      </div>
     </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <!-- Page Header -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Startup Analytics Dashboard</h1>
+        <p class="text-slate-400">Track performance and engagement across all your startups</p>
+      </div>
+      <a href="added-startups.html"
+         class="inline-flex items-center px-4 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm font-medium text-slate-300 hover:bg-slate-700 transition">
+        ← Back to Startups
+      </a>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="flex items-center justify-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand.blue"></div>
+    </div>
+
+    <!-- Analytics Content -->
+    <div id="analytics-content" class="hidden space-y-8">
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="backdrop-blur-xl bg-slate-800/60 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-brand.blue/50 transition">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-brand.blue/20 text-brand.blue">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm text-slate-400">Total Startups</p>
+              <p id="total-startups" class="text-2xl font-semibold text-white">-</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="backdrop-blur-xl bg-slate-800/60 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-emerald-500/50 transition">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-brand.emerald/20 text-brand.emerald">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm text-slate-400">Total Views</p>
+              <p id="total-views" class="text-2xl font-semibold text-white">-</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="backdrop-blur-xl bg-slate-800/60 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-purple-500/50 transition">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-500/20 text-purple-400">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm text-slate-400">Total Comparisons</p>
+              <p id="total-comparisons" class="text-2xl font-semibold text-white">-</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="backdrop-blur-xl bg-slate-800/60 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-orange-400/50 transition">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-orange-500/20 text-orange-400">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm text-slate-400">Unique Viewers</p>
+              <p id="unique-viewers" class="text-2xl font-semibold text-white">-</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="backdrop-blur-xl bg-slate-800/60 border border-slate-700 rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-white mb-4">Views by Startup</h3>
+          <div class="h-48"><canvas id="viewsChart"></canvas></div>
+        </div>
+
+        <div class="backdrop-blur-xl bg-slate-800/60 border border-slate-700 rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-white mb-4">Comparisons by Startup</h3>
+          <div class="h-48"><canvas id="comparisonsChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="backdrop-blur-xl bg-slate-800/60 border border-slate-700 rounded-lg shadow-lg">
+        <div class="px-6 py-4 border-b border-slate-700">
+          <h3 class="text-lg font-semibold text-white">Detailed Analytics by Startup</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-slate-700">
+            <thead class="bg-slate-900/60">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Startup</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Total Views</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Unique Viewers</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Total Comparisons</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Recent Activity</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="analytics-table-body" class="divide-y divide-slate-700"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- No Data -->
+      <div id="no-data-state" class="hidden text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-white">No analytics data</h3>
+        <p class="mt-1 text-sm text-slate-400">Add startups to see analytics data.</p>
+        <div class="mt-6">
+          <a href="Company_Information_Form.html"
+             class="inline-flex items-center px-4 py-2 rounded-md text-white bg-gradient-to-r from-brand.blue to-brand.emerald hover:opacity-90 transition">
+            Add Your First Startup
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
 
     <script>
         let viewsChart, comparisonsChart;

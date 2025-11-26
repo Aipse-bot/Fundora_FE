@@ -1,247 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Edit Startup Information</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9; /* slate-100 */
-            height: 100vh;
-            margin: 0;
-        }
-        .form-input-modern {
-            background-color: #ffffff; /* white */
-            border: 1px solid #cbd5e1; /* slate-300 */
-            transition: all 0.2s ease-in-out;
-        }
-        .form-input-modern:focus {
-            --tw-ring-color: #2563eb; /* blue-600 */
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-        }
-        .form-input-modern:hover {
-            border-color: #94a3b8; /* slate-400 */
-        }
-        .dynamic-tooltip {
-            visibility: hidden;
-            background-color: #0f172a; /* slate-900 */
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px 12px;
-            position: fixed;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.3s;
-            max-width: 220px;
-            font-size: 0.875rem;
-            pointer-events: none;
-        }
-        .dynamic-tooltip.visible {
-            visibility: visible;
-            opacity: 1;
-        }
-        .dynamic-tooltip::after {
-            content: "";
-            position: absolute;
-            border-width: 5px;
-            border-style: solid;
-        }
-        .tooltip-top::after {
-           top: 100%;
-           left: 50%;
-           margin-left: -5px;
-           border-color: #0f172a transparent transparent transparent;
-        }
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .loading-overlay.hidden {
-            display: none;
-        }
-        
-        /* Scrollable form container */
-        .form-container {
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-        
-        /* Financial section styling */
-        .financial-section {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-left: 4px solid;
-            transition: all 0.3s ease;
-        }
-        .financial-section:hover {
-            transform: translateX(2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Fundora | Edit Startup Information</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      height: 100vh;
+      color: #e2e8f0;
+      margin: 0;
+    }
+
+    .form-input-modern {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      color: #f1f5f9;
+      transition: all 0.2s ease-in-out;
+    }
+    .form-input-modern::placeholder {
+      color: #94a3b8;
+    }
+    .form-input-modern:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+      outline: none;
+    }
+    .form-input-modern:hover {
+      border-color: #475569;
+    }
+
+    .financial-section {
+      background-color: #1e293b;
+      border-left: 4px solid;
+      transition: all 0.3s ease;
+    }
+    .financial-section:hover {
+      transform: translateX(2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .dynamic-tooltip {
+      visibility: hidden;
+      background-color: #1e293b;
+      color: #f8fafc;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px 12px;
+      position: fixed;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s;
+      max-width: 220px;
+      font-size: 0.875rem;
+      pointer-events: none;
+    }
+    .dynamic-tooltip.visible {
+      visibility: visible;
+      opacity: 1;
+    }
+    .tooltip-top::after {
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-color: #1e293b transparent transparent transparent;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .loading-overlay.hidden {
+      display: none;
+    }
+
+    .form-container {
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #475569;
+      border-radius: 4px;
+    }
+  </style>
 </head>
-<body class="bg-slate-100 flex flex-col h-screen">
+<body class="flex flex-col h-screen">
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="bg-white p-6 rounded-lg shadow-xl text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p class="text-slate-700 font-medium">Loading startup data...</p>
-        </div>
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="bg-slate-800 p-6 rounded-lg shadow-xl text-center border border-slate-700">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+      <p class="text-slate-300 font-medium">Loading startup data...</p>
     </div>
+  </div>
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-blue-600 p-2 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"></path>
-                        </svg>
-                    </div>
-                    <span class="text-2xl font-bold text-slate-800 tracking-tight">Fundora</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-slate-600 text-sm">
-                        Welcome, <span class="font-semibold text-slate-800" id="user-email">Loading...</span>
-                    </span>
-                    <button onclick="window.location.href='added-startups.html'" class="text-slate-600 hover:text-slate-800 text-sm font-medium flex items-center space-x-1">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                        <span>Back to Startups</span>
-                    </button>
-                </div>
-            </div>
+  <!-- Header -->
+  <header class="bg-slate-900 border-b border-slate-700 shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-3">
+          <div class="bg-blue-600 p-2 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <span class="text-2xl font-bold text-white tracking-tight">Fundora</span>
         </div>
-    </header>
+        <div class="flex items-center space-x-4">
+          <span class="text-slate-400 text-sm">
+            Welcome, <span class="font-semibold text-blue-400" id="user-email">Loading...</span>
+          </span>
+          <button onclick="window.location.href='added-startups.html'"
+            class="text-slate-400 hover:text-blue-400 text-sm font-medium flex items-center space-x-1 transition">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Back to Startups</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <main class="flex-1 min-h-0 py-2 overflow-hidden">
-        <div class="max-w-full mx-auto px-2 h-full">
-            <form id="editStartupForm" novalidate class="bg-white rounded-xl shadow-xl border border-slate-200 h-full flex flex-col">
-                <!-- Form Header - Compact -->
-                <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-t-xl px-6 py-3">
-                    <h2 class="text-xl font-bold text-white flex items-center space-x-2">
-                        <i data-lucide="edit-3" class="w-6 h-6"></i>
-                        <span>Edit Startup Information</span>
-                    </h2>
+  <!-- Main Form -->
+  <main class="flex-1 min-h-0 py-2 overflow-hidden">
+    <div class="max-w-full mx-auto px-2 h-full">
+      <form id="editStartupForm" novalidate class="bg-slate-900 rounded-xl shadow-xl border border-slate-700 h-full flex flex-col">
+
+        <!-- Form Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-t-xl px-6 py-3">
+          <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+            <i data-lucide="edit-3" class="w-6 h-6"></i>
+            <span>Edit Startup Information</span>
+          </h2>
+        </div>
+
+        <!-- Form Content -->
+        <div class="form-container flex-1 px-6 py-4 overflow-y-auto overflow-x-hidden">
+          <div class="grid lg:grid-cols-5 gap-6 h-full">
+
+            <!-- LEFT COLUMN -->
+            <div class="lg:col-span-2 flex flex-col space-y-4 h-full">
+              <div class="bg-slate-800 rounded-lg p-5 border border-slate-700 flex-1 flex flex-col">
+                <h3 class="text-base font-bold text-slate-100 mb-4 flex items-center space-x-2">
+                  <i data-lucide="building-2" class="w-5 h-5 text-blue-500"></i>
+                  <span>Core Information</span>
+                </h3>
+
+                <div class="flex-1 flex flex-col justify-between">
+                  <div class="mb-4">
+                    <label for="company-name" class="block text-sm font-semibold text-slate-300 mb-2">
+                      Company Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="company-name" name="company-name"
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg"
+                      placeholder="Enter company name" required />
+                  </div>
+
+                  <div class="mb-4">
+                    <label for="industry" class="block text-sm font-semibold text-slate-300 mb-2">
+                      Industry <span class="text-red-500">*</span>
+                    </label>
+                    <select id="industry" name="industry"
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" required>
+                      <option value="">Select Industry</option>
+                      <option>Technology</option>
+                      <option>Finance</option>
+                      <option>Healthcare</option>
+                      <option>E-commerce</option>
+                      <option>Education</option>
+                      <option>Real Estate</option>
+                      <option>Manufacturing</option>
+                      <option>Retail</option>
+                      <option>Food & Beverage</option>
+                      <option>Transportation</option>
+                      <option>Energy</option>
+                      <option>Entertainment</option>
+                      <option>Agriculture</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-0 flex-1 flex flex-col">
+                    <label for="company-description" class="block text-sm font-semibold text-slate-300 mb-2">
+                      Company Description
+                    </label>
+                    <textarea id="company-description" name="company-description"
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg resize-none flex-1"
+                      placeholder="Brief description of your company..."></textarea>
+                  </div>
                 </div>
-                
-                <!-- Form Content - Scrollable -->
-                <div class="form-container flex-1 px-6 py-4 overflow-y-auto overflow-x-hidden">
+              </div>
 
-                <div class="grid lg:grid-cols-5 gap-6 h-full">
-
-                    <!-- Left Column: Core Info -->
-                    <div class="lg:col-span-2 flex flex-col space-y-4 h-full">
-                        <!-- Core Information Card -->
-                        <div class="bg-slate-50 rounded-lg p-5 border border-slate-200 flex-1 flex flex-col">
-                            <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center space-x-2">
-                                <i data-lucide="building-2" class="w-5 h-5 text-blue-600"></i>
-                                <span>Core Information</span>
-                            </h3>
-                            
-                            <div class="flex-1 flex flex-col justify-between">
-                        
-                            <!-- Company Name -->
-                            <div class="mb-4">
-                                <label for="company-name" class="block text-sm font-semibold text-slate-700 mb-2">
-                                    Company Name <span class="text-red-500">*</span>
-                                </label>
-                            <input 
-                                type="text" 
-                                id="company-name" 
-                                name="company-name" 
-                                class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg focus:outline-none" 
-                                placeholder="Enter company name"
-                                required
-                            />
-                        </div>
-
-                            <!-- Industry -->
-                            <div class="mb-4">
-                                <label for="industry" class="block text-sm font-semibold text-slate-700 mb-2">
-                                    Industry <span class="text-red-500">*</span>
-                                </label>
-                            <select 
-                                id="industry" 
-                                name="industry" 
-                                class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg focus:outline-none"
-                                required
-                            >
-                                <option value="">Select Industry</option>
-                                <option value="Technology">Technology</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Healthcare">Healthcare</option>
-                                <option value="E-commerce">E-commerce</option>
-                                <option value="Education">Education</option>
-                                <option value="Real Estate">Real Estate</option>
-                                <option value="Manufacturing">Manufacturing</option>
-                                <option value="Retail">Retail</option>
-                                <option value="Food & Beverage">Food & Beverage</option>
-                                <option value="Transportation">Transportation</option>
-                                <option value="Energy">Energy</option>
-                                <option value="Entertainment">Entertainment</option>
-                                <option value="Agriculture">Agriculture</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-
-                            <!-- Company Description -->
-                            <div class="mb-0 flex-1 flex flex-col">
-                                <label for="company-description" class="block text-sm font-semibold text-slate-700 mb-2">Company Description</label>
-                                <textarea 
-                                    id="company-description" 
-                                    name="company-description" 
-                                    class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg focus:outline-none resize-none flex-1" 
-                                    placeholder="Brief description of your company..."
-                                ></textarea>
-                            </div>
-                            
-                            </div>
-                        </div>
-                        
-                        <!-- Data Completeness Card -->
-                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
-                            <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-sm font-bold text-slate-800 flex items-center space-x-2">
-                                    <i data-lucide="pie-chart" class="w-4 h-4 text-blue-600"></i>
-                                    <span>Data Completeness</span>
-                                </h4>
-                                <span id="completeness-text" class="text-sm font-semibold text-slate-600 bg-white px-3 py-1 rounded-full">0% Complete</span>
-                            </div>
-                            <div class="w-full bg-white rounded-full h-3 shadow-inner">
-                                <div id="completeness-bar" class="h-3 rounded-full transition-all duration-500 bg-red-500" style="width: 0%"></div>
-                            </div>
-                            <p class="text-xs text-slate-600 mt-3 flex items-center space-x-1">
-                                <i data-lucide="info" class="w-3 h-3"></i>
-                                <span>Fill in more fields to increase confidence level</span>
-                            </p>
-                            <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low">
-                        </div>
-                    </div>
+              <!-- Data Completeness -->
+              <div class="bg-slate-800 rounded-lg p-5 border border-slate-700">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-sm font-bold text-slate-100 flex items-center space-x-2">
+                    <i data-lucide="pie-chart" class="w-4 h-4 text-blue-400"></i>
+                    <span>Data Completeness</span>
+                  </h4>
+                  <span id="completeness-text"
+                    class="text-sm font-semibold text-slate-300 bg-slate-700 px-3 py-1 rounded-full">0% Complete</span>
+                </div>
+                <div class="w-full bg-slate-700 rounded-full h-3 shadow-inner">
+                  <div id="completeness-bar"
+                    class="h-3 rounded-full transition-all duration-500 bg-blue-500"
+                    style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-slate-400 mt-3 flex items-center space-x-1">
+                  <i data-lucide="info" class="w-3 h-3"></i>
+                  <span>Fill in more fields to increase confidence level</span>
+                </p>
+                <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low" />
+              </div>
+            </div>
 
                     <!-- Right Column: Financials & Actions -->
                     <div class="lg:col-span-3 flex flex-col space-y-4 h-full">
                         <!-- Income Statement Section -->
-                        <div class="financial-section rounded-lg p-5 border-green-500 flex-1">
-                            <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
-                                <i data-lucide="trending-up" class="w-5 h-5 text-green-600"></i>
-                                <span>Income Statement</span>
+                        <div class="financial-section border-green-500 rounded-lg p-5 flex-1">
+                            <h3 class="text-base font-bold text-slate-100 mb-3 flex items-center space-x-2">
+                            <i data-lucide="trending-up" class="w-5 h-5 text-green-400"></i>
+                            <span>Income Statement</span>
                             </h3>
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
@@ -308,10 +306,10 @@
                         </div>
 
                         <!-- Balance Sheet Section -->
-                        <div class="financial-section rounded-lg p-5 border-purple-500 flex-1">
-                            <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
-                                <i data-lucide="scale" class="w-5 h-5 text-purple-600"></i>
-                                <span>Balance Sheet</span>
+                        <div class="financial-section border-purple-500 rounded-lg p-5 flex-1">
+                            <h3 class="text-base font-bold text-slate-100 mb-3 flex items-center space-x-2">
+                            <i data-lucide="scale" class="w-5 h-5 text-purple-400"></i>
+                            <span>Balance Sheet</span>
                             </h3>
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
@@ -364,10 +362,10 @@
                         </div>
 
                         <!-- Cash Flow Section -->
-                        <div class="financial-section rounded-lg p-5 border-blue-500 flex-1">
-                            <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
-                                <i data-lucide="dollar-sign" class="w-5 h-5 text-blue-600"></i>
-                                <span>Cash Flow Statement</span>
+                        <div class="financial-section border-blue-500 rounded-lg p-5 flex-1">
+                            <h3 class="text-base font-bold text-slate-100 mb-3 flex items-center space-x-2">
+                            <i data-lucide="dollar-sign" class="w-5 h-5 text-blue-400"></i>
+                            <span>Cash Flow Statement</span>
                             </h3>
                             <div class="grid md:grid-cols-3 gap-4">
                                 <div>
@@ -422,10 +420,10 @@
                         </div>
 
                         <!-- Qualitative Assessment Section -->
-                        <div class="financial-section rounded-lg p-5 border-purple-500 flex-1 bg-gradient-to-br from-purple-50 to-blue-50">
-                            <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
-                                <i data-lucide="users" class="w-5 h-5 text-purple-600"></i>
-                                <span>Qualitative Assessment</span>
+                        <div class="financial-section border-purple-500 rounded-lg p-5 flex-1">
+                            <h3 class="text-base font-bold text-slate-100 mb-3 flex items-center space-x-2">
+                            <i data-lucide="users" class="w-5 h-5 text-purple-400"></i>
+                            <span>Qualitative Assessment</span>
                             </h3>
                             <div class="space-y-4">
                                 <div>
@@ -478,29 +476,24 @@
 
                         <!-- Action Buttons -->
                         <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                            <button 
-                                type="submit" 
-                                class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                            >
-                                <i data-lucide="save" class="w-5 h-5"></i>
-                                <span>Update Startup</span>
+                            <button type="submit"
+                            class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            <i data-lucide="save" class="w-5 h-5"></i>
+                            <span>Update Startup</span>
                             </button>
-                            <button 
-                                type="button"
-                                onclick="window.location.href='added-startups.html'" 
-                                class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow hover:shadow-md"
-                            >
-                                <i data-lucide="x" class="w-5 h-5"></i>
-                                <span>Cancel</span>
+                            <button type="button" onclick="window.location.href='added-startups.html'"
+                            class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                            <span>Cancel</span>
                             </button>
                         </div>
+                        </div>
+
                     </div>
+                    </div>
+                </form>
                 </div>
-                
-                </div> <!-- Close form-container -->
-            </form>
-        </div>
-    </main>
+            </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

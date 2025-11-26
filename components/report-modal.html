@@ -1,268 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Health Report</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* slate-50 */
-        }
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.8s ease-out;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Health Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .progress-ring__circle {
+      transition: stroke-dashoffset 0.8s ease-out;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+  </style>
 </head>
-<body class="bg-slate-50">
 
-    <!-- Include Module 3 Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-            
-            <!-- Left side - Fundora logo/title -->
-            <div class="flex items-center">
-                <a href="/index.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
-                Fundora
-                </a>
-            </div>
+<body class="bg-slate-900 text-gray-100">
 
-            <!-- Right side - Welcome message and logout -->
-            <div id="header-user" class="flex items-center space-x-4"></div>
-
-            </div>
-        </div>
-        <script>
-            function renderHeaderUser(user) {
-                const container = document.getElementById('header-user');
-                container.innerHTML = '';
-
-                if (!user || !user.name) return;
-
-                container.innerHTML = `
-                    <span class="text-gray-700 text-sm">
-                    Welcome, <span class="font-medium">${user.name}</span>
-                    </span>
-                    <a href="/logout.html"
-                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                    Logout
-                    </a>
-                `;
-            }
-        </script>
-    </header>
-
-<div id="deckReportContainer" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 bg-black bg-opacity-20 rounded-lg shadow-lg m-10">
   <!-- Header -->
-  <div class="bg-blue-600 text-white px-6 py-6 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow">
-    <div class="flex items-center space-x-4">
-      <div class="bg-white text-blue-600 font-bold w-10 h-10 flex items-center justify-center text-xl rounded" id="companyInitial">L</div>
+  <header class="bg-slate-900 border-b border-slate-800 shadow-lg sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Left -->
+        <div class="flex items-center">
+          <a href="/index.html"
+            class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent hover:from-blue-500 hover:to-blue-700 transition-all duration-300">
+            Fundora
+          </a>
+        </div>
+
+        <!-- Right -->
+        <div id="header-user" class="flex items-center space-x-4"></div>
+      </div>
+    </div>
+
+    <script>
+      function renderHeaderUser(user) {
+        const container = document.getElementById('header-user');
+        container.innerHTML = '';
+        if (!user || !user.name) return;
+        container.innerHTML = `
+          <span class="text-gray-300 text-sm">
+            Welcome, <span class="font-medium text-white">${user.name}</span>
+          </span>
+          <a href="/logout.html"
+            class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md
+            text-gray-300 hover:text-white border border-slate-700 hover:border-blue-500
+            bg-slate-800 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600
+            transition-all duration-300">
+            Logout
+          </a>`;
+      }
+    </script>
+  </header>
+
+  <!-- Report Container -->
+  <div id="deckReportContainer" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 bg-slate-800/70 rounded-2xl shadow-xl m-10 border border-slate-700">
+
+    <!-- Company Header -->
+    <div class="bg-gradient-to-r from-blue-700 to-blue-600 text-white px-6 py-6 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+      <div class="flex items-center space-x-4">
+        <div id="companyInitial" class="bg-white text-blue-600 font-bold w-12 h-12 flex items-center justify-center text-xl rounded-full shadow-md">L</div>
+        <div>
+          <h1 id="companyName" class="text-3xl font-semibold">Loading...</h1>
+          <p id="companyTagline" class="text-blue-100 text-lg">Loading tagline...</p>
+        </div>
+      </div>
       <div>
-        <h1 class="text-2xl sm:text-3xl font-semibold" id="companyName">Loading...</h1>
-        <p class="text-lg sm:text-xl text-blue-100" id="companyTagline">Loading tagline...</p>
-      </div>
-    </div>
-    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-      <button onclick="history.back()" class="bg-gray-200 rounded-lg text-gray-800 px-4 py-2 hover:bg-gray-300 transition">
-      ← Back
-    </button>
-    </div>
-  </div>
-
-  <!-- Content Sections -->
-  <div class="space-y-6">
-    <!-- Problem & Solution -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="px-4 py-6 bg-white border rounded shadow">
-        <h2 class="text-xl font-bold text-black mb-2">The Problem</h2>
-        <div class="w-full h-1 bg-blue-500 mb-4"></div>
-        <p class="text-gray-500 text-lg" id="problemDescription">—</p>
-      </div>
-      <div class="px-4 py-6 bg-white border rounded shadow">
-        <h2 class="text-xl font-bold text-black mb-2">The Solution</h2>
-        <div class="w-full h-1 bg-blue-500 mb-4"></div>
-        <p class="text-gray-500 text-lg" id="solutionDescription">—</p>
+        <button onclick="history.back()" class="bg-slate-700 text-gray-200 px-5 py-2 rounded-lg hover:bg-slate-600 transition">
+          ← Back
+        </button>
       </div>
     </div>
 
-    <!-- Market & Financials -->
-    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Market Analysis -->
-      <div class="bg-white p-6 rounded shadow">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Market Analysis</h2>
-        <div class="space-y-3">
-          <div class="flex justify-between">
-            <span class="text-gray-600 font-medium">Primary Market:</span>
-            <span class="text-gray-900 font-semibold" id="primaryMarket">—</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-600 font-medium">Target Audience:</span>
-            <span class="text-gray-900 font-semibold" id="targetAudience">—</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-600 font-medium">Market Growth (YOY):</span>
-            <span class="text-green-600 font-bold" id="marketGrowthRate">—%</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-600 font-medium">Our Advantage:</span>
-            <span class="text-blue-600 font-semibold" id="competitiveAdvantage">—</span>
-          </div>
+    <!-- Main Content -->
+    <div class="space-y-8">
+
+      <!-- Problem & Solution -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="px-5 py-6 bg-slate-800 border border-slate-700 rounded-xl shadow-lg">
+          <h2 class="text-xl font-bold text-white mb-2">The Problem</h2>
+          <div class="w-full h-1 bg-blue-500 mb-4"></div>
+          <p id="problemDescription" class="text-gray-300 text-lg">—</p>
+        </div>
+        <div class="px-5 py-6 bg-slate-800 border border-slate-700 rounded-xl shadow-lg">
+          <h2 class="text-xl font-bold text-white mb-2">The Solution</h2>
+          <div class="w-full h-1 bg-blue-500 mb-4"></div>
+          <p id="solutionDescription" class="text-gray-300 text-lg">—</p>
         </div>
       </div>
 
-      <!-- Financial Table -->
-      <div class="bg-white p-6 rounded shadow overflow-x-auto">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Financial Projection</h2>
-        <table class="w-full text-left border border-gray-200">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="px-4 py-2 font-semibold text-gray-700">Year</th>
-              <th class="px-4 py-2 font-semibold text-gray-700">Revenue (₱)</th>
-              <th class="px-4 py-2 font-semibold text-gray-700">Profit (₱)</th>
-            </tr>
-          </thead>
-          <tbody id="financialTableBody"></tbody>
-        </table>
-      </div>
-      
-      <!-- The Ask -->
-      <div class="bg-white py-10 px-6 rounded shadow text-center col-span-1">
-        <h2 class="text-xl font-bold text-gray-800 mb-2">THE ASK</h2>
-        <p class="text-5xl font-extrabold text-green-600 mb-4" id="askAmount">₱0</p>
-        <span class="font-medium text-gray-800" id="askUsage">Loading...</span>
-      </div>
+      <!-- Market & Financials -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <!-- Chart -->
-      <div class="bg-white p-6 rounded shadow col-span-1">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Revenue & Profit Chart</h2>
-        <canvas id="financialChart" width="400" height="200"></canvas>
-      </div>
+        <!-- Market Analysis -->
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg">
+          <h2 class="text-xl font-bold text-white mb-4 text-center">Market Analysis</h2>
+          <div class="space-y-3 text-gray-300">
+            <div class="flex justify-between">
+              <span class="font-medium">Primary Market:</span>
+              <span id="primaryMarket" class="text-white font-semibold">—</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-medium">Target Audience:</span>
+              <span id="targetAudience" class="text-white font-semibold">—</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-medium">Market Growth (YOY):</span>
+              <span id="marketGrowthRate" class="text-green-400 font-semibold">—%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-medium">Our Advantage:</span>
+              <span id="competitiveAdvantage" class="text-blue-400 font-semibold">—</span>
+            </div>
+          </div>
+        </div>
 
-    </section>
+        <!-- Financial Table -->
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg overflow-x-auto">
+          <h2 class="text-xl font-bold text-white mb-4 text-center">Financial Projection</h2>
+          <table class="w-full border-collapse text-left">
+            <thead class="bg-slate-700">
+              <tr>
+                <th class="px-4 py-2 font-semibold text-gray-200">Year</th>
+                <th class="px-4 py-2 font-semibold text-gray-200">Revenue (₱)</th>
+                <th class="px-4 py-2 font-semibold text-gray-200">Profit (₱)</th>
+              </tr>
+            </thead>
+            <tbody id="financialTableBody" class="divide-y divide-slate-700 text-gray-300"></tbody>
+          </table>
+        </div>
+
+        <!-- The Ask -->
+        <div class="bg-slate-800 border border-slate-700 py-10 px-6 rounded-xl shadow-lg text-center">
+          <h2 class="text-xl font-bold text-white mb-3">THE ASK</h2>
+          <p id="askAmount" class="text-5xl font-extrabold text-green-400 mb-4">₱0</p>
+          <span id="askUsage" class="font-medium text-gray-300">Loading...</span>
+        </div>
+
+        <!-- Chart -->
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg">
+          <h2 class="text-xl font-bold text-white mb-4 text-center">Revenue & Profit Chart</h2>
+          <canvas id="financialChart" width="400" height="200" class="bg-slate-700/40 rounded-lg p-3"></canvas>
+        </div>
+
+      </section>
+    </div>
   </div>
-</div>
-    <script>
-      const startupId = new URLSearchParams(window.location.search).get('id');
-      const token = localStorage.getItem('authToken');
 
-        async function loadData() {
-          try {
-            const res = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/report/`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
+  <script>
+    const startupId = new URLSearchParams(window.location.search).get('id');
+    const token = localStorage.getItem('authToken');
 
-            
-            console.log('Raw response:', res);
+    async function loadData() {
+      try {
+        const res = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/report/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
-            if (!res.ok) {
-              throw new Error(`HTTP error! status: ${res.status}`);
-            }
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
 
-            const data = await res.json();
-            console.log('Parsed data:', data);
-
-            
-            if (data.report_type !== 'deck') {
-              alert('This startup is not linked to a deck.');
-              return;
-            }
-
-            // Inject header
-            document.getElementById('companyInitial').textContent = data.deck_info.company_name?.charAt(0) || '—';
-            document.getElementById('companyName').textContent = data.deck_info.company_name || '—';
-            document.getElementById('companyTagline').textContent = data.deck_info.tagline || '—';
-
-            // Inject problem & solution
-            document.getElementById('problemDescription').textContent = data.problem?.description || '—';
-            document.getElementById('solutionDescription').textContent = data.solution?.description || '—';
-
-            // Inject market analysis
-            document.getElementById('primaryMarket').textContent = data.market_analysis?.primary_market || '—';
-            document.getElementById('targetAudience').textContent = data.market_analysis?.target_audience || '—';
-            document.getElementById('marketGrowthRate').textContent = data.market_analysis?.market_growth_rate || '—';
-            document.getElementById('competitiveAdvantage').textContent = data.market_analysis?.competitive_advantage || '—';
-
-            // Inject financials
-            const tbody = document.getElementById('financialTableBody');
-            tbody.innerHTML = '';
-            if (data.financials?.length) {
-              data.financials.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-t';
-                tr.innerHTML = `
-                  <td class="px-4 py-2">${row.year}</td>
-                  <td class="px-4 py-2">₱${parseFloat(row.revenue).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                  <td class="px-4 py-2">₱${parseFloat(row.profit).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                `;
-                tbody.appendChild(tr);
-              });
-            } else {
-              tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-2 text-center text-gray-500">No data available</td></tr>`;
-            }
-
-            // Inject ask
-            document.getElementById('askAmount').textContent = `₱${parseFloat(data.ask?.amount || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-            document.getElementById('askUsage').textContent = data.ask?.usage_description || '—';
-
-            // Inject chart
-            renderFinancialChart(data.financials || []);
-
-          } catch (err) {
-            console.error('Failed to load report modal:', err);
-            alert('Unable to load report. Please try again.');
-          }
+        if (data.report_type !== 'deck') {
+          alert('This startup is not linked to a deck.');
+          return;
         }
-        
-        let financialChart = null;
 
-        function renderFinancialChart(financials) {
-          const ctx = document.getElementById('financialChart').getContext('2d');
-          const years = financials.map(f => f.year);
-          const revenues = financials.map(f => parseFloat(f.revenue));
-          const profits = financials.map(f => parseFloat(f.profit));
+        document.getElementById('companyInitial').textContent = data.deck_info.company_name?.charAt(0) || '—';
+        document.getElementById('companyName').textContent = data.deck_info.company_name || '—';
+        document.getElementById('companyTagline').textContent = data.deck_info.tagline || '—';
 
-          if (financialChart) {
-            financialChart.destroy();
-            financialChart = null;
-          }
+        document.getElementById('problemDescription').textContent = data.problem?.description || '—';
+        document.getElementById('solutionDescription').textContent = data.solution?.description || '—';
 
-          financialChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: years,
-              datasets: [
-                {
-                  label: 'Revenue',
-                  data: revenues,
-                  backgroundColor: 'rgba(54, 162, 235, 0.6)'
-                },
-                {
-                  label: 'Profit',
-                  data: profits,
-                  backgroundColor: 'rgba(75, 192, 192, 0.6)'
-                }
-              ]
-            },
-            options: {
-              responsive: true,
-              scales: {
-                y: {
-                  beginAtZero: true
-                }
-              }
-            }
+        document.getElementById('primaryMarket').textContent = data.market_analysis?.primary_market || '—';
+        document.getElementById('targetAudience').textContent = data.market_analysis?.target_audience || '—';
+        document.getElementById('marketGrowthRate').textContent = data.market_analysis?.market_growth_rate || '—';
+        document.getElementById('competitiveAdvantage').textContent = data.market_analysis?.competitive_advantage || '—';
+
+        const tbody = document.getElementById('financialTableBody');
+        tbody.innerHTML = '';
+        if (data.financials?.length) {
+          data.financials.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="px-4 py-2">${row.year}</td>
+              <td class="px-4 py-2">₱${parseFloat(row.revenue).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td class="px-4 py-2">₱${parseFloat(row.profit).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+            `;
+            tbody.appendChild(tr);
           });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-2 text-center text-gray-500">No data available</td></tr>`;
         }
-    loadData()
-    </script>
+
+        document.getElementById('askAmount').textContent = `₱${parseFloat(data.ask?.amount || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+        document.getElementById('askUsage').textContent = data.ask?.usage_description || '—';
+
+        renderFinancialChart(data.financials || []);
+      } catch (err) {
+        console.error('Failed to load report:', err);
+        alert('Unable to load report. Please try again.');
+      }
+    }
+
+    let financialChart = null;
+    function renderFinancialChart(financials) {
+      const ctx = document.getElementById('financialChart').getContext('2d');
+      const years = financials.map(f => f.year);
+      const revenues = financials.map(f => parseFloat(f.revenue));
+      const profits = financials.map(f => parseFloat(f.profit));
+
+      if (financialChart) financialChart.destroy();
+      financialChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: years,
+          datasets: [
+            {
+              label: 'Revenue',
+              data: revenues,
+              backgroundColor: 'rgba(59,130,246,0.7)'
+            },
+            {
+              label: 'Profit',
+              data: profits,
+              backgroundColor: 'rgba(34,197,94,0.7)'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } },
+          plugins: { legend: { labels: { color: '#E5E7EB' } } }
+        }
+      });
+    }
+    loadData();
+  </script>
 </body>
 </html>

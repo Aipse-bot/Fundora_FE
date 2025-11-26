@@ -1,97 +1,48 @@
-<section id="mainContent" class="bg-gray-100 text-black">
-  <div class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-3 min-h-full pb-10">
-    <div>
-      <h1 class="text-4xl sm:text-5xl font-bold mb-8">Cover Page</h1>
+<section id="mainContent" class="bg-slate-900 text-gray-100 min-h-screen">
+  <div class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-6 pb-10">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl shadow-lg p-8">
+      <h1 class="text-4xl sm:text-5xl font-bold mb-10 text-white">Cover Page</h1>
 
-      <form id="coverForm" enctype="multipart/form-data">
+      <form id="coverForm" enctype="multipart/form-data" class="space-y-6">
+
         <!-- Company Name -->
-        <div class="mb-5">
-          <label for="company_name" class="mb-2 block text-gray-500 font-semibold text-xl">Company Name</label>
-          <input type="text" id="company_name" name="company_name" class="w-full p-3 border rounded" required />
+        <div>
+          <label for="company_name" class="mb-2 block text-gray-300 font-semibold text-lg">Company Name</label>
+          <input
+            type="text"
+            id="company_name"
+            name="company_name"
+            class="w-full p-3.5 bg-slate-700 border border-slate-600 rounded-lg text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            placeholder="Enter your company name"
+            required
+          />
           <p id="errorCompanyName" class="text-red-500 text-sm mt-1 hidden"></p>
         </div>
 
         <!-- Tagline -->
-        <div class="mb-5">
-          <label for="tagline" class="mb-2 block text-gray-500 font-semibold text-xl">Tagline</label>
-          <input type="text" id="tagline" name="tagline" class="w-full p-3 border rounded" required />
+        <div>
+          <label for="tagline" class="mb-2 block text-gray-300 font-semibold text-lg">Tagline</label>
+          <input
+            type="text"
+            id="tagline"
+            name="tagline"
+            class="w-full p-3.5 bg-slate-700 border border-slate-600 rounded-lg text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            placeholder="Your company tagline"
+            required
+          />
           <p id="errorTagline" class="text-red-500 text-sm mt-1 hidden"></p>
         </div>
 
-        <!-- Logo Upload -->
-        <div class="mb-5">
-          <label for="logo" class="mb-2 block text-gray-500 font-semibold text-xl">Logo</label>
-          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <button type="button" id="openButton" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Choose File</button>
-            <input type="file" id="logo" name="logo" class="hidden" accept="image/*" />
-            <p id="fileName" class="text-sm text-gray-700">No file chosen</p>
-          </div>
-          <p id="errorLogo" class="text-red-500 text-sm mt-1 hidden"></p>
-        </div>
-
         <!-- Submit Button -->
-        <div class="flex justify-end mt-6">
-          <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Next</button>
+        <div class="flex justify-end pt-6">
+          <button
+            type="submit"
+            class="px-8 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-700 transform hover:scale-[1.02] transition shadow-lg"
+          >
+            Next →
+          </button>
         </div>
       </form>
     </div>
   </div>
-
-  <!-- <script>
-    const openButton = document.getElementById('openButton');
-    const fileInput = document.getElementById('logo');
-    const fileName = document.getElementById('fileName');
-
-    openButton.addEventListener('click', () => {
-      fileInput.click();
-    });
-
-    fileInput.addEventListener('change', () => {
-      const file = fileInput.files[0];
-      fileName.textContent = file ? `Selected file: ${file.name}` : 'No file chosen';
-    });
-
-    document.getElementById('coverForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const formData = new FormData();
-      formData.append('company_name', document.getElementById('company_name').value.trim());
-      formData.append('tagline', document.getElementById('tagline').value.trim());
-      if (fileInput.files[0]) {
-        formData.append('logo', fileInput.files[0]);
-      }
-
-      const token = localStorage.getItem('authToken');
-
-      try {
-        const response = await fetch('https://fundora-be-singapore.onrender.com/api/decks/create/', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          body: formData
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          alert('Cover page saved successfully!');
-          window.location.href = '/decks/next-section.html';
-        } else {
-          // Display validation errors
-          document.getElementById('errorCompanyName').textContent = data.company_name || '';
-          document.getElementById('errorCompanyName').classList.toggle('hidden', !data.company_name);
-
-          document.getElementById('errorTagline').textContent = data.tagline || '';
-          document.getElementById('errorTagline').classList.toggle('hidden', !data.tagline);
-
-          document.getElementById('errorLogo').textContent = data.logo || '';
-          document.getElementById('errorLogo').classList.toggle('hidden', !data.logo);
-        }
-      } catch (err) {
-        console.error('Submission failed:', err);
-        alert('Something went wrong. Please try again.');
-      }
-    });
-  </script> -->
 </section>
