@@ -82,3 +82,326 @@
     </div>
   </div>
 </section>
+
+<script>
+function waitForChart(callback) {
+  if (typeof Chart !== 'undefined') {
+    callback();
+  } else {
+    console.warn('Chart.js not loaded yet, waiting...');
+    setTimeout(() => waitForChart(callback), 100);
+  }
+}
+
+// Initialize financial form when loaded
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Financials page loaded');
+  
+  // Check if Chart.js is available
+  waitForChart(() => {
+    console.log('Chart.js is ready');
+    initializeFinancialForm();
+  });
+});
+
+function initializeFinancialForm() {
+  const financialForm = document.getElementById('financialForm');
+  const addYearBtn = document.getElementById('addYearBtn');
+  const financialRows = document.getElementById('financialRows');
+  
+  if (!financialForm || !addYearBtn || !financialRows) {
+    console.error('Financial form elements not found');
+    return;
+  }
+
+  let yearCount = 0;
+  let chartInstance = null;
+
+  // Load existing data if editing
+  loadExistingFinancials();
+
+  // Add year button
+  addYearBtn.addEventListener('click', () => {
+    yearCount++;
+    addFinancialRow(yearCount);
+  });
+
+  // Form submission
+  financialForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await saveFinancials();
+  });
+
+  function addFinancialRow(year, revenue = '', profit = '') {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'grid grid-cols-4 gap-3 items-center';
+    rowDiv.dataset.year = year;
+
+    rowDiv.innerHTML = `
+      <input
+        type="number"
+        name="year_${year}"
+        value="${year}"
+        readonly
+        class="px-3 py-2 bg-slate-700 text-gray-200 rounded-lg border border-slate-600 font-medium"
+      />
+      <input
+        type="number"
+        name="revenue_${year}"
+        placeholder="0.00"
+        value="${revenue}"
+        step="0.01"
+        min="0"
+        required
+        class="px-3 py-2 bg-slate-700 text-gray-200 rounded-lg border border-slate-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      />
+      <input
+        type="number"
+        name="profit_${year}"
+        placeholder="0.00"
+        value="${profit}"
+        step="0.01"
+        required
+        class="px-3 py-2 bg-slate-700 text-gray-200 rounded-lg border border-slate-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      />
+      <button
+        type="button"
+        onclick="removeFinancialRow(this)"
+        class="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+      >
+        Remove
+      </button>
+    `;
+
+    financialRows.appendChild(rowDiv);
+  }
+
+  // Make removeFinancialRow globally accessible
+  window.removeFinancialRow = function(button) {
+    const row = button.closest('div[data-year]');
+    if (row) {
+      row.remove();
+      updateChart();
+    }
+  };
+
+  async function loadExistingFinancials() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const deckId = urlParams.get('deck_id');
+      
+      if (!deckId) {
+        console.log('No deck_id found, starting fresh');
+        addFinancialRow(2024); // Add default first year
+        return;
+      }
+
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`https://fundora-be-singapore.onrender.com/api/deck-builder/financials/?deck_id=${deckId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const financials = await response.json();
+        
+        if (financials && financials.length > 0) {
+          financials.forEach(f => {
+            yearCount = Math.max(yearCount, f.year);
+            addFinancialRow(f.year, f.revenue, f.profit);
+          });
+          updateChart();
+        } else {
+          addFinancialRow(2024); // Add default first year
+        }
+      } else {
+        console.log('No existing financials found');
+        addFinancialRow(2024); // Add default first year
+      }
+    } catch (error) {
+      console.error('Error loading financials:', error);
+      addFinancialRow(2024); // Add default first year on error
+    }
+  }
+
+  async function saveFinancials() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const deckId = urlParams.get('deck_id');
+
+      if (!deckId) {
+        alert('Error: No deck ID found');
+        return;
+      }
+
+      const rows = financialRows.querySelectorAll('div[data-year]');
+      const financials = [];
+
+      rows.forEach(row => {
+        const year = row.querySelector('input[name^="year_"]').value;
+        const revenue = row.querySelector('input[name^="revenue_"]').value;
+        const profit = row.querySelector('input[name^="profit_"]').value;
+
+        financials.push({
+          year: parseInt(year),
+          revenue: parseFloat(revenue),
+          profit: parseFloat(profit)
+        });
+      });
+
+      if (financials.length === 0) {
+        alert('Please add at least one year of financial projections');
+        return;
+      }
+
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('https://fundora-be-singapore.onrender.com/api/deck-builder/financials/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          deck_id: deckId,
+          financials: financials
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        console.log('Financials saved successfully');
+        // Navigate to next section
+        window.location.href = `base.html?section=the-ask&deck_id=${deckId}`;
+      } else {
+        alert('Error saving financials: ' + (result.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error saving financials:', error);
+      alert('Failed to save financials. Please try again.');
+    }
+  }
+
+  function updateChart() {
+    const rows = financialRows.querySelectorAll('div[data-year]');
+    const years = [];
+    const revenues = [];
+    const profits = [];
+
+    rows.forEach(row => {
+      const year = row.querySelector('input[name^="year_"]').value;
+      const revenue = parseFloat(row.querySelector('input[name^="revenue_"]').value) || 0;
+      const profit = parseFloat(row.querySelector('input[name^="profit_"]').value) || 0;
+
+      years.push(year);
+      revenues.push(revenue);
+      profits.push(profit);
+    });
+
+    // Update preview table
+    const previewTable = document.getElementById('financialPreviewTable');
+    if (previewTable) {
+      previewTable.innerHTML = '';
+      
+      if (years.length === 0) {
+        previewTable.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-400">No data yet</td></tr>';
+      } else {
+        years.forEach((year, index) => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-700/50 transition';
+          tr.innerHTML = `
+            <td class="px-4 py-3 text-gray-200">${year}</td>
+            <td class="px-4 py-3 text-gray-200">₱${revenues[index].toLocaleString()}</td>
+            <td class="px-4 py-3 text-gray-200">₱${profits[index].toLocaleString()}</td>
+          `;
+          previewTable.appendChild(tr);
+        });
+      }
+    }
+
+    // Update chart
+    const canvas = document.getElementById('revenueProfitChart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    if (years.length === 0) {
+      return; // Don't create chart with no data
+    }
+
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: 'Revenue (₱)',
+            data: revenues,
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.3,
+            fill: true
+          },
+          {
+            label: 'Profit (₱)',
+            data: profits,
+            borderColor: 'rgb(34, 197, 94)',
+            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+            tension: 0.3,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: '#e5e7eb',
+              font: { size: 12 }
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            titleColor: '#fff',
+            bodyColor: '#cbd5e1',
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ₱' + context.parsed.y.toLocaleString();
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#9ca3af' },
+            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: '#9ca3af',
+              callback: function(value) {
+                return '₱' + value.toLocaleString();
+              }
+            },
+            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+          }
+        }
+      }
+    });
+  }
+
+  // Add input event listeners to update chart in real-time
+  financialRows.addEventListener('input', () => {
+    updateChart();
+  });
+}
+</script>

@@ -67,7 +67,7 @@
           <p id="startupName" class="text-lg text-gray-400 mt-1">Loading...</p>
         </div>
       </div>
-      <span id="risk-badge" class="bg-green-500/20 text-green-300 text-sm font-medium px-4 py-2 rounded-full border border-green-500/30">Low Risk</span>
+      <span id="risk-badge" class="bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30">Loading...</span>
     </div>
   </header>
 
@@ -98,19 +98,22 @@
         </div>
 
         <div>
-          <label class="text-sm font-medium text-gray-300 mb-3 block">Estimated Growth Rate</label>
+          <label class="text-sm font-medium text-gray-300 mb-3 block">
+            Estimated Growth Rate (CAGR)
+            <span id="cagr-source" class="text-xs text-gray-500 font-normal block mt-1">Calculated from revenue data</span>
+          </label>
           <div class="flex">
             <div id="growth-rate-display"
                  class="flex-1 px-4 py-4 bg-slate-800/50 border border-slate-700 rounded-l-lg text-lg font-semibold text-brand-400">
               0
             </div>
-            <span class="px-4 py-4 bg-slate-800/30 border border-l-0 border-slate-700 rounded-r-lg text-gray-400 font-medium">% per year (Auto)</span>
+            <span class="px-4 py-4 bg-slate-800/30 border border-l-0 border-slate-700 rounded-r-lg text-gray-400 font-medium">% per year</span>
           </div>
         </div>
       </div>
 
       <div class="flex justify-center mt-8">
-        <button id="simulate-btn" onclick="runSimulation()" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold py-4 px-12 rounded-lg shadow-lg transition-all duration-200 opacity-50 cursor-not-allowed" disabled>
+        <button id="simulate-btn" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold py-4 px-12 rounded-lg shadow-lg transition-all duration-200 opacity-50 cursor-not-allowed" disabled>
           Run Simulation
         </button>
       </div>
@@ -168,7 +171,7 @@
     <section id="assumptions-section" class="hidden bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-l-4 border-yellow-500/50 rounded-xl p-8 mb-8 fade-in delay-3">
       <h4 class="text-lg font-semibold text-yellow-300 mb-4">Important Assumptions</h4>
       <p class="text-sm text-gray-300 italic leading-relaxed">
-        <strong>Disclaimer:</strong> This simulation uses a canonical CAPM-based risk-adjusted return model. Actual results depend on market conditions and startup performance.
+        <strong>Disclaimer:</strong> This simulation uses <strong>raw revenue CAGR (Compound Annual Growth Rate)</strong> calculated from <span id="data-source-text">revenue data</span> without risk adjustments. The growth rate shown (<span id="cagr-value" class="font-semibold">0%</span>) represents the pure historical revenue growth trend. Actual future results depend on market conditions, execution, and startup performance. Past performance does not guarantee future results.
       </p>
     </section>
   </main>
@@ -176,6 +179,7 @@
   <script>
     let growthChart = null;
     let simulationData = null;
+    let startupData = null;
 
     // Configuration
     const API_BASE = 'https://fundora-be-singapore.onrender.com/api';
@@ -205,8 +209,6 @@
         return null;
       }
     }
-
-    let startupData = null;
 
     document.addEventListener('DOMContentLoaded', async () => {
       // Get startup ID from URL
@@ -239,19 +241,40 @@
         return;
       }
 
+      console.log('=== STARTUP DATA LOADED ===');
+      console.log('Company:', startupData.company_name);
+      console.log('Is Deck Builder:', startupData.is_deck_builder);
+      console.log('Projected Return (CAGR from backend):', startupData.projected_return);
+      console.log('Risk Level:', startupData.risk_level);
+      console.log('==========================');
+
       // Update page with startup info
       document.getElementById('startupName').textContent = startupData.company_name || 'Unknown Startup';
       
-      const projectedReturn = startupData.projected_return;
+      const isDeckBuilder = startupData.is_deck_builder === true;
       const riskLevel = startupData.risk_level;
-      const isPitchDeck = startupData.is_pitch_deck === true;
+      const projectedReturn = startupData.projected_return;
 
+      // Update data source text based on type
+      if (isDeckBuilder) {
+        document.getElementById('cagr-source').textContent = 'From financial projections';
+        document.getElementById('data-source-text').textContent = 'the pitch deck financial projections';
+      } else {
+        document.getElementById('cagr-source').textContent = 'From revenue history';
+        document.getElementById('data-source-text').textContent = 'the startup\'s historical revenue data';
+      }
+
+      // Check if we have a valid growth rate from backend
       if (projectedReturn === null || projectedReturn === undefined) {
           // Disable simulation - no growth rate available
           document.getElementById('growth-rate-display').textContent = 'N/A';
           document.getElementById('growth-rate-display').parentElement.classList.add('opacity-50');
           
-          alert('This startup does not have sufficient financial data for investment simulation.\n\nRequired: Revenue history (current and previous period revenue)');
+          const errorMsg = isDeckBuilder 
+            ? 'This pitch deck does not have sufficient financial projections for investment simulation.\n\nRequired: At least 2 years of revenue projections'
+            : 'This startup does not have sufficient financial data for investment simulation.\n\nRequired: Revenue history (current and previous period revenue)';
+          
+          alert(errorMsg);
           
           // Disable simulate button permanently
           const simulateBtn = document.getElementById('simulate-btn');
@@ -259,38 +282,54 @@
           simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
           simulateBtn.textContent = 'Insufficient Data';
           
+          // Update risk badge
+          const riskBadge = document.getElementById('risk-badge');
+          riskBadge.textContent = 'No Financial Data';
+          riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
+          
           return;
       }
       
+      // Display the CAGR from backend
       document.getElementById('growth-rate-display').textContent = projectedReturn.toFixed(2);
       
+      // Update risk badge
       const riskBadge = document.getElementById('risk-badge');
       
-      if (riskLevel === null || riskLevel === undefined) {
-        riskBadge.textContent = 'Data Pending';
+      console.log('Setting badge - Is Deck Builder:', isDeckBuilder, 'Risk Level:', riskLevel);
+      
+      if (isDeckBuilder) {
+        // For Pitch Decks, show "Pitch Deck" badge
+        riskBadge.textContent = 'Pitch Deck';
+        riskBadge.className = 'bg-purple-500/20 text-purple-300 text-sm font-medium px-4 py-2 rounded-full border border-purple-500/30';
+        console.log('Badge set to: Pitch Deck (purple)');
+      } else if (riskLevel === null || riskLevel === undefined) {
+        // For regular startups without risk level
+        riskBadge.textContent = 'Risk Pending';
         riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
-      } else if (isPitchDeck && !riskLevel) {
-          riskBadge.textContent = 'Pitch Deck';
-          riskBadge.className = 'bg-purple-500/20 text-purple-300 text-sm font-medium px-4 py-2 rounded-full border border-purple-500/30';
+        console.log('Badge set to: Risk Pending (gray)');
       } else {
-          riskBadge.textContent = `${riskLevel} Risk`;
-          
-          const riskColors = {
-              'Very Low': 'bg-green-500/20 text-green-300 border-green-500/30',
-              'Low': 'bg-green-500/20 text-green-300 border-green-500/30',
-              'Medium': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
-              'High': 'bg-red-500/20 text-red-300 border-red-500/30',
-              'Very High': 'bg-red-500/20 text-red-300 border-red-500/30'
-          };
-          
-          const colorClass = riskColors[riskLevel] || 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-          riskBadge.className = `${colorClass} text-sm font-medium px-4 py-2 rounded-full border`;
+        // For regular startups with risk level
+        riskBadge.textContent = `${riskLevel} Risk`;
+        
+        const riskColors = {
+            'Very Low': 'bg-green-500/20 text-green-300 border-green-500/30',
+            'Low': 'bg-green-500/20 text-green-300 border-green-500/30',
+            'Medium': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+            'High': 'bg-red-500/20 text-red-300 border-red-500/30',
+            'Very High': 'bg-red-500/20 text-red-300 border-red-500/30'
+        };
+        
+        const colorClass = riskColors[riskLevel] || 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+        riskBadge.className = `${colorClass} text-sm font-medium px-4 py-2 rounded-full border`;
+        console.log('Badge set to:', riskLevel, 'Risk');
       }
 
       const investmentInput = document.getElementById('investment-amount');
       const durationSelect = document.getElementById('duration-years');
       const simulateBtn = document.getElementById('simulate-btn');
 
+      // Enable/disable simulate button based on input
       [investmentInput, durationSelect].forEach(el => {
           el.addEventListener('input', () => {
               if (investmentInput.value && durationSelect.value) {
@@ -305,16 +344,48 @@
           });
       });
 
-      simulateBtn.onclick = () => runSimulation(growthRate);
+      // Set up simulate button click handler
+      simulateBtn.onclick = () => runSimulation();
     });
 
-    function runSimulation(growthRate) {
+    function runSimulation() {
+      // Validate inputs
       const investmentAmount = parseFloat(document.getElementById('investment-amount').value);
       const durationYears = parseInt(document.getElementById('duration-years').value);
+
+      if (!investmentAmount || investmentAmount <= 0) {
+        alert('Please enter a valid investment amount');
+        return;
+      }
+
+      if (!durationYears || durationYears <= 0) {
+        alert('Please select a simulation duration');
+        return;
+      }
+
+      // Get the CAGR calculated by the backend
+      const projectedReturn = startupData.projected_return;
+      
+      if (projectedReturn === null || projectedReturn === undefined) {
+        alert('Cannot run simulation: No growth rate available');
+        return;
+      }
+
+      console.log('=== RUNNING SIMULATION ===');
+      console.log('Investment Amount:', investmentAmount);
+      console.log('Duration:', durationYears, 'years');
+      console.log('Growth Rate (CAGR from backend):', projectedReturn.toFixed(2) + '%');
+      console.log('=========================');
+
+      // Convert percentage to decimal
+      const growthRate = projectedReturn / 100;
+
+      // Calculate future value using compound growth
       const finalValue = investmentAmount * Math.pow(1 + growthRate, durationYears);
       const totalGain = finalValue - investmentAmount;
       const roiPercentage = (totalGain / investmentAmount) * 100;
 
+      // Generate yearly breakdown
       const yearlyBreakdown = [];
       let currentValue = investmentAmount;
       for (let year = 1; year <= durationYears; year++) {
@@ -325,7 +396,24 @@
         currentValue = end;
       }
 
-      simulationData = { investmentAmount, durationYears, finalValue, totalGain, roiPercentage, yearlyBreakdown };
+      // Store simulation data
+      simulationData = { 
+        investmentAmount, 
+        durationYears, 
+        finalValue, 
+        totalGain, 
+        roiPercentage, 
+        yearlyBreakdown,
+        growthRate: projectedReturn // Store as percentage for display
+      };
+
+      console.log('Simulation Results:', {
+        finalValue: finalValue.toFixed(2),
+        totalGain: totalGain.toFixed(2),
+        roi: roiPercentage.toFixed(2) + '%'
+      });
+
+      // Update UI
       updateResults();
       createChart();
       showResults();
@@ -338,10 +426,14 @@
           el.classList.remove('hidden');
           if (id === 'results-section') el.classList.add('grid');
         });
+      
+      // Update CAGR value in disclaimer
+      document.getElementById('cagr-value').textContent = simulationData.growthRate.toFixed(2) + '%';
     }
 
     function updateResults() {
       const { investmentAmount, durationYears, finalValue, totalGain, roiPercentage, yearlyBreakdown } = simulationData;
+      
       document.getElementById('initial-investment').textContent = `₱${investmentAmount.toLocaleString()}`;
       document.getElementById('duration-display').textContent = durationYears;
       document.getElementById('final-value').textContent = `₱${Math.round(finalValue).toLocaleString()}`;
@@ -364,10 +456,12 @@
     function createChart() {
       const ctx = document.getElementById('growthChart').getContext('2d');
       if (growthChart) growthChart.destroy();
-      const { yearlyBreakdown } = simulationData;
+      
+      const { investmentAmount, yearlyBreakdown } = simulationData;
 
-      const labels = yearlyBreakdown.map(y => `Year ${y.year}`);
-      const values = yearlyBreakdown.map(y => y.end);
+      // Add initial investment as Year 0
+      const labels = ['Year 0', ...yearlyBreakdown.map(y => `Year ${y.year}`)];
+      const values = [investmentAmount, ...yearlyBreakdown.map(y => y.end)];
 
       growthChart = new Chart(ctx, {
         type: 'line',
@@ -380,6 +474,11 @@
             backgroundColor: 'rgba(16, 185, 129, 0.2)',
             tension: 0.3,
             fill: true,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7
           }]
         },
         options: {
@@ -387,23 +486,30 @@
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              labels: { color: '#fff' }
+              labels: { color: '#fff', font: { size: 14 } }
             },
             tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.9)',
+              titleColor: '#fff',
+              bodyColor: '#cbd5e1',
+              borderColor: '#334155',
+              borderWidth: 1,
+              padding: 12,
               callbacks: {
-                label: context => `₱${context.parsed.y.toLocaleString()}`
+                label: context => `Value: ₱${Math.round(context.parsed.y).toLocaleString()}`
               }
             }
           },
           scales: {
             x: {
-              ticks: { color: '#9ca3af' },
+              ticks: { color: '#9ca3af', font: { size: 12 } },
               grid: { color: 'rgba(148, 163, 184, 0.1)' }
             },
             y: {
               beginAtZero: true,
               ticks: { 
                 color: '#9ca3af',
+                font: { size: 12 },
                 callback: value => `₱${value.toLocaleString()}` 
               },
               grid: { color: 'rgba(148, 163, 184, 0.1)' }
