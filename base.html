@@ -268,8 +268,12 @@
     const form = document.getElementById('coverForm');
     const fileInput = document.getElementById('logo');
     const fileName = document.getElementById('fileName');
-    const openButton = document.getElementById('openButton');
     const token = localStorage.getItem('authToken');
+
+    if (!form || !fileInput) {
+      console.error('Cover form elements not found');
+      return;
+    }
 
     // Load existing data if available
     try {
@@ -293,13 +297,6 @@
     } catch (err) {
       console.warn('No existing cover data found or failed to load:', err);
     }
-
-    // Bind file input preview
-    openButton.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => {
-      const file = fileInput.files[0];
-      fileName.textContent = file ? `Selected file: ${file.name}` : 'No file chosen';
-    });
 
     console.log('Binding cover form events for deck ID:', deckId);
 
