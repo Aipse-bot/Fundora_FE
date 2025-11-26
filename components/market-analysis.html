@@ -1,82 +1,112 @@
-<section id="mainContent" class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-3 min-h-full pb-10">
-  <div>
-    <h1 class="text-4xl sm:text-5xl font-bold mb-8">Market Analysis</h1>
+<section id="mainContent" class="bg-slate-900 text-gray-100 min-h-screen">
+  <div class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-6 pb-10">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl shadow-lg p-8">
+      <h1 class="text-4xl sm:text-5xl font-bold mb-10 text-white">Market Analysis</h1>
 
-    <form id="marketForm">
-      <!-- Primary Market -->
-      <div class="mb-5">
-        <label for="primaryMarket" class="mb-2 block text-gray-500 font-semibold text-xl">Primary Market</label>
-        <input type="text" id="primaryMarket" name="primary_market"
-          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm" />
-        <p id="primaryMarketError" class="text-red-500 text-sm mt-1 hidden"></p>
-      </div>
+      <form id="marketForm" class="space-y-8">
+        <!-- Primary Market -->
+        <div>
+          <label for="primaryMarket" class="block text-gray-300 font-semibold text-lg mb-2">
+            Primary Market
+          </label>
+          <input
+            type="text"
+            id="primaryMarket"
+            name="primary_market"
+            class="w-full p-3 rounded-lg border border-slate-700 bg-slate-900 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
+            placeholder="e.g., Fintech, Healthtech, Edtech"
+          />
+          <p id="primaryMarketError" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
 
-      <!-- Target Audience -->
-      <div class="mb-5">
-        <label for="targetAudience" class="mb-2 block text-gray-500 font-semibold text-xl">Target Audience Description</label>
-        <textarea id="targetAudience" name="target_audience" rows="4"
-          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm"></textarea>
-        <p id="targetAudienceError" class="text-red-500 text-sm mt-1 hidden"></p>
-      </div>
+        <!-- Target Audience -->
+        <div>
+          <label for="targetAudience" class="block text-gray-300 font-semibold text-lg mb-2">
+            Target Audience Description
+          </label>
+          <textarea
+            id="targetAudience"
+            name="target_audience"
+            rows="4"
+            class="w-full p-3 rounded-lg border border-slate-700 bg-slate-900 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
+            placeholder="Describe your key audience..."
+          ></textarea>
+          <p id="targetAudienceError" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
 
-      <!-- Market Growth -->
-      <div class="mb-5">
-        <label for="marketGrowthRate" class="mb-2 block text-gray-500 font-semibold text-xl">Market Growth Rate (YoY)</label>
-        <input type="text" id="marketGrowthRate" name="market_growth_rate"
-          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm" />
-        <p id="marketGrowthRateError" class="text-red-500 text-sm mt-1 hidden"></p>
-      </div>
+        <!-- Market Growth -->
+        <div>
+          <label for="marketGrowthRate" class="block text-gray-300 font-semibold text-lg mb-2">
+            Market Growth Rate (YoY)
+          </label>
+          <input
+            type="text"
+            id="marketGrowthRate"
+            name="market_growth_rate"
+            class="w-full p-3 rounded-lg border border-slate-700 bg-slate-900 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
+            placeholder="e.g., 15%"
+          />
+          <p id="marketGrowthRateError" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
 
-      <!-- Competitive Advantage -->
-      <div class="mb-5">
-        <label for="competitiveAdvantage" class="mb-2 block text-gray-500 font-semibold text-xl">Competitive Advantage</label>
-        <textarea id="competitiveAdvantage" name="competitive_advantage" rows="4"
-          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm"></textarea>
-        <p id="competitiveAdvantageError" class="text-red-500 text-sm mt-1 hidden"></p>
-      </div>
+        <!-- Competitive Advantage -->
+        <div>
+          <label for="competitiveAdvantage" class="block text-gray-300 font-semibold text-lg mb-2">
+            Competitive Advantage
+          </label>
+          <textarea
+            id="competitiveAdvantage"
+            name="competitive_advantage"
+            rows="4"
+            class="w-full p-3 rounded-lg border border-slate-700 bg-slate-900 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
+            placeholder="Describe what makes your company stand out..."
+          ></textarea>
+          <p id="competitiveAdvantageError" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
 
-      <!-- Submit Button -->
-      <div class="flex justify-end mt-6">
-        <button type="submit"
-          class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
-          Next
-        </button>
-      </div>
-    </form>
+        <!-- Submit Button -->
+        <div class="flex justify-end">
+          <button
+            type="submit"
+            class="px-8 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-700 transform hover:scale-[1.02] transition shadow-lg"
+          >
+            Next →
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </section>
 
-<section id="card-panel" class="min-h-screen flex px-5 py-6 items-center justify-center">
-  <div class="w-full max-w-xl bg-white rounded-lg p-8 shadow-lg space-y-6">
-
-    <!-- Header -->
-    <h1 class="text-3xl font-bold text-gray-800">Our Market</h1>
+<!-- Card Preview Panel -->
+<section id="card-panel" class="min-h-screen flex px-5 py-10 items-center justify-center bg-slate-900">
+  <div class="w-full max-w-xl bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl space-y-8">
+    <h1 class="text-3xl font-bold text-white">Our Market</h1>
 
     <!-- Primary Market -->
     <div>
-      <div class="mb-2 text-blue-500 font-semibold text-xl">Primary Market</div>
-      <div id="previewPrimaryMarket" class="text-sm text-gray-700">—</div>
+      <div class="mb-2 text-blue-400 font-semibold text-lg">Primary Market</div>
+      <div id="previewPrimaryMarket" class="text-sm text-gray-300">—</div>
     </div>
 
     <!-- Target Audience -->
     <div>
-      <div class="mb-2 text-blue-500 font-semibold text-xl">Target Audience</div>
-      <div id="previewTargetAudience" class="text-sm text-gray-700">—</div>
+      <div class="mb-2 text-blue-400 font-semibold text-lg">Target Audience</div>
+      <div id="previewTargetAudience" class="text-sm text-gray-300">—</div>
     </div>
 
-    <div class="border border-gray-200 w-full my-4"></div>
+    <div class="border border-slate-700 w-full my-4"></div>
 
     <!-- Market Growth and Advantage -->
     <div class="flex flex-col sm:flex-row gap-8">
       <div>
-        <div class="mb-2 text-gray-500 font-semibold text-xl">Market Growth (YoY)</div>
-        <div id="previewMarketGrowthRate" class="text-sm text-gray-700">—</div>
+        <div class="mb-2 text-gray-400 font-semibold text-lg">Market Growth (YoY)</div>
+        <div id="previewMarketGrowthRate" class="text-sm text-gray-300">—</div>
       </div>
       <div>
-        <div class="mb-2 text-gray-500 font-semibold text-xl">Our Advantage</div>
-        <div id="previewCompetitiveAdvantage" class="text-sm text-gray-700">—</div>
+        <div class="mb-2 text-gray-400 font-semibold text-lg">Our Advantage</div>
+        <div id="previewCompetitiveAdvantage" class="text-sm text-gray-300">—</div>
       </div>
     </div>
-
   </div>
 </section>

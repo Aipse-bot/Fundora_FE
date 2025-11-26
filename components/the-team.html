@@ -1,21 +1,22 @@
-<section id="mainContent" class="px-4 sm:px-6 lg:px-8 w-full max-w-screen-lg mx-auto p-3 min-h-full pb-10">
-  <div>
-    <h1 class="text-4xl sm:text-5xl font-bold mb-8">The Team</h1>
+<!-- Team Form Section -->
+<section id="mainContent" class="bg-slate-950 text-gray-100 min-h-screen py-20 px-6">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-4xl md:text-5xl font-bold text-white mb-10 text-center">Build Your Team</h1>
 
-    <form id="teamForm">
+    <form id="teamForm" class="space-y-8 bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-sm glow-blue">
       <!-- Team Members Container -->
       <div id="teamMembers" class="space-y-6 mb-6"></div>
 
       <!-- Add Member Button -->
       <button type="button" id="addMemberBtn"
-        class="bg-gray-300 px-4 py-2 font-semibold rounded-lg hover:bg-gray-400 transition">
+        class="w-full sm:w-auto bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
         + Add Member
       </button>
 
       <!-- Submit Button -->
-      <div class="flex justify-end mt-6">
+      <div class="flex justify-end">
         <button type="submit"
-          class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+          class="px-8 py-3 bg-accent-600 hover:bg-accent-700 text-white rounded-lg font-medium transition-colors">
           Next
         </button>
       </div>
@@ -23,70 +24,28 @@
   </div>
 </section>
 
+<!-- Template for Dynamic Members -->
 <template id="teamMemberTemplate">
-  <div class="space-y-3 border-b pb-6 relative team-form">
+  <div class="relative space-y-4 border border-slate-700 bg-slate-800/40 rounded-xl p-6 card-hover">
     <input type="text" name="name" placeholder="Name"
-      class="w-full p-3 border border-gray-300 rounded-lg shadow-sm" />
+      class="w-full p-3 bg-slate-900/60 border border-slate-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-600" />
     <input type="text" name="title" placeholder="Title"
-      class="w-full p-3 border border-gray-300 rounded-lg shadow-sm" />
+      class="w-full p-3 bg-slate-900/60 border border-slate-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-600" />
+
     <button type="button"
-      class="absolute top-0 right-2 text-red-600 font-bold hover:text-red-700 transition remove-member">
+      class="absolute top-3 right-3 text-red-400 hover:text-red-500 font-bold text-lg transition remove-member">
       ✕
     </button>
   </div>
 </template>
 
-<section id="card-panel" class="min-h-screen flex px-5 py-6 items-center justify-center">
-  <div class="w-full max-w-lg bg-white rounded-lg p-8 shadow-lg space-y-6">
+<!-- Team Preview Section -->
+<section id="card-panel" class="bg-slate-900 py-20 px-6 border-t border-slate-800">
+  <div class="max-w-5xl mx-auto text-center">
+    <h1 class="text-4xl font-bold text-white mb-10">Our Team Preview</h1>
 
-    <h1 class="text-3xl font-bold text-gray-800 text-center">Our Team</h1>
-
-    <div id="teamPreview" class="space-y-6">
-      <p class="text-center text-gray-500 text-base">Loading team members...</p>
+    <div id="teamPreview" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      <p class="text-center text-gray-500 text-base col-span-full">Loading team members...</p>
     </div>
-
   </div>
 </section>
-<!-- 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const addMemberBtn = document.getElementById('addMemberBtn');
-  const teamMembers = document.getElementById('teamMembers');
-  const template = document.getElementById('teamMemberTemplate');
-
-  addMemberBtn.addEventListener('click', () => {
-    const clone = template.content.cloneNode(true);
-    clone.querySelector('.remove-member').addEventListener('click', (e) => {
-      e.target.closest('.team-form').remove();
-    });
-    console.log({ template, clone, teamMembers });
-    teamMembers.appendChild(clone);
-  });
-});
-
-  document.getElementById('teamForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('authToken');
-    const members = [...teamMembers.querySelectorAll('.team-form')].map(form => ({
-      name: form.querySelector('input[name="name"]').value,
-      title: form.querySelector('input[name="title"]').value
-    }));
-
-    try {
-      const res = await fetch('https://fundora-be-singapore.onrender.com/api/decks/{deckId}/team/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ members })
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Failed to save team');
-      console.log('Team saved:', data);
-    } catch (err) {
-      console.error('Team submit error:', err);
-    }
-  });
-</script> -->

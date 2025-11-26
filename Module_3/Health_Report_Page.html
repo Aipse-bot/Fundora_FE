@@ -4,610 +4,338 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Startup Health Report</title>
+    <title>Startup Health Report - Fundora</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a'
+                        },
+                        accent: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
+        body { 
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* slate-50 */
         }
         .progress-ring__circle {
             transition: stroke-dashoffset 0.8s ease-out;
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
         }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
+        }
     </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-slate-950 text-gray-100">
 
-    <div class="h-screen flex flex-col">
-        <!-- Include Module 3 Header -->
-        <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                <!-- Left side - Fundora logo/title -->
-                <div class="flex items-center">
-                    <a href="/index.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
-                    Fundora
-                    </a>
-                </div>
-                <!-- Right side - Welcome message and logout -->
-                <div id="header-user" class="flex items-center space-x-4"></div>
-                </div>
-            </div>
-            <script>
-                function renderHeaderUser(user) {
-                    const container = document.getElementById('header-user');
-                    container.innerHTML = '';
-
-                    if (!user || !user.name) return;
-
-                    container.innerHTML = `
-                        <span class="text-gray-700 text-sm">
-                        Welcome, <span class="font-medium">${user.name}</span>
-                        </span>
-                        <a href="/logout.html"
-                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                        Logout
-                        </a>
-                    `;
-                }
-            </script>
-        </header>
-        
-        <div class="flex-1 flex items-start justify-center p-4 overflow-hidden">
-            <div id="reportContainer" class="w-full max-w-6xl h-full overflow-y-auto">
-                <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 mb-4">
-                    <div class="flex items-start justify-between mb-6">
-                    <div class="flex items-center gap-4">
-                        <a id="report-back-link" href="#" class="p-2 rounded-full hover:bg-slate-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="relative w-10 h-10">
+                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)" stroke="#3b82f6" stroke-width="2"/>
+                            <path d="M20 10 L20 30 M12 20 L28 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="20" cy="12" r="2" fill="white"/>
+                            <circle cx="20" cy="28" r="2" fill="white"/>
+                            <circle cx="12" cy="20" r="2" fill="white"/>
+                            <circle cx="28" cy="20" r="2" fill="white"/>
+                            <defs>
+                                <linearGradient id="logo-gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#3b82f6"/>
+                                    <stop offset="100%" stop-color="#10b981"/>
+                                </linearGradient>
+                            </defs>
                         </svg>
+                    </div>
+                    <span class="text-2xl font-bold text-white">Fundora</span>
+                </div>
+                <div id="header-user" class="flex items-center space-x-4"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-24 pb-12 px-6">
+        <div id="reportContainer" class="max-w-7xl mx-auto space-y-8">
+            
+            <!-- Header Card -->
+            <div class="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-8 backdrop-blur-sm">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div class="flex items-start gap-4">
+                        <a id="report-back-link" href="#" class="p-2 rounded-lg hover:bg-slate-800/50 border border-slate-700 transition-colors shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
                         </a>
-                        <img id="report-logo" src="https://placehold.co/48x48/F97316/FFFFFF?text=C" alt="Company Logo" class="h-12 w-12 rounded-lg">
+                        <img id="report-logo" src="https://placehold.co/48x48/3b82f6/FFFFFF?text=C" alt="Company Logo" class="h-12 w-12 rounded-xl shrink-0">
                         <div>
-                        <h1 id="report-company-name" class="text-2xl font-bold text-slate-800">Company Name</h1>
-                        <p id="report-industry" class="text-sm font-medium text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full inline-block">Industry</p>
+                            <h1 id="report-company-name" class="text-3xl font-bold text-white mb-2">Company Name</h1>
+                            <span id="report-industry" class="inline-block text-xs font-semibold text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30">Industry</span>
                         </div>
                     </div>
-                    <div id="report-confidence-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                    <div id="report-confidence-badge" class="inline-block text-xs font-bold px-4 py-2 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 shrink-0">
                         Medium Confidence
-                    </div>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column - Main Content -->
                 <div class="lg:col-span-2 space-y-6">
-                    <div>
-                        <h2 class="text-lg font-semibold text-slate-800 mb-2">Company Summary</h2>
-                        <p id="report-summary" class="text-slate-600 leading-relaxed">No company description provided.</p>
+                    
+                    <!-- Company Summary -->
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Company Summary</h2>
+                        </div>
+                        <p id="report-summary" class="text-gray-400 leading-relaxed">No company description provided.</p>
                     </div>
 
-                    <!-- Qualitative Section -->
-                    <div id="qualitative-assessment" style="display: none;">
-                        <h2 class="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                            </svg>
-                            Qualitative Insights
-                        </h2>
+                    <!-- Qualitative Assessment -->
+                    <div id="qualitative-assessment" class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm" style="display: none;">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Qualitative Insights</h2>
+                        </div>
                         
                         <div class="space-y-4">
-                            <div class="bg-purple-50 p-4 rounded-lg">
-                                <h3 class="text-sm font-semibold text-purple-700 mb-2">Team Strength</h3>
-                                <p id="team-strength" class="text-slate-700 leading-relaxed">Loading...</p>
+                            <div class="bg-purple-500/10 border border-purple-500/20 p-5 rounded-xl">
+                                <h3 class="text-sm font-semibold text-purple-400 mb-2 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                    Team Strength
+                                </h3>
+                                <p id="team-strength" class="text-gray-300 leading-relaxed">Loading...</p>
                             </div>
                             
-                            <div class="bg-blue-50 p-4 rounded-lg">
-                                <h3 class="text-sm font-semibold text-blue-700 mb-2">Market Position</h3>
-                                <p id="market-position" class="text-slate-700 leading-relaxed">Loading...</p>
+                            <div class="bg-blue-500/10 border border-blue-500/20 p-5 rounded-xl">
+                                <h3 class="text-sm font-semibold text-blue-400 mb-2 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                    Market Position
+                                </h3>
+                                <p id="market-position" class="text-gray-300 leading-relaxed">Loading...</p>
                             </div>
                             
-                            <div class="bg-green-50 p-4 rounded-lg">
-                                <h3 class="text-sm font-semibold text-green-700 mb-2">Brand Reputation</h3>
-                                <p id="brand-reputation" class="text-slate-700 leading-relaxed">Loading...</p>
+                            <div class="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-xl">
+                                <h3 class="text-sm font-semibold text-emerald-400 mb-2 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                    </svg>
+                                    Brand Reputation
+                                </h3>
+                                <p id="brand-reputation" class="text-gray-300 leading-relaxed">Loading...</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Financial Section -->
-                    <div id="financial-metrics" style="display: none;">
-                        <h2 class="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                        Financial Metrics
-                        </h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <p class="text-sm text-green-700">Revenue Growth</p>
-                            <p id="report-revenue-growth" class="text-xl font-bold text-green-800">N/A</p>
+                    <!-- Financial Metrics -->
+                    <div id="financial-metrics" class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm" style="display: none;">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Financial Metrics</h2>
                         </div>
-                        <div class="bg-blue-50 p-3 rounded-lg">
-                            <p class="text-sm text-blue-700">Net Income</p>
-                            <p id="report-net-income" class="text-xl font-bold text-blue-800">N/A</p>
-                        </div>
-                        <div class="bg-orange-50 p-3 rounded-lg">
-                            <p class="text-sm text-orange-700">Monthly Burn Rate</p>
-                            <p id="report-burn-rate" class="text-xl font-bold text-orange-800">N/A</p>
-                        </div>
-                        <div class="bg-purple-50 p-3 rounded-lg">
-                            <p class="text-sm text-purple-700">Profit Margin</p>
-                            <p id="report-profit-margin" class="text-xl font-bold text-purple-800">N/A</p>
-                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-xl">
+                                <p class="text-sm text-emerald-400 mb-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                    </svg>
+                                    Revenue Growth
+                                </p>
+                                <p id="report-revenue-growth" class="text-2xl font-bold text-white">N/A</p>
+                            </div>
+                            
+                            <div class="bg-blue-500/10 border border-blue-500/20 p-5 rounded-xl">
+                                <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Net Income
+                                </p>
+                                <p id="report-net-income" class="text-2xl font-bold text-white">N/A</p>
+                            </div>
+                            
+                            <div class="bg-orange-500/10 border border-orange-500/20 p-5 rounded-xl">
+                                <p class="text-sm text-orange-400 mb-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                                    </svg>
+                                    Monthly Burn Rate
+                                </p>
+                                <p id="report-burn-rate" class="text-2xl font-bold text-white">N/A</p>
+                            </div>
+                            
+                            <div class="bg-purple-500/10 border border-purple-500/20 p-5 rounded-xl">
+                                <p class="text-sm text-purple-400 mb-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    Profit Margin
+                                </p>
+                                <p id="report-profit-margin" class="text-2xl font-bold text-white">N/A</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-4">
+                <!-- Right Column - Sidebar -->
+                <div class="space-y-6">
+                    
                     <!-- Risk & Reward -->
-                    <div class="bg-slate-50 p-4 rounded-lg">
-                        <h3 class="font-semibold text-slate-800 mb-3">Risk & Reward</h3>
-                        <div class="space-y-2">
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                            <p>Risk Score</p>
-                            <p id="report-risk-score" class="font-semibold"></p>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 backdrop-blur-sm">
+                        <h3 class="font-bold text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            Risk & Reward
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <p class="text-gray-400">Risk Score</p>
+                                    <p id="report-risk-score" class="font-semibold text-white"></p>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-2.5">
+                                    <div id="report-risk-bar" class="bg-gradient-to-r from-red-500 to-red-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
                             </div>
-                            <div class="w-full bg-slate-200 rounded-full h-2">
-                            <div id="report-risk-bar" class="bg-red-500 h-2 rounded-full" style="width: 0%"></div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <p class="text-gray-400">Reward Potential</p>
+                                    <p id="report-reward-score" class="font-semibold text-white"></p>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-2.5">
+                                    <div id="report-reward-bar" class="bg-gradient-to-r from-blue-500 to-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                            <p>Reward Potential</p>
-                            <p id="report-reward-score" class="font-semibold"></p>
-                            </div>
-                            <div class="w-full bg-slate-200 rounded-full h-2">
-                            <div id="report-reward-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
                         </div>
                     </div>
 
                     <!-- Data Confidence -->
-                    <div class="bg-slate-50 p-4 rounded-lg text-center">
-                        <h3 class="font-semibold text-slate-800 mb-3">Data Confidence</h3>
-                        <div class="relative inline-flex items-center justify-center">
-                        <svg class="w-24 h-24">
-                            <circle class="text-slate-200" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48" />
-                            <circle id="confidence-circle" class="text-blue-500 progress-ring__circle" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48" />
-                        </svg>
-                        <span id="report-confidence-percent" class="absolute text-2xl font-bold text-blue-600">0%</span>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 backdrop-blur-sm text-center">
+                        <h3 class="font-bold text-white mb-4 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Data Confidence
+                        </h3>
+                        <div class="relative inline-flex items-center justify-center mb-4">
+                            <svg class="w-28 h-28">
+                                <circle class="text-slate-700" stroke-width="10" stroke="currentColor" fill="transparent" r="50" cx="56" cy="56" />
+                                <circle id="confidence-circle" class="text-blue-500 progress-ring__circle" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="50" cx="56" cy="56" />
+                            </svg>
+                            <span id="report-confidence-percent" class="absolute text-3xl font-bold text-blue-400">0%</span>
                         </div>
-                        <p class="text-xs text-slate-600 mt-2">High reliability based on verified financial data and market analysis.</p>
+                        <p class="text-xs text-gray-400 leading-relaxed">High reliability based on verified financial data and market analysis.</p>
                     </div>
 
                     <!-- Action Button -->
-                    <div class="space-y-2">
-                        <button id="addStartupBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                    <button id="addStartupBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
                         Add Startup
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Success/Error Modal -->
-    <div id="messageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
-            <div class="text-center">
-                <div id="modalIcon" class="mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4">
-                    <!-- Success icon -->
-                    <svg id="successIcon" class="h-6 w-6 text-green-600 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <!-- Error icon -->
-                    <svg id="errorIcon" class="h-6 w-6 text-red-600 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </div>
-                <h3 id="modalTitle" class="text-lg font-medium text-slate-900 mb-2"></h3>
-                <p id="modalMessage" class="text-sm text-slate-500 mb-6"></p>
-                <div class="flex justify-center gap-3">
-                    <button id="modalOkBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        OK
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Modal functionality
-            function showModal(title, message, isSuccess = true) {
-                const modal = document.getElementById('messageModal');
-                const modalTitle = document.getElementById('modalTitle');
-                const modalMessage = document.getElementById('modalMessage');
-                const modalIcon = document.getElementById('modalIcon');
-                const successIcon = document.getElementById('successIcon');
-                const errorIcon = document.getElementById('errorIcon');
-                
-                modalTitle.textContent = title;
-                modalMessage.textContent = message;
-                
-                if (isSuccess) {
-                    modalIcon.className = 'mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4';
-                    successIcon.classList.remove('hidden');
-                    errorIcon.classList.add('hidden');
-                } else {
-                    modalIcon.className = 'mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4';
-                    errorIcon.classList.remove('hidden');
-                    successIcon.classList.add('hidden');
-                }
-                
-                modal.classList.remove('hidden');
-            }
-            
-            function hideModal() {
-                document.getElementById('messageModal').classList.add('hidden');
-            }
-            
-            // Modal close button functionality
-            document.getElementById('modalOkBtn').addEventListener('click', () => {
-                hideModal();
-                // If it was a success message, redirect to added startups
-                const modalTitle = document.getElementById('modalTitle').textContent;
-                if (modalTitle === 'Success!') {
-                    window.location.href = '{% url "added_startups" %}';
-                }
-            });
-            
-            // Close modal when clicking outside
-            document.getElementById('messageModal').addEventListener('click', (e) => {
-                if (e.target.id === 'messageModal') {
-                    hideModal();
-                }
-            });
+    <!-- Success/Error Modal -->
+    <div id="messageModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modalIcon" class="mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4">
+                    <!-- Success icon -->
+                    <svg id="successIcon" class="h-8 w-8 text-emerald-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <!-- Error icon -->
+                    <svg id="errorIcon" class="h-8 w-8 text-red-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+                <h3 id="modalTitle" class="text-xl font-bold text-white mb-2"></h3>
+                <p id="modalMessage" class="text-sm text-gray-400 mb-6"></p>
+                <button id="modalOkBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-8 py-2.5 rounded-lg font-medium transition-colors">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
 
-            // MODIFICATION START: Get new data points for calculation
-            const companyData = {
-                company_name: "{{ company_data.company_name|default:''|escapejs }}",
-                industry: "{{ company_data.industry|default:''|escapejs }}",
-                company_description: "{{ company_data.company_description|default:''|escapejs }}",
-                data_source_confidence: "{{ company_data.data_source_confidence|default:'Medium'|escapejs }}",
-                previous_revenue: "{{ company_data.previous_revenue|default:''|escapejs }}",
-                current_revenue: "{{ company_data.current_revenue|default:''|escapejs }}",
-                net_income: "{{ company_data.net_income|default:''|escapejs }}",
-                total_assets: "{{ company_data.total_assets|default:''|escapejs }}",
-                total_liabilities: "{{ company_data.total_liabilities|default:''|escapejs }}",
-                cash_flow: "{{ company_data.cash_flow|default:''|escapejs }}",
-                team_strength: "{{ company_data.team_strength|default:''|escapejs }}",
-                market_position: "{{ company_data.market_position|default:''|escapejs }}",
-                brand_reputation: "{{ company_data.brand_reputation|default:''|escapejs }}"
-            };
-            // MODIFICATION END
+    <script>
+        function renderHeaderUser(user) {
+            const container = document.getElementById('header-user');
+            container.innerHTML = '';
 
-            // Debug: Log the data to console
-            console.log('Company Data:', companyData);
+            if (!user || !user.name) return;
 
-            //   Function to display the report from Django data   
-            function displayReportFromDjango() {
-                // Only update logo if we have company name
-                if (companyData.company_name) {
-                    const firstLetter = companyData.company_name.charAt(0).toUpperCase();
-                    document.getElementById('report-logo').src = `https://placehold.co/48x48/F97316/FFFFFF?text=${firstLetter}`;
-                }
-                
-                const confidenceLevel = companyData.data_source_confidence.toLowerCase();
-                
-                // Handle different confidence levels
-                if (confidenceLevel === 'low') {
-                    // For Low confidence, calculate risk/reward based on qualitative factors
-                    calculateQualitativeRiskReward();
-                } else {
-                    // For High/Medium confidence, use financial calculations
-                    calculateFinancialMetrics();
-                }
-                
-                // Always show qualitative insights regardless of confidence level
-                showQualitativeInsights();
-                
-                // Always populate Data Confidence Circle
-                populateConfidenceCircle(confidenceLevel);
-            }
-            
-            function calculateFinancialMetrics() {
-                // Get numbers from the data object
-                const prevRevenue = parseFloat(companyData.previous_revenue) || 0;
-                const currentRevenue = parseFloat(companyData.current_revenue) || 0;
-                const netIncome = parseFloat(companyData.net_income) || 0;
-                const cashFlow = parseFloat(companyData.cash_flow) || 0;
+            container.innerHTML = `
+                <span class="text-gray-400 text-sm">
+                    Welcome, <span class="font-medium text-white">${user.name}</span>
+                </span>
+                <a href="/logout.html" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    Logout
+                </a>
+            `;
+        }
+    </script>
 
-                console.log('Previous Revenue:', prevRevenue);
-                console.log('Current Revenue:', currentRevenue);
-                console.log('Net Income:', netIncome);
-                console.log('Cash Flow:', cashFlow);
-
-                // 1. Calculate Revenue Growth
-                let revenueGrowth = "N/A";
-                if (prevRevenue > 0 && currentRevenue > 0) {
-                    const growth = ((currentRevenue - prevRevenue) / prevRevenue) * 100;
-                    const growthColor = growth >= 0 ? 'text-green-800' : 'text-red-800';
-                    document.getElementById('report-revenue-growth').className = `text-2xl font-bold ${growthColor}`;
-                    revenueGrowth = `${growth.toFixed(1)}%`;
-                } else if (currentRevenue > 0 && prevRevenue === 0) {
-                    // If we have current revenue but no previous revenue, show "New Company"
-                    document.getElementById('report-revenue-growth').className = `text-2xl font-bold text-blue-800`;
-                    revenueGrowth = "New Company";
-                }
-                document.getElementById('report-revenue-growth').textContent = revenueGrowth;
-
-                // 2. Calculate Profit Margin
-                let profitMargin = "N/A";
-                let profitMarginValue = 0; // for risk calculation
-                if (currentRevenue > 0 && netIncome !== 0) {
-                    profitMarginValue = (netIncome / currentRevenue);
-                    profitMargin = `${(profitMarginValue * 100).toFixed(1)}%`;
-                    const marginColor = profitMarginValue >= 0 ? 'text-purple-800' : 'text-red-800';
-                    document.getElementById('report-profit-margin').className = `text-2xl font-bold ${marginColor}`;
-                } else if (netIncome !== 0 && currentRevenue === 0) {
-                    // If we have net income but no revenue, show it as a flat amount
-                    const incomeColor = netIncome >= 0 ? 'text-purple-800' : 'text-red-800';
-                    document.getElementById('report-profit-margin').className = `text-2xl font-bold ${incomeColor}`;
-                    profitMargin = `₱${Math.abs(netIncome).toLocaleString()}`;
-                }
-                document.getElementById('report-profit-margin').textContent = profitMargin;
-
-                // 3. Calculate Monthly Burn Rate
-                let burnRate = "₱0";
-                let burnRateColor = 'text-green-800'; // Default to green for no burn
-                
-                if (cashFlow !== 0) {
-                    if (cashFlow < 0) {
-                        // Negative cash flow = burning money (bad - red)
-                        const monthlyBurn = Math.abs(cashFlow);
-                        burnRate = `-₱${monthlyBurn.toLocaleString()}`;
-                        burnRateColor = 'text-red-800';
-                    } else {
-                        // Positive cash flow = generating money (good - green)
-                        burnRate = `+₱${cashFlow.toLocaleString()}`;
-                        burnRateColor = 'text-green-800';
-                    }
-                }
-                
-                document.getElementById('report-burn-rate').textContent = burnRate;
-                document.getElementById('report-burn-rate').className = `text-2xl font-bold ${burnRateColor}`;
-
-                // 4. Update Risk & Reward based on Profit Margin
-                let riskScore = 2.5;
-                let rewardScore = 3.0;
-
-                if (profitMarginValue > 0.2) {
-                    riskScore = 2.0;
-                    rewardScore = 4.5;
-                } else if (profitMarginValue > 0.1) {
-                    riskScore = 2.5;
-                    rewardScore = 3.5;
-                } else if (profitMarginValue > 0) {
-                    riskScore = 3.5;
-                    rewardScore = 2.5;
-                } else {
-                    riskScore = 4.5;
-                    rewardScore = 2.0;
-                }
-                
-                updateRiskRewardDisplay(riskScore, rewardScore);
-            }
-            
-            function showQualitativeInsights() {
-                // Always show the qualitative assessment section
-                const qualitativeSection = document.getElementById('qualitative-assessment');
-                if (qualitativeSection) {
-                    qualitativeSection.style.display = 'block';
-                    
-                    // Populate the qualitative insights with enhanced analysis
-                    const teamStrengthEl = document.getElementById('team-strength');
-                    const marketPositionEl = document.getElementById('market-position');
-                    const brandReputationEl = document.getElementById('brand-reputation');
-                    
-                    // Team Strength Analysis
-                    if (teamStrengthEl) {
-                        let teamAnalysis = companyData.team_strength || 'No specific team strength data provided';
-                        if (!companyData.team_strength) {
-                            // Provide default insights based on confidence level
-                            const confidenceLevel = companyData.data_source_confidence.toLowerCase();
-                            if (confidenceLevel === 'high') {
-                                teamAnalysis = 'Based on high confidence data, the team appears to have strong technical and business capabilities with proven track records.';
-                            } else if (confidenceLevel === 'medium') {
-                                teamAnalysis = 'The team shows reasonable capabilities with some proven experience in the industry.';
-                            } else {
-                                teamAnalysis = 'Limited information available about team composition and experience. Further evaluation recommended.';
-                            }
-                        }
-                        teamStrengthEl.textContent = teamAnalysis;
-                    }
-                    
-                    // Market Position Analysis
-                    if (marketPositionEl) {
-                        let marketAnalysis = companyData.market_position || 'No specific market position data provided';
-                        if (!companyData.market_position) {
-                            // Provide insights based on industry and confidence
-                            const industry = companyData.industry || 'Unknown';
-                            const confidenceLevel = companyData.data_source_confidence.toLowerCase();
-                            
-                            if (confidenceLevel === 'high') {
-                                marketAnalysis = `Strong positioning in the ${industry} sector with clear competitive advantages and market traction.`;
-                            } else if (confidenceLevel === 'medium') {
-                                marketAnalysis = `Moderate positioning in the ${industry} market with some competitive differentiation.`;
-                            } else {
-                                marketAnalysis = `Early-stage positioning in the ${industry} sector. Market validation and competitive analysis needed.`;
-                            }
-                        }
-                        marketPositionEl.textContent = marketAnalysis;
-                    }
-                    
-                    // Brand Reputation Analysis
-                    if (brandReputationEl) {
-                        let brandAnalysis = companyData.brand_reputation || 'No specific brand reputation data provided';
-                        if (!companyData.brand_reputation) {
-                            // Provide insights based on company data
-                            const confidenceLevel = companyData.data_source_confidence.toLowerCase();
-                            const hasRevenue = companyData.current_revenue && parseFloat(companyData.current_revenue) > 0;
-                            
-                            if (confidenceLevel === 'high' && hasRevenue) {
-                                brandAnalysis = 'Established brand presence with positive market recognition and customer trust, evidenced by revenue generation.';
-                            } else if (confidenceLevel === 'medium') {
-                                brandAnalysis = 'Developing brand identity with growing market awareness and customer base.';
-                            } else {
-                                brandAnalysis = 'Emerging brand with limited market presence. Brand building and customer acquisition strategies recommended.';
-                            }
-                        }
-                        brandReputationEl.textContent = brandAnalysis;
-                    }
-                }
-            }
-            
-            function calculateQualitativeRiskReward() {
-                // For Low confidence, set fixed values as requested
-                let riskScore = 2.5; // Fixed risk score for low confidence
-                let rewardScore = 2.5; // Fixed reward score for low confidence
-                
-                console.log('Using fixed risk/reward values for low confidence');
-                console.log('Team Strength:', companyData.team_strength);
-                console.log('Market Position:', companyData.market_position);
-                console.log('Brand Reputation:', companyData.brand_reputation);
-                
-                // No calculations needed as we're using fixed values
-                // But we'll log the qualitative data for debugging purposes
-                
-                // Note: If you want to restore the original calculation logic,
-                // uncomment the following section
-                
-                /*
-                // Analyze team strength
-                if (companyData.team_strength && companyData.team_strength.length > 50) {
-                    // If detailed team strength is provided, assume better team = lower risk, higher reward
-                    riskScore -= 0.5;
-                    rewardScore += 0.5;
-                }
-                
-                // Analyze market position
-                if (companyData.market_position && companyData.market_position.length > 50) {
-                    // If detailed market position is provided, assume good positioning = lower risk, higher reward
-                    riskScore -= 0.5;
-                    rewardScore += 0.5;
-                }
-                
-                // Analyze brand reputation
-                if (companyData.brand_reputation && companyData.brand_reputation.length > 50) {
-                    // If detailed brand reputation is provided, assume good reputation = lower risk, higher reward
-                    riskScore -= 0.3;
-                    rewardScore += 0.3;
-                }
-                
-                // Ensure scores stay within bounds
-                riskScore = Math.max(1.5, Math.min(4.5, riskScore));
-                rewardScore = Math.max(2.0, Math.min(4.5, rewardScore));
-                */
-                
-                updateRiskRewardDisplay(riskScore, rewardScore);
-            }
-            
-            function updateRiskRewardDisplay(riskScore, rewardScore) {
-                document.getElementById('report-risk-score').textContent = `${riskScore.toFixed(1)}/5`;
-                document.getElementById('report-reward-score').textContent = `${rewardScore.toFixed(1)}/5`;
-                document.getElementById('report-risk-bar').style.width = `${(riskScore/5)*100}%`;
-                document.getElementById('report-reward-bar').style.width = `${(rewardScore/5)*100}%`;
-
-            }
-            
-            function populateConfidenceCircle(confidenceLevel) {
-                let confidencePercent = 0;
-                
-                if (confidenceLevel === 'high') {
-                    confidencePercent = 95;
-                } else if (confidenceLevel === 'medium') {
-                    confidencePercent = 75;
-                } else {
-                    confidencePercent = 30; // Changed from 40% to 30% for low confidence
-                }
-                
-                document.getElementById('report-confidence-percent').textContent = `${confidencePercent}%`;
-                const circle = document.getElementById('confidence-circle');
-                const radius = circle.r.baseVal.value;
-                const circumference = radius * 2 * Math.PI;
-                circle.style.strokeDasharray = `${circumference} ${circumference}`;
-                
-                // Set a timeout to apply the transition after the page has loaded
-                setTimeout(() => {
-                    const offset = circumference - confidencePercent / 100 * circumference;
-                    circle.style.strokeDashoffset = offset;
-                }, 100);
-            }
-
-    
-            
-            // Add/Update Startup button functionality
-            document.getElementById('addStartupBtn').addEventListener('click', async () => {
-                const button = document.getElementById('addStartupBtn');
-                const originalText = button.textContent;
-                const isEdit = originalText.includes('Update');
-                const editStartupId = {{ edit_startup_id|default:'null' }};
-                
-                // Disable button and show loading state
-                button.disabled = true;
-                button.textContent = isEdit ? 'Updating Startup...' : 'Adding Startup...';
-                button.classList.add('opacity-50', 'cursor-not-allowed');
-                
-                try {
-                    // Get CSRF token
-                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
-                                      document.querySelector('meta[name=csrf-token]')?.content ||
-                                      '{{ csrf_token }}';
-                    
-                    let url, method;
-                    let body = JSON.stringify({});
-                    
-                    if (isEdit && editStartupId) {
-                        // For edit mode, we need to go back to the edit form and submit it
-                        window.location.href = `/edit-startup/${editStartupId}/`;
-                        return;
-                    } else {
-                        // For new startup
-                        url = '{% url "add_startup" %}';
-                        method = 'POST';
-                    }
-                    
-                    const response = await fetch(url, {
-                        method: method,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': csrfToken,
-                        },
-                        body: body
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        showModal('Success!', 'Startup added successfully!', true);
-                    } else {
-                        showModal('Error', result.error || 'Failed to add startup', false);
-                        // Re-enable button
-                        button.disabled = false;
-                        button.textContent = originalText;
-                        button.classList.remove('opacity-50', 'cursor-not-allowed');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    showModal('Error', 'Failed to process request', false);
-                    // Re-enable button
-                    button.disabled = false;
-                    button.textContent = originalText;
-                    button.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            });
-
-            //   Initial call to populate the report   
-            displayReportFromDjango();
-        });
-    </script> -->
 </body>
 </html>

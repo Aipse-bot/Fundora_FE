@@ -242,32 +242,49 @@
       // Update page with startup info
       document.getElementById('startupName').textContent = startupData.company_name || 'Unknown Startup';
       
-      const projectedReturn = startupData.projected_return || 7; // Already a percentage
+      const projectedReturn = startupData.projected_return;
       const riskLevel = startupData.risk_level;
       const isPitchDeck = startupData.is_pitch_deck === true;
 
-      // Convert percentage to decimal for calculations
-      const growthRate = projectedReturn / 100;
-
-      document.getElementById('growth-rate-display').textContent = (growthRate * 100).toFixed(2);
+      if (projectedReturn === null || projectedReturn === undefined) {
+          // Disable simulation - no growth rate available
+          document.getElementById('growth-rate-display').textContent = 'N/A';
+          document.getElementById('growth-rate-display').parentElement.classList.add('opacity-50');
+          
+          alert('This startup does not have sufficient financial data for investment simulation.\n\nRequired: Revenue history (current and previous period revenue)');
+          
+          // Disable simulate button permanently
+          const simulateBtn = document.getElementById('simulate-btn');
+          simulateBtn.disabled = true;
+          simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          simulateBtn.textContent = 'Insufficient Data';
+          
+          return;
+      }
       
-      // Update risk badge - handle all cases
+      document.getElementById('growth-rate-display').textContent = projectedReturn.toFixed(2);
+      
       const riskBadge = document.getElementById('risk-badge');
       
-      if (isPitchDeck && !riskLevel) {
-        riskBadge.textContent = 'Pitch Deck';
-        riskBadge.className = 'bg-purple-500/20 text-purple-300 text-sm font-medium px-4 py-2 rounded-full border border-purple-500/30';
-      } else if (!riskLevel) {
+      if (riskLevel === null || riskLevel === undefined) {
         riskBadge.textContent = 'Data Pending';
         riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
+      } else if (isPitchDeck && !riskLevel) {
+          riskBadge.textContent = 'Pitch Deck';
+          riskBadge.className = 'bg-purple-500/20 text-purple-300 text-sm font-medium px-4 py-2 rounded-full border border-purple-500/30';
       } else {
-        riskBadge.textContent = `${riskLevel} Risk`;
-        riskBadge.className =
-          riskLevel === 'High'
-            ? 'bg-red-500/20 text-red-300 text-sm font-medium px-4 py-2 rounded-full border border-red-500/30'
-            : riskLevel === 'Medium'
-            ? 'bg-yellow-500/20 text-yellow-300 text-sm font-medium px-4 py-2 rounded-full border border-yellow-500/30'
-            : 'bg-green-500/20 text-green-300 text-sm font-medium px-4 py-2 rounded-full border border-green-500/30';
+          riskBadge.textContent = `${riskLevel} Risk`;
+          
+          const riskColors = {
+              'Very Low': 'bg-green-500/20 text-green-300 border-green-500/30',
+              'Low': 'bg-green-500/20 text-green-300 border-green-500/30',
+              'Medium': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+              'High': 'bg-red-500/20 text-red-300 border-red-500/30',
+              'Very High': 'bg-red-500/20 text-red-300 border-red-500/30'
+          };
+          
+          const colorClass = riskColors[riskLevel] || 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+          riskBadge.className = `${colorClass} text-sm font-medium px-4 py-2 rounded-full border`;
       }
 
       const investmentInput = document.getElementById('investment-amount');
@@ -275,17 +292,17 @@
       const simulateBtn = document.getElementById('simulate-btn');
 
       [investmentInput, durationSelect].forEach(el => {
-        el.addEventListener('input', () => {
-          if (investmentInput.value && durationSelect.value) {
-            simulateBtn.disabled = false;
-            simulateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            simulateBtn.classList.add('hover:bg-brand-700');
-          } else {
-            simulateBtn.disabled = true;
-            simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            simulateBtn.classList.remove('hover:bg-brand-700');
-          }
-        });
+          el.addEventListener('input', () => {
+              if (investmentInput.value && durationSelect.value) {
+                  simulateBtn.disabled = false;
+                  simulateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                  simulateBtn.classList.add('hover:bg-brand-700');
+              } else {
+                  simulateBtn.disabled = true;
+                  simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                  simulateBtn.classList.remove('hover:bg-brand-700');
+              }
+          });
       });
 
       simulateBtn.onclick = () => runSimulation(growthRate);
