@@ -125,8 +125,9 @@
             </div>
             <h2 class="text-lg font-semibold text-white">Financial Projections</h2>
           </div>
-          <div id="financial-table-container" class="mb-6 overflow-x-auto max-h-[200px]"></div>
-          <div class="mt-6 h-[250px] overflow-hidden" style="contain: layout style paint;">
+          <!-- Fixed max-height and overflow to prevent UI breaking when financial metrics show -->
+          <div id="financial-table-container" class="mb-6 overflow-y-auto max-h-[300px]"></div>
+          <div class="mt-6 h-[250px]" style="contain: layout style paint;">
             <canvas id="revenueProfitChart" class="w-full h-full" style="display: block;"></canvas>
           </div>
         </div>
@@ -150,11 +151,26 @@
           </div>
         </div>
 
-        <!-- The Ask -->
+        <!-- Funding Ask -->
+        <div class="card-base rounded-xl p-6 fade-in delay-2">
+          <h2 class="text-lg font-semibold mb-4 text-white">Funding Ask</h2>
+          <div class="space-y-3">
+            <div>
+              <div class="text-xs text-gray-400 mb-1">Amount</div>
+              <div id="funding-ask" class="text-2xl font-bold text-brand-400">—</div>
+            </div>
+            <div class="pt-3 border-t border-slate-700/30">
+              <div class="text-xs text-gray-400 mb-2">Use of Funds</div>
+              <p id="use-of-funds" class="text-sm text-gray-300">—</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team -->
         <div class="card-base rounded-xl p-6 fade-in delay-3">
-          <h2 class="text-lg font-semibold mb-4 text-white">Funding Request</h2>
-          <div id="ask-section" class="space-y-3">
-            <p class="text-gray-400 text-sm">No funding information available</p>
+          <h2 class="text-lg font-semibold mb-4 text-white">Team</h2>
+          <div id="team-container" class="space-y-3">
+            <p class="text-sm text-gray-400">—</p>
           </div>
         </div>
       </div>
@@ -162,19 +178,33 @@
   </div>
 
   <script>
-    const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
-    const params = new URLSearchParams(window.location.search);
-    const startupId = params.get("id");
-    const returnUrl = params.get("return");
-    
+    const API_BASE = 'https://fundora-be-singapore.onrender.com';
+    let chartInstance = null;
+    let startupId = null;
     let watchlistIdsSet = new Set();
     let currentWatchlistState = false;
-    let chartInstance = null;
+
+    window.addEventListener('load', () => {
+      const params = new URLSearchParams(window.location.search);
+      startupId = params.get('id') || params.get('startup_id');
+      if (!startupId) {
+        alert('Missing startup ID');
+        window.history.back();
+        return;
+      }
+      loadAllData();
+    });
+
+    document.getElementById('backBtn').addEventListener('click', () => window.history.back());
+
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
 
     function authHeaders() {
-      const h = { 'Content-Type': 'application/json' };
-      if (token) h['Authorization'] = `Bearer ${token}`;
-      return h;
+      const token = getAuthToken();
+      if (!token) return {};
+      return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
     }
 
     async function fetchJSON(url, opts = {}) {
@@ -210,129 +240,128 @@
       }
     }
 
-    function populateHeaderFromStartup(startup) {
-      document.title = startup.company_name || "Company Profile";
-      document.getElementById("deck-name").textContent = startup.company_name || "—";
-      document.getElementById("deck-tagline").textContent = startup.company_description || "—";
-    }
-
-    function populateAsk(ask) {
-      const askSection = document.getElementById("ask-section");
-      if (!ask) {
-        askSection.innerHTML = `<p class="text-gray-400 text-sm">No funding information available</p>`;
-        return;
+    async function addToWatchlist(sid) {
+      try {
+        const url = `${API_BASE}/api/investor/watchlist/add/${sid}/`;
+        const res = await fetchJSON(url, { method: 'POST' });
+        watchlistIdsSet.add(Number(sid));
+        return !!res;
+      } catch (err) {
+        console.error('Error adding to watchlist:', err);
+        return false;
       }
-      const amt = (ask.amount != null && !isNaN(Number(ask.amount))) ? `₱${Number(ask.amount).toLocaleString()}` : (ask.amount || "—");
-      askSection.innerHTML = `
-        <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4">
-          <div class="text-xs text-gray-400 mb-2">Funding Goal</div>
-          <div class="text-lg font-bold text-brand-300 mb-3">${amt}</div>
-          <div class="text-xs text-gray-400 mb-2">Use of Funds</div>
-          <p class="text-gray-300 text-sm">${ask.usage_description || "—"}</p>
-        </div>
-      `;
     }
 
-    function populateMarket(market) {
-      document.getElementById("primary-market").textContent = market?.primary_market || "—";
-      document.getElementById("target-audience").textContent = market?.target_audience || "—";
-      const growth = market?.market_growth_rate ?? market?.market_growth ?? "—";
-      document.getElementById("market-growth").textContent = growth !== null ? String(growth) : "—";
-      document.getElementById("competitive-advantage").textContent = market?.competitive_advantage || "—";
-    }
-
-    function populateProblemSolution(problemObj, solutionObj) {
-      const problemText = problemObj?.description ?? (typeof problemObj === 'string' ? problemObj : null);
-      const solutionText = solutionObj?.description ?? (typeof solutionObj === 'string' ? solutionObj : null);
-      document.getElementById("problem-description").textContent = problemText || "—";
-      document.getElementById("solution-description").textContent = solutionText || "—";
+    async function removeFromWatchlist(sid) {
+      try {
+        const url = `${API_BASE}/api/investor/watchlist/remove/${sid}/`;
+        const res = await fetchJSON(url, { method: 'POST' });
+        watchlistIdsSet.delete(Number(sid));
+        return !!res;
+      } catch (err) {
+        console.error('Error removing from watchlist:', err);
+        return false;
+      }
     }
 
     function updateWatchlistButton(inWatchlist) {
-      const watchBtn = document.getElementById("watchlistBtn");
-      if (!watchBtn) return;
-      
-      watchBtn.disabled = false;
-      currentWatchlistState = inWatchlist;
-
+      const btn = document.getElementById('watchlistBtn');
       if (inWatchlist) {
-        watchBtn.innerHTML = `
-          <svg class="w-4 h-4 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-          In Watchlist
-        `;
-        watchBtn.className = "w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200 border border-slate-600 text-sm";
-        watchBtn.onclick = () => toggleWatchlist(false);
+        btn.className = 'w-full bg-red-600/20 hover:bg-red-600/30 text-red-400 font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center text-sm border border-red-600/50';
+        btn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.682-7.682 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>Saved to Watchlist';
       } else {
-        watchBtn.innerHTML = `
-          <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-          </svg>
-          Add to Watchlist
-        `;
-        watchBtn.className = "w-full bg-accent-600 hover:bg-accent-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200 text-sm";
-        watchBtn.onclick = () => toggleWatchlist(true);
+        btn.className = 'w-full bg-slate-800/30 hover:bg-slate-700/30 text-gray-300 font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center text-sm border border-slate-700/50';
+        btn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>Add to Watchlist';
       }
+      btn.disabled = false;
     }
 
-    async function toggleWatchlist(shouldAdd) {
-      const watchBtn = document.getElementById("watchlistBtn");
-      if (!watchBtn) return;
-      
-      watchBtn.disabled = true;
-      const originalHTML = watchBtn.innerHTML;
-      watchBtn.innerHTML = `
-        <svg class="w-4 h-4 mr-2 inline" style="animation: spin 1s linear infinite" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
-        </svg>
-        Updating...
-      `;
+    document.getElementById('watchlistBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('watchlistBtn');
+      btn.disabled = true;
 
-      try {
-        const action = shouldAdd ? 'add' : 'remove';
-        const method = shouldAdd ? 'POST' : 'DELETE';
-        
-        const res = await fetch(`https://fundora-be-singapore.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
-          method: method,
-          headers: authHeaders()
-        });
-        
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Failed to ${action} watchlist: ${res.status} ${errorText}`);
-        }
-
-        const result = await res.json();
-        
-        if (shouldAdd) {
-          watchlistIdsSet.add(Number(startupId));
+      const currently = currentWatchlistState;
+      if (!currently) {
+        const ok = await addToWatchlist(startupId);
+        if (ok) {
+          currentWatchlistState = true;
+          updateWatchlistButton(true);
         } else {
-          watchlistIdsSet.delete(Number(startupId));
+          alert('Could not add to watchlist');
         }
-        currentWatchlistState = shouldAdd;
-        
-        showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');
-        updateWatchlistButton(shouldAdd);
-        
-      } catch (err) {
-        showNotification(err.message || 'Failed to update watchlist. Please try again.', 'error');
-        watchBtn.innerHTML = originalHTML;
-        watchBtn.disabled = false;
+      } else {
+        const ok = await removeFromWatchlist(startupId);
+        if (ok) {
+          currentWatchlistState = false;
+          updateWatchlistButton(false);
+        } else {
+          alert('Could not remove from watchlist');
+        }
+      }
+      btn.disabled = false;
+    });
+
+    function escapeHtml(text) {
+      if (typeof text !== 'string') return text;
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    function populateHeaderFromStartup(startup) {
+      document.getElementById('deck-name').textContent = escapeHtml(startup.company_name || 'Untitled');
+      document.getElementById('deck-tagline').textContent = escapeHtml(startup.company_description || 'No description');
+    }
+
+    function populateProblemSolution(problem, solution) {
+      const problemEl = document.getElementById('problem-description');
+      const solutionEl = document.getElementById('solution-description');
+      
+      if (problem) {
+        problemEl.textContent = escapeHtml(problem.description || problem.problem_statement || '—');
+      } else {
+        problemEl.textContent = '—';
+      }
+
+      if (solution) {
+        solutionEl.textContent = escapeHtml(solution.description || solution.solution_statement || '—');
+      } else {
+        solutionEl.textContent = '—';
       }
     }
 
-    function showNotification(message, type) {
-      const div = document.createElement('div');
-      div.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg font-medium ${type === 'success' ? 'bg-accent-600' : 'bg-red-600'} text-white`;
-      div.textContent = message;
-      div.style.animation = 'fadeIn 0.3s ease-out';
-      document.body.appendChild(div);
-      setTimeout(() => {
-        div.style.opacity = '0';
-        div.style.transition = 'opacity 0.3s ease-out';
-        setTimeout(() => div.remove(), 300);
-      }, 3000);
+    function populateMarket(market) {
+      if (!market) {
+        document.getElementById('primary-market').textContent = '—';
+        document.getElementById('target-audience').textContent = '—';
+        document.getElementById('market-growth').textContent = '—';
+        document.getElementById('competitive-advantage').textContent = '—';
+        return;
+      }
+
+      document.getElementById('primary-market').textContent = escapeHtml(market.primary_market || market.market || '—');
+      document.getElementById('target-audience').textContent = escapeHtml(market.target_audience || market.audience || '—');
+      
+      const growth = market.market_growth_rate || market.market_growth || null;
+      document.getElementById('market-growth').textContent = growth != null ? `${Number(growth)}%` : '—';
+      
+      document.getElementById('competitive-advantage').textContent = escapeHtml(market.competitive_advantage || market.advantage || '—');
+    }
+
+    function populateAsk(ask) {
+      if (!ask) {
+        document.getElementById('funding-ask').textContent = '—';
+        document.getElementById('use-of-funds').textContent = '—';
+        return;
+      }
+
+      const amount = ask.amount || ask.funding_ask || ask.funding_amount || null;
+      if (amount != null) {
+        document.getElementById('funding-ask').textContent = `$${parseFloat(amount).toLocaleString()}`;
+      } else {
+        document.getElementById('funding-ask').textContent = '—';
+      }
+
+      document.getElementById('use-of-funds').textContent = escapeHtml(ask.usage_description || ask.use_of_funds || ask.description || '—');
     }
 
     function renderFinancialTable(financials) {
@@ -359,7 +388,7 @@
       container.innerHTML = `
         <div class="overflow-x-auto">
           <table class="min-w-full text-sm">
-            <thead class="bg-slate-800/40 font-semibold text-gray-300">
+            <thead class="bg-slate-800/40 font-semibold text-gray-300 sticky top-0">
               <tr>
                 <th class="py-2 px-3 text-left rounded-tl-lg text-xs">Year</th>
                 <th class="py-2 px-3 text-left text-xs">Revenue</th>
@@ -510,21 +539,6 @@
       const currentPath = window.location.pathname + window.location.search;
       investBtn.href = `../Module_2/Investment_Simulation.html?startup_id=${startupId}&return=${encodeURIComponent(currentPath)}`;
     }
-
-    document.getElementById('backBtn').addEventListener('click', () => {
-      if (returnUrl) {
-        window.location.href = returnUrl;
-      } else {
-        window.location.href = '../Module_1/Dashboard.html';
-      }
-    }, { passive: true });
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      if (!token) {
-        console.warn('No auth token present — page will try to load public data where available.');
-      }
-      await loadAllData();
-    }, { passive: true });
   </script>
 </body>
 </html>
