@@ -325,67 +325,70 @@ function initializeFinancialForm() {
   }
 
   async function saveFinancials() {
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const deckId = urlParams.get('deck_id');
-
-      if (!deckId) {
-        alert('Error: No deck ID found');
-        return;
-      }
-
-      const currentVal = parseFloat(currentValuationInput.value);
-      const industryMultiple = parseFloat(industryMultipleInput.value);
-      const years = parseInt(yearsInput.value);
-      const futureRevenue = parseFloat(revenueInput.value);
-
-      if (!currentVal || !industryMultiple || !years || !futureRevenue) {
-        alert('Please fill in all required fields');
-        return;
-      }
-
-      const financialData = {
-        current_valuation: currentVal,
-        industry_multiple: industryMultiple,
-        years_to_projection: years,
-        projected_revenue: futureRevenue,
-        future_valuation: futureRevenue * industryMultiple,
-        irr: (Math.pow((futureRevenue * industryMultiple) / currentVal, 1 / years) - 1) * 100
-      };
-
-      // Save to localStorage for backup
-      localStorage.setItem(`financials_pitch_${deckId}`, JSON.stringify(financialData));
-
-      const token = sessionStorage.getItem('authToken');
-      const response = await fetch('https://fundora-be-singapore.onrender.com/api/deck-builder/pitch-financials/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          deck_id: deckId,
-          ...financialData
-        })
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        console.log('Pitch Deck Financials saved successfully');
-        // Navigate to next section
-        if (window.parent && window.parent.loadSection) {
-          window.parent.loadSection('the-ask');
-        } else {
-          window.location.href = `base.html?section=the-ask&deck_id=${deckId}`;
+      try {
+        const deckId = localStorage.getItem('deck_id');
+        if (!deckId) {
+          alert('Error: No deck ID found');
+          return;
         }
-      } else {
-        alert('Error saving financials: ' + (result.error || 'Unknown error'));
+
+        const currentVal = parseFloat(currentValuationInput.value);
+        const industryMultiple = parseFloat(industryMultipleInput.value);
+        const years = parseInt(yearsInput.value);
+        const futureRevenue = parseFloat(revenueInput.value);
+
+        if (!currentVal || !industryMultiple || !years || !futureRevenue) {
+          alert('Please fill in all required fields');
+          return;
+        }
+
+        const token = sessionStorage.getItem('authToken');
+
+        await fetch('https://fundora-be-singapore.onrender.com/api/deck/market-analysis/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            deck_id: deckId,
+            valuation_multiple: industryMultiple
+          })
+        });
+
+        const response = await fetch('https://fundora-be-singapore.onrender.com/api/deck/financial/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            deck_id: deckId,
+            financials: [{
+              year: years,
+              revenue: futureRevenue,
+              profit: futureRevenue * 0.2
+            }]
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log('Financials saved successfully');
+          localStorage.setItem('deck_id', result.deck_id);
+          
+          // Use the parent window's loadSection function
+          if (window.parent && window.parent.loadSection) {
+            window.parent.loadSection('the-ask', deckId);
+          }
+        } else {
+          alert('Error saving financials: ' + (result.detail || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error saving financials:', error);
+        alert('Failed to save financials. Please try again.');
       }
-    } catch (error) {
-      console.error('Error saving financials:', error);
-      alert('Failed to save financials. Please try again.');
     }
-  }
 }
 </script>
