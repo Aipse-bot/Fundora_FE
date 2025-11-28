@@ -251,10 +251,8 @@
         }
         
         startups = allStartups.filter(s => {
-          const isPitchDeck = s.source_deck_id != null || s.is_deck_builder || s.source_deck;
-          const hasValidRiskLevel = s.risk_level && s.risk_level !== 'Pitch Deck' && s.risk_level !== null;
-          
-          return !isPitchDeck && hasValidRiskLevel;
+          const isPitchDeck = s.source_deck_id != null || s.is_deck_builder || s.source_deck || s.is_pitch_deck;
+          return !isPitchDeck;
         });
         
         renderStartups(startups);
