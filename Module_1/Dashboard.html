@@ -448,12 +448,12 @@
     }
 
     function renderStartup(startup) {
-      const isPitchDeck = startup.is_deck_builder === true;
+      const isPitchDeck = startup.source_deck_id != null;
       
       const card = document.createElement('div');
       card.className = 'startup-card bg-slate-900/40 border border-slate-800/50 rounded-lg p-6 flex flex-col';
       card.setAttribute('data-startup-id', startup.id);
-      card.setAttribute('data-is-deck-builder', isPitchDeck);
+      card.setAttribute('data-has-pitch-deck', isPitchDeck ? 'true' : 'false');
 
       let hasDataPending = false;
       let riskBadge;
@@ -540,8 +540,8 @@
 
       card.querySelector('.view-details-btn').addEventListener('click', () => {
           const id = card.getAttribute('data-startup-id');
-          const isDeckBuilder = card.getAttribute('data-is-deck-builder') === 'true';
-          const target = isDeckBuilder ? `${COMPANY_PROFILE_DB_PAGE}?id=${id}` : `${COMPANY_PROFILE_PAGE}?id=${id}`;
+          const hasPitchDeck = card.getAttribute('data-has-pitch-deck') === 'true';
+          const target = hasPitchDeck ? `${COMPANY_PROFILE_DB_PAGE}?id=${id}` : `${COMPANY_PROFILE_PAGE}?id=${id}`;
           window.location.href = target;
       });
 
@@ -761,7 +761,7 @@
 
     window._fundora = {
       refreshWatchlist,
-      fetchStartups: async () => { // Renamed for clarity as it's not used directly in DOM events
+      fetchStartups: async () => { 
         const form = document.getElementById('filterForm');
         const params = new URLSearchParams();
         const formData = new FormData(form);
