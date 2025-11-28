@@ -120,9 +120,7 @@
                             <span id="report-industry" class="inline-block text-xs font-semibold text-blue-400 bg-blue-500/15 px-3 py-1 rounded-full border border-slate-700">Industry</span>
                         </div>
                     </div>
-                    <div id="report-confidence-badge" class="inline-block text-xs font-bold px-4 py-2 rounded-full bg-blue-500/15 text-blue-400 border border-slate-700 shrink-0">
-                        Medium Confidence
-                    </div>
+                    <!-- removed confidence badge as it's not in Company_Information_Form -->
                 </div>
             </div>
 
@@ -192,6 +190,7 @@
                             <h2 class="text-xl font-bold text-white">Financial Metrics</h2>
                         </div>
                         
+                        <!-- updated financial metrics to match Company_Information_Form fields -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
                                 <p class="text-sm text-accent-400 mb-1 flex items-center gap-2">
@@ -212,9 +211,9 @@
                             <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
                                 <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
                                     <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
-                                    Monthly Burn Rate
+                                    EBIT
                                 </p>
-                                <p id="report-burn-rate" class="text-2xl font-bold text-white">N/A</p>
+                                <p id="report-ebit" class="text-2xl font-bold text-white">N/A</p>
                             </div>
                             
                             <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
@@ -224,6 +223,52 @@
                                 </p>
                                 <p id="report-profit-margin" class="text-2xl font-bold text-white">N/A</p>
                             </div>
+
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                    <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
+                                    Total Assets
+                                </p>
+                                <p id="report-total-assets" class="text-2xl font-bold text-white">N/A</p>
+                            </div>
+
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                    <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
+                                    Total Liabilities
+                                </p>
+                                <p id="report-total-liabilities" class="text-2xl font-bold text-white">N/A</p>
+                            </div>
+                        </div>
+
+                        <!-- added valuation section -->
+                        <div class="mt-6 pt-6 border-t border-slate-700">
+                            <h3 class="text-lg font-semibold text-white mb-4">Valuation</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                    <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                        <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
+                                        Current Valuation
+                                    </p>
+                                    <p id="report-current-valuation" class="text-2xl font-bold text-white">N/A</p>
+                                </div>
+
+                                <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                    <p class="text-sm text-accent-400 mb-1 flex items-center gap-2">
+                                        <span class="inline-block w-1 h-1 rounded-full bg-accent-400"></span>
+                                        Expected Future Valuation
+                                    </p>
+                                    <p id="report-expected-future-valuation" class="text-2xl font-bold text-white">N/A</p>
+                                </div>
+
+                                <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                    <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                        <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
+                                        Years to Future Valuation
+                                    </p>
+                                    <p id="report-years-to-future-valuation" class="text-2xl font-bold text-white">N/A</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -231,34 +276,6 @@
                 <!-- Right Column - Sidebar -->
                 <div class="space-y-6">
                     
-                    <!-- Risk & Reward -->
-                    <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-6">
-                        <h3 class="font-bold text-white mb-4 flex items-center gap-2">
-                            <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
-                            Risk & Reward
-                        </h3>
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm mb-2">
-                                    <p class="text-gray-400">Risk Score</p>
-                                    <p id="report-risk-score" class="font-semibold text-white"></p>
-                                </div>
-                                <div class="w-full bg-slate-700 rounded-full h-2.5">
-                                    <div id="report-risk-bar" class="bg-red-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-2">
-                                    <p class="text-gray-400">Reward Potential</p>
-                                    <p id="report-reward-score" class="font-semibold text-white"></p>
-                                </div>
-                                <div class="w-full bg-slate-700 rounded-full h-2.5">
-                                    <div id="report-reward-bar" class="bg-brand-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Data Confidence -->
                     <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-6 text-center">
                         <h3 class="font-bold text-white mb-4 flex items-center justify-center gap-2">
@@ -292,11 +309,9 @@
         <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full mx-4 transition-opacity duration-200">
             <div class="text-center">
                 <div id="modalIcon" class="mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4">
-                    <!-- Success icon -->
                     <svg id="successIcon" class="h-8 w-8 text-accent-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    <!-- Error icon -->
                     <svg id="errorIcon" class="h-8 w-8 text-red-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -319,28 +334,49 @@
             modalTitle: document.getElementById('modalTitle'),
             modalMessage: document.getElementById('modalMessage'),
             modalOkBtn: document.getElementById('modalOkBtn'),
-            headerUser: document.getElementById('header-user')
+            headerUser: document.getElementById('header-user'),
+            reportRevenueGrowth: document.getElementById('report-revenue-growth'),
+            reportNetIncome: document.getElementById('report-net-income'),
+            reportEbit: document.getElementById('report-ebit'),
+            reportProfitMargin: document.getElementById('report-profit-margin'),
+            reportTotalAssets: document.getElementById('report-total-assets'),
+            reportTotalLiabilities: document.getElementById('report-total-liabilities'),
+            reportCurrentValuation: document.getElementById('report-current-valuation'),
+            reportExpectedFutureValuation: document.getElementById('report-expected-future-valuation'),
+            reportYearsToFutureValuation: document.getElementById('report-years-to-future-valuation'),
         };
 
-        function renderHeaderUser(user) {
-            const container = domCache.headerUser;
-            container.innerHTML = '';
 
-            if (!user || !user.name) return;
-
-            container.innerHTML = `
-                <span class="text-gray-400 text-sm">
-                    Welcome, <span class="font-medium text-white">${user.name}</span>
-                </span>
-                <a href="/logout.html" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Logout
-                </a>
-            `;
+        function displayMetrics(data) {
+            if (data['report-revenue-growth']) {
+                domCache.reportRevenueGrowth.textContent = data['report-revenue-growth'];
+            }
+            if (data['report-net-income']) {
+                domCache.reportNetIncome.textContent = data['report-net-income'];
+            }
+            if (data['report-ebit']) {
+                domCache.reportEbit.textContent = data['report-ebit'];
+            }
+            if (data['report-profit-margin']) {
+                domCache.reportProfitMargin.textContent = data['report-profit-margin'];
+            }
+            if (data['report-total-assets']) {
+                domCache.reportTotalAssets.textContent = data['report-total-assets'];
+            }
+            if (data['report-total-liabilities']) {
+                domCache.reportTotalLiabilities.textContent = data['report-total-liabilities'];
+            }
+            if (data['report-current-valuation']) {
+                domCache.reportCurrentValuation.textContent = data['report-current-valuation'];
+            }
+            if (data['report-expected-future-valuation']) {
+                domCache.reportExpectedFutureValuation.textContent = data['report-expected-future-valuation'];
+            }
+            if (data['report-years-to-future-valuation']) {
+                domCache.reportYearsToFutureValuation.textContent = data['report-years-to-future-valuation'];
+            }
         }
 
-        domCache.modalOkBtn.addEventListener('click', () => {
-            domCache.messageModal.classList.add('hidden');
-        }, { passive: true });
     </script>
 
 </body>

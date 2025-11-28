@@ -133,8 +133,17 @@
                                     <option value="Technology">Technology</option>
                                     <option value="Finance">Finance</option>
                                     <option value="Healthcare">Healthcare</option>
-                                    <option value="Retail">Retail</option>
+                                    <option value="E-commerce">E-commerce</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Real Estate">Real Estate</option>
                                     <option value="Manufacturing">Manufacturing</option>
+                                    <option value="Retail">Retail</option>
+                                    <option value="Food & Beverage">Food & Beverage</option>
+                                    <option value="Transportation">Transportation</option>
+                                    <option value="Energy">Energy</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Agriculture">Agriculture</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                             <div>
@@ -265,6 +274,31 @@
                                 </div>
                             </div>
 
+                            <!-- Valuation -->
+                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+                                <h3 class="font-semibold text-white mb-4 text-center text-sm">Valuation</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="current-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">Current Valuation (₱)
+                                            <span class="tooltip-trigger ml-1.5 cursor-help" data-tooltip-text="Current market valuation of the company.">?</span>
+                                        </label>
+                                        <input type="number" name="current-valuation" id="current-valuation" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="5,000,000">
+                                    </div>
+                                    <div>
+                                        <label for="expected-future-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">Expected Future Valuation (₱)
+                                            <span class="tooltip-trigger ml-1.5 cursor-help" data-tooltip-text="Projected valuation at a future date.">?</span>
+                                        </label>
+                                        <input type="number" name="expected-future-valuation" id="expected-future-valuation" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="10,000,000">
+                                    </div>
+                                    <div>
+                                        <label for="years-to-future-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">Years to Future Valuation
+                                            <span class="tooltip-trigger ml-1.5 cursor-help" data-tooltip-text="Number of years until expected future valuation is reached.">?</span>
+                                        </label>
+                                        <input type="number" name="years-to-future-valuation" id="years-to-future-valuation" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="5" step="0.1" min="0">
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Actions & Confidence -->
                             <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 flex flex-col justify-between">
                                  <div>
@@ -302,7 +336,6 @@
         };
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Cache DOM elements
             domCache.form = document.getElementById('companyForm');
             domCache.completenessBar = document.getElementById('completeness-bar');
             domCache.completenessText = document.getElementById('completeness-text');
@@ -478,6 +511,11 @@
                     
                     // Financial Data - Cash Flow
                     cash_flow: parseNumericValue(document.getElementById('cash-flow').value),
+                    
+                    // Financial Data - Valuation
+                    current_valuation: parseNumericValue(document.getElementById('current-valuation').value),
+                    expected_future_valuation: parseNumericValue(document.getElementById('expected-future-valuation').value),
+                    years_to_future_valuation: parseNumericValue(document.getElementById('years-to-future-valuation').value),
                     
                     // Qualitative Assessment
                     team_strength: document.getElementById('team-strength').value.trim(),

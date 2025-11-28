@@ -114,6 +114,29 @@
         </div>
       </div>
 
+      <!-- Team & Market Assessment -->
+      <!-- Added team strength, market position, and brand reputation from Company_Information_Form -->
+      <div class="card p-6">
+        <div class="section-header">
+          <span class="icon-dot bg-purple-900/30 text-purple-400">👥</span>
+          Team & Market
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <p class="text-xs text-slate-400 mb-1">Team Strength</p>
+            <span id="team-strength" class="text-sm text-purple-300 bg-purple-900/30 px-2 py-1 rounded inline-block">N/A</span>
+          </div>
+          <div>
+            <p class="text-xs text-slate-400 mb-1">Market Position</p>
+            <span id="market-position" class="text-sm text-indigo-300 bg-indigo-900/30 px-2 py-1 rounded inline-block">N/A</span>
+          </div>
+          <div class="col-span-2">
+            <p class="text-xs text-slate-400 mb-1">Brand Reputation</p>
+            <span id="brand-reputation" class="text-sm text-pink-300 bg-pink-900/30 px-2 py-1 rounded inline-block">N/A</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Income Statement -->
       <div class="card p-6">
         <div class="section-header">
@@ -133,10 +156,15 @@
               <span id="revenue-growth" class="text-xs growth-positive font-medium">+25%</span>
             </div>
           </div>
-        </div>
-        <div class="mt-4">
-          <p class="text-xs text-slate-400 mb-1">Current Period Net Income</p>
-          <p id="net-income" class="text-2xl font-bold text-emerald-400">₱150,000</p>
+          <div>
+            <p class="text-xs text-slate-400 mb-1">Current Period Net Income</p>
+            <p id="current-net-income" class="text-lg font-bold text-emerald-400">₱150,000</p>
+          </div>
+          <!-- Added EBIT field -->
+          <div>
+            <p class="text-xs text-slate-400 mb-1">EBIT</p>
+            <p id="ebit" class="text-lg font-bold text-blue-400">₱180,000</p>
+          </div>
         </div>
       </div>
 
@@ -151,6 +179,11 @@
             <p class="text-sm text-slate-400 mb-1">Total Assets</p>
             <p id="total-assets" class="text-2xl font-bold text-white">₱2,500,000</p>
           </div>
+          <!-- Added current assets and current liabilities -->
+          <div>
+            <p class="text-sm text-slate-400 mb-1">Current Assets</p>
+            <p id="current-assets" class="text-lg font-semibold text-white">₱1,200,000</p>
+          </div>
           <div>
             <div class="flex justify-between items-center mb-2">
               <p class="text-sm text-slate-400">Total Liabilities</p>
@@ -160,6 +193,16 @@
             <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
               <div id="liability-bar" class="bg-blue-500 h-1.5 rounded-full progress-bar" style="width: 32%"></div>
             </div>
+          </div>
+          <!-- Added current liabilities -->
+          <div>
+            <p class="text-sm text-slate-400 mb-1">Current Liabilities</p>
+            <p id="current-liabilities" class="text-lg font-semibold text-white">₱400,000</p>
+          </div>
+          <!-- Added retained earnings -->
+          <div>
+            <p class="text-sm text-slate-400 mb-1">Retained Earnings</p>
+            <p id="retained-earnings" class="text-lg font-semibold text-emerald-400">₱600,000</p>
           </div>
           <div class="border-t border-slate-700 pt-4">
             <div class="flex justify-between items-center">
@@ -178,54 +221,50 @@
           Cash Flow
         </div>
         <div class="space-y-4 mt-4">
+          <!-- Removed investment and financing cash flow, kept operations only -->
           <div class="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
             <span class="text-sm text-slate-300">Operations Cash Flow</span>
             <span id="operations-cash-flow" class="font-semibold text-emerald-400">₱200,000</span>
           </div>
-          <div class="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
-            <span class="text-sm text-slate-300">Investment Cash Flow</span>
-            <span id="investment-cash-flow" class="font-semibold text-red-400">-₱50,000</span>
-          </div>
-          <div class="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
-            <span class="text-sm text-slate-300">Financing Cash Flow</span>
-            <span id="financing-cash-flow" class="font-semibold text-blue-400">₱100,000</span>
-          </div>
-          <div class="border-t border-slate-700 pt-4">
-            <div class="flex justify-between items-center">
-              <span class="text-sm font-medium text-slate-300">Net Cash Flow</span>
-              <span id="net-cash-flow" class="text-xl font-bold text-blue-400">₱250,000</span>
-            </div>
-          </div>
         </div>
       </div>
 
-    </div>
-
-    <!-- Confidence Section -->
-    <div class="mt-8">
+      <!-- Valuation Metrics -->
+      <!-- Added new valuation section with 3 new fields -->
       <div class="card p-6">
         <div class="section-header">
-          <span class="icon-dot bg-blue-900/30 text-blue-400">✓</span>
-          Report Confidence
+          <span class="icon-dot bg-orange-900/30 text-orange-400">📈</span>
+          Valuation Metrics
         </div>
-        <div class="mt-4 space-y-4">
+        <div class="grid grid-cols-2 gap-4 mt-4">
           <div>
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-sm text-slate-400">Data Quality Score</span>
-              <span id="confidence-percentage" class="text-sm font-semibold">8%</span>
-            </div>
-            <div class="w-full bg-slate-800 rounded-full h-2">
-              <div id="confidence-bar" class="bg-red-500 h-2 rounded-full progress-bar" style="width: 8%"></div>
-            </div>
-            <p id="confidence-level" class="text-sm text-red-400 font-medium mt-1">Low Confidence</p>
+            <p class="text-xs text-slate-400 mb-1">Current Valuation</p>
+            <p id="current-valuation" class="text-lg font-bold text-orange-400">₱5,000,000</p>
           </div>
-          <div class="bg-slate-800 border-l-4 border-blue-500 p-4 rounded-r-lg">
-            <p id="confidence-description" class="text-sm text-slate-300">
-              This confidence score reflects the completeness and reliability of the financial data provided.
-            </p>
+          <div>
+            <p class="text-xs text-slate-400 mb-1">Expected Future Valuation</p>
+            <p id="expected-future-valuation" class="text-lg font-bold text-orange-300">₱8,000,000</p>
+          </div>
+          <div class="col-span-2">
+            <p class="text-xs text-slate-400 mb-1">Years to Future Valuation</p>
+            <p id="years-to-future-valuation" class="text-lg font-bold text-orange-400">3 years</p>
           </div>
         </div>
       </div>
+
+      <!-- Time Between Periods -->
+      <!-- Added time between periods field -->
+      <div class="card p-6">
+        <div class="section-header">
+          <span class="icon-dot bg-cyan-900/30 text-cyan-400">⏱</span>
+          Period Information
+        </div>
+        <div class="mt-4">
+          <p class="text-xs text-slate-400 mb-1">Time Between Periods</p>
+          <p id="time-between-periods" class="text-lg font-semibold text-cyan-400">1 Year</p>
+        </div>
+      </div>
+
     </div>
 
     <!-- Actions -->
@@ -254,417 +293,334 @@
     </div>
   </div>
     
-    <script>
-        const domCache = {};
+  <script>
+    const domCache = {};
+    
+    function getCachedElement(id) {
+        if (!domCache[id]) {
+            domCache[id] = document.getElementById(id);
+        }
+        return domCache[id];
+    }
+
+    // Header user rendering function
+    function renderHeaderUser(user) {
+        const container = getCachedElement('header-user');
+        container.innerHTML = '';
+
+        if (!user || !user.name) return;
+
+        container.innerHTML = `
+            <span class="text-gray-700 text-sm">
+            Welcome, <span class="font-medium">${user.name}</span>
+            </span>
+            <a href="/logout.html"
+            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+            Logout
+            </a>
+        `;
+    }
+
+    // Edit startup function
+    function editStartup(startupId) {
+        if (!startupId || startupId === 'unknown') {
+            alert('Invalid startup ID. Cannot edit startup.');
+            return;
+        }
         
-        function getCachedElement(id) {
-            if (!domCache[id]) {
-                domCache[id] = document.getElementById(id);
-            }
-            return domCache[id];
+        window.location.href = `Edit_Startup.html?id=${startupId}`;
+    }
+
+    // Delete confirmation functionality
+    function confirmDelete() {
+        const modal = getCachedElement('delete-modal');
+        modal.classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        const modal = getCachedElement('delete-modal');
+        modal.classList.add('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const startupId = urlParams.get('id') || localStorage.getItem('startupId');
+        
+        if (startupId) {
+            localStorage.setItem('startupId', startupId);
         }
-
-        // Header user rendering function
-        function renderHeaderUser(user) {
-            const container = getCachedElement('header-user');
-            container.innerHTML = '';
-
-            if (!user || !user.name) return;
-
-            container.innerHTML = `
-                <span class="text-gray-700 text-sm">
-                Welcome, <span class="font-medium">${user.name}</span>
-                </span>
-                <a href="/logout.html"
-                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                Logout
-                </a>
-            `;
-        }
-
-        // Edit startup function - simplified
-        function editStartup(startupId) {
-            if (!startupId || startupId === 'unknown') {
-                alert('Invalid startup ID. Cannot edit startup.');
-                return;
-            }
-            
-            // Redirect to edit form
-            window.location.href = `Edit_Startup.html?id=${startupId}`;
-        }
-
-        // Delete confirmation functionality
-        function confirmDelete() {
-            const modal = getCachedElement('delete-modal');
-            modal.classList.remove('hidden');
-        }
-
-        function closeDeleteModal() {
-            const modal = getCachedElement('delete-modal');
-            modal.classList.add('hidden');
-        }
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            // First get startup ID from URL parameters or localStorage
-            const urlParams = new URLSearchParams(window.location.search);
-            const startupId = urlParams.get('id') || localStorage.getItem('startupId');
-            
-            // Store the startup ID in localStorage for other functions
-            if (startupId) {
-                localStorage.setItem('startupId', startupId);
-            }
-            
-            // Set up delete modal event listeners first
-            getCachedElement('modal-delete-cancel').addEventListener('click', closeDeleteModal, { passive: true });
-            
-            getCachedElement('modal-delete-confirm').addEventListener('click', async function() {
-                const token = localStorage.getItem('authToken');
-                
-                // Check authentication
-                if (!token) {
-                    alert('Please log in to delete startups.');
-                    window.location.href = '../login.html';
-                    return;
-                }
-                
-                // Disable the confirm button and show loading state
-                this.disabled = true;
-                this.textContent = 'Deleting...';
-                
-                try {
-                    const response = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                        }
-                    });
-                    
-                    // Parse response
-                    let result = {};
-                    try {
-                        result = await response.json();
-                    } catch (parseError) {
-                        console.warn('Could not parse JSON response:', parseError);
-                        // If we can't parse JSON, check if it was successful based on status code
-                        if (response.ok) {
-                            result = { success: true, message: 'Startup deleted successfully!' };
-                        } else {
-                            result = { success: false, error: 'Failed to delete startup' };
-                        }
-                    }
-                    
-                    console.log('Delete response:', { status: response.status, result });
-                    
-                    if (response.ok && result.success) {
-                        // Success - show message and redirect
-                        alert(result.message || 'Startup deleted successfully!');
-                        window.location.href = 'added-startups.html';
-                    } else if (response.status === 401) {
-                        // Authentication error
-                        alert('Session expired. Please log in again.');
-                        window.location.href = '../login.html';
-                        return;
-                    } else if (response.status === 403) {
-                        // Access denied
-                        alert('Access denied. You can only delete your own startups.');
-                        closeDeleteModal();
-                        // Re-enable button
-                        this.disabled = false;
-                        this.textContent = 'Delete';
-                    } else if (response.status === 404) {
-                        // Startup not found or access denied
-                        alert('Startup not found or you do not have permission to delete it.');
-                        closeDeleteModal();
-                        // Re-enable button
-                        this.disabled = false;
-                        this.textContent = 'Delete';
-                    } else {
-                        // Other errors - try to get error message from different possible fields
-                        const errorMsg = result.error || result.detail || result.message || 'Failed to delete startup';
-                        alert('Error: ' + errorMsg);
-                        // Re-enable button
-                        this.disabled = false;
-                        this.textContent = 'Delete';
-                    }
-                } catch (error) {
-                    console.error('Error deleting startup:', error);
-                    
-                    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                        alert('Network error. Please check your connection and ensure the server is running.');
-                    } else {
-                        alert('Error: Failed to delete startup. Please try again.');
-                    }
-                    
-                    // Re-enable button
-                    this.disabled = false;
-                    this.textContent = 'Delete';
-                } finally {
-                    // Close modal if still open
-                    const modal = getCachedElement('delete-modal');
-                    if (!this.disabled && modal && !modal.classList.contains('hidden')) {
-                        closeDeleteModal();
-                    }
-                }
-            }, { passive: true });
-
-            // Load startup data
-            if (!startupId) return;
-
+        
+        getCachedElement('modal-delete-cancel').addEventListener('click', closeDeleteModal, { passive: true });
+        
+        getCachedElement('modal-delete-confirm').addEventListener('click', async function() {
             const token = localStorage.getItem('authToken');
             
-            // Check authentication
             if (!token) {
-                alert('Please log in to view startup reports.');
+                alert('Please log in to delete startups.');
                 window.location.href = '../login.html';
                 return;
             }
             
+            this.disabled = true;
+            this.textContent = 'Deleting...';
+            
             try {
-                // Use the same endpoint as Edit page - this returns the actual startup data
-                const res = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/`, {
+                const response = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/`, {
+                    method: 'DELETE',
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                     }
                 });
-
-                if (!res.ok) {
-                    if (res.status === 401) {
-                        alert('Session expired. Please log in again.');
-                        window.location.href = '../login.html';
-                        return;
-                    }
-                    throw new Error('Failed to fetch startup data');
-                }
-
-                const response = await res.json();
                 
-                // Debug: Log the entire response to see the structure
-                console.log('📊 Full API Response:', response);
-                console.log('📊 Response keys:', Object.keys(response));
-                
-                // The response structure should be { startup: {...} } or just the startup object
-                const startup = response.startup || response;
-                const data = startup; // Use the startup object directly for financial data
-                
-                // Debug: Log extracted data
-                console.log('🏢 Startup object:', startup);
-                console.log('💰 Data object:', data);
-                console.log('💰 All available fields:', Object.keys(data));
-
-                // Populate Company Profile
-                const companyName = startup.company_name || data.company_name || 'N/A';
-                getCachedElement('company-name').textContent = companyName;
-                getCachedElement('company-industry').textContent = startup.industry || data.industry || 'N/A';
-                getCachedElement('company-description').textContent = 
-                    startup.company_description || 
-                    data.company_description || 
-                    startup.description || 
-                    data.description || 
-                    'No company description available.';
-
-                // Update modal with company name
-                getCachedElement('modal-company-name').textContent = companyName;
-
-                // Populate Income Statement
-                // Match the Edit page field names exactly
-                const currentRevenue = parseFloat(
-                    data.revenue || 
-                    data.current_revenue
-                ) || 0;
-                
-                const priorRevenue = parseFloat(
-                    data.previous_revenue || 
-                    data.prior_revenue
-                ) || (currentRevenue > 0 ? currentRevenue * 0.8 : 0);
-                
-                const netIncome = parseFloat(
-                    data.net_income
-                ) || 0;
-                
-                const revenueGrowth = priorRevenue > 0 ? ((currentRevenue - priorRevenue) / priorRevenue * 100) : 0;
-                
-                // Debug: Log financial values
-                console.log('💵 Financial Data:', {
-                    currentRevenue,
-                    priorRevenue,
-                    netIncome,
-                    revenueGrowth,
-                    rawData: {
-                        revenue: data.revenue,
-                        current_revenue: data.current_revenue,
-                        previous_revenue: data.previous_revenue,
-                        prior_revenue: data.prior_revenue,
-                        net_income: data.net_income
-                    }
-                });
-
-                getCachedElement('prior-revenue').textContent = `₱${priorRevenue.toLocaleString()}`;
-                getCachedElement('current-revenue').textContent = `₱${currentRevenue.toLocaleString()}`;
-                getCachedElement('revenue-growth').textContent = `${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth.toFixed(1)}%`;
-                getCachedElement('revenue-growth').className = revenueGrowth >= 0 ? 'text-xs growth-positive font-medium' : 'text-xs growth-negative font-medium';
-                getCachedElement('net-income').textContent = `₱${netIncome.toLocaleString()}`;
-
-                // Populate Balance Sheet
-                const totalAssets = parseFloat(
-                    data.total_assets
-                ) || 1;
-                
-                const totalLiabilities = parseFloat(
-                    data.total_liabilities
-                ) || 0;
-                
-                const shareholderEquity = totalAssets - totalLiabilities;
-                const liabilityPercentage = totalAssets > 0 ? (totalLiabilities / totalAssets * 100) : 0;
-                
-                // Debug: Log balance sheet values
-                console.log('📊 Balance Sheet:', {
-                    totalAssets,
-                    totalLiabilities,
-                    shareholderEquity,
-                    liabilityPercentage,
-                    rawData: {
-                        total_assets: data.total_assets,
-                        total_liabilities: data.total_liabilities
-                    }
-                });
-
-                getCachedElement('total-assets').textContent = `₱${totalAssets.toLocaleString()}`;
-                getCachedElement('total-liabilities').textContent = `₱${totalLiabilities.toLocaleString()}`;
-                getCachedElement('liability-percentage').textContent = `${liabilityPercentage.toFixed(1)}% of assets`;
-                getCachedElement('liability-bar').style.width = `${Math.min(liabilityPercentage, 100)}%`;
-                getCachedElement('shareholder-equity').textContent = `₱${shareholderEquity.toLocaleString()}`;
-
-                // Populate Cash Flow
-                // Use the single cash_flow field from the API and break it down sensibly
-                const totalCashFlow = parseFloat(
-                    data.cash_flow
-                ) || 0;
-                
-                // If we have specific breakdown fields from API, use them
-                const operationsCashFlow = parseFloat(
-                    data.operations_cash_flow || 
-                    data.operating_cash_flow
-                ) || (totalCashFlow !== 0 ? totalCashFlow * 0.7 : 0); // 70% operations
-                
-                const investmentCashFlow = parseFloat(
-                    data.investment_cash_flow || 
-                    data.investing_cash_flow ||
-                    data.investment_flow
-                ) || (totalCashFlow !== 0 ? totalCashFlow * 0.2 : 0); // 20% investment  
-                
-                const financingCashFlow = parseFloat(
-                    data.financing_cash_flow || 
-                    data.financing_flow
-                ) || (totalCashFlow !== 0 ? totalCashFlow * 0.1 : 0); // 10% financing
-                
-                // If we have the breakdown, use actual calculation; otherwise use the total from API
-                const netCashFlow = (data.operations_cash_flow || data.investment_cash_flow || data.financing_cash_flow || data.investment_flow || data.financing_flow) ? 
-                                  (operationsCashFlow + investmentCashFlow + financingCashFlow) : 
-                                  totalCashFlow;
-                
-                // Debug: Log cash flow values
-                console.log('💸 Cash Flow:', {
-                    totalCashFlow,
-                    operationsCashFlow,
-                    investmentCashFlow,
-                    financingCashFlow,
-                    netCashFlow,
-                    rawData: {
-                        cash_flow: data.cash_flow,
-                        investment_flow: data.investment_flow,
-                        financing_flow: data.financing_flow
-                    }
-                });
-
-                // Format cash flow values with proper signs
-                const formatCashFlow = (value) => {
-                    const sign = value >= 0 ? '' : '-';
-                    return `${sign}₱${Math.abs(value).toLocaleString()}`;
-                };
-
-                getCachedElement('operations-cash-flow').textContent = formatCashFlow(operationsCashFlow);
-                getCachedElement('investment-cash-flow').textContent = formatCashFlow(investmentCashFlow);
-                getCachedElement('financing-cash-flow').textContent = formatCashFlow(financingCashFlow);
-                getCachedElement('net-cash-flow').textContent = formatCashFlow(netCashFlow);
-
-                // Update colors based on values
-                getCachedElement('operations-cash-flow').className = `font-semibold ${operationsCashFlow >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
-                getCachedElement('investment-cash-flow').className = `font-semibold ${investmentCashFlow >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
-                getCachedElement('financing-cash-flow').className = `font-semibold ${financingCashFlow >= 0 ? 'text-blue-400' : 'text-red-400'}`;
-                getCachedElement('net-cash-flow').className = `text-xl font-bold ${netCashFlow >= 0 ? 'text-blue-400' : 'text-red-400'}`;
-
-                // Populate Report Confidence
-                // Use the stored confidence data from the backend (saved when editing)
-                const confidenceLevel = data.data_source_confidence || data.data_completeness_level || 'Low';
-                const storedPercentage = data.confidence_percentage;
-                
-                // Use the stored percentage if available, otherwise calculate it
-                let confidencePercent = 0;
-                
-                if (storedPercentage !== null && storedPercentage !== undefined) {
-                    // Use the exact percentage stored in the database
-                    confidencePercent = Math.round(storedPercentage);
-                } else {
-                    // Fallback: Calculate based on confidence level
-                    if (confidenceLevel === 'High') {
-                        confidencePercent = 95;
-                    } else if (confidenceLevel === 'Medium') {
-                        confidencePercent = 75;
+                let result = {};
+                try {
+                    result = await response.json();
+                } catch (parseError) {
+                    console.warn('Could not parse JSON response:', parseError);
+                    if (response.ok) {
+                        result = { success: true, message: 'Startup deleted successfully!' };
                     } else {
-                        confidencePercent = 8;
+                        result = { success: false, error: 'Failed to delete startup' };
                     }
                 }
                 
-                // Determine color and text based on confidence level (not percentage)
-                let confidenceColor = 'bg-red-500';
-                let confidenceText = 'Low';
-
-                if (confidenceLevel === 'High') {
-                    confidenceColor = 'bg-emerald-500';
-                    confidenceText = 'High';
-                } else if (confidenceLevel === 'Medium') {
-                    confidenceColor = 'bg-blue-500';
-                    confidenceText = 'Medium';
+                console.log('Delete response:', { status: response.status, result });
+                
+                if (response.ok && result.success) {
+                    alert(result.message || 'Startup deleted successfully!');
+                    window.location.href = 'added-startups.html';
+                } else if (response.status === 401) {
+                    alert('Session expired. Please log in again.');
+                    window.location.href = '../login.html';
+                    return;
+                } else if (response.status === 403) {
+                    alert('Access denied. You can only delete your own startups.');
+                    closeDeleteModal();
+                    this.disabled = false;
+                    this.textContent = 'Delete';
+                } else if (response.status === 404) {
+                    alert('Startup not found or you do not have permission to delete it.');
+                    closeDeleteModal();
+                    this.disabled = false;
+                    this.textContent = 'Delete';
                 } else {
-                    confidenceColor = 'bg-red-500';
-                    confidenceText = 'Low';
+                    const errorMsg = result.error || result.detail || result.message || 'Failed to delete startup';
+                    alert('Error: ' + errorMsg);
+                    this.disabled = false;
+                    this.textContent = 'Delete';
                 }
-
-                console.log('🔍 Confidence data:', {
-                    data_source_confidence: data.data_source_confidence,
-                    data_completeness_level: data.data_completeness_level,
-                    confidence_percentage: data.confidence_percentage,
-                    resolved_level: confidenceLevel,
-                    stored_percentage: storedPercentage,
-                    display_percentage: confidencePercent,
-                    display_text: confidenceText
-                });
-
-                getCachedElement('confidence-percentage').textContent = `${confidencePercent}%`;
-                getCachedElement('confidence-bar').style.width = `${confidencePercent}%`;
-                getCachedElement('confidence-bar').className = `${confidenceColor} h-2 rounded-full progress-bar`;
-                getCachedElement('confidence-level').textContent = confidenceText;
-                getCachedElement('confidence-level').className = `text-sm font-medium mt-1 ${confidenceText === 'High' ? 'text-emerald-400' : confidenceText === 'Medium' ? 'text-blue-400' : 'text-red-400'}`;
-
-                // Set up edit button functionality - simplified
-                const editButton = getCachedElement('edit-startup-link');
-                editButton.href = '#';
-                editButton.onclick = function(e) {
-                    e.preventDefault();
-                    editStartup(startupId);
-                    return false;
-                };
-
-                // Mark that a startup was viewed (to trigger refresh in added-startups page)
-                localStorage.setItem('startupViewed', Date.now().toString());
-
-            } catch (err) {
-                console.error('Failed to load report:', err);
-                document.body.innerHTML = `<div class="flex items-center justify-center min-h-screen"><div class="text-red-400 text-center"><h2 class="text-xl font-bold mb-2">Failed to load report</h2><p>Please try again later.</p></div></div>`;
+            } catch (error) {
+                console.error('Error deleting startup:', error);
+                
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    alert('Network error. Please check your connection and ensure the server is running.');
+                } else {
+                    alert('Error: Failed to delete startup. Please try again.');
+                }
+                
+                this.disabled = false;
+                this.textContent = 'Delete';
+            } finally {
+                const modal = getCachedElement('delete-modal');
+                if (!this.disabled && modal && !modal.classList.contains('hidden')) {
+                    closeDeleteModal();
+                }
             }
         }, { passive: true });
-    </script>
+
+        if (!startupId) return;
+
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+            alert('Please log in to view startup reports.');
+            window.location.href = '../login.html';
+            return;
+        }
+        
+        try {
+            const res = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                if (res.status === 401) {
+                    alert('Session expired. Please log in again.');
+                    window.location.href = '../login.html';
+                    return;
+                }
+                throw new Error('Failed to fetch startup data');
+            }
+
+            const response = await res.json();
+            
+            console.log('📊 Full API Response:', response);
+            console.log('📊 Response keys:', Object.keys(response));
+            
+            const startup = response.startup || response;
+            const data = startup;
+            
+            console.log('🏢 Startup object:', startup);
+            console.log('💰 Data object:', data);
+            console.log('💰 All available fields:', Object.keys(data));
+
+            // Populate Company Profile
+            const companyName = startup.company_name || data.company_name || 'N/A';
+            getCachedElement('company-name').textContent = companyName;
+            getCachedElement('company-industry').textContent = startup.industry || data.industry || 'N/A';
+            getCachedElement('company-description').textContent = 
+                startup.company_description || 
+                data.company_description || 
+                startup.description || 
+                data.description || 
+                'No company description available.';
+
+            getCachedElement('modal-company-name').textContent = companyName;
+
+            getCachedElement('team-strength').textContent = data.team_strength || data.teamStrength || 'N/A';
+            getCachedElement('market-position').textContent = data.market_position || data.marketPosition || 'N/A';
+            getCachedElement('brand-reputation').textContent = data.brand_reputation || data.brandReputation || 'N/A';
+
+            // Populate Income Statement
+            const currentRevenue = parseFloat(
+                data.revenue || 
+                data.current_revenue
+            ) || 0;
+            
+            const priorRevenue = parseFloat(
+                data.previous_revenue || 
+                data.prior_revenue
+            ) || (currentRevenue > 0 ? currentRevenue * 0.8 : 0);
+            
+            const netIncome = parseFloat(
+                data.current_net_income || data.net_income
+            ) || 0;
+
+            const ebit = parseFloat(data.ebit) || 0;
+            
+            const revenueGrowth = priorRevenue > 0 ? ((currentRevenue - priorRevenue) / priorRevenue * 100) : 0;
+            
+            console.log('💵 Financial Data:', {
+                currentRevenue,
+                priorRevenue,
+                netIncome,
+                ebit,
+                revenueGrowth,
+                rawData: {
+                    revenue: data.revenue,
+                    current_revenue: data.current_revenue,
+                    previous_revenue: data.previous_revenue,
+                    prior_revenue: data.prior_revenue,
+                    net_income: data.net_income,
+                    current_net_income: data.current_net_income,
+                    ebit: data.ebit
+                }
+            });
+
+            getCachedElement('prior-revenue').textContent = `₱${priorRevenue.toLocaleString()}`;
+            getCachedElement('current-revenue').textContent = `₱${currentRevenue.toLocaleString()}`;
+            getCachedElement('revenue-growth').textContent = `${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth.toFixed(1)}%`;
+            getCachedElement('revenue-growth').className = revenueGrowth >= 0 ? 'text-xs growth-positive font-medium' : 'text-xs growth-negative font-medium';
+            getCachedElement('current-net-income').textContent = `₱${netIncome.toLocaleString()}`;
+            getCachedElement('ebit').textContent = `₱${ebit.toLocaleString()}`;
+
+            // Populate Balance Sheet
+            const totalAssets = parseFloat(data.total_assets) || 1;
+            const totalLiabilities = parseFloat(data.total_liabilities) || 0;
+            
+            const currentAssets = parseFloat(data.current_assets) || 0;
+            const currentLiabilities = parseFloat(data.current_liabilities) || 0;
+            const retainedEarnings = parseFloat(data.retained_earnings) || 0;
+            
+            const shareholderEquity = totalAssets - totalLiabilities;
+            const liabilityPercentage = totalAssets > 0 ? (totalLiabilities / totalAssets * 100) : 0;
+            
+            console.log('📊 Balance Sheet:', {
+                totalAssets,
+                totalLiabilities,
+                currentAssets,
+                currentLiabilities,
+                retainedEarnings,
+                shareholderEquity,
+                liabilityPercentage,
+                rawData: {
+                    total_assets: data.total_assets,
+                    total_liabilities: data.total_liabilities,
+                    current_assets: data.current_assets,
+                    current_liabilities: data.current_liabilities,
+                    retained_earnings: data.retained_earnings
+                }
+            });
+
+            getCachedElement('total-assets').textContent = `₱${totalAssets.toLocaleString()}`;
+            getCachedElement('current-assets').textContent = `₱${currentAssets.toLocaleString()}`;
+            getCachedElement('total-liabilities').textContent = `₱${totalLiabilities.toLocaleString()}`;
+            getCachedElement('current-liabilities').textContent = `₱${currentLiabilities.toLocaleString()}`;
+            getCachedElement('retained-earnings').textContent = `₱${retainedEarnings.toLocaleString()}`;
+            getCachedElement('liability-percentage').textContent = `${liabilityPercentage.toFixed(1)}% of assets`;
+            getCachedElement('liability-bar').style.width = `${Math.min(liabilityPercentage, 100)}%`;
+            getCachedElement('shareholder-equity').textContent = `₱${shareholderEquity.toLocaleString()}`;
+
+            const operationsCashFlow = parseFloat(
+                data.operations_cash_flow || 
+                data.operating_cash_flow ||
+                data.cash_flow
+            ) || 0;
+            
+            console.log('💸 Cash Flow:', {
+                operationsCashFlow,
+                rawData: {
+                    cash_flow: data.cash_flow,
+                    operations_cash_flow: data.operations_cash_flow,
+                    operating_cash_flow: data.operating_cash_flow
+                }
+            });
+
+            const formatCashFlow = (value) => {
+                const sign = value >= 0 ? '' : '-';
+                return `${sign}₱${Math.abs(value).toLocaleString()}`;
+            };
+
+            getCachedElement('operations-cash-flow').textContent = formatCashFlow(operationsCashFlow);
+            getCachedElement('operations-cash-flow').className = `font-semibold ${operationsCashFlow >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
+
+            const currentValuation = parseFloat(data.current_valuation) || 0;
+            const expectedFutureValuation = parseFloat(data.expected_future_valuation) || 0;
+            const yearsToFutureValuation = parseFloat(data.years_to_future_valuation) || 0;
+            
+            console.log('📈 Valuation Data:', {
+                currentValuation,
+                expectedFutureValuation,
+                yearsToFutureValuation
+            });
+
+            getCachedElement('current-valuation').textContent = `₱${currentValuation.toLocaleString()}`;
+            getCachedElement('expected-future-valuation').textContent = `₱${expectedFutureValuation.toLocaleString()}`;
+            getCachedElement('years-to-future-valuation').textContent = `${yearsToFutureValuation} ${yearsToFutureValuation === 1 ? 'year' : 'years'}`;
+
+            const timeBetweenPeriods = data.time_between_periods || 'N/A';
+            getCachedElement('time-between-periods').textContent = timeBetweenPeriods;
+
+            // Set up edit button functionality
+            const editButton = getCachedElement('edit-startup-link');
+            editButton.href = '#';
+            editButton.onclick = function(e) {
+                e.preventDefault();
+                editStartup(startupId);
+                return false;
+            };
+            
+            localStorage.setItem('startupViewed', Date.now().toString());
+
+        } catch (err) {
+            console.error('Failed to load report:', err);
+            document.body.innerHTML = `<div class="flex items-center justify-center min-h-screen"><div class="text-red-400 text-center"><h2 class="text-xl font-bold mb-2">Failed to load report</h2><p>Please try again later.</p></div></div>`;
+        }
+    }, { passive: true });
+  </script>
 </body>
 </html>

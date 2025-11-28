@@ -238,7 +238,7 @@
           window.location.href = '/login';
           return;
         }
-        const response = await fetch(`${apiBase}/startups/`, {
+        const response = await fetch(`${apiBase}/startups/?limit=1000`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -251,11 +251,10 @@
         }
         
         startups = allStartups.filter(s => {
-          const hasDeckId = s.source_deck_id != null;
-          const lacksFinancials = s.revenue == null && s.net_income == null;
-          const isPitchDeck = hasDeckId || (lacksFinancials && s.funding_ask != null);
-          const hasDataPending = !s.risk_level;
-          return !isPitchDeck && !hasDataPending;
+          const isPitchDeck = s.source_deck_id != null || s.is_deck_builder || s.source_deck;
+          const hasValidRiskLevel = s.risk_level && s.risk_level !== 'Pitch Deck' && s.risk_level !== null;
+          
+          return !isPitchDeck && hasValidRiskLevel;
         });
         
         renderStartups(startups);
@@ -264,6 +263,7 @@
         domCache.emptyState.classList.remove("hidden");
       }
     }
+
 
     function renderStartups(data) {
       domCache.startupsGrid.innerHTML = "";

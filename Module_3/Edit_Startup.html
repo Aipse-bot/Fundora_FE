@@ -228,7 +228,7 @@
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
                     <label for="current-revenue" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Current Revenue (PHP)
+                      Current Period Revenue (PHP)
                       <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input 
@@ -241,44 +241,60 @@
                     />
                   </div>
                   <div>
-                    <label for="previous-revenue" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Previous Revenue (PHP)
+                    <label for="prior-revenue" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Prior Period Revenue (PHP)
                       <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input 
                       type="number" 
-                      id="previous-revenue" 
-                      name="previous-revenue" 
+                      id="prior-revenue" 
+                      name="prior-revenue" 
                       class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
                       placeholder="0.00"
                       step="0.01"
                     />
                   </div>
                   <div>
-                    <label for="net-income" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Net Income (PHP)
+                    <label for="current-net-income" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Current Period Net Income (PHP)
                       <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input 
                       type="number" 
-                      id="net-income" 
-                      name="net-income" 
+                      id="current-net-income" 
+                      name="current-net-income" 
                       class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
                       placeholder="0.00"
                       step="0.01"
                     />
                   </div>
                   <div>
-                    <label for="income-period" class="block text-sm font-medium text-slate-300 mb-2">Reporting Period</label>
-                    <select 
-                      id="income-period" 
-                      name="income-period" 
-                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg"
-                    >
-                      <option value="yearly">Yearly</option>
-                      <option value="quarterly">Quarterly</option>
-                      <option value="monthly">Monthly</option>
-                    </select>
+                    <label for="ebit" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      EBIT (PHP)
+                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="ebit" 
+                      name="ebit" 
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
+                      placeholder="0.00"
+                      step="0.01"
+                    />
+                  </div>
+                  <div>
+                    <label for="time-between-periods" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Time Between Periods (Days)
+                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="time-between-periods" 
+                      name="time-between-periods" 
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
+                      placeholder="365"
+                      step="1"
+                    />
                   </div>
                 </div>
               </div>
@@ -302,6 +318,20 @@
                     />
                   </div>
                   <div>
+                    <label for="current-assets" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Current Assets (PHP)
+                      <span class="ml-2 text-xs text-emerald-400">?</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="current-assets" 
+                      name="current-assets" 
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
+                      placeholder="0.00"
+                      step="0.01"
+                    />
+                  </div>
+                  <div>
                     <label for="total-liabilities" class="flex items-center text-sm font-medium text-slate-300 mb-2">
                       Total Liabilities (PHP)
                       <span class="ml-2 text-xs text-emerald-400">?</span>
@@ -315,7 +345,35 @@
                       step="0.01"
                     />
                   </div>
-                  <div class="md:col-span-2">
+                  <div>
+                    <label for="current-liabilities" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Current Liabilities (PHP)
+                      <span class="ml-2 text-xs text-emerald-400">?</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="current-liabilities" 
+                      name="current-liabilities" 
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
+                      placeholder="0.00"
+                      step="0.01"
+                    />
+                  </div>
+                  <div>
+                    <label for="retained-earnings" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Retained Earnings (PHP)
+                      <span class="ml-2 text-xs text-emerald-400">?</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="retained-earnings" 
+                      name="retained-earnings" 
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
+                      placeholder="0.00"
+                      step="0.01"
+                    />
+                  </div>
+                  <div class="md:col-span-1">
                     <label for="shareholder-equity" class="text-sm font-medium text-slate-300 mb-2 block">
                       Shareholder Equity (PHP) - Auto-calculated
                     </label>
@@ -332,13 +390,13 @@
               </div>
 
               <!-- Cash Flow Section -->
-              <div class="financial-section border-blue-500 rounded-lg p-5 flex-1">
-                <h3 class="text-base font-bold text-slate-100 mb-3">Cash Flow Statement</h3>
-                <div class="grid md:grid-cols-3 gap-4">
+              <div class="financial-section border-purple-500 rounded-lg p-5 flex-1">
+                <h3 class="text-base font-bold text-slate-100 mb-3">Cash Flow & Valuation</h3>
+                <div class="grid md:grid-cols-2 gap-4">
                   <div>
                     <label for="cash-flow" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Operations (PHP)
-                      <span class="ml-2 text-xs text-blue-400">?</span>
+                      Operations Cash Flow (PHP)
+                      <span class="ml-2 text-xs text-purple-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -350,31 +408,45 @@
                     />
                   </div>
                   <div>
-                    <label for="investment-flow" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Investing (PHP)
-                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    <label for="current-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Current Valuation (PHP)
+                      <span class="ml-2 text-xs text-purple-400">?</span>
                     </label>
                     <input 
                       type="number" 
-                      id="investment-flow" 
-                      name="investment-flow" 
+                      id="current-valuation" 
+                      name="current-valuation" 
                       class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
                       placeholder="0.00"
                       step="0.01"
                     />
                   </div>
                   <div>
-                    <label for="financing-flow" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Financing (PHP)
-                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    <label for="expected-future-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Expected Future Valuation (PHP)
+                      <span class="ml-2 text-xs text-purple-400">?</span>
                     </label>
                     <input 
                       type="number" 
-                      id="financing-flow" 
-                      name="financing-flow" 
+                      id="expected-future-valuation" 
+                      name="expected-future-valuation" 
                       class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
                       placeholder="0.00"
                       step="0.01"
+                    />
+                  </div>
+                  <div>
+                    <label for="years-to-future-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Years to Future Valuation
+                      <span class="ml-2 text-xs text-purple-400">?</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="years-to-future-valuation" 
+                      name="years-to-future-valuation" 
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
+                      placeholder="0"
+                      step="0.1"
                     />
                   </div>
                 </div>
@@ -545,16 +617,21 @@
         document.getElementById('company-description').value = startup.company_description || '';
 
         document.getElementById('current-revenue').value = startup.current_revenue || startup.revenue || '';
-        document.getElementById('previous-revenue').value = startup.previous_revenue || '';
-        document.getElementById('net-income').value = startup.net_income || '';
-        document.getElementById('income-period').value = startup.reporting_period || 'yearly';
+        document.getElementById('prior-revenue').value = startup.prior_revenue || startup.previous_revenue || '';
+        document.getElementById('current-net-income').value = startup.current_net_income || startup.net_income || '';
+        document.getElementById('ebit').value = startup.ebit || '';
+        document.getElementById('time-between-periods').value = startup.time_between_periods || '';
 
         domCache.totalAssetsInput.value = startup.total_assets || '';
+        document.getElementById('current-assets').value = startup.current_assets || '';
         domCache.totalLiabilitiesInput.value = startup.total_liabilities || '';
+        document.getElementById('current-liabilities').value = startup.current_liabilities || '';
+        document.getElementById('retained-earnings').value = startup.retained_earnings || '';
         
         document.getElementById('cash-flow').value = startup.cash_flow || '';
-        document.getElementById('investment-flow').value = startup.investment_flow || '';
-        document.getElementById('financing-flow').value = startup.financing_flow || '';
+        document.getElementById('current-valuation').value = startup.current_valuation || '';
+        document.getElementById('expected-future-valuation').value = startup.expected_future_valuation || '';
+        document.getElementById('years-to-future-valuation').value = startup.years_to_future_valuation || '';
 
         document.getElementById('team-strength').value = startup.team_strength || '';
         document.getElementById('market-position').value = startup.market_position || '';
@@ -693,27 +770,30 @@
           industry: document.getElementById('industry').value,
           company_description: document.getElementById('company-description').value.trim(),
           
-          revenue: parseNumericValue(document.getElementById('current-revenue').value),
-          net_income: parseNumericValue(document.getElementById('net-income').value),
-          total_assets: parseNumericValue(document.getElementById('total-assets').value),
-          total_liabilities: parseNumericValue(document.getElementById('total-liabilities').value),
-          shareholder_equity: calculatedEquity,
-          cash_flow: parseNumericValue(document.getElementById('cash-flow').value),
-          
           current_revenue: parseNumericValue(document.getElementById('current-revenue').value),
-          previous_revenue: parseNumericValue(document.getElementById('previous-revenue').value),
-          investment_flow: parseNumericValue(document.getElementById('investment-flow').value),
-          financing_flow: parseNumericValue(document.getElementById('financing-flow').value),
-          reporting_period: document.getElementById('income-period').value || 'yearly',
+          prior_revenue: parseNumericValue(document.getElementById('prior-revenue').value),
+          current_net_income: parseNumericValue(document.getElementById('current-net-income').value),
+          ebit: parseNumericValue(document.getElementById('ebit').value),
+          time_between_periods: parseNumericValue(document.getElementById('time-between-periods').value),
+          
+          total_assets: parseNumericValue(document.getElementById('total-assets').value),
+          current_assets: parseNumericValue(document.getElementById('current-assets').value),
+          total_liabilities: parseNumericValue(document.getElementById('total-liabilities').value),
+          current_liabilities: parseNumericValue(document.getElementById('current-liabilities').value),
+          retained_earnings: parseNumericValue(document.getElementById('retained-earnings').value),
+          shareholder_equity: calculatedEquity,
+          
+          cash_flow: parseNumericValue(document.getElementById('cash-flow').value),
+          current_valuation: parseNumericValue(document.getElementById('current-valuation').value),
+          expected_future_valuation: parseNumericValue(document.getElementById('expected-future-valuation').value),
+          years_to_future_valuation: parseNumericValue(document.getElementById('years-to-future-valuation').value),
           
           team_strength: document.getElementById('team-strength').value.trim(),
           market_position: document.getElementById('market-position').value.trim(),
           brand_reputation: document.getElementById('brand-reputation').value.trim(),
           
-          data_source_confidence: confidenceLevel,
-          confidence_percentage: actualPercentage,
-          
-          funding_ask: null
+          data_completeness_level: confidenceLevel,
+          confidence_percentage: actualPercentage
         };
       }
 
