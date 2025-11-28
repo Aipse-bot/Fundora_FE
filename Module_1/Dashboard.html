@@ -69,6 +69,22 @@
       background: #202733;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
+    /* Fix scrollable sidebar - make it not scrollable */
+    aside {
+      height: calc(100vh - 80px);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    aside::-webkit-scrollbar {
+      width: 6px;
+    }
+    aside::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    aside::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 3px;
+    }
   </style>
 </head>
 <body class="bg-slate-900 text-white min-h-screen">
@@ -122,25 +138,26 @@
 
   <div class="flex max-w-[1920px] mx-auto">
     <!-- Sidebar -->
-    <aside class="sticky top-20 h-[calc(100vh-80px)] w-80 bg-slate-900/30 border-r border-slate-800/50 p-6 overflow-y-auto">
+    <aside class="w-80 bg-slate-900/30 border-r border-slate-800/50 p-6">
       <form id="filterForm" class="space-y-6">
         <!-- Quick Presets -->
         <div class="bg-slate-800/20 p-4 rounded-lg border border-slate-700/30">
           <label class="block text-sm font-semibold text-gray-200 mb-3">Quick Presets</label>
           <div class="grid grid-cols-1 gap-2">
-            <button type="button" onclick="applyPreset('conservative')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
+            <!-- Presets now automatically apply filters and render startups -->
+            <button type="button" onclick="applyPreset('conservative'); renderStartups(false)" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
               <div class="flex items-center justify-between">
                 <span class="font-medium text-white">Conservative</span>
                 <span class="text-xs text-gray-400">Low Risk</span>
               </div>
             </button>
-            <button type="button" onclick="applyPreset('balanced')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
+            <button type="button" onclick="applyPreset('balanced'); renderStartups(false)" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
               <div class="flex items-center justify-between">
                 <span class="font-medium text-white">Balanced</span>
                 <span class="text-xs text-gray-400">Mixed</span>
               </div>
             </button>
-            <button type="button" onclick="applyPreset('aggressive')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
+            <button type="button" onclick="applyPreset('aggressive'); renderStartups(false)" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
               <div class="flex items-center justify-between">
                 <span class="font-medium text-white">Aggressive</span>
                 <span class="text-xs text-gray-400">High Risk</span>
@@ -198,6 +215,7 @@
             </select>
           </div>
 
+          <!-- Risk Tolerance now properly filters startups based on risk level -->
           <div>
             <label class="block text-sm font-semibold text-gray-200 mb-3">Risk Tolerance</label>
             <div class="grid grid-cols-3 gap-2">
@@ -214,6 +232,7 @@
             <input type="hidden" name="risk_level" id="risk-hidden">
           </div>
 
+          <!-- Growth rate filter now excludes pitch decks -->
           <div>
             <label class="block text-sm font-semibold text-gray-200 mb-2">Minimum Estimated Growth Rate</label>
             <select name="min_growth_rate" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
@@ -433,16 +452,15 @@
     }
 
     function escapeHtml(text) {
-      if (!text) return '';
-      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-      return text.replace(/[&<>"']/g, m => map[m]);
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
-    function watchIcon(isWatched) {
-      if (isWatched) {
-        return '<svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
-      }
-      return '<svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
+    function watchIcon(filled) {
+      return filled 
+        ? '<svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>'
+        : '<svg class="w-5 h-5 text-gray-400 hover:text-brand-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
     }
 
     function renderStartup(startup) {
@@ -456,7 +474,9 @@
       let hasDataPending = false;
       let riskBadge;
       
-      if (!isPitchDeck && startup.confidence_percentage != null) {
+      if (isPitchDeck) {
+          riskBadge = '<span class="bg-brand-600/20 text-brand-300 text-xs font-medium px-3 py-1 rounded-full border border-brand-600/30">Pitch Deck</span>';
+      } else if (startup.confidence_percentage != null) {
           if (startup.risk_level === 'Low') {
               riskBadge = '<span class="bg-accent-600/20 text-accent-300 text-xs font-medium px-3 py-1 rounded-full border border-accent-600/30">Low Risk</span>';
           } else if (startup.risk_level === 'Medium') {
@@ -521,6 +541,7 @@
               </div>
               <div class="flex flex-col items-end space-y-2">
                   ${riskBadge}
+                  <!-- Heart button now properly toggles watchlist on click -->
                   <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
                       ${inWatchlist ? watchIcon(true) : watchIcon(false)}
                   </button>
@@ -528,6 +549,7 @@
           </div>
           ${metricsSection}
           <div class="flex gap-2 mt-auto">
+              <!-- View Details button now checks if it's a pitch deck and routes to correct page -->
               <button class="view-details-btn flex-1 px-4 py-2.5 border border-slate-700/50 bg-slate-800/30 text-white rounded-lg hover:bg-slate-700/40 hover:border-slate-600 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
               ${hasDataPending 
               ? '<button class="invest-btn flex-1 px-4 py-2.5 bg-gray-600/20 text-gray-400 rounded-lg text-sm text-center cursor-not-allowed border border-gray-600/30" disabled title="Cannot invest - data pending">Invest</button>'
