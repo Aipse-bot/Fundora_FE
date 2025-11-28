@@ -185,7 +185,7 @@
     }
 
     function getAuthToken() {
-      return localStorage.getItem('authToken');
+      return sessionStorage.getItem('authToken');
     }
 
     function getBackUrl() {
@@ -297,19 +297,20 @@
         }
 
         const industry = startup.industry || '—';
-        let reward = 'N/A';
-        if (startup.reward_potential != null) {
-          if (typeof startup.reward_potential === 'string') {
-            reward = startup.reward_potential.split(',')[0].trim();
-          } else if (Array.isArray(startup.reward_potential)) {
-            reward = startup.reward_potential[0];
-          } else {
-            reward = String(startup.reward_potential);
+          let reward = 'N/A';
+          if (startup.reward_potential != null) {
+            if (typeof startup.reward_potential === 'string') {
+              reward = startup.reward_potential.split(',')[0].trim();
+            } else if (Array.isArray(startup.reward_potential)) {
+              reward = startup.reward_potential[0];
+            } else {
+              reward = String(startup.reward_potential);
+            }
           }
-        }
-        const projected = (startup.projected_return != null && startup.projected_return !== '') 
-          ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` 
-          : 'N/A';
+          const rewardDisplay = reward === 'N/A' ? 'N/A' : `${reward}/5`;
+          const estimatedGrowth = (startup.estimated_growth_rate != null && startup.estimated_growth_rate !== '') 
+            ? `${startup.estimated_growth_rate >= 0 ? '+' : ''}${startup.estimated_growth_rate}%` 
+            : 'N/A';
 
         card.innerHTML = `
           <div class="flex justify-between items-start mb-4">
@@ -327,15 +328,15 @@
             </div>
           </div>
           <div class="space-y-3">
-            <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-400">Reward Potential</span>
-              <span class="text-sm font-semibold text-brand-400">${escapeHtml(reward)}/5</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-400">Projected Return</span>
-              <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(projected)}</span>
-            </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-400">Reward Potential</span>
+            <span class="text-sm font-semibold text-white">${escapeHtml(rewardDisplay)}</span>
           </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-400">Estimated Growth Rate</span>
+            <span class="text-sm font-semibold ${startup.estimated_growth_rate != null && startup.estimated_growth_rate >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(estimatedGrowth)}</span>
+          </div>
+        </div>
         `;
         card.addEventListener("click", () => toggleStartupSelection(card), { passive: true });
         domCache.startupsGrid.appendChild(card);

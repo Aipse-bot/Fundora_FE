@@ -198,7 +198,7 @@
     document.getElementById('backBtn').addEventListener('click', () => window.history.back());
 
     function getAuthToken() {
-      return localStorage.getItem('authToken');
+      return sessionStorage.getItem('authToken');
     }
 
     function authHeaders() {

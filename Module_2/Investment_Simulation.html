@@ -201,7 +201,7 @@
 
     function fetchStartupData(startupId) {
       const apiUrl = `https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`;
-      const token = localStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken');
       
       fetch(apiUrl, {
         headers: {

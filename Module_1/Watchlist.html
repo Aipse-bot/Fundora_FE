@@ -134,7 +134,7 @@
 
     <script>
         function getAuthToken() {
-            return localStorage.getItem('authToken');
+            return sessionStorage.getItem('authToken');
         }
 
         function authHeaders() {
@@ -219,7 +219,7 @@
                 });
                 
                 if (watchlistRes.status === 401 || watchlistRes.status === 403) {
-                    localStorage.removeItem('authToken');
+                    sessionStorage.removeItem('authToken');
                     window.location.href = '/login.html';
                     return;
                 }
@@ -293,53 +293,53 @@
                     }
                     
                     let metricsSection;
-                    if (isDeck) {
-                        const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
-                        const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
-                        const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
-                        
-                        metricsSection = `
-                            <div class="space-y-3 mb-4 flex-grow">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-400">Funding Ask</span>
-                                    <span class="text-sm font-semibold text-purple-400">${escapeHtml(fundingAmount)}</span>
+                        if (isDeck) {
+                            const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
+                            const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
+                            const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
+                            
+                            metricsSection = `
+                                <div class="space-y-3 mb-4 flex-grow">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-gray-400">Funding Requested</span>
+                                        <span class="text-sm font-semibold text-brand-400">${escapeHtml(fundingAmount)}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-gray-400">Market Growth Rate (YOY)</span>
+                                        <span class="text-sm font-semibold text-accent-400">${escapeHtml(marketGrowthDisplay)}</span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-400">Market Growth</span>
-                                    <span class="text-sm font-semibold text-accent-400">${escapeHtml(marketGrowthDisplay)}</span>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        let reward = 'N/A';
-                        if (startup.reward_potential != null) {
-                            if (typeof startup.reward_potential === 'string') {
-                                reward = startup.reward_potential.split(',')[0].trim();
-                            } else if (Array.isArray(startup.reward_potential)) {
-                                reward = startup.reward_potential[0];
-                            } else {
-                                reward = String(startup.reward_potential);
+                            `;
+                        } else {
+                            let reward = 'N/A';
+                            if (startup.reward_potential != null) {
+                                if (typeof startup.reward_potential === 'string') {
+                                    reward = startup.reward_potential.split(',')[0].trim();
+                                } else if (Array.isArray(startup.reward_potential)) {
+                                    reward = startup.reward_potential[0];
+                                } else {
+                                    reward = String(startup.reward_potential);
+                                }
                             }
-                        }
 
-                        const rewardDisplay = reward === 'N/A' ? 'N/A' : `${reward}/5`;
-                        const projected = (startup.projected_return != null && startup.projected_return !== '') 
-                            ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` 
-                            : 'N/A';
-                        
-                        metricsSection = `
-                            <div class="space-y-3 mb-4 flex-grow">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-400">Reward Potential</span>
-                                    <span class="text-sm font-semibold text-white">${escapeHtml(rewardDisplay)}</span>
+                            const rewardDisplay = reward === 'N/A' ? 'N/A' : `${reward}/5`;
+                            const estimatedGrowth = (startup.estimated_growth_rate != null && startup.estimated_growth_rate !== '') 
+                                ? `${startup.estimated_growth_rate >= 0 ? '+' : ''}${startup.estimated_growth_rate}%` 
+                                : 'N/A';
+                            
+                            metricsSection = `
+                                <div class="space-y-3 mb-4 flex-grow">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-gray-400">Reward Potential</span>
+                                        <span class="text-sm font-semibold text-white">${escapeHtml(rewardDisplay)}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-gray-400">Estimated Growth Rate</span>
+                                        <span class="text-sm font-semibold ${startup.estimated_growth_rate != null && startup.estimated_growth_rate >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(estimatedGrowth)}</span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-400">Projected Return</span>
-                                    <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(projected)}</span>
-                                </div>
-                            </div>
-                        `;
-                    }
+                            `;
+                        }
                     
                     const profilePage = isDeck ? '../Module_2/Company_ProfileDB.html' : '../Module_2/Company_Profile.html';
                     const returnPath = window.location.pathname + window.location.search;
@@ -398,7 +398,7 @@
                 });
                 
                 if (res.status === 401 || res.status === 403) {
-                    localStorage.removeItem('authToken');
+                    sessionStorage.removeItem('authToken');
                     window.location.href = '/login.html';
                     return;
                 }
@@ -486,7 +486,7 @@
                 });
                 
                 if (res.status === 401 || res.status === 403) {
-                    localStorage.removeItem('authToken');
+                    sessionStorage.removeItem('authToken');
                     window.location.href = '/login.html';
                     return;
                 }
@@ -518,7 +518,7 @@
                 });
                 
                 if (res.status === 401 || res.status === 403) {
-                    localStorage.removeItem('authToken');
+                    sessionStorage.removeItem('authToken');
                     window.location.href = '/login.html';
                     return;
                 }

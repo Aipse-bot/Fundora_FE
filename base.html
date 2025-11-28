@@ -203,7 +203,7 @@
   }
 
   async function loadDeckSections() {
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
     const nav = document.getElementById('deckSections');
     const deckId = localStorage.getItem('deck_id');
 
@@ -286,7 +286,7 @@
 
   async function bindCoverFormEvents(deckId) {
     const form = document.getElementById('coverForm');
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
 
     // Load existing data if available
     try {
@@ -342,7 +342,7 @@
     const descriptionInput = document.getElementById('problemDescription');
     const errorElem = document.getElementById('descriptionError');
     const previewElem = document.getElementById('problemPreview');
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
 
     if (!form || !descriptionInput) return;
 
@@ -410,7 +410,7 @@
     const descriptionInput = document.getElementById('solutionDescription');
     const errorElem = document.getElementById('descriptionError');
     const previewElem = document.getElementById('solutionPreview');
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
 
     if (!form || !descriptionInput) return;
 
@@ -492,7 +492,7 @@
     const previewGrowth = document.getElementById('previewMarketGrowthRate');
     const previewAdvantage = document.getElementById('previewCompetitiveAdvantage');
 
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
 
     // Load existing market analysis data
     try {
@@ -609,7 +609,7 @@
     const addMemberBtn = document.getElementById('addMemberBtn');
     const template = document.getElementById('teamMemberTemplate');
     const previewContainer = document.getElementById('teamPreview');
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
 
     if (!form || !teamMembers || !addMemberBtn || !template) return;
 
@@ -737,7 +737,7 @@
     const addYearBtn = document.getElementById('addYearBtn');
     const previewTable = document.getElementById('financialPreviewTable');
     const chartCanvas = document.getElementById('revenueProfitChart');
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
 
     if (!form || !financialRows || !addYearBtn || !previewTable || !chartCanvas) return;
 
@@ -947,7 +947,7 @@
   }
 
   function bindAskFormEvents(deckId) {
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
     const form = document.getElementById('askForm');
     const amountInput = document.getElementById('amount');
     const usageInput = document.getElementById('usage_description');
@@ -1030,7 +1030,7 @@
 
   async function loadReportModal(deckId) {
     console.log('Loading report for deck ID:', deckId);
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
     try {
       const res = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/report/${deckId}`, {
         headers: { Authorization: `Bearer ${token}` }

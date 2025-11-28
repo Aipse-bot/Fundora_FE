@@ -254,7 +254,7 @@
 
     // TODO: change to session
     function getAuthToken() {
-      return localStorage.getItem('authToken');
+      return sessionStorage.getItem('authToken');
     }
 
     function authHeaders() {
@@ -272,7 +272,7 @@
       options.headers = Object.assign({}, options.headers || {}, { 'Authorization': `Bearer ${token}` });
       const res = await fetch(url, options);
       if (res.status === 401 || res.status === 403) {
-        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');  // ← CHANGED
         window.location.href = '/login.html';
         throw new Error('Unauthorized');
       }
@@ -394,7 +394,7 @@
       } catch (err) {
         console.warn('Logout error (ignored):', err);
       } finally {
-        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');
         window.location.href = '/login.html';
       }
     }
