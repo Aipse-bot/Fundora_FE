@@ -60,7 +60,7 @@
         const deckId = urlParams.get('deck_id');
         if (!deckId) return;
 
-        const token = localStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken');
         const response = await fetch(`https://fundora-be-singapore.onrender.com/api/deck-builder/team/?deck_id=${deckId}`, {
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
         });

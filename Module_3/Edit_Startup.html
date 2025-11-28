@@ -543,7 +543,7 @@
       }
 
       async function loadUserInfo() {
-        const token = localStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken');
 
         if (!token) {
           domCache.userEmailElement.textContent = 'No user logged in';
@@ -577,7 +577,7 @@
           return;
         }
 
-        const token = localStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken');
         if (!token) {
           alert('Please log in to edit startup information.');
           window.location.href = '../login.html';
@@ -804,7 +804,7 @@
           domCache.submitButton.disabled = true;
           domCache.submitButton.innerHTML = 'Updating...';
 
-          const token = localStorage.getItem('authToken');
+          const token = sessionStorage.getItem('authToken');
           if (!token) {
             throw new Error('No authentication token found');
           }

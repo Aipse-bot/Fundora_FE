@@ -478,7 +478,7 @@
 
             // --- Load User Information ---
             async function loadUserInfo() {
-                const token = localStorage.getItem('authToken');
+                const token = sessionStorage.getItem('authToken');
                 const userEmailElement = getCachedElement('user-email');
 
                 if (!token) {

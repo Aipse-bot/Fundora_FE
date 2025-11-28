@@ -106,7 +106,7 @@
 
   <script>
     const API_BASE = 'https://fundora-be-singapore.onrender.com/api/';
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
     const domCache = {
       deckList: document.getElementById('deckList'),
       messageContainer: document.getElementById('messageContainer'),
@@ -232,7 +232,7 @@
     }, { passive: true });
 
     function logout() {
-      localStorage.removeItem('authToken');
+      sessionStorage.removeItem('authToken');
       localStorage.removeItem('userData');
       window.location.href = '/login.html';
     }

@@ -167,7 +167,7 @@
 
     <script>
         async function loadUserInfo() {
-            const token = localStorage.getItem('authToken');
+            const token = sessionStorage.getItem('authToken');
             const userEmailElement = document.getElementById('user-email');
 
             // Check if element exists before trying to update it
@@ -291,7 +291,7 @@
     }
 
     async function goToDeckBuilder() {
-      const token = localStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to create a pitch deck.');
         window.location.href = '../login.html';
@@ -324,7 +324,7 @@
     }
 
     function goToCompanyForm() {
-      const token = localStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to add your business.');
         window.location.href = '../login.html';
@@ -347,7 +347,7 @@
         isLoadingStartups = true;
         console.log('Loading startups at:', new Date().toISOString());
         
-        const token = localStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken');
         const grid = document.getElementById('startupsGrid');
         const messageContainer = document.getElementById('messageContainer');
 
@@ -388,7 +388,7 @@
                 if (response.status === 401) {
                     showMessage('Authentication failed. Please log in again.', 'error');
                     // Optionally clear token and redirect
-                    localStorage.removeItem('authToken');
+                    sessionStorage.removeItem('authToken');
                     return;
                 } else if (response.status === 403) {
                     showMessage('Access denied.', 'error');
@@ -821,7 +821,7 @@
         return;
       }
 
-      const token = localStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to edit startup information.');
         return;
@@ -838,7 +838,7 @@
         return;
       }
 
-      const token = localStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken');
       if (!token) {
         alert('Please log in to view startup reports.');
         return;
@@ -888,7 +888,7 @@
     // window.onload = loadStartups;
     
     function logout() {
-      localStorage.removeItem('authToken');
+      sessionStorage.removeItem('authToken');
       localStorage.removeItem('userData');
       window.location.href = '/login.html'; // or wherever your login page lives
   }

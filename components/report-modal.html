@@ -124,7 +124,7 @@
     }
 
     const startupId = new URLSearchParams(window.location.search).get('id');
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
 
     async function loadData() {
       try {

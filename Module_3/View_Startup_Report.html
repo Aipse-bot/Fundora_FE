@@ -353,7 +353,7 @@
         getCachedElement('modal-delete-cancel').addEventListener('click', closeDeleteModal, { passive: true });
         
         getCachedElement('modal-delete-confirm').addEventListener('click', async function() {
-            const token = localStorage.getItem('authToken');
+            const token = sessionStorage.getItem('authToken');
             
             if (!token) {
                 alert('Please log in to delete startups.');
@@ -432,7 +432,7 @@
 
         if (!startupId) return;
 
-        const token = localStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken');
         
         if (!token) {
             alert('Please log in to view startup reports.');
