@@ -200,7 +200,7 @@
     });
 
     function fetchStartupData(startupId) {
-      const apiUrl = `https://fundora-be-singapore.onrender.com/api/investor/startups/${startupId}/`;
+      const apiUrl = `https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`;
       const token = localStorage.getItem('authToken');
       
       fetch(apiUrl, {
