@@ -71,6 +71,8 @@
     }
     /* Fix scrollable sidebar - make it not scrollable */
     aside {
+      position: sticky;
+      top: 80px;
       height: calc(100vh - 80px);
       overflow-y: auto;
       overflow-x: hidden;
@@ -138,7 +140,7 @@
 
   <div class="flex max-w-[1920px] mx-auto">
     <!-- Sidebar -->
-    <aside class="w-80 bg-slate-900/30 border-r border-slate-800/50 p-6">
+    <aside class="w-64 bg-slate-900/30 border-r border-slate-800/50 p-6">
       <form id="filterForm" class="space-y-6">
         <!-- Quick Presets -->
         <div class="bg-slate-800/20 p-4 rounded-lg border border-slate-700/30">
@@ -463,7 +465,7 @@
     }
 
     function renderStartup(startup) {
-      const isPitchDeck = startup.is_deck_builder === true;
+      const isPitchDeck = startup.is_deck_builder === true || startup.is_deck_builder === 'true' || startup.startup_type === 'pitch_deck';
       
       const card = document.createElement('div');
       card.className = 'startup-card bg-slate-900/40 border border-slate-800/50 rounded-lg p-6 flex flex-col';
@@ -488,6 +490,10 @@
           riskBadge = '<span class="bg-gray-600/20 text-gray-300 text-xs font-medium px-3 py-1 rounded-full border border-gray-600/30">Data Pending</span>';
       }
 
+      if (!startup.risk_level || startup.risk_level === 'Data Pending') {
+        console.log("[v0] Startup:", startup.name, "is_deck_builder:", startup.is_deck_builder, "startup_type:", startup.startup_type, "isPitchDeck:", isPitchDeck);
+      }
+
       const industry = isPitchDeck ? (startup.tagline || '—') : (startup.industry || '—');
       
       const reward = startup.reward_potential;
@@ -508,11 +514,11 @@
           metricsSection = `
               <div class="space-y-3 mb-4 flex-grow">
                   <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-400">Funding Ask</span>
+                      <span class="text-sm text-gray-400">Funding Requested</span>
                       <span class="text-sm font-semibold text-brand-400">${escapeHtml(fundingAmount)}</span>
                   </div>
                   <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-400">Market Growth</span>
+                      <span class="text-sm text-gray-400">Market Growth Rate (YOY)</span>
                       <span class="text-sm font-semibold text-accent-400">${escapeHtml(marketGrowthDisplay)}</span>
                   </div>
               </div>
