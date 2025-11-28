@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Investment Dashboard</title>
+  <title>Fundora - Investment Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
@@ -458,7 +458,7 @@
       let hasDataPending = false;
       let riskBadge;
       
-      if (!isPitchDeck && startup.confidence && startup.confidence !== null) {
+      if (!isPitchDeck && startup.confidence_percentage != null) {
           if (startup.risk_level === 'Low') {
               riskBadge = '<span class="bg-accent-600/20 text-accent-300 text-xs font-medium px-3 py-1 rounded-full border border-accent-600/30">Low Risk</span>';
           } else if (startup.risk_level === 'Medium') {

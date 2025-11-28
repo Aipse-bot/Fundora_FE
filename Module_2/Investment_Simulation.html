@@ -115,19 +115,6 @@
             <option value="5">5 Years</option>
           </select>
         </div>
-
-        <div>
-          <label class="text-sm font-medium text-gray-300 mb-3 block">
-            Estimated Growth Rate (CAGR)
-            <span id="cagr-source" class="text-xs text-gray-500 font-normal block mt-1">Calculated from revenue data</span>
-          </label>
-          <div class="flex">
-            <div id="growth-rate-display" class="flex-1 px-4 py-4 bg-slate-800/60 border border-slate-700 rounded-l-lg text-lg font-semibold text-brand-400">
-              0
-            </div>
-            <span class="px-4 py-4 bg-slate-800/40 border border-l-0 border-slate-700 rounded-r-lg text-gray-400 font-medium">% per year</span>
-          </div>
-        </div>
       </div>
 
       <div class="flex justify-center mt-8">
@@ -218,9 +205,35 @@
     };
 
     function cacheDOM() {
-      Object.keys(domCache).forEach(key => {
-        const id = key.replace(/([A-Z])/g, '-$1').toLowerCase();
-        domCache[key] = document.getElementById(id);
+      const idMapping = {
+        startupName: 'startupName',
+        riskBadge: 'risk-badge',
+        growthRateDisplay: 'growth-rate-display',
+        investmentInput: 'investment-amount',
+        durationSelect: 'duration-years',
+        simulateBtn: 'simulate-btn',
+        resultsSection: 'results-section',
+        breakdownSection: 'breakdown-section',
+        assumptionsSection: 'assumptions-section',
+        initialInvestment: 'initial-investment',
+        durationDisplay: 'duration-display',
+        finalValue: 'final-value',
+        totalGain: 'total-gain',
+        roiPercentage: 'roi-percentage',
+        breakdownTable: 'breakdown-table',
+        cagrSource: 'cagr-source',
+        dataSourceText: 'data-source-text',
+        cagrValue: 'cagr-value',
+        backButton: 'back-button'
+      };
+      
+      Object.keys(idMapping).forEach(key => {
+        const id = idMapping[key];
+        const element = document.getElementById(id);
+        if (!element) {
+          console.warn(`[v0] DOM element not found: #${id}`);
+        }
+        domCache[key] = element;
       });
     }
 
