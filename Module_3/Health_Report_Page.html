@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Startup Health Report - Fundora</title>
+    <title>Startup Health Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
@@ -47,25 +47,34 @@
     <style>
         body { 
             font-family: 'Inter', sans-serif;
+            contain: layout style paint;
         }
         .progress-ring__circle {
-            transition: stroke-dashoffset 0.8s ease-out;
+            transition: stroke-dashoffset 0.5s ease-out;
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
         }
         .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: box-shadow 0.2s ease;
         }
         .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+        nav {
+            contain: layout style paint;
+        }
+        .metric-card {
+            contain: layout style paint;
+        }
+        .assessment-card {
+            contain: layout style paint;
         }
     </style>
 </head>
 <body class="bg-slate-950 text-gray-100">
 
     <!-- Navbar -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
@@ -97,10 +106,10 @@
         <div id="reportContainer" class="max-w-7xl mx-auto space-y-8">
             
             <!-- Header Card -->
-            <div class="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-8 backdrop-blur-sm">
+            <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-8">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div class="flex items-start gap-4">
-                        <a id="report-back-link" href="#" class="p-2 rounded-lg hover:bg-slate-800/50 border border-slate-700 transition-colors shrink-0">
+                        <a id="report-back-link" href="#" class="p-2 rounded-lg hover:bg-slate-700 border border-slate-700 transition-colors shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
@@ -108,12 +117,10 @@
                         <img id="report-logo" src="https://placehold.co/48x48/3b82f6/FFFFFF?text=C" alt="Company Logo" class="h-12 w-12 rounded-xl shrink-0">
                         <div>
                             <h1 id="report-company-name" class="text-3xl font-bold text-white mb-2">Company Name</h1>
-                            <span id="report-industry" class="inline-block text-xs font-semibold text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30">Industry</span>
+                            <span id="report-industry" class="inline-block text-xs font-semibold text-blue-400 bg-blue-500/15 px-3 py-1 rounded-full border border-slate-700">Industry</span>
                         </div>
                     </div>
-                    <div id="report-confidence-badge" class="inline-block text-xs font-bold px-4 py-2 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 shrink-0">
-                        Medium Confidence
-                    </div>
+                    <!-- removed confidence badge as it's not in Company_Information_Form -->
                 </div>
             </div>
 
@@ -122,9 +129,9 @@
                 <div class="lg:col-span-2 space-y-6">
                     
                     <!-- Company Summary -->
-                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm">
+                    <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-8">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center">
+                            <div class="w-10 h-10 bg-blue-500/15 border border-slate-700 rounded-xl flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
@@ -135,10 +142,10 @@
                     </div>
 
                     <!-- Qualitative Assessment -->
-                    <div id="qualitative-assessment" class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm" style="display: none;">
+                    <div id="qualitative-assessment" class="bg-slate-800/40 border border-slate-700 rounded-2xl p-8 assessment-card" style="display: none;">
                         <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <div class="w-10 h-10 bg-blue-500/15 border border-slate-700 rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                                 </svg>
                             </div>
@@ -146,31 +153,25 @@
                         </div>
                         
                         <div class="space-y-4">
-                            <div class="bg-purple-500/10 border border-purple-500/20 p-5 rounded-xl">
-                                <h3 class="text-sm font-semibold text-purple-400 mb-2 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                    </svg>
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                <h3 class="text-sm font-semibold text-blue-400 mb-2 flex items-center gap-2">
+                                    <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
                                     Team Strength
                                 </h3>
                                 <p id="team-strength" class="text-gray-300 leading-relaxed">Loading...</p>
                             </div>
                             
-                            <div class="bg-blue-500/10 border border-blue-500/20 p-5 rounded-xl">
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
                                 <h3 class="text-sm font-semibold text-blue-400 mb-2 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                                    </svg>
+                                    <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
                                     Market Position
                                 </h3>
                                 <p id="market-position" class="text-gray-300 leading-relaxed">Loading...</p>
                             </div>
                             
-                            <div class="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-xl">
-                                <h3 class="text-sm font-semibold text-emerald-400 mb-2 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                                    </svg>
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                <h3 class="text-sm font-semibold text-accent-400 mb-2 flex items-center gap-2">
+                                    <span class="inline-block w-1 h-1 rounded-full bg-accent-400"></span>
                                     Brand Reputation
                                 </h3>
                                 <p id="brand-reputation" class="text-gray-300 leading-relaxed">Loading...</p>
@@ -179,55 +180,94 @@
                     </div>
 
                     <!-- Financial Metrics -->
-                    <div id="financial-metrics" class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm" style="display: none;">
+                    <div id="financial-metrics" class="bg-slate-800/40 border border-slate-700 rounded-2xl p-8 metric-card" style="display: none;">
                         <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <div class="w-10 h-10 bg-accent-500/15 border border-slate-700 rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-accent-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                                 </svg>
                             </div>
                             <h2 class="text-xl font-bold text-white">Financial Metrics</h2>
                         </div>
                         
+                        <!-- updated financial metrics to match Company_Information_Form fields -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-xl">
-                                <p class="text-sm text-emerald-400 mb-1 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                                    </svg>
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                <p class="text-sm text-accent-400 mb-1 flex items-center gap-2">
+                                    <span class="inline-block w-1 h-1 rounded-full bg-accent-400"></span>
                                     Revenue Growth
                                 </p>
                                 <p id="report-revenue-growth" class="text-2xl font-bold text-white">N/A</p>
                             </div>
                             
-                            <div class="bg-blue-500/10 border border-blue-500/20 p-5 rounded-xl">
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
                                 <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
+                                    <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
                                     Net Income
                                 </p>
                                 <p id="report-net-income" class="text-2xl font-bold text-white">N/A</p>
                             </div>
                             
-                            <div class="bg-orange-500/10 border border-orange-500/20 p-5 rounded-xl">
-                                <p class="text-sm text-orange-400 mb-1 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
-                                    </svg>
-                                    Monthly Burn Rate
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                    <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
+                                    EBIT
                                 </p>
-                                <p id="report-burn-rate" class="text-2xl font-bold text-white">N/A</p>
+                                <p id="report-ebit" class="text-2xl font-bold text-white">N/A</p>
                             </div>
                             
-                            <div class="bg-purple-500/10 border border-purple-500/20 p-5 rounded-xl">
-                                <p class="text-sm text-purple-400 mb-1 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                    </svg>
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                <p class="text-sm text-accent-400 mb-1 flex items-center gap-2">
+                                    <span class="inline-block w-1 h-1 rounded-full bg-accent-400"></span>
                                     Profit Margin
                                 </p>
                                 <p id="report-profit-margin" class="text-2xl font-bold text-white">N/A</p>
+                            </div>
+
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                    <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
+                                    Total Assets
+                                </p>
+                                <p id="report-total-assets" class="text-2xl font-bold text-white">N/A</p>
+                            </div>
+
+                            <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                    <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
+                                    Total Liabilities
+                                </p>
+                                <p id="report-total-liabilities" class="text-2xl font-bold text-white">N/A</p>
+                            </div>
+                        </div>
+
+                        <!-- added valuation section -->
+                        <div class="mt-6 pt-6 border-t border-slate-700">
+                            <h3 class="text-lg font-semibold text-white mb-4">Valuation</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                    <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                        <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
+                                        Current Valuation
+                                    </p>
+                                    <p id="report-current-valuation" class="text-2xl font-bold text-white">N/A</p>
+                                </div>
+
+                                <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                    <p class="text-sm text-accent-400 mb-1 flex items-center gap-2">
+                                        <span class="inline-block w-1 h-1 rounded-full bg-accent-400"></span>
+                                        Expected Future Valuation
+                                    </p>
+                                    <p id="report-expected-future-valuation" class="text-2xl font-bold text-white">N/A</p>
+                                </div>
+
+                                <div class="bg-slate-700/30 border border-slate-700 p-5 rounded-xl">
+                                    <p class="text-sm text-blue-400 mb-1 flex items-center gap-2">
+                                        <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
+                                        Years to Future Valuation
+                                    </p>
+                                    <p id="report-years-to-future-valuation" class="text-2xl font-bold text-white">N/A</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -236,56 +276,24 @@
                 <!-- Right Column - Sidebar -->
                 <div class="space-y-6">
                     
-                    <!-- Risk & Reward -->
-                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 backdrop-blur-sm">
-                        <h3 class="font-bold text-white mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                            </svg>
-                            Risk & Reward
-                        </h3>
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm mb-2">
-                                    <p class="text-gray-400">Risk Score</p>
-                                    <p id="report-risk-score" class="font-semibold text-white"></p>
-                                </div>
-                                <div class="w-full bg-slate-700 rounded-full h-2.5">
-                                    <div id="report-risk-bar" class="bg-gradient-to-r from-red-500 to-red-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-2">
-                                    <p class="text-gray-400">Reward Potential</p>
-                                    <p id="report-reward-score" class="font-semibold text-white"></p>
-                                </div>
-                                <div class="w-full bg-slate-700 rounded-full h-2.5">
-                                    <div id="report-reward-bar" class="bg-gradient-to-r from-blue-500 to-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Data Confidence -->
-                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 backdrop-blur-sm text-center">
+                    <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-6 text-center">
                         <h3 class="font-bold text-white mb-4 flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
+                            <span class="inline-block w-1 h-1 rounded-full bg-blue-400"></span>
                             Data Confidence
                         </h3>
                         <div class="relative inline-flex items-center justify-center mb-4">
                             <svg class="w-28 h-28">
                                 <circle class="text-slate-700" stroke-width="10" stroke="currentColor" fill="transparent" r="50" cx="56" cy="56" />
-                                <circle id="confidence-circle" class="text-blue-500 progress-ring__circle" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="50" cx="56" cy="56" />
+                                <circle id="confidence-circle" class="text-brand-500 progress-ring__circle" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="50" cx="56" cy="56" />
                             </svg>
-                            <span id="report-confidence-percent" class="absolute text-3xl font-bold text-blue-400">0%</span>
+                            <span id="report-confidence-percent" class="absolute text-3xl font-bold text-brand-400">0%</span>
                         </div>
                         <p class="text-xs text-gray-400 leading-relaxed">High reliability based on verified financial data and market analysis.</p>
                     </div>
 
                     <!-- Action Button -->
-                    <button id="addStartupBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
+                    <button id="addStartupBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                         </svg>
@@ -297,22 +305,20 @@
     </div>
 
     <!-- Success/Error Modal -->
-    <div id="messageModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all">
+    <div id="messageModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full mx-4 transition-opacity duration-200">
             <div class="text-center">
                 <div id="modalIcon" class="mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4">
-                    <!-- Success icon -->
-                    <svg id="successIcon" class="h-8 w-8 text-emerald-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <svg id="successIcon" class="h-8 w-8 text-accent-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    <!-- Error icon -->
                     <svg id="errorIcon" class="h-8 w-8 text-red-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </div>
                 <h3 id="modalTitle" class="text-xl font-bold text-white mb-2"></h3>
                 <p id="modalMessage" class="text-sm text-gray-400 mb-6"></p>
-                <button id="modalOkBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-8 py-2.5 rounded-lg font-medium transition-colors">
+                <button id="modalOkBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-8 py-2.5 rounded-lg font-medium transition-colors duration-200">
                     OK
                 </button>
             </div>
@@ -320,21 +326,57 @@
     </div>
 
     <script>
-        function renderHeaderUser(user) {
-            const container = document.getElementById('header-user');
-            container.innerHTML = '';
+        const domCache = {
+            addStartupBtn: document.getElementById('addStartupBtn'),
+            messageModal: document.getElementById('messageModal'),
+            successIcon: document.getElementById('successIcon'),
+            errorIcon: document.getElementById('errorIcon'),
+            modalTitle: document.getElementById('modalTitle'),
+            modalMessage: document.getElementById('modalMessage'),
+            modalOkBtn: document.getElementById('modalOkBtn'),
+            headerUser: document.getElementById('header-user'),
+            reportRevenueGrowth: document.getElementById('report-revenue-growth'),
+            reportNetIncome: document.getElementById('report-net-income'),
+            reportEbit: document.getElementById('report-ebit'),
+            reportProfitMargin: document.getElementById('report-profit-margin'),
+            reportTotalAssets: document.getElementById('report-total-assets'),
+            reportTotalLiabilities: document.getElementById('report-total-liabilities'),
+            reportCurrentValuation: document.getElementById('report-current-valuation'),
+            reportExpectedFutureValuation: document.getElementById('report-expected-future-valuation'),
+            reportYearsToFutureValuation: document.getElementById('report-years-to-future-valuation'),
+        };
 
-            if (!user || !user.name) return;
 
-            container.innerHTML = `
-                <span class="text-gray-400 text-sm">
-                    Welcome, <span class="font-medium text-white">${user.name}</span>
-                </span>
-                <a href="/logout.html" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Logout
-                </a>
-            `;
+        function displayMetrics(data) {
+            if (data['report-revenue-growth']) {
+                domCache.reportRevenueGrowth.textContent = data['report-revenue-growth'];
+            }
+            if (data['report-net-income']) {
+                domCache.reportNetIncome.textContent = data['report-net-income'];
+            }
+            if (data['report-ebit']) {
+                domCache.reportEbit.textContent = data['report-ebit'];
+            }
+            if (data['report-profit-margin']) {
+                domCache.reportProfitMargin.textContent = data['report-profit-margin'];
+            }
+            if (data['report-total-assets']) {
+                domCache.reportTotalAssets.textContent = data['report-total-assets'];
+            }
+            if (data['report-total-liabilities']) {
+                domCache.reportTotalLiabilities.textContent = data['report-total-liabilities'];
+            }
+            if (data['report-current-valuation']) {
+                domCache.reportCurrentValuation.textContent = data['report-current-valuation'];
+            }
+            if (data['report-expected-future-valuation']) {
+                domCache.reportExpectedFutureValuation.textContent = data['report-expected-future-valuation'];
+            }
+            if (data['report-years-to-future-valuation']) {
+                domCache.reportYearsToFutureValuation.textContent = data['report-years-to-future-valuation'];
+            }
         }
+
     </script>
 
 </body>

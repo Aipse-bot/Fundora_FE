@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deck Report - Fundora</title>
+    <title>Deck Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -49,18 +49,23 @@
             font-family: 'Inter', sans-serif;
         }
         .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: box-shadow 0.2s ease;
         }
         .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+        .card-container {
+            contain: layout style paint;
+        }
+        .navbar-fixed {
+            contain: layout style;
         }
     </style>
 </head>
 <body class="bg-slate-950 text-gray-100">
 
     <!-- Navbar -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+    <nav class="navbar-fixed fixed top-0 left-0 right-0 z-50 bg-slate-900 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
@@ -92,7 +97,7 @@
         <div class="max-w-7xl mx-auto space-y-8">
             
             <!-- Header Card -->
-            <div class="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-8 backdrop-blur-sm">
+            <div class="card-container bg-blue-500/5 border border-blue-500/20 rounded-2xl p-8">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div class="flex items-start gap-4">
                         <div id="deck-initial" class="w-16 h-16 bg-brand-600 text-white font-bold flex items-center justify-center text-2xl rounded-xl shrink-0">
@@ -114,7 +119,7 @@
 
             <!-- Problem & Solution -->
             <div class="grid md:grid-cols-2 gap-6">
-                <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm card-hover">
+                <div class="card-container bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center">
                             <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +131,7 @@
                     <p id="problem-description" class="text-gray-400 leading-relaxed">—</p>
                 </div>
                 
-                <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm card-hover">
+                <div class="card-container bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center">
                             <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,7 +148,7 @@
             <div class="grid md:grid-cols-2 gap-6">
                 
                 <!-- Market Analysis -->
-                <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm card-hover">
+                <div class="card-container bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center">
                             <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,7 +173,7 @@
                         
                         <div class="flex justify-between items-start">
                             <span class="text-gray-400 font-medium">Market Growth:</span>
-                            <span id="market-growth" class="text-emerald-400 font-semibold text-right">—</span>
+                            <span id="market-growth" class="text-accent-400 font-semibold text-right">—</span>
                         </div>
                         <div class="h-px bg-slate-700"></div>
                         
@@ -180,7 +185,7 @@
                 </div>
 
                 <!-- Financial Projections -->
-                <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm card-hover">
+                <div class="card-container bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center">
                             <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +196,7 @@
                     </div>
                     
                     <div id="financial-table-container" class="overflow-x-auto mb-6"></div>
-                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-700">
+                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-700" style="contain: layout style paint;">
                         <canvas id="revenueProfitChart"></canvas>
                     </div>
                 </div>
@@ -201,14 +206,14 @@
             <div class="grid md:grid-cols-2 gap-6">
                 
                 <!-- The Ask -->
-                <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm card-hover">
+                <div class="card-container bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-center justify-center">
-                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 bg-brand-500/10 border border-brand-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <h2 class="text-xl font-bold text-white">The Ask</h2>
+                        <h2 class="text-xl font-bold text-white">Funding Request</h2>
                     </div>
                     <div id="ask-section" class="text-gray-400">
                         <p>Loading funding information...</p>
@@ -216,10 +221,10 @@
                 </div>
 
                 <!-- The Team -->
-                <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 backdrop-blur-sm card-hover">
+                <div class="card-container bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center">
-                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 bg-accent-500/10 border border-accent-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
                         </div>
@@ -235,8 +240,28 @@
     </div>
 
     <script>
+        const domCache = {
+            headerUser: document.getElementById('header-user'),
+            deckInitial: document.getElementById('deck-initial'),
+            deckName: document.getElementById('deck-name'),
+            deckTagline: document.getElementById('deck-tagline'),
+            problemDesc: document.getElementById('problem-description'),
+            solutionDesc: document.getElementById('solution-description'),
+            primaryMarket: document.getElementById('primary-market'),
+            targetAudience: document.getElementById('target-audience'),
+            marketGrowth: document.getElementById('market-growth'),
+            competitiveAdv: document.getElementById('competitive-advantage'),
+            financialTable: document.getElementById('financial-table-container'),
+            askSection: document.getElementById('ask-section'),
+            teamSection: document.getElementById('team-section')
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            this.addEventListener('click', function() {}, { passive: true });
+        }, { passive: true });
+
         function renderHeaderUser(user) {
-            const container = document.getElementById('header-user');
+            const container = domCache.headerUser;
             container.innerHTML = '';
 
             if (!user || !user.name) return;

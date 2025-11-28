@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="csrf-token" content="{{ csrf_token }}">
-  <title>Fundora | Company Profile Form</title>
+  <title>Company Profile Form</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,13 +18,15 @@
       min-height: 100vh;
       margin: 0;
       color: #e2e8f0;
+      contain: layout style paint;
     }
 
     .form-input-modern {
       background-color: #1e293b;
       border: 1px solid #334155;
       color: #f1f5f9;
-      transition: all 0.2s ease-in-out;
+      transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      contain: layout style;
     }
 
     .form-input-modern::placeholder {
@@ -33,7 +35,7 @@
 
     .form-input-modern:focus {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
       outline: none;
     }
 
@@ -51,10 +53,11 @@
       position: fixed;
       z-index: 100;
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.2s;
       max-width: 220px;
       font-size: 0.875rem;
       pointer-events: none;
+      border: 1px solid #334155;
     }
 
     .dynamic-tooltip.visible {
@@ -82,6 +85,25 @@
     ::-webkit-scrollbar-thumb {
       background-color: #475569;
       border-radius: 4px;
+    }
+
+    header {
+      contain: layout style paint;
+      will-change: auto;
+    }
+
+    #completeness-bar {
+      will-change: width;
+      transition: width 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -115,13 +137,26 @@
 
   <main class="flex-1 py-6 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto bg-slate-900 border border-slate-700 rounded-2xl shadow-lg p-6 sm:p-8">
+      <div class="mb-6 bg-slate-800 rounded-lg p-4 border border-slate-700">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-medium text-slate-300">Form Completeness</span>
+          <span class="text-sm text-slate-400" id="completeness-text">Please fill the form</span>
+        </div>
+        <div class="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
+          <div id="completeness-bar" class="h-2.5 rounded-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low" />
+      </div>
+
       <form id="companyForm" novalidate class="space-y-8">
         <div class="grid lg:grid-cols-5 gap-8">
 
           <!-- Left Column -->
           <div class="lg:col-span-2">
             <div class="flex items-center gap-3 mb-6">
-              <i data-lucide="building-2" class="w-7 h-7 text-blue-500"></i>
+              <div class="bg-blue-600 p-2 rounded-lg">
+                <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+              </div>
               <h2 class="text-xl font-bold text-white">Company Profile</h2>
             </div>
             <div class="space-y-6">
@@ -130,7 +165,7 @@
                   Company Name
                   <span class="tooltip-trigger ml-1.5"
                     data-tooltip-text="Enter the full legal name of the company being analyzed.">
-                    <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                    <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </span>
                 </label>
                 <input type="text" name="company-name" id="company-name"
@@ -142,7 +177,7 @@
                 <label for="industry" class="flex items-center text-sm font-medium text-slate-300 mb-1.5">Industry
                   <span class="tooltip-trigger ml-1.5"
                     data-tooltip-text="Select the primary industry sector in which the company operates.">
-                    <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                    <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </span>
                 </label>
                 <select id="industry" name="industry"
@@ -161,7 +196,7 @@
                   class="flex items-center text-sm font-medium text-slate-300 mb-1.5">Company Description
                   <span class="tooltip-trigger ml-1.5"
                     data-tooltip-text="Describe the company's core business, products/services, target market, and competitive landscape.">
-                    <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                    <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </span>
                 </label>
                 <textarea id="company-description" name="company-description" rows="8"
@@ -176,28 +211,27 @@
             
             <!-- Income Statement -->
             <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-              <h3 class="font-semibold text-white mb-3 text-center text-sm">Income Statement</h3>
+              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+                Income Statement
+              </h3>
               <div class="space-y-3">
                 <div>
-                  <label for="income-period" class="flex items-center text-sm font-medium text-slate-300">Reporting Period
+                  <label for="time-between-periods" class="flex items-center text-sm font-medium text-slate-300">Time Between Periods (Years)
                     <span class="tooltip-trigger ml-1.5"
-                      data-tooltip-text="Select the time frame for the income data (e.g., Yearly, Quarterly).">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      data-tooltip-text="Time span between reporting periods (e.g., 1 for annual).">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
-                  <select id="income-period" name="income-period"
-                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm">
-                    <option value="yearly" selected>Yearly</option>
-                    <option value="quarterly">Quarterly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
+                  <input type="number" name="time-between-periods" id="time-between-periods"
+                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="1" step="0.1" min="0" />
                 </div>
                 <div>
                   <label for="previous-revenue" class="flex items-center text-sm font-medium text-slate-300">
                     Prior Period Revenue (₱)
                     <span class="tooltip-trigger ml-1.5"
                       data-tooltip-text="Enter the total revenue from the prior fiscal period.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
                   <input type="number" name="previous-revenue" id="previous-revenue"
@@ -208,7 +242,7 @@
                     Current Period Revenue (₱)
                     <span class="tooltip-trigger ml-1.5"
                       data-tooltip-text="Enter the total revenue from the most recent fiscal period.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
                   <input type="number" name="current-revenue" id="current-revenue"
@@ -219,154 +253,233 @@
                     Current Period Net Income (₱)
                     <span class="tooltip-trigger ml-1.5"
                       data-tooltip-text="Profit after all expenses and taxes have been deducted.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
                   <input type="number" name="net-income" id="net-income"
                     class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="150,000" />
+                </div>
+                <!-- Added EBIT field -->
+                <div>
+                  <label for="ebit" class="flex items-center text-sm font-medium text-slate-300">
+                    EBIT (₱)
+                    <span class="tooltip-trigger ml-1.5"
+                      data-tooltip-text="Earnings Before Interest and Tax.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </span>
+                  </label>
+                  <input type="number" name="ebit" id="ebit"
+                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="200,000" />
                 </div>
               </div>
             </div>
 
             <!-- Balance Sheet -->
             <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-              <h3 class="font-semibold text-white mb-3 text-center text-sm">Balance Sheet</h3>
+              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full"></span>
+                Balance Sheet
+              </h3>
               <div class="space-y-3">
                 <div>
                   <label for="total-assets" class="flex items-center text-sm font-medium text-slate-300">
                     Total Assets (₱)
                     <span class="tooltip-trigger ml-1.5"
                       data-tooltip-text="The total value of all assets owned by the company.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
                   <input type="number" name="total-assets" id="total-assets"
                     class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="2,500,000" />
                 </div>
                 <div>
+                  <label for="current-assets" class="flex items-center text-sm font-medium text-slate-300">
+                    Current Assets (₱)
+                    <span class="tooltip-trigger ml-1.5"
+                      data-tooltip-text="Assets convertible to cash within one year.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </span>
+                  </label>
+                  <input type="number" name="current-assets" id="current-assets"
+                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="1,200,000" />
+                </div>
+                <div>
                   <label for="total-liabilities" class="flex items-center text-sm font-medium text-slate-300">
                     Total Liabilities (₱)
                     <span class="tooltip-trigger ml-1.5"
                       data-tooltip-text="The total amount of debt and obligations owed by the company.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
                   <input type="number" name="total-liabilities" id="total-liabilities"
                     class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="800,000" />
                 </div>
                 <div>
-                  <label for="shareholder-equity" class="text-sm font-medium text-slate-300">Shareholder Equity (₱)</label>
-                  <input type="text" name="shareholder-equity" id="shareholder-equity"
-                    class="mt-1 w-full p-2.5 bg-slate-700 border-slate-600 rounded-md text-slate-400 font-medium text-sm"
-                    placeholder="Auto-calculated" disabled />
+                  <label for="current-liabilities" class="flex items-center text-sm font-medium text-slate-300">
+                    Current Liabilities (₱)
+                    <span class="tooltip-trigger ml-1.5"
+                      data-tooltip-text="Obligations due within one year.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </span>
+                  </label>
+                  <input type="number" name="current-liabilities" id="current-liabilities"
+                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="400,000" />
+                </div>
+                <div>
+                  <label for="retained-earnings" class="flex items-center text-sm font-medium text-slate-300">
+                    Retained Earnings (₱)
+                    <span class="tooltip-trigger ml-1.5"
+                      data-tooltip-text="Cumulative profits retained in company.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </span>
+                  </label>
+                  <input type="number" name="retained-earnings" id="retained-earnings"
+                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="600,000" />
                 </div>
               </div>
             </div>
 
             <!-- Cash Flow -->
             <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-              <h3 class="font-semibold text-white mb-3 text-center text-sm">Cash Flow</h3>
+              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+                Cash Flow
+              </h3>
               <div class="space-y-3">
                 <div>
                   <label for="cash-flow" class="flex items-center text-sm font-medium text-slate-300">
                     Operations Cash Flow (₱)
                     <span class="tooltip-trigger ml-1.5"
                       data-tooltip-text="Cash generated from normal business operations.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
                   <input type="number" name="cash-flow" id="cash-flow"
                     class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="200,000" />
                 </div>
+              </div>
+            </div>
+
+            <!-- Valuation -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
+              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2 h-2 bg-purple-500 rounded-full"></span>
+                Valuation
+              </h3>
+              <div class="space-y-3">
                 <div>
-                  <label for="investment-flow" class="flex items-center text-sm font-medium text-slate-300">
-                    Investment Cash Flow (₱)
+                  <label for="current-valuation" class="flex items-center text-sm font-medium text-slate-300">
+                    Current Valuation (₱)
                     <span class="tooltip-trigger ml-1.5"
-                      data-tooltip-text="Cash used for or generated from investments. Can be negative.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      data-tooltip-text="The company's current market valuation or estimated worth.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
-                  <input type="number" name="investment-flow" id="investment-flow"
-                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="-50,000" />
+                  <input type="number" name="current-valuation" id="current-valuation"
+                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="5,000,000" />
                 </div>
                 <div>
-                  <label for="financing-flow" class="flex items-center text-sm font-medium text-slate-300">
-                    Financing Cash Flow (₱)
+                  <label for="expected-future-valuation" class="flex items-center text-sm font-medium text-slate-300">
+                    Expected Future Valuation (₱)
                     <span class="tooltip-trigger ml-1.5"
-                      data-tooltip-text="Cash flow between the company and its owners/creditors.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      data-tooltip-text="Projected valuation at the target future date.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
-                  <input type="number" name="financing-flow" id="financing-flow"
-                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="100,000" />
+                  <input type="number" name="expected-future-valuation" id="expected-future-valuation"
+                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="12,000,000" />
+                </div>
+                <div>
+                  <label for="years-to-future-valuation" class="flex items-center text-sm font-medium text-slate-300">
+                    Years to Future Valuation
+                    <span class="tooltip-trigger ml-1.5"
+                      data-tooltip-text="Number of years until the expected future valuation is reached.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </span>
+                  </label>
+                  <input type="number" name="years-to-future-valuation" id="years-to-future-valuation"
+                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="3" step="0.1" min="0" />
                 </div>
               </div>
             </div>
 
-            <!-- Business Metrics -->
+            <!-- Qualitative Assessment -->
             <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-              <h3 class="font-semibold text-white mb-3 text-center text-sm">Business Metrics</h3>
+              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2 h-2 bg-orange-500 rounded-full"></span>
+                Qualitative Assessment
+              </h3>
               <div class="space-y-3">
-                <div>
-                  <label for="funding-ask" class="flex items-center text-sm font-medium text-slate-300">
-                    Funding Ask (₱)
-                    <span class="tooltip-trigger ml-1.5"
-                      data-tooltip-text="Amount of funding being requested from investors.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
-                    </span>
-                  </label>
-                  <input type="number" name="funding-ask" id="funding-ask"
-                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm" placeholder="5,000,000" />
-                </div>
                 <div>
                   <label for="team-strength" class="flex items-center text-sm font-medium text-slate-300">
                     Team Strength
                     <span class="tooltip-trigger ml-1.5"
-                      data-tooltip-text="Describe the team's expertise and experience.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      data-tooltip-text="Describe the leadership team's experience and skills.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
                   <textarea id="team-strength" name="team-strength" rows="2"
                     class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm resize-none"
-                    placeholder="Strong technical team with 10+ years experience..."></textarea>
+                    placeholder="Describe the team's expertise and key strengths..."></textarea>
                 </div>
                 <div>
                   <label for="market-position" class="flex items-center text-sm font-medium text-slate-300">
                     Market Position
                     <span class="tooltip-trigger ml-1.5"
-                      data-tooltip-text="Describe the company's market position and competitive advantage.">
-                      <i data-lucide="info" class="w-4 h-4 text-slate-500 hover:text-blue-400"></i>
+                      data-tooltip-text="Describe the company's competitive position.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </span>
                   </label>
                   <textarea id="market-position" name="market-position" rows="2"
                     class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm resize-none"
-                    placeholder="Top 3 provider in local fintech sector..."></textarea>
+                    placeholder="Explain the company's market standing..."></textarea>
+                </div>
+                <div>
+                  <label for="brand-reputation" class="flex items-center text-sm font-medium text-slate-300">
+                    Brand Reputation
+                    <span class="tooltip-trigger ml-1.5"
+                      data-tooltip-text="Assess the company's brand value and perception.">
+                      <svg class="w-4 h-4 text-slate-500 hover:text-blue-400 cursor-help" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </span>
+                  </label>
+                  <textarea id="brand-reputation" name="brand-reputation" rows="2"
+                    class="mt-1 w-full p-2.5 border rounded-md form-input-modern text-sm resize-none"
+                    placeholder="Describe brand recognition and reputation..."></textarea>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-6 border-t border-slate-700">
+          <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200">
+            Save Profile
+          </button>
         </div>
       </form>
     </div>
   </main>
 
     <script>
+        const domCache = {};
+        
+        function getCachedElement(id) {
+          if (!domCache[id]) {
+            domCache[id] = document.getElementById(id);
+          }
+          return domCache[id];
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             lucide.createIcons();
 
             const form = document.getElementById('companyForm');
-            const totalAssetsInput = document.getElementById('total-assets');
-            const totalLiabilitiesInput = document.getElementById('total-liabilities');
-            const shareholderEquityInput = document.getElementById('shareholder-equity');
-            const completenessBar = document.getElementById('completeness-bar');
-            const completenessText = document.getElementById('completeness-text');
-            const completenessHiddenInput = document.getElementById('data-completeness-level');
             let tooltipElement;
 
             // --- Load User Information ---
             async function loadUserInfo() {
                 const token = localStorage.getItem('authToken');
-                const userEmailElement = document.getElementById('user-email');
+                const userEmailElement = getCachedElement('user-email');
 
                 if (!token) {
                     userEmailElement.textContent = 'No user logged in';
@@ -374,7 +487,6 @@
                     return;
                 }
 
-                // Get stored user data from login
                 const storedUserData = localStorage.getItem('userData');
                 if (storedUserData) {
                     try {
@@ -387,23 +499,11 @@
                     }
                 }
 
-                // If no stored user data, show token exists but no user info
                 userEmailElement.textContent = 'Token found, no user info';
                 userEmailElement.className = 'font-semibold text-yellow-600';
             }
 
-            // Load user info on page load
             loadUserInfo();
-
-            // --- Auto-calculation for Shareholder Equity ---
-            function calculateEquity() {
-                const assets = parseFloat(totalAssetsInput.value) || 0;
-                const liabilities = parseFloat(totalLiabilitiesInput.value) || 0;
-                const equity = assets - liabilities;
-                shareholderEquityInput.value = equity > 0 ? equity.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' }).replace('₱', '₱ ') : '₱ 0.00';
-            }
-            totalAssetsInput.addEventListener('input', calculateEquity);
-            totalLiabilitiesInput.addEventListener('input', calculateEquity);
 
             // --- Dynamic Tooltip Logic ---
             function createTooltip() {
@@ -421,32 +521,33 @@
                     tooltipElement.textContent = text;
                     const rect = trigger.getBoundingClientRect();
                     
-                    tooltipElement.classList.add('visible'); // Make it visible to calculate size
+                    tooltipElement.classList.add('visible');
                     const tooltipRect = tooltipElement.getBoundingClientRect();
 
-                    let top = rect.top - tooltipRect.height - 8; // 8px gap
+                    let top = rect.top - tooltipRect.height - 8;
                     let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
 
-                    // Boundary checks
                     if (left < 0) left = 5;
                     if (top < 0) {
                         top = rect.bottom + 8;
-                        // Adjust arrow direction if needed (more complex)
                     }
 
                     tooltipElement.style.top = `${top}px`;
                     tooltipElement.style.left = `${left}px`;
-                });
+                }, { passive: true });
                 trigger.addEventListener('mouseleave', () => {
                     if (tooltipElement) {
                         tooltipElement.classList.remove('visible');
                     }
-                });
+                }, { passive: true });
             });
 
             // --- Data Completeness Calculation ---
             const formInputs = Array.from(form.querySelectorAll('input[type="text"], input[type="number"], select, textarea')).filter(el => !el.disabled);
             const totalFields = formInputs.length;
+            const completenessBar = getCachedElement('completeness-bar');
+            const completenessText = getCachedElement('completeness-text');
+            const completenessHiddenInput = getCachedElement('data-completeness-level');
 
             function updateCompleteness() {
                 let filledFields = 0;
@@ -460,11 +561,11 @@
                 completenessBar.style.width = percentage + '%';
                 
                 let level = 'Low';
-                let barColor = 'bg-red-500';
+                let barColor = 'bg-blue-500';
 
                 if (percentage > 75) {
                     level = 'High';
-                    barColor = 'bg-green-500';
+                    barColor = 'bg-emerald-500';
                     completenessText.textContent = `High Confidence (${Math.round(percentage)}%)`;
                 } else if (percentage > 40) {
                     level = 'Medium';
@@ -473,7 +574,7 @@
                 } else {
                     level = 'Low';
                     barColor = 'bg-red-500';
-                    if(filledFields > 0) {
+                    if (filledFields > 0) {
                         completenessText.textContent = `Low Confidence (${Math.round(percentage)}%)`;
                     } else {
                         completenessText.textContent = `Please fill the form`;
@@ -484,204 +585,46 @@
                 completenessBar.className = `h-2.5 rounded-full transition-all duration-300 ${barColor}`;
             }
 
-            form.addEventListener('input', updateCompleteness);
+            form.addEventListener('input', updateCompleteness, { passive: true });
 
             // --- Company Data Object Constructor ---
             function createCompanyDataObject() {
                 const companyData = {
-                    // Basic Information (match serializer field names)
-                    company_name: document.getElementById('company-name').value.trim(),
-                    industry: document.getElementById('industry').value,
-                    company_description: document.getElementById('company-description').value.trim(),
+                    company_name: getCachedElement('company-name').value.trim(),
+                    industry: getCachedElement('industry').value,
+                    company_description: getCachedElement('company-description').value.trim(),
                     
-                    // Financial Data (match serializer field names exactly)
-                    revenue: document.getElementById('current-revenue').value || null,
-                    net_income: document.getElementById('net-income').value || null,
-                    total_assets: document.getElementById('total-assets').value || null,
-                    total_liabilities: document.getElementById('total-liabilities').value || null,
-                    shareholder_equity: document.getElementById('shareholder-equity').value || null,
-                    cash_flow: document.getElementById('cash-flow').value || null,
-                    funding_ask: document.getElementById('funding-ask').value || null,
+                    // Financial Data - Income Statement
+                    time_between_periods: getCachedElement('time-between-periods').value || null,
+                    previous_revenue: getCachedElement('previous-revenue').value || null,
+                    current_revenue: getCachedElement('current-revenue').value || null,
+                    net_income: getCachedElement('net-income').value || null,
+                    ebit: getCachedElement('ebit').value || null,
                     
-                    // Business Metrics (match serializer field names)
-                    team_strength: document.getElementById('team-strength').value.trim() || null,
-                    market_position: document.getElementById('market-position').value.trim() || null,
-                    brand_reputation: document.getElementById('brand-reputation').value.trim() || null,
-                    confidence_percentage: document.getElementById('confidence-percentage').value || null,
+                    // Financial Data - Balance Sheet
+                    total_assets: getCachedElement('total-assets').value || null,
+                    current_assets: getCachedElement('current-assets').value || null,
+                    total_liabilities: getCachedElement('total-liabilities').value || null,
+                    current_liabilities: getCachedElement('current-liabilities').value || null,
+                    retained_earnings: getCachedElement('retained-earnings').value || null,
                     
-                    // Data Source Confidence (match serializer field name)
-                    data_source_confidence: document.getElementById('data-source-confidence').value || 'Medium'
+                    // Financial Data - Cash Flow
+                    cash_flow: getCachedElement('cash-flow').value || null,
+                    
+                    // Valuation
+                    current_valuation: getCachedElement('current-valuation').value || null,
+                    expected_future_valuation: getCachedElement('expected-future-valuation').value || null,
+                    years_to_future_valuation: getCachedElement('years-to-future-valuation').value || null,
+                    
+                    // Qualitative Assessment
+                    team_strength: getCachedElement('team-strength').value.trim() || null,
+                    market_position: getCachedElement('market-position').value.trim() || null,
+                    brand_reputation: getCachedElement('brand-reputation').value.trim() || null,
+                    
+                    data_completeness_level: getCachedElement('data-completeness-level').value
                 };
                 
                 return companyData;
-            }
-
-            // --- Function to Check Object Field Storage ---
-            function validateObjectFields(companyData) {
-                console.log('=== COMPANY DATA OBJECT VALIDATION ===');
-                
-                const validationReport = {
-                    totalFields: 0,
-                    filledFields: 0,
-                    emptyFields: 0,
-                    fieldDetails: {},
-                    isValid: false
-                };
-
-                // Define field categories for better organization
-                const fieldCategories = {
-                    basic: ['company_name', 'industry', 'company_description'],
-                    financial: ['revenue', 'net_income', 'total_assets', 'total_liabilities', 'shareholder_equity', 'cash_flow', 'funding_ask'],
-                    business: ['team_strength', 'market_position', 'brand_reputation', 'confidence_percentage'],
-                    confidence: ['data_source_confidence']
-                };
-
-                // Validate each field
-                Object.keys(companyData).forEach(field => {
-                    validationReport.totalFields++;
-                    const value = companyData[field];
-                    const isEmpty = value === null || value === undefined || value === '';
-                    
-                    if (!isEmpty) {
-                        validationReport.filledFields++;
-                    } else {
-                        validationReport.emptyFields++;
-                    }
-
-                    validationReport.fieldDetails[field] = {
-                        value: value,
-                        isEmpty: isEmpty,
-                        type: typeof value,
-                        length: value ? value.toString().length : 0
-                    };
-                });
-
-                // Check if minimum required fields are filled
-                const requiredFields = ['company_name', 'industry'];
-                const requiredFieldsFilled = requiredFields.every(field => 
-                    companyData[field] && companyData[field].trim() !== ''
-                );
-
-                validationReport.isValid = requiredFieldsFilled;
-
-                // Console output for debugging
-                console.log('📊 Validation Summary:');
-                console.log(`   Total Fields: ${validationReport.totalFields}`);
-                console.log(`   Filled Fields: ${validationReport.filledFields}`);
-                console.log(`   Empty Fields: ${validationReport.emptyFields}`);
-                console.log(`   Form Valid: ${validationReport.isValid ? '✅ Yes' : '❌ No'}`);
-                
-                console.log('\n📋 Field Details:');
-                Object.entries(fieldCategories).forEach(([category, fields]) => {
-                    console.log(`\n${category.toUpperCase()} FIELDS:`);
-                    fields.forEach(field => {
-                        const detail = validationReport.fieldDetails[field];
-                        if (detail) {
-                            const status = detail.isEmpty ? '❌ Empty' : '✅ Filled';
-                            console.log(`   ${field}: ${status} | Value: "${detail.value}" | Type: ${detail.type}`);
-                        }
-                    });
-                });
-
-                console.log('\n🔍 Raw Object Data:');
-                console.log(JSON.stringify(companyData, null, 2));
-                
-                return validationReport;
-            }
-
-
-
-            // --- API Call Function ---
-            async function submitStartupData(companyData) {
-                try {
-                    // Get auth token
-                    const token = localStorage.getItem('authToken');
-                    
-                    // Show loading state
-                    const submitButton = form.querySelector('button[type="submit"]');
-                    const originalText = submitButton.innerHTML;
-                    submitButton.disabled = true;
-                    submitButton.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Saving...';
-                    
-                    // Make API call
-                    const response = await fetch('https://fundora-be-singapore.onrender.com/api/startup/add/', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
-                                          document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                        },
-                        body: JSON.stringify(companyData)
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        // Success handling
-                        showSuccessMessage(result.message, result.startup_id);
-                        // Optionally redirect to another page
-                        // window.location.href = `/startup/${result.startup_id}/`;
-                    } else {
-                        // Error handling
-                        showErrorMessage(result.error || 'An error occurred while saving the startup data.');
-                    }
-                    
-                } catch (error) {
-                    console.error('API Error:', error);
-                    showErrorMessage('Network error. Please check your connection and try again.');
-                } finally {
-                    // Reset button state
-                    const submitButton = form.querySelector('button[type="submit"]');
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = originalText;
-                    lucide.createIcons(); // Recreate icons after innerHTML change
-                }
-            }
-
-            function showSuccessMessage(message, startupId) {
-                // Create success notification
-                const notification = document.createElement('div');
-                notification.className = 'fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50 max-w-sm';
-                notification.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="check-circle" class="w-5 h-5"></i>
-                        <div>
-                            <div class="font-semibold">Success!</div>
-                            <div class="text-sm">${message}</div>
-                            ${startupId ? `<div class="text-sm mt-1">Startup ID: ${startupId}</div>` : ''}
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(notification);
-                lucide.createIcons();
-                
-                // Auto remove after 5 seconds
-                setTimeout(() => {
-                    notification.remove();
-                }, 5000);
-            }
-
-            function showErrorMessage(message) {
-                // Create error notification
-                const notification = document.createElement('div');
-                notification.className = 'fixed top-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg z-50 max-w-sm';
-                notification.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="alert-circle" class="w-5 h-5"></i>
-                        <div>
-                            <div class="font-semibold">Error!</div>
-                            <div class="text-sm">${message}</div>
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(notification);
-                lucide.createIcons();
-                
-                // Auto remove after 7 seconds
-                setTimeout(() => {
-                    notification.remove();
-                }, 7000);
             }
 
             // --- Form Submission Handler ---
@@ -693,21 +636,17 @@
                     return;
                 }
                 
-                // Create company data object
                 const companyData = createCompanyDataObject();
+                console.log('Form submitted with data:', companyData);
                 
-                // Validate and check object fields
-                const validation = validateObjectFields(companyData);
-                
-                // Check if minimum required fields are filled
-                if (!validation.isValid) {
-                    showErrorMessage('Please fill in all required fields (Company Name and Industry).');
+                // Validate required fields
+                if (!companyData.company_name || !companyData.industry) {
+                    alert('Please fill in all required fields (Company Name and Industry).');
                     return;
                 }
                 
-                // Submit to API
-                submitStartupData(companyData);
-            });
+                alert('Form data ready for submission:\n' + JSON.stringify(companyData, null, 2));
+            }, { passive: false });
 
             // --- Initial State Setup ---
             createTooltip();

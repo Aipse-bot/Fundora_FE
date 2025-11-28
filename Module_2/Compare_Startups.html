@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compare Startups - Fundora</title>
+  <title>Compare Startups</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
@@ -43,27 +43,35 @@
   </script>
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 0.5s ease-out; }
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.3s; }
-    .startup-card:hover { transform: translateY(-2px); }
+    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+    
+    @keyframes fadeIn { 
+      from { opacity: 0; } 
+      to { opacity: 1; } 
+    }
+    .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
+    .delay-1 { animation-delay: 0.05s; }
+    .delay-2 { animation-delay: 0.1s; }
+    .delay-3 { animation-delay: 0.15s; }
+    
+    .startup-card { will-change: auto; }
+    .startup-card:hover { transform: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+    
+    .startup-card, .fade-in { contain: layout style paint; }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
   <div class="max-w-7xl mx-auto p-6">
     <!-- Header -->
     <div class="flex items-center mb-8 fade-in">
-      <button id="back-button" class="mr-6 p-2.5 hover:bg-slate-800/50 rounded-lg transition-all border border-slate-700">
+      <button id="back-button" class="mr-6 p-2.5 hover:bg-slate-800 rounded-lg transition-colors border border-slate-700">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
       </button>
       <div>
         <h1 class="text-3xl font-bold mb-2">Compare Startups</h1>
-        <p class="text-gray-400">Select 2-3 startups to compare side by side (does not include pitch decks)</p>
+        <p class="text-gray-400">Select 2-3 startups to compare side by side</p>
       </div>
     </div>
 
@@ -75,11 +83,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </div>
-        <input id="search-input" type="text" placeholder="Search startups..." class="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+        <input id="search-input" type="text" placeholder="Search startups..." class="w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all">
       </div>
 
       <div class="relative">
-        <select id="industry-filter" class="appearance-none bg-slate-900/50 border border-slate-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+        <select id="industry-filter" class="appearance-none bg-slate-900 border border-slate-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all">
           <option value="">All Industries</option>
           <option value="Technology">Technology</option>
           <option value="Finance">Finance</option>
@@ -97,7 +105,7 @@
       </div>
 
       <div class="relative">
-        <select id="risk-filter" class="appearance-none bg-slate-900/50 border border-slate-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+        <select id="risk-filter" class="appearance-none bg-slate-900 border border-slate-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all">
           <option value="">All Risk Levels</option>
           <option value="Low">Low Risk</option>
           <option value="Medium">Medium Risk</option>
@@ -126,7 +134,7 @@
       <div id="startups-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
       <div id="empty-state" class="text-center py-12 hidden">
-        <div class="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
           </svg>
@@ -138,7 +146,7 @@
 
     <!-- Compare Button -->
     <div class="flex justify-center fade-in delay-3">
-      <button id="compare-btn" class="bg-slate-700/50 text-gray-400 font-semibold py-3.5 px-8 rounded-lg transition-all duration-200 cursor-not-allowed" disabled>
+      <button id="compare-btn" class="bg-slate-700 text-gray-400 font-semibold py-3.5 px-8 rounded-lg transition-all duration-200 cursor-not-allowed" disabled>
         Select at least 2-3 startups to compare
       </button>
     </div>
@@ -149,12 +157,37 @@
     let startups = [];
     let selectedStartups = new Set();
     const maxSelections = 3;
+    
+    const domCache = {
+      backButton: null,
+      searchInput: null,
+      industryFilter: null,
+      riskFilter: null,
+      startupsGrid: null,
+      emptyState: null,
+      selectedCount: null,
+      selectedList: null,
+      selectedStartups: null,
+      compareBtn: null
+    };
+
+    function cacheElements() {
+      domCache.backButton = document.getElementById("back-button");
+      domCache.searchInput = document.getElementById("search-input");
+      domCache.industryFilter = document.getElementById("industry-filter");
+      domCache.riskFilter = document.getElementById("risk-filter");
+      domCache.startupsGrid = document.getElementById("startups-grid");
+      domCache.emptyState = document.getElementById("empty-state");
+      domCache.selectedCount = document.getElementById("selected-count");
+      domCache.selectedList = document.getElementById("selected-list");
+      domCache.selectedStartups = document.getElementById("selected-startups");
+      domCache.compareBtn = document.getElementById("compare-btn");
+    }
 
     function getAuthToken() {
       return localStorage.getItem('authToken');
     }
 
-    // Get the referrer URL from query params or use default
     function getBackUrl() {
       const params = new URLSearchParams(window.location.search);
       const returnUrl = params.get('return');
@@ -162,38 +195,26 @@
       if (returnUrl) {
         try {
           const decoded = decodeURIComponent(returnUrl);
-          console.log('Decoded return URL:', decoded);
-          
-          // If it's a full URL, extract just the path and query string
           if (decoded.startsWith('http://') || decoded.startsWith('https://')) {
             const url = new URL(decoded);
             return url.pathname + url.search;
           }
-          
-          // If it already starts with /, it's an absolute path
           if (decoded.startsWith('/')) {
             return decoded;
           }
-          
-          // Otherwise return as-is (relative path)
           return decoded;
         } catch (e) {
           console.error('Failed to decode return URL:', e);
         }
       }
-      
-      // Default fallback
       return '../Module_1/Dashboard.html';
     }
 
-    // Set up back button navigation
     document.addEventListener("DOMContentLoaded", () => {
+      cacheElements();
       const backUrl = getBackUrl();
-      console.log('Using back URL:', backUrl);
       
-      const backButton = document.getElementById("back-button");
-      
-      backButton.onclick = (e) => {
+      domCache.backButton.onclick = (e) => {
         e.preventDefault();
         window.location.href = backUrl;
       };
@@ -204,9 +225,10 @@
         return;
       }
       loadStartups();
-      document.getElementById("industry-filter").addEventListener("change", filterStartups);
-      document.getElementById("risk-filter").addEventListener("change", filterStartups);
-      document.getElementById("search-input").addEventListener("input", filterStartups);
+      
+      domCache.industryFilter.addEventListener("change", filterStartups, { passive: true });
+      domCache.riskFilter.addEventListener("change", filterStartups, { passive: true });
+      domCache.searchInput.addEventListener("input", filterStartups, { passive: true });
     });
 
     async function loadStartups() {
@@ -216,7 +238,7 @@
           window.location.href = '/login';
           return;
         }
-        const response = await fetch(`${apiBase}/startups/`, {
+        const response = await fetch(`${apiBase}/startups/?limit=1000`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -228,40 +250,32 @@
           allStartups = [];
         }
         
-        // Filter out pitch decks and startups with data pending
-        // Only include startups with verified financial data and risk levels
         startups = allStartups.filter(s => {
-          // A startup is a pitch deck if it has source_deck_id OR if it lacks basic financial data
-          const hasDeckId = s.source_deck_id != null;
-          const lacksFinancials = s.revenue == null && s.net_income == null;
-          const isPitchDeck = hasDeckId || (lacksFinancials && s.funding_ask != null);
+          const isPitchDeck = s.source_deck_id != null || s.is_deck_builder || s.source_deck;
+          const hasValidRiskLevel = s.risk_level && s.risk_level !== 'Pitch Deck' && s.risk_level !== null;
           
-          // Check if startup has data pending (no risk level)
-          const hasDataPending = !s.risk_level;
-          
-          // Only include startups that are NOT pitch decks AND do NOT have pending data
-          return !isPitchDeck && !hasDataPending;
+          return !isPitchDeck && hasValidRiskLevel;
         });
         
         renderStartups(startups);
       } catch (error) {
         console.error("Error loading startups:", error);
-        document.getElementById("empty-state").classList.remove("hidden");
+        domCache.emptyState.classList.remove("hidden");
       }
     }
 
+
     function renderStartups(data) {
-      const grid = document.getElementById("startups-grid");
-      grid.innerHTML = "";
+      domCache.startupsGrid.innerHTML = "";
       if (!data.length) {
-        document.getElementById("empty-state").classList.remove("hidden");
+        domCache.emptyState.classList.remove("hidden");
         return;
       }
-      document.getElementById("empty-state").classList.add("hidden");
+      domCache.emptyState.classList.add("hidden");
 
       data.forEach(startup => {
         const card = document.createElement("div");
-        card.className = "startup-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-all cursor-pointer";
+        card.className = "startup-card bg-slate-900 border border-slate-700 rounded-lg p-6 hover:border-slate-600 transition-all cursor-pointer";
         card.dataset.startupId = startup.id;
         card.dataset.startupName = startup.company_name;
         card.dataset.industry = startup.industry;
@@ -274,7 +288,7 @@
         } else if (startup.risk_level) {
           const riskLevel = startup.risk_level.toLowerCase();
           if (riskLevel === 'low') {
-            riskBadge = '<span class="bg-green-500/20 text-green-300 text-xs font-medium px-3 py-1 rounded-full border border-green-500/30">Low Risk</span>';
+            riskBadge = '<span class="bg-accent-500/20 text-accent-300 text-xs font-medium px-3 py-1 rounded-full border border-accent-500/30">Low Risk</span>';
           } else if (riskLevel === 'medium') {
             riskBadge = '<span class="bg-yellow-500/20 text-yellow-300 text-xs font-medium px-3 py-1 rounded-full border border-yellow-500/30">Medium Risk</span>';
           } else {
@@ -307,7 +321,7 @@
             </div>
             <div class="flex flex-col items-end space-y-2">
               ${riskBadge}
-              <div class="selection-indicator border-2 border-slate-700 rounded-full w-6 h-6 flex items-center justify-center transition-all">
+              <div class="selection-indicator border-2 border-slate-600 rounded-full w-6 h-6 flex items-center justify-center transition-all">
                 <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
@@ -325,8 +339,8 @@
             </div>
           </div>
         `;
-        card.addEventListener("click", () => toggleStartupSelection(card));
-        grid.appendChild(card);
+        card.addEventListener("click", () => toggleStartupSelection(card), { passive: true });
+        domCache.startupsGrid.appendChild(card);
       });
     }
 
@@ -348,15 +362,15 @@
       if (selectedStartups.has(id)) {
         selectedStartups.delete(id);
         card.classList.remove("border-brand-500", "bg-brand-500/10");
-        card.classList.add("border-slate-800");
+        card.classList.add("border-slate-700");
         indicator.classList.remove("bg-brand-600", "border-brand-600");
-        indicator.classList.add("border-slate-700");
+        indicator.classList.add("border-slate-600");
         checkmark.classList.add("hidden");
       } else if (selectedStartups.size < maxSelections) {
         selectedStartups.add(id);
-        card.classList.remove("border-slate-800");
+        card.classList.remove("border-slate-700");
         card.classList.add("border-brand-500", "bg-brand-500/10");
-        indicator.classList.remove("border-slate-700");
+        indicator.classList.remove("border-slate-600");
         indicator.classList.add("bg-brand-600", "border-brand-600");
         checkmark.classList.remove("hidden");
       }
@@ -365,13 +379,10 @@
     }
 
     function updateSelectedDisplay() {
-      const count = document.getElementById("selected-count");
-      const section = document.getElementById("selected-startups");
-      const list = document.getElementById("selected-list");
-      count.textContent = selectedStartups.size;
+      domCache.selectedCount.textContent = selectedStartups.size;
       if (selectedStartups.size > 0) {
-        section.classList.remove("hidden");
-        list.innerHTML = "";
+        domCache.selectedStartups.classList.remove("hidden");
+        domCache.selectedList.innerHTML = "";
         selectedStartups.forEach(id => {
           const startup = startups.find(s => s.id == id);
           if (!startup) return;
@@ -379,16 +390,16 @@
           badge.className = "bg-brand-500/20 text-brand-300 text-sm font-medium px-3 py-2 rounded-lg flex items-center border border-brand-500/30";
           badge.innerHTML = `
             ${startup.company_name}
-            <button onclick="removeFromSelection('${id}')" class="ml-2 text-brand-400 hover:text-brand-200">
+            <button onclick="removeFromSelection('${id}')" class="ml-2 text-brand-400 hover:text-brand-200 transition-colors">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </button>
           `;
-          list.appendChild(badge);
+          domCache.selectedList.appendChild(badge);
         });
       } else {
-        section.classList.add("hidden");
+        domCache.selectedStartups.classList.add("hidden");
       }
     }
 
@@ -398,29 +409,28 @@
     }
 
     function updateCompareButton() {
-      const btn = document.getElementById("compare-btn");
       if (selectedStartups.size >= 2) {
-        btn.disabled = false;
-        btn.classList.remove("bg-slate-700/50", "text-gray-400", "cursor-not-allowed");
-        btn.classList.add("bg-brand-600", "hover:bg-brand-700", "text-white");
-        btn.textContent = `Compare Selected Startups (${selectedStartups.size})`;
-        btn.onclick = () => {
+        domCache.compareBtn.disabled = false;
+        domCache.compareBtn.classList.remove("bg-slate-700", "text-gray-400", "cursor-not-allowed");
+        domCache.compareBtn.classList.add("bg-brand-600", "hover:bg-brand-700", "text-white");
+        domCache.compareBtn.textContent = `Compare Selected Startups (${selectedStartups.size})`;
+        domCache.compareBtn.onclick = () => {
           const ids = Array.from(selectedStartups);
           window.location.href = `Startup_Comparison.html?startups=${ids.join(",")}`;
         };
       } else {
-        btn.disabled = true;
-        btn.classList.remove("bg-brand-600", "hover:bg-brand-700", "text-white");
-        btn.classList.add("bg-slate-700/50", "text-gray-400", "cursor-not-allowed");
-        btn.textContent = "Select at least 2-3 startups to compare";
-        btn.onclick = null;
+        domCache.compareBtn.disabled = true;
+        domCache.compareBtn.classList.remove("bg-brand-600", "hover:bg-brand-700", "text-white");
+        domCache.compareBtn.classList.add("bg-slate-700", "text-gray-400", "cursor-not-allowed");
+        domCache.compareBtn.textContent = "Select at least 2-3 startups to compare";
+        domCache.compareBtn.onclick = null;
       }
     }
 
     function filterStartups() {
-      const searchTerm = document.getElementById("search-input").value.toLowerCase();
-      const industry = document.getElementById("industry-filter").value;
-      const risk = document.getElementById("risk-filter").value;
+      const searchTerm = domCache.searchInput.value.toLowerCase();
+      const industry = domCache.industryFilter.value;
+      const risk = domCache.riskFilter.value;
       
       const filtered = startups.filter(s => {
         const matchesSearch = !searchTerm || s.company_name.toLowerCase().includes(searchTerm);
@@ -444,7 +454,6 @@
       
       renderStartups(filtered);
       
-      // Re-apply selection state
       selectedStartups.forEach(id => {
         const card = document.querySelector(`[data-startup-id="${id}"]`);
         if (card) {

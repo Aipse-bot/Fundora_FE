@@ -6,6 +6,13 @@
   <title>Deck Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    body { contain: layout style paint; }
+    #deckSections { contain: layout style; }
+    #mainContent { contain: layout style paint; }
+    #card-panel { contain: layout style paint; }
+    #reportModal { contain: layout style paint; }
+  </style>
 </head>
 
 <body class="h-full flex bg-slate-900 text-gray-100 overflow-y-hidden font-inter">
@@ -31,7 +38,7 @@
     </div>
 
     <button onclick="openModal()"
-      class="mt-6 py-2.5 px-4 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xl font-semibold hover:from-blue-600 hover:to-blue-700 transform hover:scale-[1.03] transition duration-200 ease-in-out shadow-lg">
+      class="mt-6 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xl font-semibold transition duration-200 ease-in-out shadow-lg">
       Generate Report
     </button>
   </aside>
@@ -55,7 +62,7 @@
       <input type="text" name="title" placeholder="Title"
         class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
       <button type="button"
-        class="absolute top-1 right-2 text-red-500 font-bold hover:text-red-400 transition remove-member">✕</button>
+        class="absolute top-1 right-2 text-slate-400 hover:text-slate-200 transition remove-member text-lg font-medium">×</button>
     </div>
   </template>
 
@@ -69,7 +76,7 @@
       <input type="number" name="profit" placeholder="Profit"
         class="p-2 bg-slate-700 border border-slate-600 rounded text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
       <button type="button"
-        class="text-red-500 font-bold hover:text-red-400 transition remove-financial">✕</button>
+        class="text-slate-400 hover:text-slate-200 transition remove-financial text-lg font-medium">×</button>
     </div>
   </template>
 
@@ -80,7 +87,7 @@
 
       <!-- Header -->
       <div
-        class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg">
+        class="bg-blue-600 text-white px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg">
         <div class="flex items-center space-x-4">
           <div class="bg-white text-blue-600 font-bold w-12 h-12 flex items-center justify-center text-xl rounded-md"
             id="companyInitial">L</div>
@@ -91,7 +98,7 @@
         </div>
         <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <button onclick="closeModal()"
-            class="bg-slate-200 rounded-lg text-gray-800 px-4 py-2 hover:bg-slate-300 transition">← Back to Builder</button>
+            class="bg-slate-200 rounded-lg text-gray-800 px-4 py-2 hover:bg-slate-300 transition">Back to Builder</button>
         </div>
       </div>
 
@@ -106,7 +113,7 @@
           </div>
           <div class="flex-1 px-4 py-6 bg-slate-900 border border-slate-700 rounded-lg shadow-sm">
             <h2 class="text-xl font-bold text-white mb-3">The Solution</h2>
-            <div class="w-full h-1 bg-blue-500 mb-4 rounded"></div>
+            <div class="w-full h-1 bg-emerald-500 mb-4 rounded"></div>
             <p class="text-gray-400 text-lg" id="solutionDescription">—</p>
           </div>
         </div>
@@ -128,7 +135,7 @@
               </div>
               <div class="flex justify-between text-gray-300">
                 <span class="font-medium">Market Growth (YOY):</span>
-                <span class="text-green-400 font-bold" id="marketGrowthRate">—%</span>
+                <span class="text-emerald-400 font-bold" id="marketGrowthRate">—%</span>
               </div>
               <div class="flex justify-between text-gray-300">
                 <span class="font-medium">Our Advantage:</span>
@@ -144,8 +151,8 @@
               <thead class="bg-slate-800 text-gray-300">
                 <tr>
                   <th class="px-4 py-2 font-semibold">Year</th>
-                  <th class="px-4 py-2 font-semibold">Revenue (₱)</th>
-                  <th class="px-4 py-2 font-semibold">Profit (₱)</th>
+                  <th class="px-4 py-2 font-semibold">Revenue</th>
+                  <th class="px-4 py-2 font-semibold">Profit</th>
                 </tr>
               </thead>
               <tbody id="financialTableBody" class="text-gray-200"></tbody>
@@ -154,8 +161,8 @@
 
           <!-- The Ask -->
           <div class="bg-slate-900 py-10 px-6 rounded-lg border border-slate-700 text-center shadow">
-            <h2 class="text-xl font-bold text-white mb-2">THE ASK</h2>
-            <p class="text-4xl sm:text-5xl font-extrabold text-green-400 mb-4" id="askAmount">₱0</p>
+            <h2 class="text-xl font-bold text-white mb-2">Funding Request</h2>
+            <p class="text-4xl sm:text-5xl font-extrabold text-emerald-400 mb-4" id="askAmount">₱0</p>
             <span class="font-medium text-gray-300" id="askUsage">Loading...</span>
           </div>
 
@@ -171,14 +178,28 @@
   </div>
 
   <script>
+  const domCache = {
+    reportModal: null,
+    deckSections: null,
+    mainContent: null,
+    cardPanel: null
+  };
+
+  function getCachedElement(id) {
+    if (!domCache[id]) {
+      domCache[id] = document.getElementById(id);
+    }
+    return domCache[id];
+  }
+
   function openModal() {
     const deckId = localStorage.getItem('deck_id');
-    loadReportModal(deckId)
-    document.getElementById('reportModal').classList.remove('hidden');
+    loadReportModal(deckId);
+    getCachedElement('reportModal').classList.remove('hidden');
   }
 
   function closeModal() {
-    document.getElementById('reportModal').classList.add('hidden');
+    getCachedElement('reportModal').classList.add('hidden');
   }
 
   async function loadDeckSections() {
@@ -195,15 +216,18 @@
       });
 
       const sections = await res.json();
+      const fragment = document.createDocumentFragment();
 
       sections.forEach(section => {
         const button = document.createElement('button');
-        button.className = "block w-full text-left py-2 px-4 rounded hover:bg-blue-500 hover:text-white text-xl font-semibold transform hover:scale-105 transition duration-200 ease-in-out";
+        button.className = "block w-full text-left py-2 px-4 rounded hover:bg-blue-500 hover:text-white text-lg font-semibold transition duration-200 ease-in-out";
         button.textContent = section.display_name;
         button.dataset.section = section.key;
-        button.addEventListener('click', () => loadSection(section.key, deckId, section));
-        nav.appendChild(button);
+        button.addEventListener('click', () => loadSection(section.key, deckId, section), { passive: true });
+        fragment.appendChild(button);
       });
+
+      nav.appendChild(fragment);
     } catch (err) {
       console.error('Failed to load deck sections:', err);
     }
@@ -220,13 +244,11 @@
       const mainContent = doc.querySelector('#mainContent');
       const cardPanel = doc.querySelector('#card-panel');
 
-      // Inject main content
       const main = document.getElementById('mainContent');
       main.innerHTML = mainContent
         ? mainContent.innerHTML
         : '<p class="text-red-600">Main content missing.</p>';
 
-      // Inject card panel content only if present
       const panel = document.getElementById('card-panel');
       if (cardPanel) {
         panel.innerHTML = cardPanel.innerHTML;
@@ -236,7 +258,6 @@
         panel.style.display = 'none';
       }
 
-      // Rebind logic for the loaded section
       bindSectionEvents(sectionName, deckId);
 
     } catch (err) {
@@ -254,7 +275,6 @@
       'market-analysis': () => bindMarketFormEvents(deckId),
       'financials': () => bindFinancialFormEvents(deckId),
       'the-ask': () => bindAskFormEvents(deckId),
-      // Add more sections here as needed
     };
 
     if (bindings[sectionName]) {
@@ -349,7 +369,7 @@
       previewElem.innerHTML = value
         ? value.replace(/\n/g, '<br>')
         : '<span class="text-gray-400">Describe the problem you\'re solving...</span>';
-    });
+    }, { passive: true });
 
     // Form submission
     form.addEventListener('submit', async (e) => {
@@ -417,7 +437,7 @@
       previewElem.innerHTML = value
         ? value.replace(/\n/g, '<br>')
         : '<span class="text-gray-400">Describe your solution to the problem...</span>';
-    });
+    }, { passive: true });
 
     // Form submission
     form.addEventListener('submit', async (e) => {
@@ -512,28 +532,28 @@
       previewPrimary.innerHTML = value
         ? value.replace(/\n/g, '<br>')
         : '<span class="text-gray-400">Primary market</span>';
-    });
+    }, { passive: true });
 
     targetAudience.addEventListener('input', () => {
       const value = targetAudience.value.trim();
       previewTarget.innerHTML = value
         ? value.replace(/\n/g, '<br>')
         : '<span class="text-gray-400">Target audience</span>';
-    });
+    }, { passive: true });
 
     marketGrowthRate.addEventListener('input', () => {
       const value = marketGrowthRate.value.trim();
       previewGrowth.innerHTML = value
         ? value.replace(/\n/g, '<br>')
         : '<span class="text-gray-400">Growth rate</span>';
-    });
+    }, { passive: true });
 
     competitiveAdvantage.addEventListener('input', () => {
       const value = competitiveAdvantage.value.trim();
       previewAdvantage.innerHTML = value
         ? value.replace(/\n/g, '<br>')
         : '<span class="text-gray-400">Growth rate</span>';
-    });
+    }, { passive: true });
 
     // Form submission
     form.addEventListener('submit', async (e) => {
@@ -593,7 +613,6 @@
 
     if (!form || !teamMembers || !addMemberBtn || !template) return;
 
-    // 🧠 Load existing team data
     try {
       const res = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/team/?deck_id=${deckId}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -601,6 +620,7 @@
       if (res.ok) {
         const data = await res.json();
         const members = data.members || [];
+        const fragment = document.createDocumentFragment();
 
         members.forEach(member => {
           const clone = template.content.cloneNode(true);
@@ -612,22 +632,22 @@
           formBlock.querySelector('.remove-member').addEventListener('click', (e) => {
             e.target.closest('.team-form').remove();
             renderTeamPreview();
-          });
+          }, { passive: true });
 
           formBlock.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', renderTeamPreview);
+            input.addEventListener('input', renderTeamPreview, { passive: true });
           });
 
-          teamMembers.appendChild(clone);
+          fragment.appendChild(clone);
         });
 
+        teamMembers.appendChild(fragment);
         renderTeamPreview();
       }
     } catch (err) {
       console.warn('No existing team data found or failed to load:', err);
     }
 
-    // ➕ Add new member
     addMemberBtn.addEventListener('click', () => {
       const clone = template.content.cloneNode(true);
       const formBlock = clone.querySelector('.team-form');
@@ -635,17 +655,16 @@
       formBlock.querySelector('.remove-member').addEventListener('click', (e) => {
         e.target.closest('.team-form').remove();
         renderTeamPreview();
-      });
+      }, { passive: true });
 
       formBlock.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', renderTeamPreview);
+        input.addEventListener('input', renderTeamPreview, { passive: true });
       });
 
       teamMembers.appendChild(clone);
       renderTeamPreview();
-    });
+    }, { passive: true });
 
-    // 📨 Submit team
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -681,7 +700,6 @@
       }
     });
 
-    // 🧹 Render team preview
     function renderTeamPreview() {
       const members = [...teamMembers.querySelectorAll('.team-form')]
         .map(form => ({
@@ -697,6 +715,7 @@
         return;
       }
 
+      const fragment = document.createDocumentFragment();
       members.forEach(member => {
         const card = document.createElement('div');
         card.className = 'bg-gray-50 p-4 rounded-lg shadow-sm border';
@@ -706,8 +725,9 @@
           <div class="text-sm text-gray-600">${member.title || '<span class="text-gray-400">No title</span>'}</div>
         `;
 
-        previewContainer.appendChild(card);
+        fragment.appendChild(card);
       });
+      previewContainer.appendChild(fragment);
     }
   }
 
@@ -721,26 +741,24 @@
 
     if (!form || !financialRows || !addYearBtn || !previewTable || !chartCanvas) return;
 
-    // 🧩 Add Year Row
     const template = document.getElementById('financialTemplate');
 
     addYearBtn.addEventListener('click', () => {
       const clone = template.content.cloneNode(true);
       clone.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', updatePreviewAndChart);
+        input.addEventListener('input', updatePreviewAndChart, { passive: true });
         if (input.name.includes('year')) {
-          input.addEventListener('input', validateYear);
-          input.addEventListener('blur', validateYear);
+          input.addEventListener('input', validateYear, { passive: true });
+          input.addEventListener('blur', validateYear, { passive: true });
         }
       });
       clone.querySelector('.remove-financial').addEventListener('click', (e) => {
         e.target.closest('.team-form').remove();
         updatePreviewAndChart();
-      });
+      }, { passive: true });
       financialRows.appendChild(clone);
-    });
+    }, { passive: true });
 
-    // 📤 Submit Financials
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -776,7 +794,6 @@
         alert('Something went wrong while saving your financials.');
       }
     });
-    // 🧩 Year validation to prevent duplicates
     function validateYear(event) {
       const currentInput = event.target;
       const currentValue = currentInput.value;
@@ -867,7 +884,6 @@
 
     previewTable.innerHTML = '';
 
-    // 🧩 Handle empty state
     if (financialData.length === 0) {
       const emptyRow = document.createElement('tr');
       emptyRow.innerHTML = `
@@ -878,7 +894,7 @@
       return;
     }
 
-    // 🧩 Inject data rows
+    const fragment = document.createDocumentFragment();
     financialData.forEach(data => {
       const row = document.createElement('tr');
       row.innerHTML = `
@@ -886,19 +902,20 @@
         <td class="px-4 py-2 bg-gray-50 border text-gray-700 font-medium">₱${parseFloat(data.revenue || 0).toLocaleString()}</td>
         <td class="px-4 py-2 bg-gray-50 border text-gray-700 font-medium">₱${parseFloat(data.profit || 0).toLocaleString()}</td>
       `;
-      previewTable.appendChild(row);
+      fragment.appendChild(row);
     });
+    previewTable.appendChild(fragment);
 
     updateChart(financialData);
   }
 
-    // 📊 Load Preview + Chart
     async function loadFinancials(deckId) {
       try {
         const res = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/financial-list/?deck_id=${deckId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const financials = await res.json();
+        const fragment = document.createDocumentFragment();
         financials.forEach(data => {
           const clone = template.content.cloneNode(true);
           clone.querySelector('input[name="year"]').value = data.year;
@@ -908,18 +925,18 @@
           clone.querySelector('.remove-financial').addEventListener('click', (e) => {
             e.target.closest('.team-form').remove();
             updatePreviewAndChart();
-          });
+          }, { passive: true });
 
           clone.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', updatePreviewAndChart);
+            input.addEventListener('input', updatePreviewAndChart, { passive: true });
             if (input.name.includes('year')) {
-              input.addEventListener('input', validateYear);
-              input.addEventListener('blur', validateYear);
+              input.addEventListener('input', validateYear, { passive: true });
+              input.addEventListener('blur', validateYear, { passive: true });
             }
           });
-
-          financialRows.appendChild(clone);
+          fragment.appendChild(clone);
         });
+        financialRows.appendChild(fragment);
         updatePreviewAndChart();
       } catch (err) {
         console.error('Failed to load financials:', err);
@@ -939,7 +956,6 @@
 
     if (!form || !amountInput || !usageInput || !previewAmount || !previewUsage) return;
 
-    // 🔄 Load existing Ask data
     async function loadAskData() {
       try {
         const res = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/ask/?deck_id=${deckId}`, {
@@ -962,7 +978,6 @@
       }
     }
 
-    // 📤 Submit Ask data
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const payload = {
@@ -997,21 +1012,19 @@
       }
     });
 
-    // 🧩 Live preview updates
     amountInput.addEventListener('input', () => {
       const value = amountInput.value.trim();
       const numValue = parseFloat(value.replace(/,/g, ''));
       previewAmount.textContent = !isNaN(numValue)
         ? '₱' + numValue.toLocaleString()
         : value || 'Enter funding amount...';
-    });
+    }, { passive: true });
 
     usageInput.addEventListener('input', () => {
       const value = usageInput.value.trim();
       previewUsage.textContent = value || 'Describe how you plan to use the funding...';
-    });
+    }, { passive: true });
 
-    // 🔄 Initial load
     loadAskData();
   }
 
@@ -1043,6 +1056,7 @@
       const tbody = document.getElementById('financialTableBody');
       tbody.innerHTML = '';
       if (data.financials?.length) {
+        const fragment = document.createDocumentFragment();
         data.financials.forEach(row => {
           const tr = document.createElement('tr');
           tr.className = 'border-t';
@@ -1051,8 +1065,9 @@
             <td class="px-4 py-2">₱${parseFloat(row.revenue).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
             <td class="px-4 py-2">₱${parseFloat(row.profit).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
           `;
-          tbody.appendChild(tr);
+          fragment.appendChild(tr);
         });
+        tbody.appendChild(fragment);
       } else {
         tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-2 text-center text-gray-500">No data available</td></tr>`;
       }
@@ -1065,7 +1080,7 @@
       renderFinancialChart(data.financials || []);
 
       // Show modal
-      document.getElementById('reportModal').classList.remove('hidden');
+      getCachedElement('reportModal').classList.remove('hidden');
     } catch (err) {
       console.error('Failed to load report modal:', err);
       alert('Unable to load report. Please try again.');
@@ -1093,17 +1108,18 @@
           {
             label: 'Revenue',
             data: revenues,
-            backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            backgroundColor: '#3b82f6'
           },
           {
             label: 'Profit',
             data: profits,
-            backgroundColor: 'rgba(75, 192, 192, 0.6)'
+            backgroundColor: '#10b981'
           }
         ]
       },
       options: {
         responsive: true,
+        animation: { duration: 0 },
         scales: {
           y: {
             beginAtZero: true
@@ -1118,7 +1134,7 @@
   }
 
 
-    window.onload = loadDeckSections;
+  window.addEventListener('load', loadDeckSections, { passive: true });
   </script>
 </body>
 </html>
