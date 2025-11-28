@@ -107,21 +107,7 @@
         </div>
       </div>
 
-      <div class="mt-8 p-4 bg-slate-900/50 rounded-xl border border-slate-700">
-        <p class="text-sm text-gray-400 mb-2"><strong>Growth Rate (CAGR):</strong></p>
-        <p class="text-2xl font-semibold text-accent-400"><span id="growth-rate-display">0</span>%</p>
-        <p id="cagr-source" class="text-xs text-gray-500 mt-2">From revenue history</p>
-      </div>
-
       <button id="simulate-btn" class="mt-8 w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-6 rounded-lg transition-all">Run Simulation</button>
-    </section>
-
-    <!-- Disclaimer Section -->
-    <section class="card-base border border-slate-800 rounded-2xl p-8 mb-8 fade-in delay-2">
-      <h3 class="text-lg font-semibold mb-4">About This Calculation</h3>
-      <p class="text-sm text-gray-400 leading-relaxed">
-        <strong>Disclaimer:</strong> This simulation uses <strong>raw revenue CAGR (Compound Annual Growth Rate)</strong> calculated from <span id="data-source-text">revenue data</span> without risk adjustments. The growth rate shown (<span id="cagr-value" class="font-semibold">0%</span>) represents the pure historical revenue growth trend. Actual future results depend on market conditions, execution, and startup performance. Past performance does not guarantee future results.
-      </p>
     </section>
 
     <!-- Results Section (Hidden until simulation runs) -->
@@ -203,50 +189,60 @@
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
-      const startupId = new URLSearchParams(window.location.search).get('id');
+      const startupId = new URLSearchParams(window.location.search).get('startup_id');
       if (startupId) {
         fetchStartupData(startupId);
+      } else {
+        alert('No startup selected');
       }
       domCache.backButton.addEventListener('click', () => window.history.back());
       domCache.simulateBtn.addEventListener('click', runSimulation);
     });
 
     function fetchStartupData(startupId) {
-      const apiUrl = `/api/startups/${startupId}/`;
+      const apiUrl = `https://fundora-be-singapore.onrender.com/api/investor/startups/${startupId}/`;
+      const token = localStorage.getItem('authToken');
       
-      fetch(apiUrl)
-        .then(response => response.json())
+      fetch(apiUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to fetch startup data');
+          return response.json();
+        })
         .then(data => {
+          console.log('[v0] Fetched startup data:', data);
           startupData = data;
           initializeUI();
         })
         .catch(error => {
           console.error('[v0] Error fetching startup data:', error);
-          alert('Error loading startup data');
+          alert('Error loading startup data. Please try again.');
         });
     }
 
     function initializeUI() {
       if (!startupData) return;
 
-      const isDeckBuilder = startupData.is_deck_builder === true;
+      const isDeckBuilder = startupData.is_deck_builder === true || startupData.source_deck_id != null;
       const riskLevel = startupData.risk_level;
-      const projectedReturn = startupData.projected_return;
+      const projectedReturn = isDeckBuilder ? startupData.estimated_growth_rate : startupData.projected_return;
 
-      // Update data source text based on type
-      if (isDeckBuilder) {
-        domCache.cagrSource.textContent = 'From financial projections';
-        domCache.dataSourceText.textContent = 'the pitch deck financial projections';
-      } else {
-        domCache.cagrSource.textContent = 'From revenue history';
-        domCache.dataSourceText.textContent = 'the startup\'s historical revenue data';
-      }
+      console.log('[v0] Initializing UI:', {
+        isDeckBuilder,
+        riskLevel,
+        projectedReturn,
+        startupName: startupData.company_name
+      });
+
+      // Update startup name
+      domCache.startupName.textContent = startupData.company_name || 'Unknown Startup';
 
       // Check if we have a valid growth rate from backend
       if (projectedReturn === null || projectedReturn === undefined) {
-          domCache.growthRateDisplay.textContent = 'N/A';
-          domCache.growthRateDisplay.parentElement.classList.add('opacity-50');
-          
           const errorMsg = isDeckBuilder 
             ? 'This pitch deck does not have sufficient financial projections for investment simulation.\n\nRequired: At least 2 years of revenue projections'
             : 'This startup does not have sufficient financial data for investment simulation.\n\nRequired: Revenue history (current and previous period revenue)';
@@ -262,15 +258,12 @@
           
           return;
       }
-      
-      domCache.growthRateDisplay.textContent = projectedReturn.toFixed(2);
-      domCache.cagrValue.textContent = projectedReturn.toFixed(2);
-      domCache.startupName.textContent = startupData.name || 'Unknown Startup';
 
+      // Update risk badge
       if (isDeckBuilder) {
         domCache.riskBadge.textContent = 'Pitch Deck';
         domCache.riskBadge.className = 'bg-brand-500/20 text-brand-300 text-sm font-medium px-4 py-2 rounded-full border border-brand-500/30';
-      } else if (riskLevel === null || riskLevel === undefined) {
+      } else if (riskLevel === null || riskLevel === undefined || riskLevel === 'Data Pending') {
         domCache.riskBadge.textContent = 'Risk Pending';
         domCache.riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
       } else {
@@ -278,7 +271,7 @@
         
         const riskColors = {
           'Low': 'bg-accent-500/20 text-accent-300 border-accent-500/30',
-          'Medium': 'bg-brand-500/20 text-brand-300 border-brand-500/30',
+          'Medium': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
           'High': 'bg-red-500/20 text-red-300 border-red-500/30'
         };
         
@@ -290,7 +283,19 @@
     function runSimulation() {
       const investmentAmount = parseFloat(domCache.investmentInput.value);
       const durationYears = parseInt(domCache.durationInput.value);
-      const projectedReturn = startupData.projected_return;
+      
+      // Use correct field based on startup type
+      const isDeckBuilder = startupData.is_deck_builder === true || startupData.source_deck_id != null;
+      const projectedReturn = isDeckBuilder ? startupData.estimated_growth_rate : startupData.projected_return;
+      const riskLevel = startupData.risk_level;
+      
+      console.log('[v0] Running simulation with:', {
+        isDeckBuilder,
+        projectedReturn,
+        riskLevel,
+        investmentAmount,
+        durationYears
+      });
       
       if (projectedReturn === null || projectedReturn === undefined) {
         alert('Cannot run simulation: No growth rate available');
@@ -308,13 +313,34 @@
       }
 
       console.log('[v0] === RUNNING SIMULATION ===');
+      console.log('[v0] Startup Type:', isDeckBuilder ? 'Pitch Deck' : 'Regular Startup');
       console.log('[v0] Investment Amount:', investmentAmount);
       console.log('[v0] Duration:', durationYears, 'years');
-      console.log('[v0] Growth Rate (CAGR from backend):', projectedReturn.toFixed(2) + '%');
-      console.log('[v0] Formula: FV = amount × (1 + growthRate)^years');
+      console.log('[v0] Base Growth Rate:', projectedReturn.toFixed(2) + '%');
 
-      // FV = amount × (1 + projected_return)^years
-      const growthRate = projectedReturn / 100;
+      // Apply risk adjustment ONLY for regular startups, NOT for pitch decks
+      let adjustedGrowthRate = projectedReturn;
+      
+      if (!isDeckBuilder && riskLevel) {
+        const riskMultipliers = {
+          'Low': 1.00,
+          'Medium': 0.75,
+          'High': 0.50
+        };
+        const multiplier = riskMultipliers[riskLevel] || 0.75;
+        adjustedGrowthRate = projectedReturn * multiplier;
+        
+        console.log('[v0] Risk Level:', riskLevel);
+        console.log('[v0] Risk Multiplier:', multiplier);
+        console.log('[v0] Risk-Adjusted Growth Rate:', adjustedGrowthRate.toFixed(2) + '%');
+      } else if (isDeckBuilder) {
+        console.log('[v0] Pitch Deck - No risk adjustment applied');
+      }
+
+      console.log('[v0] Formula: FV = amount × (1 + adjustedGrowthRate)^years');
+
+      // Calculate using risk-adjusted rate
+      const growthRate = adjustedGrowthRate / 100;
       const finalValue = investmentAmount * Math.pow(1 + growthRate, durationYears);
       const totalGain = finalValue - investmentAmount;
       const roiPercentage = (totalGain / investmentAmount) * 100;
@@ -336,13 +362,16 @@
         totalGain, 
         roiPercentage, 
         yearlyBreakdown,
-        growthRate: projectedReturn
+        growthRate: adjustedGrowthRate,
+        baseGrowthRate: projectedReturn,
+        riskAdjusted: !isDeckBuilder && riskLevel != null
       };
 
       console.log('[v0] Simulation Results:', {
         finalValue: finalValue.toFixed(2),
         totalGain: totalGain.toFixed(2),
-        roi: roiPercentage.toFixed(2) + '%'
+        roi: roiPercentage.toFixed(2) + '%',
+        riskAdjusted: simulationData.riskAdjusted
       });
 
       displayResults();
