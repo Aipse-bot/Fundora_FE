@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fundora - Sign In</title>
+  <title>Sign In</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script>
+  <script defer>
     tailwind.config = {
       theme: {
         extend: {
@@ -50,24 +50,23 @@
     @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-100%); opacity: 0; } }
     .toast-enter { animation: slideIn 0.3s ease-out; }
     .toast-exit { animation: slideOut 0.3s ease-out; }
+    .container-optimize { contain: layout style paint; }
   </style>
 </head>
 <body class="bg-slate-950 text-gray-100 min-h-screen">
 
-  <!-- Toast Container - Fixed with higher z-index -->
-  <div id="toastContainer" class="fixed top-4 right-4 z-[9999] space-y-2"></div>
+  <div id="toastContainer" class="fixed top-4 right-4 z-[9999] space-y-2 container-optimize"></div>
 
-  <!-- Background Effects -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
-    <div class="absolute top-20 left-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500 rounded-full blur-3xl"></div>
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-blue-500/5 to-transparent"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-emerald-500/3 to-transparent"></div>
   </div>
 
   <!-- Navbar -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-sm border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-6 py-4">
       <div class="flex items-center justify-between">
-        <a href="/index.html" class="flex items-center space-x-3">
+        <a href="/index.html" class="flex items-center space-x-3 group">
           <div class="relative w-10 h-10">
             <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)" stroke="#3b82f6" stroke-width="2"/>
@@ -93,62 +92,60 @@
   <!-- Main Content -->
   <div class="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-4">
     <div class="w-full max-w-md mx-auto">
-      <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-sm">
+      <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-8 backdrop-blur-sm">
         <div class="mb-8 text-center">
           <h2 class="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-          <p class="text-gray-400">Sign in to access your dashboard and continue your journey</p>
+          <p class="text-gray-400 text-sm">Sign in to your account and continue</p>
         </div>
 
-          <form id="loginForm" class="space-y-5">
-            <!-- Email -->
-            <div>
-              <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
-              <input type="email" id="email" name="email"
-                class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
-              <p class="text-red-400 text-xs mt-1.5 hidden" id="emailError"></p>
-            </div>
+        <form id="loginForm" class="space-y-5">
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-xs font-semibold text-gray-300 mb-2 uppercase tracking-wide">Email Address</label>
+            <input type="email" id="email" name="email"
+              class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-600 transition-all duration-200">
+            <p class="text-red-400 text-xs mt-1.5 hidden" id="emailError"></p>
+          </div>
 
-            <!-- Password -->
-            <div>
-              <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-              <div class="relative">
-                <input type="password" id="password" name="password"
-                  class="w-full px-4 py-2.5 pr-12 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
-                <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
-                  <svg id="passwordEyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                  </svg>
-                </button>
-              </div>
-              <p class="text-red-400 text-xs mt-1.5 hidden" id="passwordError"></p>
+          <!-- Password -->
+          <div>
+            <label for="password" class="block text-xs font-semibold text-gray-300 mb-2 uppercase tracking-wide">Password</label>
+            <div class="relative">
+              <input type="password" id="password" name="password"
+                class="w-full px-4 py-2.5 pr-12 bg-slate-800/50 border border-slate-700/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-600 transition-all duration-200">
+              <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors">
+                <svg id="passwordEyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+              </button>
             </div>
+            <p class="text-red-400 text-xs mt-1.5 hidden" id="passwordError"></p>
+          </div>
 
-            <!-- Remember Me & Forgot Password -->
-            <div class="flex items-center justify-between">
-              <div class="flex items-center">
-                <input type="checkbox" id="remember" name="remember"
-                  class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-slate-600 rounded bg-slate-800">
-                <label for="remember" class="ml-3 text-sm text-gray-400">Remember me</label>
-              </div>
-              <a href="#" class="text-sm text-brand-400 hover:text-brand-300">Forgot password?</a>
+          <!-- Remember Me & Forgot Password -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input type="checkbox" id="remember" name="remember"
+                class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-slate-600 rounded bg-slate-800">
+              <label for="remember" class="ml-3 text-xs text-gray-400">Remember me</label>
             </div>
+            <a href="#" class="text-xs text-brand-400 hover:text-brand-300 transition-colors">Forgot password?</a>
+          </div>
 
-            <!-- Submit Button -->
-            <button type="submit" id="submitBtn"
-              class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-              Sign In
-            </button>
-          </form>
+          <!-- Submit Button -->
+          <button type="submit" id="submitBtn"
+            class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            Sign In
+          </button>
+        </form>
 
-          <!-- Sign Up Link -->
-          <div class="text-center mt-6 pt-6 border-t border-slate-800">
-            <p class="text-sm text-gray-400 mb-3">Don't have an account?</p>
-            <div class="flex flex-col sm:flex-row gap-2 justify-center">
-              <a href="/Module_3/startup_register.html" class="text-brand-400 hover:text-brand-300 font-medium text-sm">Sign up as Startup</a>
-              <span class="hidden sm:inline text-gray-600">or</span>
-              <a href="/Module_1/investor_register.html" class="text-accent-400 hover:text-accent-300 font-medium text-sm">Sign up as Investor</a>
-            </div>
+        <!-- Sign Up Link -->
+        <div class="text-center mt-6 pt-6 border-t border-slate-800">
+          <p class="text-xs text-gray-400 mb-4">New to Fundora?</p>
+          <div class="grid grid-cols-2 gap-2">
+            <a href="/Module_3/startup_register.html" class="text-xs text-brand-400 hover:text-brand-300 font-semibold transition-colors">Sign up as Startup</a>
+            <a href="/Module_1/investor_register.html" class="text-xs text-accent-400 hover:text-accent-300 font-semibold transition-colors">Sign up as Investor</a>
           </div>
         </div>
       </div>
@@ -156,7 +153,6 @@
   </div>
 
 <script>
-    // Toast notification system
     let activeToasts = new Set();
     
     function showToast(message, type = 'success') {
@@ -171,9 +167,9 @@
             ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>'
             : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
         
-        toast.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-xl flex items-center space-x-3 min-w-[300px] toast-enter`;
+        toast.className = `${bgColor} text-white px-5 py-3 rounded-lg shadow-lg flex items-center space-x-3 min-w-[280px] toast-enter text-sm`;
         toast.innerHTML = `
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 ${icon}
             </svg>
             <span class="flex-1 font-medium">${message}</span>
@@ -191,7 +187,6 @@
         }, 3000);
     }
 
-    // Enhanced email validation
     function isValidEmail(email) {
         const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
         
@@ -214,7 +209,6 @@
         return true;
     }
 
-    // Password visibility toggle
     function togglePassword() {
         const field = document.getElementById('password');
         const icon = document.getElementById('passwordEyeIcon');
@@ -233,7 +227,6 @@
         }
     }
 
-    // Clear error messages
     function clearError(fieldId) {
         const errorElement = document.getElementById(fieldId + 'Error');
         const inputElement = document.getElementById(fieldId);
@@ -246,7 +239,6 @@
         }
     }
 
-    // Show error messages
     function showError(fieldId, message) {
         const errorElement = document.getElementById(fieldId + 'Error');
         const inputElement = document.getElementById(fieldId);
@@ -259,7 +251,6 @@
         }
     }
 
-    // Add input listeners to clear errors
     ['email', 'password'].forEach(fieldId => {
         const element = document.getElementById(fieldId);
         if (element) {
@@ -267,7 +258,6 @@
         }
     });
 
-    // Form submission
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 

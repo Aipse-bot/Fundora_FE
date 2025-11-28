@@ -45,11 +45,12 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 0.5s ease-out; }
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .fade-in { animation: fadeIn 0.3s ease-out; will-change: opacity; }
+    .delay-1 { animation-delay: 0.05s; }
+    .delay-2 { animation-delay: 0.1s; }
+    .delay-3 { animation-delay: 0.15s; }
+    .card-base { background: #1e293b; border: 1px solid #334155; }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
@@ -57,7 +58,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8 fade-in">
       <div class="flex items-center">
-        <button id="backBtn" class="mr-6 p-2.5 hover:bg-slate-800/50 rounded-lg transition-all border border-slate-700">
+        <button id="backBtn" class="mr-6 p-2.5 hover:bg-slate-800 rounded-lg transition-colors border border-slate-700">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
@@ -74,59 +75,59 @@
       <div class="lg:col-span-3 space-y-6">
         <!-- Problem & Solution -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in delay-1">
-          <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-xl font-semibold mb-4">The Problem</h2>
+          <div class="card-base rounded-xl p-6">
+            <h2 class="text-lg font-semibold mb-4 text-white">Problem</h2>
             <p id="problem-description" class="text-gray-300 leading-relaxed text-sm">—</p>
           </div>
-          <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-xl font-semibold mb-4">The Solution</h2>
+          <div class="card-base rounded-xl p-6">
+            <h2 class="text-lg font-semibold mb-4 text-white">Solution</h2>
             <p id="solution-description" class="text-gray-300 leading-relaxed text-sm">—</p>
           </div>
         </div>
 
         <!-- Market Analysis -->
-        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-2">
+        <div class="card-base rounded-xl p-6 fade-in delay-2">
           <div class="flex items-center mb-6">
-            <div class="w-10 h-10 bg-brand-500/20 rounded-lg flex items-center justify-center mr-3">
+            <div class="w-10 h-10 bg-brand-500/15 rounded-lg flex items-center justify-center mr-3">
               <svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
               </svg>
             </div>
-            <h2 class="text-xl font-semibold">Market Analysis</h2>
+            <h2 class="text-lg font-semibold text-white">Market Analysis</h2>
           </div>
           <div class="grid grid-cols-2 gap-4">
-            <div class="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4">
-              <div class="text-xs text-gray-400 mb-1">Primary Market</div>
-              <div id="primary-market" class="text-base font-semibold text-brand-400">—</div>
+            <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4">
+              <div class="text-xs text-gray-400 mb-2">Primary Market</div>
+              <div id="primary-market" class="text-sm font-semibold text-brand-300">—</div>
             </div>
-            <div class="bg-accent-500/10 border border-accent-500/30 rounded-lg p-4">
-              <div class="text-xs text-gray-400 mb-1">Target Audience</div>
-              <div id="target-audience" class="text-base font-semibold text-accent-400">—</div>
+            <div class="bg-accent-500/10 border border-accent-500/25 rounded-lg p-4">
+              <div class="text-xs text-gray-400 mb-2">Target Audience</div>
+              <div id="target-audience" class="text-sm font-semibold text-accent-300">—</div>
             </div>
-            <div class="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
-              <div class="text-xs text-gray-400 mb-1">Market Growth (YOY)</div>
-              <div id="market-growth" class="text-base font-semibold text-orange-400">—</div>
+            <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4">
+              <div class="text-xs text-gray-400 mb-2">Market Growth</div>
+              <div id="market-growth" class="text-sm font-semibold text-brand-300">—</div>
             </div>
-            <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4">
-              <div class="text-xs text-gray-400 mb-1">Competitive Advantage</div>
-              <div id="competitive-advantage" class="text-base font-semibold text-purple-400 line-clamp-2">—</div>
+            <div class="bg-accent-500/10 border border-accent-500/25 rounded-lg p-4">
+              <div class="text-xs text-gray-400 mb-2">Competitive Advantage</div>
+              <div id="competitive-advantage" class="text-sm font-semibold text-accent-300 line-clamp-2">—</div>
             </div>
           </div>
         </div>
 
         <!-- Financial Projections -->
-        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-2">
+        <div class="card-base rounded-xl p-6 fade-in delay-2">
           <div class="flex items-center mb-6">
-            <div class="w-10 h-10 bg-accent-500/20 rounded-lg flex items-center justify-center mr-3">
+            <div class="w-10 h-10 bg-accent-500/15 rounded-lg flex items-center justify-center mr-3">
               <svg class="w-5 h-5 text-accent-400" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
               </svg>
             </div>
-            <h2 class="text-xl font-semibold">Financial Projections</h2>
+            <h2 class="text-lg font-semibold text-white">Financial Projections</h2>
           </div>
-          <div id="financial-table-container" class="mb-6"></div>
-          <div class="mt-6 h-[250px]">
-            <canvas id="revenueProfitChart" class="w-full h-full"></canvas>
+          <div id="financial-table-container" class="mb-6 overflow-x-auto max-h-[200px]"></div>
+          <div class="mt-6 h-[250px] overflow-hidden" style="contain: layout style paint;">
+            <canvas id="revenueProfitChart" class="w-full h-full" style="display: block;"></canvas>
           </div>
         </div>
       </div>
@@ -134,25 +135,24 @@
       <!-- Right Column - Sidebar -->
       <div class="space-y-6">
         <!-- Action Buttons -->
-        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-1">
-          <h2 class="text-lg font-semibold mb-4">Actions</h2>
+        <div class="card-base rounded-xl p-6 fade-in delay-1">
+          <h2 class="text-lg font-semibold mb-4 text-white">Actions</h2>
           <div class="space-y-3">
-            <button id="watchlistBtn" class="w-full font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center text-sm" disabled>
-              <svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <button id="watchlistBtn" class="w-full font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center text-sm" disabled>
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
               </svg>
               Loading...
             </button>
-            <a id="investBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 text-center block text-sm">
+            <a id="investBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 text-center block text-sm">
               Invest
             </a>
           </div>
         </div>
 
         <!-- The Ask -->
-        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-3">
-          <h2 class="text-lg font-semibold mb-4">The Ask</h2>
+        <div class="card-base rounded-xl p-6 fade-in delay-3">
+          <h2 class="text-lg font-semibold mb-4 text-white">Funding Request</h2>
           <div id="ask-section" class="space-y-3">
             <p class="text-gray-400 text-sm">No funding information available</p>
           </div>
@@ -169,6 +169,7 @@
     
     let watchlistIdsSet = new Set();
     let currentWatchlistState = false;
+    let chartInstance = null;
 
     function authHeaders() {
       const h = { 'Content-Type': 'application/json' };
@@ -203,7 +204,6 @@
         if (data) {
           const items = data.results || data.watchlist || [];
           watchlistIdsSet = new Set(items.map(it => it.id));
-          console.log('Watchlist refreshed, IDs:', Array.from(watchlistIdsSet));
         }
       } catch (err) {
         console.warn('Could not refresh watchlist:', err);
@@ -211,7 +211,6 @@
     }
 
     function populateHeaderFromStartup(startup) {
-      const initial = (startup.company_name || "—").charAt(0).toUpperCase() || "L";
       document.title = startup.company_name || "Company Profile";
       document.getElementById("deck-name").textContent = startup.company_name || "—";
       document.getElementById("deck-tagline").textContent = startup.company_description || "—";
@@ -225,10 +224,10 @@
       }
       const amt = (ask.amount != null && !isNaN(Number(ask.amount))) ? `₱${Number(ask.amount).toLocaleString()}` : (ask.amount || "—");
       askSection.innerHTML = `
-        <div class="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4">
-          <div class="text-xs text-gray-400 mb-1">Funding Goal</div>
-          <div class="text-xl font-bold text-brand-400 mb-3">${amt}</div>
-          <div class="text-xs text-gray-400 mb-1">Use of Funds</div>
+        <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4">
+          <div class="text-xs text-gray-400 mb-2">Funding Goal</div>
+          <div class="text-lg font-bold text-brand-300 mb-3">${amt}</div>
+          <div class="text-xs text-gray-400 mb-2">Use of Funds</div>
           <p class="text-gray-300 text-sm">${ask.usage_description || "—"}</p>
         </div>
       `;
@@ -263,7 +262,7 @@
           </svg>
           In Watchlist
         `;
-        watchBtn.className = "w-full bg-slate-800/50 hover:bg-slate-700/50 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-200 border border-slate-700 text-sm";
+        watchBtn.className = "w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200 border border-slate-600 text-sm";
         watchBtn.onclick = () => toggleWatchlist(false);
       } else {
         watchBtn.innerHTML = `
@@ -272,7 +271,7 @@
           </svg>
           Add to Watchlist
         `;
-        watchBtn.className = "w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-200 text-sm";
+        watchBtn.className = "w-full bg-accent-600 hover:bg-accent-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200 text-sm";
         watchBtn.onclick = () => toggleWatchlist(true);
       }
     }
@@ -282,12 +281,10 @@
       if (!watchBtn) return;
       
       watchBtn.disabled = true;
-      
       const originalHTML = watchBtn.innerHTML;
       watchBtn.innerHTML = `
-        <svg class="w-4 h-4 mr-2 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <svg class="w-4 h-4 mr-2 inline" style="animation: spin 1s linear infinite" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
         </svg>
         Updating...
       `;
@@ -296,23 +293,17 @@
         const action = shouldAdd ? 'add' : 'remove';
         const method = shouldAdd ? 'POST' : 'DELETE';
         
-        console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
-        
         const res = await fetch(`https://fundora-be-singapore.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
           method: method,
           headers: authHeaders()
         });
         
-        console.log('Response status:', res.status);
-        
         if (!res.ok) {
           const errorText = await res.text();
-          console.error('Response error:', errorText);
           throw new Error(`Failed to ${action} watchlist: ${res.status} ${errorText}`);
         }
 
         const result = await res.json();
-        console.log('Watchlist response:', result);
         
         if (shouldAdd) {
           watchlistIdsSet.add(Number(startupId));
@@ -322,13 +313,10 @@
         currentWatchlistState = shouldAdd;
         
         showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');
-        
         updateWatchlistButton(shouldAdd);
         
       } catch (err) {
-        console.error('Watchlist toggle failed:', err);
         showNotification(err.message || 'Failed to update watchlist. Please try again.', 'error');
-        
         watchBtn.innerHTML = originalHTML;
         watchBtn.disabled = false;
       }
@@ -336,13 +324,13 @@
 
     function showNotification(message, type) {
       const div = document.createElement('div');
-      div.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl font-medium ${type === 'success' ? 'bg-accent-600' : 'bg-red-600'} text-white`;
+      div.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg font-medium ${type === 'success' ? 'bg-accent-600' : 'bg-red-600'} text-white`;
       div.textContent = message;
-      div.style.opacity = '0';
+      div.style.animation = 'fadeIn 0.3s ease-out';
       document.body.appendChild(div);
-      setTimeout(() => div.style.opacity = '1', 10);
       setTimeout(() => {
         div.style.opacity = '0';
+        div.style.transition = 'opacity 0.3s ease-out';
         setTimeout(() => div.remove(), 300);
       }, 3000);
     }
@@ -371,7 +359,7 @@
       container.innerHTML = `
         <div class="overflow-x-auto">
           <table class="min-w-full text-sm">
-            <thead class="bg-slate-800/50 font-semibold text-gray-300">
+            <thead class="bg-slate-800/40 font-semibold text-gray-300">
               <tr>
                 <th class="py-2 px-3 text-left rounded-tl-lg text-xs">Year</th>
                 <th class="py-2 px-3 text-left text-xs">Revenue</th>
@@ -386,32 +374,31 @@
       const ctxEl = document.getElementById("revenueProfitChart");
       if (!ctxEl) return;
       const ctx = ctxEl.getContext("2d");
-      if (window._revenueProfitChart) {
-        try { window._revenueProfitChart.destroy(); } catch(e){/*ignore*/ }
-        window._revenueProfitChart = null;
+      if (chartInstance) {
+        try { chartInstance.destroy(); } catch(e){/*ignore*/ }
+        chartInstance = null;
       }
 
-      window._revenueProfitChart = new Chart(ctx, {
+      chartInstance = new Chart(ctx, {
         type: "bar",
         data: {
           labels: parsed.map(p => p.year),
           datasets: [
-            { label: "Revenue", data: parsed.map(p => p.revenue), backgroundColor: "#3b82f6" },
-            { label: "Profit", data: parsed.map(p => p.profit), backgroundColor: "#10b981" }
+            { label: "Revenue", data: parsed.map(p => p.revenue), backgroundColor: "#3b82f6", borderRadius: 4 },
+            { label: "Profit", data: parsed.map(p => p.profit), backgroundColor: "#10b981", borderRadius: 4 }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: { duration: 0 },
           plugins: {
-            legend: {
-              labels: { color: '#fff', font: { size: 11 } }
-            }
+            legend: { labels: { color: '#fff', font: { size: 11 }, boxHeight: 12 } }
           },
           scales: {
             x: {
               ticks: { color: '#9ca3af', font: { size: 10 } },
-              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+              grid: { drawBorder: false, color: 'rgba(148, 163, 184, 0.1)' }
             },
             y: {
               beginAtZero: true,
@@ -420,7 +407,7 @@
                 font: { size: 10 },
                 callback: v => "₱" + Number(v).toLocaleString()
               },
-              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+              grid: { drawBorder: false, color: 'rgba(148, 163, 184, 0.1)' }
             }
           }
         }
@@ -470,7 +457,6 @@
 
       const profile = await loadStartupProfile(startupId);
       if (!profile) {
-        console.warn('No profile or deck report available for startup', startupId);
         const fallback = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`);
         if (fallback) {
           populateHeaderFromStartup(fallback);
@@ -531,15 +517,14 @@
       } else {
         window.location.href = '../Module_1/Dashboard.html';
       }
-    });
+    }, { passive: true });
 
     document.addEventListener("DOMContentLoaded", async () => {
       if (!token) {
         console.warn('No auth token present — page will try to load public data where available.');
       }
-
       await loadAllData();
-    });
+    }, { passive: true });
   </script>
 </body>
 </html>

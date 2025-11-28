@@ -9,18 +9,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #0f172a; /* dark slate */
-      color: #e2e8f0; /* slate-200 */
+      background-color: #0f172a;
+      color: #e2e8f0;
     }
     .card {
-      background: #1e293b; /* dark slate */
+      background: #1e293b;
       border: 1px solid #334155;
       border-radius: 0.75rem;
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      contain: layout style paint;
     }
     .section-header {
       color: #e2e8f0;
@@ -31,7 +31,7 @@
       gap: 8px;
     }
     .growth-positive {
-      color: #22c55e;
+      color: #10b981;
     }
     .growth-negative {
       color: #ef4444;
@@ -40,23 +40,36 @@
       color: #94a3b8;
     }
     .progress-bar {
-      transition: width 0.8s ease-out;
+      transition: width 0.3s ease-out;
     }
-    .glass {
-      background: rgba(30,41,59,0.7);
-      backdrop-filter: blur(10px);
+    .icon-dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    header {
+      background-color: #1e293b;
+      border-bottom: 1px solid #334155;
+    }
+    .modal-bg {
+      background: rgba(15, 23, 42, 0.8);
     }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-200">
 
   <!-- Header -->
-  <header class="glass border-b border-slate-700 sticky top-0 z-50">
+  <header class="border-b border-slate-700 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center space-x-3">
           <div class="bg-blue-600 p-2 rounded-lg">
-            <i data-lucide="bar-chart-3" class="w-5 h-5 text-white"></i>
+            <span class="w-5 h-5 text-white font-bold">≡</span>
           </div>
           <span class="text-2xl font-bold text-white tracking-tight">Fundora</span>
         </div>
@@ -68,7 +81,7 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex items-center gap-4 mb-8">
       <button onclick="history.back()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition">
-        <i data-lucide="arrow-left" class="w-5 h-5 text-slate-300"></i>
+        <span class="w-5 h-5 text-slate-300">←</span>
       </button>
       <div>
         <h1 class="text-2xl font-bold text-white">Financial Report Summary</h1>
@@ -82,7 +95,7 @@
       <!-- Company Profile -->
       <div class="card p-6">
         <div class="section-header">
-          <i data-lucide="building-2" class="w-5 h-5 text-blue-500"></i>
+          <span class="icon-dot bg-blue-900/30 text-blue-400">■</span>
           Company Profile
         </div>
         <div class="mt-4 space-y-4">
@@ -104,7 +117,7 @@
       <!-- Income Statement -->
       <div class="card p-6">
         <div class="section-header">
-          <i data-lucide="trending-up" class="w-5 h-5 text-green-400"></i>
+          <span class="icon-dot bg-emerald-900/30 text-emerald-400">▲</span>
           Income Statement
           <span class="ml-auto text-xs text-blue-400 bg-blue-900/30 px-2 py-1 rounded">Yearly</span>
         </div>
@@ -123,14 +136,14 @@
         </div>
         <div class="mt-4">
           <p class="text-xs text-slate-400 mb-1">Current Period Net Income</p>
-          <p id="net-income" class="text-2xl font-bold text-green-400">₱150,000</p>
+          <p id="net-income" class="text-2xl font-bold text-emerald-400">₱150,000</p>
         </div>
       </div>
 
       <!-- Balance Sheet -->
       <div class="card p-6">
         <div class="section-header">
-          <i data-lucide="scale" class="w-5 h-5 text-purple-400"></i>
+          <span class="icon-dot bg-blue-900/30 text-blue-400">◆</span>
           Balance Sheet
         </div>
         <div class="mt-4 space-y-4">
@@ -145,7 +158,7 @@
             </div>
             <p id="total-liabilities" class="text-lg font-semibold text-white">₱800,000</p>
             <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
-              <div id="liability-bar" class="bg-blue-500 h-1.5 rounded-full" style="width: 32%"></div>
+              <div id="liability-bar" class="bg-blue-500 h-1.5 rounded-full progress-bar" style="width: 32%"></div>
             </div>
           </div>
           <div class="border-t border-slate-700 pt-4">
@@ -153,7 +166,7 @@
               <p class="text-sm text-slate-400">Shareholder Equity</p>
               <span class="text-xs text-blue-400 bg-blue-900/30 px-2 py-1 rounded">Auto-calculated</span>
             </div>
-            <p id="shareholder-equity" class="text-xl font-bold text-green-400">₱1,700,000</p>
+            <p id="shareholder-equity" class="text-xl font-bold text-emerald-400">₱1,700,000</p>
           </div>
         </div>
       </div>
@@ -161,19 +174,19 @@
       <!-- Cash Flow -->
       <div class="card p-6">
         <div class="section-header">
-          <i data-lucide="dollar-sign" class="w-5 h-5 text-blue-400"></i>
+          <span class="icon-dot bg-emerald-900/30 text-emerald-400">$</span>
           Cash Flow
         </div>
         <div class="space-y-4 mt-4">
-          <div class="flex items-center justify-between p-3 bg-green-900/30 rounded-lg">
+          <div class="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
             <span class="text-sm text-slate-300">Operations Cash Flow</span>
-            <span id="operations-cash-flow" class="font-semibold text-green-400">₱200,000</span>
+            <span id="operations-cash-flow" class="font-semibold text-emerald-400">₱200,000</span>
           </div>
-          <div class="flex items-center justify-between p-3 bg-red-900/30 rounded-lg">
+          <div class="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
             <span class="text-sm text-slate-300">Investment Cash Flow</span>
             <span id="investment-cash-flow" class="font-semibold text-red-400">-₱50,000</span>
           </div>
-          <div class="flex items-center justify-between p-3 bg-blue-900/30 rounded-lg">
+          <div class="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
             <span class="text-sm text-slate-300">Financing Cash Flow</span>
             <span id="financing-cash-flow" class="font-semibold text-blue-400">₱100,000</span>
           </div>
@@ -192,7 +205,7 @@
     <div class="mt-8">
       <div class="card p-6">
         <div class="section-header">
-          <i data-lucide="shield-check" class="w-5 h-5 text-amber-400"></i>
+          <span class="icon-dot bg-blue-900/30 text-blue-400">✓</span>
           Report Confidence
         </div>
         <div class="mt-4 space-y-4">
@@ -206,8 +219,8 @@
             </div>
             <p id="confidence-level" class="text-sm text-red-400 font-medium mt-1">Low Confidence</p>
           </div>
-          <div class="bg-amber-900/20 border-l-4 border-amber-500 p-4 rounded-r-lg">
-            <p id="confidence-description" class="text-sm text-amber-300">
+          <div class="bg-slate-800 border-l-4 border-blue-500 p-4 rounded-r-lg">
+            <p id="confidence-description" class="text-sm text-slate-300">
               This confidence score reflects the completeness and reliability of the financial data provided.
             </p>
           </div>
@@ -227,10 +240,10 @@
   </main>
 
   <!-- Delete Modal -->
-  <div id="delete-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex justify-center items-center z-50">
+  <div id="delete-modal" class="hidden fixed inset-0 modal-bg flex justify-center items-center z-50">
     <div class="card p-6 w-96 text-center">
       <div class="flex items-center justify-center h-12 w-12 rounded-full bg-red-900/40 mx-auto mb-3">
-        <i data-lucide="alert-triangle" class="w-6 h-6 text-red-400"></i>
+        <span class="text-red-400 font-bold">!</span>
       </div>
       <h3 class="text-lg font-semibold text-white mb-2">Delete Startup</h3>
       <p class="text-sm text-slate-400 mb-6">Are you sure you want to delete <span id="modal-company-name" class="text-white font-semibold">this startup</span>? This action cannot be undone.</p>
@@ -242,9 +255,18 @@
   </div>
     
     <script>
+        const domCache = {};
+        
+        function getCachedElement(id) {
+            if (!domCache[id]) {
+                domCache[id] = document.getElementById(id);
+            }
+            return domCache[id];
+        }
+
         // Header user rendering function
         function renderHeaderUser(user) {
-            const container = document.getElementById('header-user');
+            const container = getCachedElement('header-user');
             container.innerHTML = '';
 
             if (!user || !user.name) return;
@@ -273,12 +295,12 @@
 
         // Delete confirmation functionality
         function confirmDelete() {
-            const modal = document.getElementById('delete-modal');
+            const modal = getCachedElement('delete-modal');
             modal.classList.remove('hidden');
         }
 
         function closeDeleteModal() {
-            const modal = document.getElementById('delete-modal');
+            const modal = getCachedElement('delete-modal');
             modal.classList.add('hidden');
         }
 
@@ -293,9 +315,9 @@
             }
             
             // Set up delete modal event listeners first
-            document.getElementById('modal-delete-cancel').addEventListener('click', closeDeleteModal);
+            getCachedElement('modal-delete-cancel').addEventListener('click', closeDeleteModal, { passive: true });
             
-            document.getElementById('modal-delete-confirm').addEventListener('click', async function() {
+            getCachedElement('modal-delete-confirm').addEventListener('click', async function() {
                 const token = localStorage.getItem('authToken');
                 
                 // Check authentication
@@ -380,12 +402,12 @@
                     this.textContent = 'Delete';
                 } finally {
                     // Close modal if still open
-                    const modal = document.getElementById('delete-modal');
+                    const modal = getCachedElement('delete-modal');
                     if (!this.disabled && modal && !modal.classList.contains('hidden')) {
                         closeDeleteModal();
                     }
                 }
-            });
+            }, { passive: true });
 
             // Load startup data
             if (!startupId) return;
@@ -433,9 +455,9 @@
 
                 // Populate Company Profile
                 const companyName = startup.company_name || data.company_name || 'N/A';
-                document.getElementById('company-name').textContent = companyName;
-                document.getElementById('company-industry').textContent = startup.industry || data.industry || 'N/A';
-                document.getElementById('company-description').textContent = 
+                getCachedElement('company-name').textContent = companyName;
+                getCachedElement('company-industry').textContent = startup.industry || data.industry || 'N/A';
+                getCachedElement('company-description').textContent = 
                     startup.company_description || 
                     data.company_description || 
                     startup.description || 
@@ -443,7 +465,7 @@
                     'No company description available.';
 
                 // Update modal with company name
-                document.getElementById('modal-company-name').textContent = companyName;
+                getCachedElement('modal-company-name').textContent = companyName;
 
                 // Populate Income Statement
                 // Match the Edit page field names exactly
@@ -478,11 +500,11 @@
                     }
                 });
 
-                document.getElementById('prior-revenue').textContent = `₱${priorRevenue.toLocaleString()}`;
-                document.getElementById('current-revenue').textContent = `₱${currentRevenue.toLocaleString()}`;
-                document.getElementById('revenue-growth').textContent = `${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth.toFixed(1)}%`;
-                document.getElementById('revenue-growth').className = revenueGrowth >= 0 ? 'text-xs growth-positive font-medium' : 'text-xs growth-negative font-medium';
-                document.getElementById('net-income').textContent = `₱${netIncome.toLocaleString()}`;
+                getCachedElement('prior-revenue').textContent = `₱${priorRevenue.toLocaleString()}`;
+                getCachedElement('current-revenue').textContent = `₱${currentRevenue.toLocaleString()}`;
+                getCachedElement('revenue-growth').textContent = `${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth.toFixed(1)}%`;
+                getCachedElement('revenue-growth').className = revenueGrowth >= 0 ? 'text-xs growth-positive font-medium' : 'text-xs growth-negative font-medium';
+                getCachedElement('net-income').textContent = `₱${netIncome.toLocaleString()}`;
 
                 // Populate Balance Sheet
                 const totalAssets = parseFloat(
@@ -508,11 +530,11 @@
                     }
                 });
 
-                document.getElementById('total-assets').textContent = `₱${totalAssets.toLocaleString()}`;
-                document.getElementById('total-liabilities').textContent = `₱${totalLiabilities.toLocaleString()}`;
-                document.getElementById('liability-percentage').textContent = `${liabilityPercentage.toFixed(1)}% of assets`;
-                document.getElementById('liability-bar').style.width = `${Math.min(liabilityPercentage, 100)}%`;
-                document.getElementById('shareholder-equity').textContent = `₱${shareholderEquity.toLocaleString()}`;
+                getCachedElement('total-assets').textContent = `₱${totalAssets.toLocaleString()}`;
+                getCachedElement('total-liabilities').textContent = `₱${totalLiabilities.toLocaleString()}`;
+                getCachedElement('liability-percentage').textContent = `${liabilityPercentage.toFixed(1)}% of assets`;
+                getCachedElement('liability-bar').style.width = `${Math.min(liabilityPercentage, 100)}%`;
+                getCachedElement('shareholder-equity').textContent = `₱${shareholderEquity.toLocaleString()}`;
 
                 // Populate Cash Flow
                 // Use the single cash_flow field from the API and break it down sensibly
@@ -562,16 +584,16 @@
                     return `${sign}₱${Math.abs(value).toLocaleString()}`;
                 };
 
-                document.getElementById('operations-cash-flow').textContent = formatCashFlow(operationsCashFlow);
-                document.getElementById('investment-cash-flow').textContent = formatCashFlow(investmentCashFlow);
-                document.getElementById('financing-cash-flow').textContent = formatCashFlow(financingCashFlow);
-                document.getElementById('net-cash-flow').textContent = formatCashFlow(netCashFlow);
+                getCachedElement('operations-cash-flow').textContent = formatCashFlow(operationsCashFlow);
+                getCachedElement('investment-cash-flow').textContent = formatCashFlow(investmentCashFlow);
+                getCachedElement('financing-cash-flow').textContent = formatCashFlow(financingCashFlow);
+                getCachedElement('net-cash-flow').textContent = formatCashFlow(netCashFlow);
 
                 // Update colors based on values
-                document.getElementById('operations-cash-flow').className = `font-semibold ${operationsCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`;
-                document.getElementById('investment-cash-flow').className = `font-semibold ${investmentCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`;
-                document.getElementById('financing-cash-flow').className = `font-semibold ${financingCashFlow >= 0 ? 'text-blue-600' : 'text-red-600'}`;
-                document.getElementById('net-cash-flow').className = `text-xl font-bold ${netCashFlow >= 0 ? 'text-blue-600' : 'text-red-600'}`;
+                getCachedElement('operations-cash-flow').className = `font-semibold ${operationsCashFlow >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
+                getCachedElement('investment-cash-flow').className = `font-semibold ${investmentCashFlow >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
+                getCachedElement('financing-cash-flow').className = `font-semibold ${financingCashFlow >= 0 ? 'text-blue-400' : 'text-red-400'}`;
+                getCachedElement('net-cash-flow').className = `text-xl font-bold ${netCashFlow >= 0 ? 'text-blue-400' : 'text-red-400'}`;
 
                 // Populate Report Confidence
                 // Use the stored confidence data from the backend (saved when editing)
@@ -600,10 +622,10 @@
                 let confidenceText = 'Low';
 
                 if (confidenceLevel === 'High') {
-                    confidenceColor = 'bg-green-500';
+                    confidenceColor = 'bg-emerald-500';
                     confidenceText = 'High';
                 } else if (confidenceLevel === 'Medium') {
-                    confidenceColor = 'bg-yellow-500';
+                    confidenceColor = 'bg-blue-500';
                     confidenceText = 'Medium';
                 } else {
                     confidenceColor = 'bg-red-500';
@@ -620,14 +642,14 @@
                     display_text: confidenceText
                 });
 
-                document.getElementById('confidence-percentage').textContent = `${confidencePercent}%`;
-                document.getElementById('confidence-bar').style.width = `${confidencePercent}%`;
-                document.getElementById('confidence-bar').className = `${confidenceColor} h-2 rounded-full progress-bar`;
-                document.getElementById('confidence-level').textContent = confidenceText;
-                document.getElementById('confidence-level').className = `text-sm font-medium mt-1 ${confidenceText === 'High' ? 'text-green-600' : confidenceText === 'Medium' ? 'text-yellow-600' : 'text-red-600'}`;
+                getCachedElement('confidence-percentage').textContent = `${confidencePercent}%`;
+                getCachedElement('confidence-bar').style.width = `${confidencePercent}%`;
+                getCachedElement('confidence-bar').className = `${confidenceColor} h-2 rounded-full progress-bar`;
+                getCachedElement('confidence-level').textContent = confidenceText;
+                getCachedElement('confidence-level').className = `text-sm font-medium mt-1 ${confidenceText === 'High' ? 'text-emerald-400' : confidenceText === 'Medium' ? 'text-blue-400' : 'text-red-400'}`;
 
                 // Set up edit button functionality - simplified
-                const editButton = document.getElementById('edit-startup-link');
+                const editButton = getCachedElement('edit-startup-link');
                 editButton.href = '#';
                 editButton.onclick = function(e) {
                     e.preventDefault();
@@ -640,9 +662,9 @@
 
             } catch (err) {
                 console.error('Failed to load report:', err);
-                document.body.innerHTML = `<div class="flex items-center justify-center min-h-screen"><div class="text-red-600 text-center"><h2 class="text-xl font-bold mb-2">Failed to load report</h2><p>Please try again later.</p></div></div>`;
+                document.body.innerHTML = `<div class="flex items-center justify-center min-h-screen"><div class="text-red-400 text-center"><h2 class="text-xl font-bold mb-2">Failed to load report</h2><p>Please try again later.</p></div></div>`;
             }
-        });
+        }, { passive: true });
     </script>
 </body>
 </html>

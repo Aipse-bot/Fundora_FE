@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fundora - My Profile</title>
+  <title>My Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
@@ -44,19 +44,19 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(148, 163, 184, 0.1); }
+    .glass-card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); }
     .stat-card {
-      transition: all 0.3s ease;
+      transition: box-shadow 0.3s ease;
+      contain: layout style paint;
     }
     .stat-card:hover {
-      transform: translateY(-4px);
       box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
     }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
   <!-- Header -->
-  <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+  <header class="sticky top-0 z-50 bg-slate-900 border-b border-slate-800">
     <div class="max-w-[1920px] mx-auto px-6 py-4">
       <div class="flex justify-between items-center">
         <div class="flex items-center space-x-3">
@@ -79,13 +79,13 @@
           <h1 class="text-2xl font-bold">Fundora</h1>
         </div>
         <div class="flex items-center space-x-3">
-          <a href="/Module_3/added-startups.html" class="bg-slate-800/50 hover:bg-slate-700/50 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-slate-700 flex items-center space-x-2">
+          <a href="/Module_3/added-startups.html" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors border border-slate-700 flex items-center space-x-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
             </svg>
             <span>Dashboard</span>
           </a>
-          <button id="logoutBtn" class="bg-red-600/80 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-red-500/50 flex items-center space-x-2">
+          <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors border border-red-500/50 flex items-center space-x-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
             </svg>
@@ -98,7 +98,7 @@
 
   <div class="max-w-7xl mx-auto px-6 py-8">
     <!-- Profile Header -->
-    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 mb-6">
+    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-8 mb-6 contain-layout">
       <div class="flex items-start justify-between">
         <div class="flex items-center space-x-6">
           <div class="w-24 h-24 rounded-full bg-gradient-to-br from-accent-500 to-brand-500 flex items-center justify-center text-3xl font-bold">
@@ -110,7 +110,7 @@
             <span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mt-2 bg-accent-500/20 text-accent-300 border border-accent-500/30">Startup</span>
           </div>
         </div>
-        <button id="editProfileBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all flex items-center space-x-2">
+        <button id="editProfileBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors flex items-center space-x-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
           </svg>
@@ -122,11 +122,11 @@
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <!-- Startups Registered -->
-      <div class="stat-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+      <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-4">
           <div class="w-12 h-12 rounded-xl bg-accent-500/20 flex items-center justify-center">
             <svg class="w-6 h-6 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
             </svg>
           </div>
           <span class="text-3xl font-bold" id="startupsCount">0</span>
@@ -136,10 +136,10 @@
       </div>
 
       <!-- Pitch Decks Created -->
-      <div class="stat-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+      <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
-            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
+            <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
           </div>
@@ -150,7 +150,7 @@
       </div>
 
       <!-- Profile Views -->
-      <div class="stat-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+      <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-4">
           <div class="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
             <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,10 +166,10 @@
     </div>
 
     <!-- My Companies Section -->
-    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 mb-6">
+    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 mb-6 contain-layout">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-xl font-bold">My Companies</h3>
-        <a href="/Module_3/Company_Information_Form.html" class="bg-accent-600 hover:bg-accent-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2">
+        <a href="/Module_3/Company_Information_Form.html" class="bg-accent-600 hover:bg-accent-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
           </svg>
@@ -182,10 +182,10 @@
     </div>
 
     <!-- Pitch Decks Section -->
-    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 mb-6">
+    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 mb-6 contain-layout">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-xl font-bold">My Pitch Decks</h3>
-        <a href="/base.html" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2">
+        <a href="/base.html" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
           </svg>
@@ -198,7 +198,7 @@
     </div>
 
     <!-- Recent Activity -->
-    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 contain-layout">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-xl font-bold">Recent Activity</h3>
         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,7 +212,7 @@
   </div>
 
   <!-- Edit Profile Modal -->
-  <div id="editModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="editModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full">
       <h3 class="text-2xl font-bold mb-6">Edit Profile</h3>
       <form id="editForm" class="space-y-4">
@@ -229,8 +229,8 @@
           <input type="email" id="editEmail" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required>
         </div>
         <div class="flex space-x-3 pt-4">
-          <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-all">Save Changes</button>
-          <button type="button" id="cancelEdit" class="flex-1 bg-slate-800/50 hover:bg-slate-700/50 text-white py-2.5 px-4 rounded-lg font-medium transition-all border border-slate-700">Cancel</button>
+          <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-colors">Save Changes</button>
+          <button type="button" id="cancelEdit" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2.5 px-4 rounded-lg font-medium transition-colors border border-slate-700">Cancel</button>
         </div>
       </form>
     </div>
@@ -241,6 +241,33 @@
     const PROFILE_ENDPOINT = `${API_BASE}/api/startup/profile/`;
     const UPDATE_PROFILE_ENDPOINT = `${API_BASE}/api/profile/update/`;
     const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
+
+    const domCache = {
+      userInitials: null,
+      userName: null,
+      userEmail: null,
+      startupsCount: null,
+      decksCount: null,
+      viewsCount: null,
+      companiesList: null,
+      decksList: null,
+      recentActivity: null,
+      editModal: null,
+      editForm: null,
+      editFirstName: null,
+      editLastName: null,
+      editEmail: null,
+      logoutBtn: null,
+      editProfileBtn: null,
+      cancelEdit: null
+    };
+
+    function getCachedElement(id) {
+      if (!domCache[id]) {
+        domCache[id] = document.getElementById(id);
+      }
+      return domCache[id];
+    }
 
     function getAuthToken() {
       return localStorage.getItem('authToken');
@@ -300,13 +327,13 @@
       try {
         const data = await fetchJSON(PROFILE_ENDPOINT);
         
-        document.getElementById('userName').textContent = `${data.first_name} ${data.last_name}`;
-        document.getElementById('userEmail').textContent = data.email;
-        document.getElementById('userInitials').textContent = getInitials(data.first_name, data.last_name);
+        getCachedElement('userName').textContent = `${data.first_name} ${data.last_name}`;
+        getCachedElement('userEmail').textContent = data.email;
+        getCachedElement('userInitials').textContent = getInitials(data.first_name, data.last_name);
         
-        document.getElementById('startupsCount').textContent = data.startups_count || 0;
-        document.getElementById('decksCount').textContent = data.decks_count || 0;
-        document.getElementById('viewsCount').textContent = data.views_count || 0;
+        getCachedElement('startupsCount').textContent = data.startups_count || 0;
+        getCachedElement('decksCount').textContent = data.decks_count || 0;
+        getCachedElement('viewsCount').textContent = data.views_count || 0;
 
         renderCompanies(data.startups || []);
         renderDecks(data.decks || []);
@@ -319,7 +346,7 @@
     }
 
     function renderCompanies(companies) {
-      const container = document.getElementById('companiesList');
+      const container = getCachedElement('companiesList');
       
       if (!companies || companies.length === 0) {
         container.innerHTML = '<div class="text-center py-8 text-gray-400">No companies registered yet</div>';
@@ -327,7 +354,7 @@
       }
 
       container.innerHTML = companies.map(company => `
-        <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-all">
+        <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors">
           <div class="flex-1">
             <h4 class="font-semibold text-white mb-1">${escapeHtml(company.company_name || 'Untitled')}</h4>
             <p class="text-sm text-gray-400">${escapeHtml(company.industry || 'N/A')}</p>
@@ -341,7 +368,7 @@
     }
 
     function renderDecks(decks) {
-      const container = document.getElementById('decksList');
+      const container = getCachedElement('decksList');
       
       if (!decks || decks.length === 0) {
         container.innerHTML = '<div class="text-center py-8 text-gray-400">No pitch decks created yet</div>';
@@ -349,21 +376,21 @@
       }
 
       container.innerHTML = decks.map(deck => `
-        <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-all">
+        <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors">
           <div class="flex-1">
             <h4 class="font-semibold text-white mb-1">${escapeHtml(deck.company_name || 'Untitled Deck')}</h4>
             <p class="text-sm text-gray-400">${escapeHtml(deck.tagline || 'No tagline')}</p>
           </div>
           <div class="flex items-center space-x-3">
             <span class="text-sm text-gray-500">${formatDate(deck.created_at)}</span>
-            <a href="/Module_3/View_Deck.html?id=${deck.id}" class="text-purple-400 hover:text-purple-300 text-sm font-medium">View</a>
+            <a href="/Module_3/View_Deck.html?id=${deck.id}" class="text-brand-400 hover:text-brand-300 text-sm font-medium">View</a>
           </div>
         </div>
       `).join('');
     }
 
     function renderActivity(activities) {
-      const container = document.getElementById('recentActivity');
+      const container = getCachedElement('recentActivity');
       
       if (!activities || activities.length === 0) {
         container.innerHTML = '<div class="text-center py-8 text-gray-400">No recent activity</div>';
@@ -373,7 +400,7 @@
       container.innerHTML = activities.slice(0, 10).map(activity => `
         <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg">
           <div class="flex items-center space-x-3 flex-1">
-            <div class="w-2 h-2 rounded-full ${activity.type === 'view' ? 'bg-brand-400' : activity.type === 'deck' ? 'bg-purple-400' : 'bg-accent-400'}"></div>
+            <div class="w-2 h-2 rounded-full ${activity.type === 'view' ? 'bg-brand-400' : activity.type === 'deck' ? 'bg-brand-400' : 'bg-accent-400'}"></div>
             <p class="text-sm text-gray-300">${escapeHtml(activity.description || 'Activity')}</p>
           </div>
           <span class="text-sm text-gray-500">${formatDate(activity.timestamp)}</span>
@@ -402,31 +429,31 @@
       }
     }
 
-    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+    getCachedElement('logoutBtn').addEventListener('click', logoutUser, { passive: true });
 
-    document.getElementById('editProfileBtn').addEventListener('click', async () => {
+    getCachedElement('editProfileBtn').addEventListener('click', async () => {
       try {
         const data = await fetchJSON(PROFILE_ENDPOINT);
-        document.getElementById('editFirstName').value = data.first_name || '';
-        document.getElementById('editLastName').value = data.last_name || '';
-        document.getElementById('editEmail').value = data.email || '';
-        document.getElementById('editModal').classList.remove('hidden');
+        getCachedElement('editFirstName').value = data.first_name || '';
+        getCachedElement('editLastName').value = data.last_name || '';
+        getCachedElement('editEmail').value = data.email || '';
+        getCachedElement('editModal').classList.remove('hidden');
       } catch (error) {
         console.error('Error loading profile for edit:', error);
       }
-    });
+    }, { passive: true });
 
-    document.getElementById('cancelEdit').addEventListener('click', () => {
-      document.getElementById('editModal').classList.add('hidden');
-    });
+    getCachedElement('cancelEdit').addEventListener('click', () => {
+      getCachedElement('editModal').classList.add('hidden');
+    }, { passive: true });
 
-    document.getElementById('editForm').addEventListener('submit', async (e) => {
+    getCachedElement('editForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const formData = {
-        first_name: document.getElementById('editFirstName').value,
-        last_name: document.getElementById('editLastName').value,
-        email: document.getElementById('editEmail').value
+        first_name: getCachedElement('editFirstName').value,
+        last_name: getCachedElement('editLastName').value,
+        email: getCachedElement('editEmail').value
       };
 
       try {
@@ -436,7 +463,7 @@
           body: JSON.stringify(formData)
         });
 
-        document.getElementById('editModal').classList.add('hidden');
+        getCachedElement('editModal').classList.add('hidden');
         await loadProfile();
         alert('Profile updated successfully!');
       } catch (error) {
@@ -452,7 +479,7 @@
         return;
       }
       loadProfile();
-    });
+    }, { passive: true });
   </script>
 </body>
 </html>

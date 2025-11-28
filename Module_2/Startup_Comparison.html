@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Startup Comparison - Fundora</title>
+  <title>Startup Comparison</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -45,15 +45,16 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
     .delay-1 { animation-delay: 0.1s; }
     .delay-2 { animation-delay: 0.2s; }
     .delay-3 { animation-delay: 0.3s; }
+    .chart-container { contain: layout style paint; }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
-  <header class="bg-slate-900/50 backdrop-blur-xl border-b border-slate-800 sticky top-0 z-50">
+  <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center">
@@ -91,7 +92,7 @@
       <div class="flex justify-between items-center mb-8 fade-in">
         <div>
           <h1 class="text-3xl font-bold text-white">Startup Comparison</h1>
-          <p id="comparison-count" class="text-gray-300 mt-1">Loading comparison...</p>
+          <p id="comparison-count" class="text-gray-400 mt-1">Loading comparison...</p>
         </div>
         <div id="back-to-selection-container" class="hidden flex gap-3">
           <a href="Compare_Startups.html" class="text-gray-300 hover:text-white font-medium flex items-center">
@@ -106,12 +107,12 @@
       <!-- Loading State -->
       <div id="loading-state" class="text-center py-16 fade-in">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500 mx-auto mb-4"></div>
-        <p class="text-gray-300">Loading startup data...</p>
+        <p class="text-gray-400">Loading startup data...</p>
       </div>
 
       <!-- Error State -->
       <div id="error-state" class="hidden text-center py-16 fade-in">
-        <div class="text-6xl mb-4">⚠️</div>
+        <div class="text-4xl font-bold text-red-500 mb-4">Error</div>
         <h3 class="text-xl font-semibold text-white mb-2">Failed to load comparison</h3>
         <p class="text-gray-400 mb-6">Please try again or select different startups</p>
         <a href="Compare_Startups.html" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-6 rounded-lg transition-colors">
@@ -123,25 +124,25 @@
       <div id="comparison-header" class="hidden grid gap-6 mb-8"></div>
 
       <!-- Quick Stats Overview -->
-      <div id="quick-stats" class="hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 mb-8 fade-in delay-1">
+      <div id="quick-stats" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-8 fade-in delay-1">
         <h2 class="text-xl font-bold text-white mb-6">Quick Overview</h2>
         <div id="quick-stats-content" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
       </div>
 
       <!-- Visual Comparison Charts -->
       <div id="charts-section" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-2">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 fade-in delay-2 chart-container">
           <h3 class="text-lg font-semibold text-white mb-4">Projected Returns</h3>
           <canvas id="returns-chart"></canvas>
         </div>
-        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 fade-in delay-2">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 fade-in delay-2 chart-container">
           <h3 class="text-lg font-semibold text-white mb-4">Risk vs Reward</h3>
           <canvas id="risk-reward-chart"></canvas>
         </div>
       </div>
 
       <!-- Detailed Comparison Table -->
-      <div id="comparison-table-section" class="hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl overflow-hidden mb-8 fade-in delay-3">
+      <div id="comparison-table-section" class="hidden bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden mb-8 fade-in delay-3">
         <div class="p-6 border-b border-slate-800">
           <h2 class="text-xl font-bold text-white">Detailed Comparison</h2>
         </div>
@@ -162,6 +163,22 @@
   </main>
 
   <script>
+    const domCache = {
+      notification: document.getElementById('notification'),
+      notificationMessage: document.getElementById('notification-message'),
+      notificationIcon: document.getElementById('notification-icon'),
+      loadingState: document.getElementById('loading-state'),
+      errorState: document.getElementById('error-state'),
+      comparisonHeader: document.getElementById('comparison-header'),
+      quickStats: document.getElementById('quick-stats'),
+      chartsSection: document.getElementById('charts-section'),
+      comparisonTableSection: document.getElementById('comparison-table-section'),
+      saveBtn: document.getElementById('save-comparison-btn'),
+      saveText: document.getElementById('save-text'),
+      saveIcon: document.getElementById('save-icon'),
+      comparissonCount: document.getElementById('comparison-count')
+    };
+
     const API_BASE = 'https://fundora-be-singapore.onrender.com/api';
     const STARTUPS_ENDPOINT = `${API_BASE}/startups/`;
     const SAVE_COMPARISON_ENDPOINT = `${API_BASE}/investor/comparisons/save/`;
@@ -195,39 +212,35 @@
     }
 
     function showNotification(message, type = 'success') {
-      const notification = document.getElementById('notification');
-      const notificationMessage = document.getElementById('notification-message');
-      const notificationIcon = document.getElementById('notification-icon');
-      
-      notificationMessage.textContent = message;
+      domCache.notificationMessage.textContent = message;
       
       if (type === 'success') {
-        notification.querySelector('.border-l-4').classList.remove('border-red-500', 'border-yellow-500');
-        notification.querySelector('.border-l-4').classList.add('border-accent-500');
-        notificationIcon.innerHTML = `
+        domCache.notification.querySelector('.border-l-4').classList.remove('border-red-500', 'border-yellow-500');
+        domCache.notification.querySelector('.border-l-4').classList.add('border-accent-500');
+        domCache.notificationIcon.innerHTML = `
           <svg class="w-6 h-6 text-accent-400" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
           </svg>
         `;
       } else if (type === 'error') {
-        notification.querySelector('.border-l-4').classList.remove('border-accent-500', 'border-yellow-500');
-        notification.querySelector('.border-l-4').classList.add('border-red-500');
-        notificationIcon.innerHTML = `
+        domCache.notification.querySelector('.border-l-4').classList.remove('border-accent-500', 'border-yellow-500');
+        domCache.notification.querySelector('.border-l-4').classList.add('border-red-500');
+        domCache.notificationIcon.innerHTML = `
           <svg class="w-6 h-6 text-red-400" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
           </svg>
         `;
       } else {
-        notification.querySelector('.border-l-4').classList.remove('border-accent-500', 'border-red-500');
-        notification.querySelector('.border-l-4').classList.add('border-yellow-500');
-        notificationIcon.innerHTML = `
+        domCache.notification.querySelector('.border-l-4').classList.remove('border-accent-500', 'border-red-500');
+        domCache.notification.querySelector('.border-l-4').classList.add('border-yellow-500');
+        domCache.notificationIcon.innerHTML = `
           <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
           </svg>
         `;
       }
       
-      notification.classList.remove('hidden');
+      domCache.notification.classList.remove('hidden');
       
       setTimeout(() => {
         hideNotification();
@@ -235,7 +248,7 @@
     }
 
     function hideNotification() {
-      document.getElementById('notification').classList.add('hidden');
+      domCache.notification.classList.add('hidden');
     }
 
     async function checkIfComparisonExists() {
@@ -250,22 +263,16 @@
         const data = await response.json();
         const comparisons = data.results || [];
         
-        console.log('All comparisons:', comparisons);
-        
         const sortedCurrent = [...currentComparisonIds].sort((a, b) => a - b);
-        console.log('Looking for comparison with startup IDs:', sortedCurrent);
         
         for (const comp of comparisons) {
           const compIds = comp.startups.map(s => s.id).sort((a, b) => a - b);
-          console.log('Checking comparison ID', comp.id, 'with startup IDs:', compIds);
           
           if (JSON.stringify(sortedCurrent) === JSON.stringify(compIds)) {
-            console.log('Match found! Comparison ID:', comp.id);
             return { exists: true, id: comp.id };
           }
         }
         
-        console.log('No matching comparison found');
         return { exists: false, id: null };
       } catch (error) {
         console.error('Error checking comparison:', error);
@@ -274,30 +281,26 @@
     }
 
     function updateSaveButton(isSaved) {
-      const saveBtn = document.getElementById('save-comparison-btn');
-      const saveText = document.getElementById('save-text');
-      const saveIcon = document.getElementById('save-icon');
-      
-      saveBtn.disabled = false;
+      domCache.saveBtn.disabled = false;
       
       if (isSaved) {
-        saveText.textContent = 'Unsave Comparison';
-        saveIcon.innerHTML = `
+        domCache.saveText.textContent = 'Unsave Comparison';
+        domCache.saveIcon.innerHTML = `
           <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         `;
-        saveBtn.classList.remove('bg-brand-600', 'hover:bg-brand-700');
-        saveBtn.classList.add('bg-slate-800', 'hover:bg-slate-700', 'border', 'border-slate-700');
+        domCache.saveBtn.classList.remove('bg-brand-600', 'hover:bg-brand-700');
+        domCache.saveBtn.classList.add('bg-slate-800', 'hover:bg-slate-700', 'border', 'border-slate-700');
       } else {
-        saveText.textContent = 'Save Comparison';
-        saveIcon.innerHTML = `
+        domCache.saveText.textContent = 'Save Comparison';
+        domCache.saveIcon.innerHTML = `
           <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
           </svg>
         `;
-        saveBtn.classList.remove('bg-slate-800', 'hover:bg-slate-700', 'border', 'border-slate-700');
-        saveBtn.classList.add('bg-brand-600', 'hover:bg-brand-700');
+        domCache.saveBtn.classList.remove('bg-slate-800', 'hover:bg-slate-700', 'border', 'border-slate-700');
+        domCache.saveBtn.classList.add('bg-brand-600', 'hover:bg-brand-700');
       }
     }
 
@@ -315,13 +318,9 @@
         return;
       }
 
-      const saveBtn = document.getElementById('save-comparison-btn');
-      const saveText = document.getElementById('save-text');
-      const saveIcon = document.getElementById('save-icon');
-      
-      saveBtn.disabled = true;
-      saveText.textContent = 'Saving...';
-      saveIcon.innerHTML = `
+      domCache.saveBtn.disabled = true;
+      domCache.saveText.textContent = 'Saving...';
+      domCache.saveIcon.innerHTML = `
         <svg class="animate-spin w-5 h-5 mr-2 inline" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -364,15 +363,9 @@
         return;
       }
 
-      console.log('Attempting to delete comparison with ID:', savedComparisonId);
-
-      const saveBtn = document.getElementById('save-comparison-btn');
-      const saveText = document.getElementById('save-text');
-      const saveIcon = document.getElementById('save-icon');
-      
-      saveBtn.disabled = true;
-      saveText.textContent = 'Removing...';
-      saveIcon.innerHTML = `
+      domCache.saveBtn.disabled = true;
+      domCache.saveText.textContent = 'Removing...';
+      domCache.saveIcon.innerHTML = `
         <svg class="animate-spin w-5 h-5 mr-2 inline" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -381,23 +374,16 @@
 
       try {
         const deleteUrl = `${API_BASE}/api/investor/comparisons/delete/${savedComparisonId}/`;
-        console.log('DELETE URL:', deleteUrl);
         
         const response = await fetch(deleteUrl, {
           method: 'DELETE',
           headers: authHeaders()
         });
 
-        console.log('Delete response status:', response.status);
-
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          console.error('Delete error data:', errorData);
           throw new Error(errorData.error || 'Failed to unsave comparison');
         }
-
-        const result = await response.json().catch(() => ({}));
-        console.log('Delete success:', result);
 
         isComparisonSaved = false;
         savedComparisonId = null;
@@ -441,7 +427,7 @@
         return;
       }
 
-      document.getElementById('comparison-count').textContent = 
+      domCache.comparissonCount.textContent = 
         `Comparing ${startupIds.length} startup${startupIds.length > 1 ? 's' : ''}`;
 
       try {
@@ -454,12 +440,11 @@
           return;
         }
 
-        document.getElementById('loading-state').classList.add('hidden');
+        domCache.loadingState.classList.add('hidden');
         
         const result = await checkIfComparisonExists();
-        const saveBtn = document.getElementById('save-comparison-btn');
         
-        saveBtn.classList.remove('hidden');
+        domCache.saveBtn.classList.remove('hidden');
         
         if (result.exists) {
           isComparisonSaved = true;
@@ -479,10 +464,9 @@
     }
 
     function showError(message) {
-      document.getElementById('loading-state').classList.add('hidden');
-      const errorState = document.getElementById('error-state');
-      errorState.classList.remove('hidden');
-      errorState.querySelector('p').textContent = message;
+      domCache.loadingState.classList.add('hidden');
+      domCache.errorState.classList.remove('hidden');
+      domCache.errorState.querySelector('p').textContent = message;
     }
 
     function renderComparison() {
@@ -491,14 +475,14 @@
       renderCharts();
       renderComparisonTable();
       
-      document.getElementById('comparison-header').classList.remove('hidden');
-      document.getElementById('quick-stats').classList.remove('hidden');
-      document.getElementById('charts-section').classList.remove('hidden');
-      document.getElementById('comparison-table-section').classList.remove('hidden');
+      domCache.comparisonHeader.classList.remove('hidden');
+      domCache.quickStats.classList.remove('hidden');
+      domCache.chartsSection.classList.remove('hidden');
+      domCache.comparisonTableSection.classList.remove('hidden');
     }
 
     function renderHeaders() {
-      const container = document.getElementById('comparison-header');
+      const container = domCache.comparisonHeader;
       container.className = `grid grid-cols-1 md:grid-cols-${startupsData.length} gap-6 mb-8`;
       container.innerHTML = '';
 
@@ -507,11 +491,11 @@
         
         let riskBadge;
         if (isDeck) {
-          riskBadge = '<span class="bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>';
+          riskBadge = '<span class="bg-brand-500/20 text-brand-300 border border-brand-500/30 text-xs font-medium px-2 py-1 rounded-full">Pitch Deck</span>';
         } else if (startup.risk_level) {
           const riskLevel = startup.risk_level.toLowerCase();
           if (riskLevel === 'low') {
-            riskBadge = '<span class="bg-green-500/20 text-green-300 border border-green-500/30 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>';
+            riskBadge = '<span class="bg-accent-500/20 text-accent-300 border border-accent-500/30 text-xs font-medium px-2 py-1 rounded-full">Low Risk</span>';
           } else if (riskLevel === 'medium') {
             riskBadge = '<span class="bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>';
           } else {
@@ -522,7 +506,7 @@
         }
 
         const card = document.createElement('div');
-        card.className = 'bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6';
+        card.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-6';
         card.innerHTML = `
           <div class="flex justify-between items-start mb-4">
             <div>
@@ -588,13 +572,13 @@
           title: 'Lowest Risk',
           company: lowestRisk.company_name,
           value: lowestRisk.risk_level || 'N/A',
-          color: 'text-purple-400'
+          color: 'text-accent-400'
         }
       ];
 
       stats.forEach(stat => {
         const statCard = document.createElement('div');
-        statCard.className = 'text-center p-4 bg-slate-800/50 rounded-lg border border-slate-700';
+        statCard.className = 'text-center p-4 bg-slate-800 rounded-lg border border-slate-700';
         statCard.innerHTML = `
           <p class="text-sm text-gray-400 mb-1">${stat.title}</p>
           <p class="text-lg font-bold text-white mb-1">${escapeHtml(stat.company)}</p>
@@ -627,6 +611,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: true,
+          animation: { duration: 0 },
           plugins: {
             legend: { 
               display: false 
@@ -693,6 +678,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: true,
+          animation: { duration: 0 },
           plugins: {
             legend: { 
               position: 'bottom',
@@ -794,9 +780,9 @@
       ];
 
       const thead = document.createElement('thead');
-      thead.className = 'bg-slate-800/50';
+      thead.className = 'bg-slate-800';
       const headerRow = document.createElement('tr');
-      headerRow.innerHTML = '<th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider sticky left-0 bg-slate-800/50 z-10">Metric</th>';
+      headerRow.innerHTML = '<th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider sticky left-0 bg-slate-800 z-10">Metric</th>';
       startupsData.forEach(startup => {
         const th = document.createElement('th');
         th.className = 'px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider';
@@ -845,19 +831,14 @@
       const backNavText = document.getElementById('back-nav-text');
       const backToSelectionContainer = document.getElementById('back-to-selection-container');
       
-      console.log('From source:', fromSource);
-      console.log('Full URL:', window.location.href);
-      
       if (fromSource === 'watchlist') {
         backNavLink.href = '../Module_1/Watchlist.html?tab=compared';
         backNavText.textContent = 'Back to Watchlist';
         backToSelectionContainer.classList.add('hidden');
-        console.log('Set navigation to: Back to Watchlist (no Back to Selection)');
       } else {
         backNavLink.href = '../Module_1/Dashboard.html';
         backNavText.textContent = 'Dashboard';
         backToSelectionContainer.classList.remove('hidden');
-        console.log('Set navigation to: Dashboard (with Back to Selection)');
       }
       
       loadComparison();

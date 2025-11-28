@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Investment Simulation - Fundora Platform</title>
+  <title>Investment Simulation</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -43,13 +43,32 @@
     };
   </script>
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 0.5s ease-out; }
+    body { 
+      font-family: 'Inter', sans-serif;
+      contain: layout style paint;
+    }
+    .hero-gradient { 
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); 
+    }
+    @keyframes fadeIn { 
+      from { opacity: 0; } 
+      to { opacity: 1; } 
+    }
+    .fade-in { 
+      animation: fadeIn 0.4s ease-out forwards;
+      opacity: 0;
+    }
     .delay-1 { animation-delay: 0.1s; }
     .delay-2 { animation-delay: 0.2s; }
     .delay-3 { animation-delay: 0.3s; }
+    .card-base {
+      background-color: rgba(15, 23, 42, 0.8);
+      contain: layout style;
+    }
+    .transition-smooth {
+      transition: all 150ms ease-out;
+      will-change: color, background-color;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
@@ -73,7 +92,7 @@
 
   <main class="max-w-7xl mx-auto px-6 py-8">
     <!-- Parameters Section -->
-    <section class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 mb-8 fade-in delay-1">
+    <section class="card-base border border-slate-800 rounded-2xl p-8 mb-8 fade-in delay-1">
       <h2 class="text-2xl font-semibold mb-6">Simulation Parameters</h2>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -81,13 +100,13 @@
           <label class="text-sm font-medium text-gray-300 mb-3 block">Investment Amount</label>
           <div class="relative">
             <span class="absolute left-4 top-4 text-gray-400 font-medium">₱</span>
-            <input type="number" id="investment-amount" class="w-full pl-10 pr-4 py-4 bg-slate-800/50 border border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent text-lg font-semibold text-white placeholder-gray-500" placeholder="Enter amount" min="1000" step="1000" />
+            <input type="number" id="investment-amount" class="w-full pl-10 pr-4 py-4 bg-slate-800/60 border border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent text-lg font-semibold text-white placeholder-gray-500 transition-smooth" placeholder="Enter amount" min="1000" step="1000" />
           </div>
         </div>
 
         <div>
           <label class="text-sm font-medium text-gray-300 mb-3 block">Simulation Duration</label>
-          <select id="duration-years" class="w-full px-4 py-4 bg-slate-800/50 border border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 text-lg font-semibold text-white">
+          <select id="duration-years" class="w-full px-4 py-4 bg-slate-800/60 border border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 text-lg font-semibold text-white transition-smooth">
             <option value="" disabled selected>Select duration</option>
             <option value="1">1 Year</option>
             <option value="2">2 Years</option>
@@ -103,11 +122,10 @@
             <span id="cagr-source" class="text-xs text-gray-500 font-normal block mt-1">Calculated from revenue data</span>
           </label>
           <div class="flex">
-            <div id="growth-rate-display"
-                 class="flex-1 px-4 py-4 bg-slate-800/50 border border-slate-700 rounded-l-lg text-lg font-semibold text-brand-400">
+            <div id="growth-rate-display" class="flex-1 px-4 py-4 bg-slate-800/60 border border-slate-700 rounded-l-lg text-lg font-semibold text-brand-400">
               0
             </div>
-            <span class="px-4 py-4 bg-slate-800/30 border border-l-0 border-slate-700 rounded-r-lg text-gray-400 font-medium">% per year</span>
+            <span class="px-4 py-4 bg-slate-800/40 border border-l-0 border-slate-700 rounded-r-lg text-gray-400 font-medium">% per year</span>
           </div>
         </div>
       </div>
@@ -121,41 +139,41 @@
 
     <!-- Results Section -->
     <section id="results-section" class="hidden grid-cols-1 lg:grid-cols-2 gap-8 mb-8 fade-in delay-2">
-      <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8">
+      <div class="card-base border border-slate-800 rounded-2xl p-8">
         <h3 class="text-2xl font-semibold mb-6">Projection Summary</h3>
         <div class="space-y-6">
-          <div class="flex justify-between items-center p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+          <div class="flex justify-between items-center p-4 bg-slate-800/40 rounded-lg border border-slate-700">
             <span class="text-gray-300 font-medium">Initial Investment</span>
             <span id="initial-investment" class="font-bold text-xl text-white">₱0</span>
           </div>
-          <div class="flex justify-between items-center p-4 bg-accent-500/10 rounded-lg border border-accent-500/30">
+          <div class="flex justify-between items-center p-4 bg-accent-500/15 rounded-lg border border-accent-500/30">
             <span class="text-gray-300 font-medium">Projected Value (<span id="duration-display">0</span> years)</span>
             <span id="final-value" class="font-bold text-xl text-accent-400">₱0</span>
           </div>
-          <div class="flex justify-between items-center p-4 bg-brand-500/10 rounded-lg border border-brand-500/30">
+          <div class="flex justify-between items-center p-4 bg-brand-500/15 rounded-lg border border-brand-500/30">
             <span class="text-gray-300 font-medium">Total Gain</span>
             <span id="total-gain" class="font-bold text-xl text-brand-400">₱0</span>
           </div>
-          <div class="bg-gradient-to-r from-accent-500 to-accent-600 text-white rounded-xl p-6 text-center shadow-lg">
+          <div class="bg-accent-500 text-white rounded-xl p-6 text-center shadow-lg">
             <div class="text-sm font-medium opacity-90 mb-1">ROI Percentage</div>
             <div id="roi-percentage" class="text-3xl font-bold">0%</div>
           </div>
         </div>
       </div>
 
-      <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8">
+      <div class="card-base border border-slate-800 rounded-2xl p-8">
         <h3 class="text-2xl font-semibold mb-6">Growth Projection</h3>
         <div style="height: 300px;"><canvas id="growthChart"></canvas></div>
       </div>
     </section>
 
     <!-- Breakdown Section -->
-    <section id="breakdown-section" class="hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 mb-8 fade-in delay-3">
+    <section id="breakdown-section" class="hidden card-base border border-slate-800 rounded-2xl p-8 mb-8 fade-in delay-3">
       <h3 class="text-2xl font-semibold mb-6">Annual Breakdown</h3>
       <div class="overflow-x-auto">
         <table class="w-full">
           <thead>
-            <tr class="bg-slate-800/50">
+            <tr class="bg-slate-800/40">
               <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300 rounded-tl-lg">Year</th>
               <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Starting Value</th>
               <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Growth</th>
@@ -168,15 +186,44 @@
     </section>
 
     <!-- Assumptions Section -->
-    <section id="assumptions-section" class="hidden bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-l-4 border-yellow-500/50 rounded-xl p-8 mb-8 fade-in delay-3">
-      <h4 class="text-lg font-semibold text-yellow-300 mb-4">Important Assumptions</h4>
-      <p class="text-sm text-gray-300 italic leading-relaxed">
+    <section id="assumptions-section" class="hidden bg-slate-800/50 border-l-4 border-brand-500/50 rounded-xl p-8 mb-8 fade-in delay-3">
+      <h4 class="text-lg font-semibold text-brand-300 mb-4">Important Assumptions</h4>
+      <p class="text-sm text-gray-300 leading-relaxed">
         <strong>Disclaimer:</strong> This simulation uses <strong>raw revenue CAGR (Compound Annual Growth Rate)</strong> calculated from <span id="data-source-text">revenue data</span> without risk adjustments. The growth rate shown (<span id="cagr-value" class="font-semibold">0%</span>) represents the pure historical revenue growth trend. Actual future results depend on market conditions, execution, and startup performance. Past performance does not guarantee future results.
       </p>
     </section>
   </main>
 
   <script>
+    const domCache = {
+      startupName: null,
+      riskBadge: null,
+      growthRateDisplay: null,
+      investmentInput: null,
+      durationSelect: null,
+      simulateBtn: null,
+      resultsSection: null,
+      breakdownSection: null,
+      assumptionsSection: null,
+      initialInvestment: null,
+      durationDisplay: null,
+      finalValue: null,
+      totalGain: null,
+      roiPercentage: null,
+      breakdownTable: null,
+      cagrSource: null,
+      dataSourceText: null,
+      cagrValue: null,
+      backButton: null
+    };
+
+    function cacheDOM() {
+      Object.keys(domCache).forEach(key => {
+        const id = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+        domCache[key] = document.getElementById(id);
+      });
+    }
+
     let growthChart = null;
     let simulationData = null;
     let startupData = null;
@@ -211,20 +258,21 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
+      cacheDOM();
+      
       // Get startup ID from URL
       const urlParams = new URLSearchParams(window.location.search);
       const returnUrl = urlParams.get('return');
-      const backButton = document.getElementById('back-button');
       const startupId = urlParams.get('startup_id');
 
-      backButton.addEventListener('click', (e) => {
+      domCache.backButton.addEventListener('click', (e) => {
         e.preventDefault();
         if (returnUrl) {
           window.location.href = decodeURIComponent(returnUrl);
         } else {
           window.location.href = '../Module_1/Dashboard.html';
         }
-      });
+      }, { passive: true });
 
       if (!startupId) {
         alert('No startup selected');
@@ -249,7 +297,7 @@
       console.log('==========================');
 
       // Update page with startup info
-      document.getElementById('startupName').textContent = startupData.company_name || 'Unknown Startup';
+      domCache.startupName.textContent = startupData.company_name || 'Unknown Startup';
       
       const isDeckBuilder = startupData.is_deck_builder === true;
       const riskLevel = startupData.risk_level;
@@ -257,18 +305,17 @@
 
       // Update data source text based on type
       if (isDeckBuilder) {
-        document.getElementById('cagr-source').textContent = 'From financial projections';
-        document.getElementById('data-source-text').textContent = 'the pitch deck financial projections';
+        domCache.cagrSource.textContent = 'From financial projections';
+        domCache.dataSourceText.textContent = 'the pitch deck financial projections';
       } else {
-        document.getElementById('cagr-source').textContent = 'From revenue history';
-        document.getElementById('data-source-text').textContent = 'the startup\'s historical revenue data';
+        domCache.cagrSource.textContent = 'From revenue history';
+        domCache.dataSourceText.textContent = 'the startup\'s historical revenue data';
       }
 
       // Check if we have a valid growth rate from backend
       if (projectedReturn === null || projectedReturn === undefined) {
-          // Disable simulation - no growth rate available
-          document.getElementById('growth-rate-display').textContent = 'N/A';
-          document.getElementById('growth-rate-display').parentElement.classList.add('opacity-50');
+          domCache.growthRateDisplay.textContent = 'N/A';
+          domCache.growthRateDisplay.parentElement.classList.add('opacity-50');
           
           const errorMsg = isDeckBuilder 
             ? 'This pitch deck does not have sufficient financial projections for investment simulation.\n\nRequired: At least 2 years of revenue projections'
@@ -276,82 +323,65 @@
           
           alert(errorMsg);
           
-          // Disable simulate button permanently
-          const simulateBtn = document.getElementById('simulate-btn');
-          simulateBtn.disabled = true;
-          simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
-          simulateBtn.textContent = 'Insufficient Data';
+          domCache.simulateBtn.disabled = true;
+          domCache.simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          domCache.simulateBtn.textContent = 'Insufficient Data';
           
-          // Update risk badge
-          const riskBadge = document.getElementById('risk-badge');
-          riskBadge.textContent = 'No Financial Data';
-          riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
+          domCache.riskBadge.textContent = 'No Financial Data';
+          domCache.riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
           
           return;
       }
       
-      // Display the CAGR from backend
-      document.getElementById('growth-rate-display').textContent = projectedReturn.toFixed(2);
+      domCache.growthRateDisplay.textContent = projectedReturn.toFixed(2);
       
       // Update risk badge
-      const riskBadge = document.getElementById('risk-badge');
-      
       console.log('Setting badge - Is Deck Builder:', isDeckBuilder, 'Risk Level:', riskLevel);
       
       if (isDeckBuilder) {
-        // For Pitch Decks, show "Pitch Deck" badge
-        riskBadge.textContent = 'Pitch Deck';
-        riskBadge.className = 'bg-purple-500/20 text-purple-300 text-sm font-medium px-4 py-2 rounded-full border border-purple-500/30';
-        console.log('Badge set to: Pitch Deck (purple)');
+        domCache.riskBadge.textContent = 'Pitch Deck';
+        domCache.riskBadge.className = 'bg-brand-500/20 text-brand-300 text-sm font-medium px-4 py-2 rounded-full border border-brand-500/30';
+        console.log('Badge set to: Pitch Deck (blue)');
       } else if (riskLevel === null || riskLevel === undefined) {
-        // For regular startups without risk level
-        riskBadge.textContent = 'Risk Pending';
-        riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
+        domCache.riskBadge.textContent = 'Risk Pending';
+        domCache.riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
         console.log('Badge set to: Risk Pending (gray)');
       } else {
-        // For regular startups with risk level
-        riskBadge.textContent = `${riskLevel} Risk`;
+        domCache.riskBadge.textContent = `${riskLevel} Risk`;
         
         const riskColors = {
-            'Very Low': 'bg-green-500/20 text-green-300 border-green-500/30',
-            'Low': 'bg-green-500/20 text-green-300 border-green-500/30',
-            'Medium': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+            'Very Low': 'bg-accent-500/20 text-accent-300 border-accent-500/30',
+            'Low': 'bg-accent-500/20 text-accent-300 border-accent-500/30',
+            'Medium': 'bg-brand-500/20 text-brand-300 border-brand-500/30',
             'High': 'bg-red-500/20 text-red-300 border-red-500/30',
             'Very High': 'bg-red-500/20 text-red-300 border-red-500/30'
         };
         
         const colorClass = riskColors[riskLevel] || 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-        riskBadge.className = `${colorClass} text-sm font-medium px-4 py-2 rounded-full border`;
+        domCache.riskBadge.className = `${colorClass} text-sm font-medium px-4 py-2 rounded-full border`;
         console.log('Badge set to:', riskLevel, 'Risk');
       }
 
-      const investmentInput = document.getElementById('investment-amount');
-      const durationSelect = document.getElementById('duration-years');
-      const simulateBtn = document.getElementById('simulate-btn');
-
       // Enable/disable simulate button based on input
-      [investmentInput, durationSelect].forEach(el => {
-          el.addEventListener('input', () => {
-              if (investmentInput.value && durationSelect.value) {
-                  simulateBtn.disabled = false;
-                  simulateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                  simulateBtn.classList.add('hover:bg-brand-700');
-              } else {
-                  simulateBtn.disabled = true;
-                  simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                  simulateBtn.classList.remove('hover:bg-brand-700');
-              }
-          });
-      });
+      const handleInput = () => {
+        if (domCache.investmentInput.value && domCache.durationSelect.value) {
+          domCache.simulateBtn.disabled = false;
+          domCache.simulateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+          domCache.simulateBtn.disabled = true;
+          domCache.simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+      };
 
-      // Set up simulate button click handler
-      simulateBtn.onclick = () => runSimulation();
+      domCache.investmentInput.addEventListener('input', handleInput, { passive: true });
+      domCache.durationSelect.addEventListener('change', handleInput, { passive: true });
+
+      domCache.simulateBtn.onclick = () => runSimulation();
     });
 
     function runSimulation() {
-      // Validate inputs
-      const investmentAmount = parseFloat(document.getElementById('investment-amount').value);
-      const durationYears = parseInt(document.getElementById('duration-years').value);
+      const investmentAmount = parseFloat(domCache.investmentInput.value);
+      const durationYears = parseInt(domCache.durationSelect.value);
 
       if (!investmentAmount || investmentAmount <= 0) {
         alert('Please enter a valid investment amount');
@@ -363,7 +393,6 @@
         return;
       }
 
-      // Get the CAGR calculated by the backend
       const projectedReturn = startupData.projected_return;
       
       if (projectedReturn === null || projectedReturn === undefined) {
@@ -377,15 +406,11 @@
       console.log('Growth Rate (CAGR from backend):', projectedReturn.toFixed(2) + '%');
       console.log('=========================');
 
-      // Convert percentage to decimal
       const growthRate = projectedReturn / 100;
-
-      // Calculate future value using compound growth
       const finalValue = investmentAmount * Math.pow(1 + growthRate, durationYears);
       const totalGain = finalValue - investmentAmount;
       const roiPercentage = (totalGain / investmentAmount) * 100;
 
-      // Generate yearly breakdown
       const yearlyBreakdown = [];
       let currentValue = investmentAmount;
       for (let year = 1; year <= durationYears; year++) {
@@ -396,7 +421,6 @@
         currentValue = end;
       }
 
-      // Store simulation data
       simulationData = { 
         investmentAmount, 
         durationYears, 
@@ -404,7 +428,7 @@
         totalGain, 
         roiPercentage, 
         yearlyBreakdown,
-        growthRate: projectedReturn // Store as percentage for display
+        growthRate: projectedReturn
       };
 
       console.log('Simulation Results:', {
@@ -413,105 +437,86 @@
         roi: roiPercentage.toFixed(2) + '%'
       });
 
-      // Update UI
       updateResults();
       createChart();
       showResults();
     }
 
     function showResults() {
-      ['results-section', 'breakdown-section', 'assumptions-section']
-        .forEach(id => {
-          const el = document.getElementById(id);
-          el.classList.remove('hidden');
-          if (id === 'results-section') el.classList.add('grid');
-        });
+      [domCache.resultsSection, domCache.breakdownSection, domCache.assumptionsSection].forEach(el => {
+        el.classList.remove('hidden');
+        if (el.id === 'results-section') el.classList.add('grid');
+      });
       
-      // Update CAGR value in disclaimer
-      document.getElementById('cagr-value').textContent = simulationData.growthRate.toFixed(2) + '%';
+      domCache.cagrValue.textContent = simulationData.growthRate.toFixed(2) + '%';
     }
 
     function updateResults() {
       const { investmentAmount, durationYears, finalValue, totalGain, roiPercentage, yearlyBreakdown } = simulationData;
       
-      document.getElementById('initial-investment').textContent = `₱${investmentAmount.toLocaleString()}`;
-      document.getElementById('duration-display').textContent = durationYears;
-      document.getElementById('final-value').textContent = `₱${Math.round(finalValue).toLocaleString()}`;
-      document.getElementById('total-gain').textContent = `₱${Math.round(totalGain).toLocaleString()}`;
-      document.getElementById('roi-percentage').textContent = `${roiPercentage.toFixed(2)}%`;
+      domCache.initialInvestment.textContent = `₱${investmentAmount.toLocaleString()}`;
+      domCache.durationDisplay.textContent = durationYears;
+      domCache.finalValue.textContent = `₱${Math.round(finalValue).toLocaleString()}`;
+      domCache.totalGain.textContent = `₱${Math.round(totalGain).toLocaleString()}`;
+      domCache.roiPercentage.textContent = `${roiPercentage.toFixed(2)}%`;
 
-      const tbody = document.getElementById('breakdown-table');
-      tbody.innerHTML = '';
-      yearlyBreakdown.forEach(y => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="px-6 py-4 text-sm font-medium text-white">Year ${y.year}</td>
-          <td class="px-6 py-4 text-sm text-gray-300">₱${Math.round(y.start).toLocaleString()}</td>
-          <td class="px-6 py-4 text-sm font-semibold text-accent-400">+₱${Math.round(y.growth).toLocaleString()}</td>
-          <td class="px-6 py-4 text-sm font-bold text-white">₱${Math.round(y.end).toLocaleString()}</td>`;
-        tbody.appendChild(tr);
-      });
+      domCache.breakdownTable.innerHTML = yearlyBreakdown.map(({ year, start, growth, end }) => `
+        <tr class="hover:bg-slate-800/30">
+          <td class="px-6 py-4 text-sm font-semibold text-white">Year ${year}</td>
+          <td class="px-6 py-4 text-sm text-gray-300">₱${Math.round(start).toLocaleString()}</td>
+          <td class="px-6 py-4 text-sm text-accent-400 font-medium">₱${Math.round(growth).toLocaleString()}</td>
+          <td class="px-6 py-4 text-sm font-semibold text-white">₱${Math.round(end).toLocaleString()}</td>
+        </tr>
+      `).join('');
     }
 
     function createChart() {
       const ctx = document.getElementById('growthChart').getContext('2d');
-      if (growthChart) growthChart.destroy();
       
-      const { investmentAmount, yearlyBreakdown } = simulationData;
+      if (growthChart) {
+        growthChart.destroy();
+      }
 
-      // Add initial investment as Year 0
-      const labels = ['Year 0', ...yearlyBreakdown.map(y => `Year ${y.year}`)];
-      const values = [investmentAmount, ...yearlyBreakdown.map(y => y.end)];
+      const { investmentAmount, durationYears, yearlyBreakdown } = simulationData;
+      const labels = ['Initial', ...yearlyBreakdown.map(d => `Year ${d.year}`)];
+      const data = [investmentAmount, ...yearlyBreakdown.map(d => d.end)];
 
       growthChart = new Chart(ctx, {
         type: 'line',
         data: {
           labels,
           datasets: [{
-            label: 'Investment Growth (₱)',
-            data: values,
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.2)',
-            tension: 0.3,
+            label: 'Portfolio Value',
+            data,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderWidth: 2,
             fill: true,
-            pointBackgroundColor: '#10b981',
+            tension: 0.3,
+            pointBackgroundColor: '#3b82f6',
             pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            pointRadius: 5,
-            pointHoverRadius: 7
+            pointRadius: 4,
+            pointHoverRadius: 6
           }]
         },
         options: {
+          animation: { duration: 0 },
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              labels: { color: '#fff', font: { size: 14 } }
-            },
-            tooltip: {
-              backgroundColor: 'rgba(15, 23, 42, 0.9)',
-              titleColor: '#fff',
-              bodyColor: '#cbd5e1',
-              borderColor: '#334155',
-              borderWidth: 1,
-              padding: 12,
-              callbacks: {
-                label: context => `Value: ₱${Math.round(context.parsed.y).toLocaleString()}`
-              }
+              display: true,
+              labels: { color: '#d1d5db', font: { size: 12 } }
             }
           },
           scales: {
-            x: {
-              ticks: { color: '#9ca3af', font: { size: 12 } },
+            y: {
+              beginAtZero: false,
+              ticks: { color: '#9ca3af', callback: v => `₱${(v / 1000).toFixed(0)}k` },
               grid: { color: 'rgba(148, 163, 184, 0.1)' }
             },
-            y: {
-              beginAtZero: true,
-              ticks: { 
-                color: '#9ca3af',
-                font: { size: 12 },
-                callback: value => `₱${value.toLocaleString()}` 
-              },
+            x: {
+              ticks: { color: '#9ca3af' },
               grid: { color: 'rgba(148, 163, 184, 0.1)' }
             }
           }

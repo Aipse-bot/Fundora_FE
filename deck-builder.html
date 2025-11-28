@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deck Builder | Fundora</title>
+  <title>Deck Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -17,28 +16,36 @@
       background: #1e293b;
       border: 1px solid #334155;
       border-radius: 0.75rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      contain: layout style paint;
     }
     .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      background-color: #334155;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
     .glass {
-      background: rgba(30, 41, 59, 0.8);
-      backdrop-filter: blur(10px);
+      background: #0f172a;
+      border-color: #334155;
+    }
+    .spinner {
+      border: 2px solid #334155;
+      border-top: 2px solid #3b82f6;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 
 <body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col">
 
-  <!-- Header -->
   <header class="glass border-b border-slate-700 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
       <div class="flex items-center space-x-3">
         <div class="bg-blue-600 p-2 rounded-lg">
-          <i data-lucide="layout-dashboard" class="w-5 h-5 text-white"></i>
+          <span class="text-white text-lg font-bold">D</span>
         </div>
         <h1 class="text-2xl font-bold text-white tracking-tight">My Pitch Decks</h1>
       </div>
@@ -49,17 +56,16 @@
   </header>
 
   <!-- Main -->
-  <main class="flex-1 max-w-7xl mx-auto p-6">
+  <main class="flex-1 max-w-7xl mx-auto p-6 w-full">
 
     <!-- Controls -->
     <div class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
       <a href="Module_3/added-startups.html"
          class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white font-medium transition">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-        Back to Added Startups
+        ← Back to Added Startups
       </a>
       <button id="createDeckBtn"
-              class="py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition">
+              class="py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition">
         + Create New Deck
       </button>
     </div>
@@ -75,40 +81,47 @@
   <!-- Template Loader/Empty States -->
   <template id="loading-template">
     <div class="col-span-full text-center py-12">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+      <div class="spinner rounded-full h-8 w-8 border-2 mx-auto"></div>
       <p class="mt-4 text-slate-400">Loading your pitch decks...</p>
     </div>
   </template>
 
   <template id="empty-template">
     <div class="col-span-full text-center py-12">
-      <i data-lucide="file-plus" class="mx-auto h-14 w-14 text-slate-500 mb-3"></i>
       <h3 class="text-lg font-medium text-slate-200 mb-2">No Pitch Decks Yet</h3>
       <p class="text-slate-400">Click the button above to start building your first deck.</p>
     </div>
   </template>
 
-  <!-- Error Modal -->
-  <div id="errorModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex justify-center items-center z-50">
+  <div id="errorModal" class="hidden fixed inset-0 bg-slate-900/80 flex justify-center items-center z-50">
     <div class="card p-6 w-96 text-center">
       <div class="flex items-center justify-center h-12 w-12 rounded-full bg-red-900/40 mx-auto mb-3">
-        <i data-lucide="alert-triangle" class="w-6 h-6 text-red-400"></i>
+        <span class="text-red-400 text-lg font-bold">!</span>
       </div>
       <h3 class="text-lg font-semibold text-white mb-2">Error Loading Decks</h3>
       <p id="errorMessage" class="text-sm text-slate-400 mb-6"></p>
-      <button onclick="loadDecks()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow">Try Again</button>
+      <button onclick="loadDecks()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">Try Again</button>
     </div>
   </div>
 
   <script>
     const API_BASE = 'https://fundora-be-singapore.onrender.com/api/';
     const token = localStorage.getItem('authToken');
+    const domCache = {
+      deckList: document.getElementById('deckList'),
+      messageContainer: document.getElementById('messageContainer'),
+      errorModal: document.getElementById('errorModal'),
+      errorMessage: document.getElementById('errorMessage'),
+      loadingTemplate: document.getElementById('loading-template'),
+      emptyTemplate: document.getElementById('empty-template'),
+      createDeckBtn: document.getElementById('createDeckBtn')
+    };
 
     async function loadDecks() {
-      const container = document.getElementById('deckList');
-      const messageContainer = document.getElementById('messageContainer');
-      const loadingTemplate = document.getElementById('loading-template').content.cloneNode(true);
-      const emptyTemplate = document.getElementById('empty-template').content.cloneNode(true);
+      const container = domCache.deckList;
+      const messageContainer = domCache.messageContainer;
+      const loadingTemplate = domCache.loadingTemplate.content.cloneNode(true);
+      const emptyTemplate = domCache.emptyTemplate.content.cloneNode(true);
 
       if (!token) {
         showMessage('Please log in to view your decks.', 'error');
@@ -137,6 +150,7 @@
           return;
         }
 
+        const fragment = document.createDocumentFragment();
         decks.forEach(deck => {
           const card = document.createElement('div');
           card.className = 'card p-6 flex flex-col justify-between';
@@ -151,16 +165,17 @@
               <button onclick="deleteDeck(${deck.id})" class="text-red-400 hover:text-red-300 transition">Delete</button>
             </div>
           `;
-          container.appendChild(card);
+          fragment.appendChild(card);
         });
+        container.appendChild(fragment);
 
         showMessage(`Loaded ${decks.length} deck${decks.length === 1 ? '' : 's'} successfully.`, 'success');
 
       } catch (error) {
         console.error('Error loading decks:', error);
         container.innerHTML = '';
-        document.getElementById('errorModal').classList.remove('hidden');
-        document.getElementById('errorMessage').textContent = error.message;
+        domCache.errorModal.classList.remove('hidden');
+        domCache.errorMessage.textContent = error.message;
         showMessage(`Failed to load decks: ${error.message}`, 'error');
       }
     }
@@ -183,12 +198,12 @@
     }
 
     function showMessage(text, type) {
-      const container = document.getElementById('messageContainer');
+      const container = domCache.messageContainer;
       const color = type === 'error'
         ? 'bg-red-900/30 border border-red-700 text-red-400'
         : type === 'warning'
         ? 'bg-amber-900/30 border border-amber-700 text-amber-400'
-        : 'bg-green-900/30 border border-green-700 text-green-400';
+        : 'bg-emerald-900/30 border border-emerald-700 text-emerald-400';
       container.innerHTML = `<div class="p-4 rounded-lg text-sm font-medium ${color}">${text}</div>`;
       setTimeout(() => { container.innerHTML = ''; }, 5000);
     }
@@ -199,7 +214,7 @@
       window.location.href = '/base.html';
     }
 
-    document.getElementById('createDeckBtn').addEventListener('click', async () => {
+    domCache.createDeckBtn.addEventListener('click', async () => {
       try {
         const res = await fetch(`${API_BASE}deck/create/`, {
           method: 'POST',
@@ -214,7 +229,7 @@
         console.error(err);
         alert('Something went wrong while creating the deck.');
       }
-    });
+    }, { passive: true });
 
     function logout() {
       localStorage.removeItem('authToken');
@@ -222,10 +237,9 @@
       window.location.href = '/login.html';
     }
 
-    window.onload = () => {
+    window.addEventListener('load', () => {
       loadDecks();
-      lucide.createIcons();
-    };
+    }, { passive: true });
   </script>
 
 </body>

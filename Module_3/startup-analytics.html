@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Startup Analytics Dashboard | Fundora</title>
+  <title>Startup Analytics Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,11 +31,20 @@
     body {
       font-family: 'Inter', sans-serif;
     }
+    header {
+      contain: layout style paint;
+    }
+    main {
+      contain: layout style;
+    }
+    .analytics-card {
+      contain: layout style paint;
+    }
   </style>
 </head>
 <body class="bg-gradient-dark text-gray-100 min-h-screen flex flex-col">
   <!-- Header -->
-  <header class="backdrop-blur-xl bg-slate-900/80 border-b border-slate-700 sticky top-0 z-50">
+  <header class="bg-slate-900 border-b border-slate-700 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <a href="/index.html" class="text-2xl font-bold bg-gradient-to-r from-brand.blue to-brand.emerald bg-clip-text text-transparent">
@@ -69,9 +78,9 @@
     <div id="analytics-content" class="hidden space-y-8">
       <!-- Summary Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="backdrop-blur-xl bg-slate-800/60 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-brand.blue/50 transition">
+        <div class="analytics-card bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-slate-600 transition">
           <div class="flex items-center">
-            <div class="p-3 rounded-full bg-brand.blue/20 text-brand.blue">
+            <div class="p-3 rounded-full bg-slate-700 text-brand.blue">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
               </svg>
@@ -83,9 +92,9 @@
           </div>
         </div>
 
-        <div class="backdrop-blur-xl bg-slate-800/60 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-emerald-500/50 transition">
+        <div class="analytics-card bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-slate-600 transition">
           <div class="flex items-center">
-            <div class="p-3 rounded-full bg-brand.emerald/20 text-brand.emerald">
+            <div class="p-3 rounded-full bg-slate-700 text-brand.emerald">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -98,9 +107,9 @@
           </div>
         </div>
 
-        <div class="backdrop-blur-xl bg-slate-800/60 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-purple-500/50 transition">
+        <div class="analytics-card bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-slate-600 transition">
           <div class="flex items-center">
-            <div class="p-3 rounded-full bg-purple-500/20 text-purple-400">
+            <div class="p-3 rounded-full bg-slate-700 text-brand.blue">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
               </svg>
@@ -112,9 +121,9 @@
           </div>
         </div>
 
-        <div class="backdrop-blur-xl bg-slate-800/60 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-orange-400/50 transition">
+        <div class="analytics-card bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-6 hover:border-slate-600 transition">
           <div class="flex items-center">
-            <div class="p-3 rounded-full bg-orange-500/20 text-orange-400">
+            <div class="p-3 rounded-full bg-slate-700 text-brand.emerald">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
               </svg>
@@ -129,25 +138,25 @@
 
       <!-- Charts Row -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="backdrop-blur-xl bg-slate-800/60 border border-slate-700 rounded-lg shadow-lg p-6">
+        <div class="analytics-card bg-slate-800 border border-slate-700 rounded-lg shadow-lg p-6">
           <h3 class="text-lg font-semibold text-white mb-4">Views by Startup</h3>
           <div class="h-48"><canvas id="viewsChart"></canvas></div>
         </div>
 
-        <div class="backdrop-blur-xl bg-slate-800/60 border border-slate-700 rounded-lg shadow-lg p-6">
+        <div class="analytics-card bg-slate-800 border border-slate-700 rounded-lg shadow-lg p-6">
           <h3 class="text-lg font-semibold text-white mb-4">Comparisons by Startup</h3>
           <div class="h-48"><canvas id="comparisonsChart"></canvas></div>
         </div>
       </div>
 
       <!-- Table -->
-      <div class="backdrop-blur-xl bg-slate-800/60 border border-slate-700 rounded-lg shadow-lg">
+      <div class="analytics-card bg-slate-800 border border-slate-700 rounded-lg shadow-lg">
         <div class="px-6 py-4 border-b border-slate-700">
           <h3 class="text-lg font-semibold text-white">Detailed Analytics by Startup</h3>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-slate-700">
-            <thead class="bg-slate-900/60">
+            <thead class="bg-slate-900">
               <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Startup</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Total Views</th>
@@ -182,6 +191,13 @@
 
     <script>
         let viewsChart, comparisonsChart;
+        const domCache = {};
+        function getCachedElement(id) {
+            if (!domCache[id]) {
+                domCache[id] = document.getElementById(id);
+            }
+            return domCache[id];
+        }
 
         async function loadAnalytics() {
             try {
@@ -244,11 +260,11 @@
                     );
                     
                     if (hasDeckInfo) {
-                        console.log(`⏭️ Filtering out pitch deck startup: ${startup?.company_name}`);
-                        return false; // Exclude pitch deck startups
+                        console.log(`Filtering out pitch deck startup: ${startup?.company_name}`);
+                        return false;
                     }
                     
-                    return true; // Include regular startups
+                    return true;
                 });
 
                 console.log(`Processed ${startups.length} regular startups for analytics (${allStartups.length - startups.length} pitch decks filtered out)`);
@@ -258,8 +274,8 @@
                 console.error('Error loading analytics:', error);
                 showError('Failed to load analytics data. Please try again.');
             } finally {
-                document.getElementById('loading-state').classList.add('hidden');
-                document.getElementById('analytics-content').classList.remove('hidden');
+                getCachedElement('loading-state').classList.add('hidden');
+                getCachedElement('analytics-content').classList.remove('hidden');
             }
         }
 
@@ -267,12 +283,11 @@
             console.log('Displaying analytics for startups:', startups);
 
             if (!startups || !startups.length) {
-                document.getElementById('no-data-state').classList.remove('hidden');
-                // Set all metrics to 0 when no startups
-                document.getElementById('total-startups').textContent = '0';
-                document.getElementById('total-views').textContent = '0';
-                document.getElementById('total-comparisons').textContent = '0';
-                document.getElementById('unique-viewers').textContent = '0';
+                getCachedElement('no-data-state').classList.remove('hidden');
+                getCachedElement('total-startups').textContent = '0';
+                getCachedElement('total-views').textContent = '0';
+                getCachedElement('total-comparisons').textContent = '0';
+                getCachedElement('unique-viewers').textContent = '0';
                 return;
             }
 
@@ -287,7 +302,6 @@
                 console.log(`Processing startup ${index + 1}:`, startup.company_name, startup.analytics);
                 
                 if (startup.analytics && typeof startup.analytics === 'object') {
-                    // Add up all the analytics values
                     totalViews += parseInt(startup.analytics.total_views) || 0;
                     totalComparisons += parseInt(startup.analytics.total_comparisons) || 0;
                     uniqueViewers += parseInt(startup.analytics.unique_viewers) || 0;
@@ -304,10 +318,10 @@
             });
 
             // Update summary cards with calculated values
-            document.getElementById('total-startups').textContent = startups.length.toString();
-            document.getElementById('total-views').textContent = totalViews.toLocaleString();
-            document.getElementById('total-comparisons').textContent = totalComparisons.toLocaleString();
-            document.getElementById('unique-viewers').textContent = uniqueViewers.toLocaleString();
+            getCachedElement('total-startups').textContent = startups.length.toString();
+            getCachedElement('total-views').textContent = totalViews.toLocaleString();
+            getCachedElement('total-comparisons').textContent = totalComparisons.toLocaleString();
+            getCachedElement('unique-viewers').textContent = uniqueViewers.toLocaleString();
 
             // Populate table
             populateAnalyticsTable(startups);
@@ -317,18 +331,18 @@
             createComparisonsChart(startups);
 
             // Hide no-data state if we have startups
-            document.getElementById('no-data-state').classList.add('hidden');
+            getCachedElement('no-data-state').classList.add('hidden');
         }
 
         function populateAnalyticsTable(startups) {
-            const tbody = document.getElementById('analytics-table-body');
+            const tbody = getCachedElement('analytics-table-body');
             tbody.innerHTML = '';
 
             startups.forEach((startup, index) => {
                 const analytics = startup.analytics || {};
                 
                 // Generate consistent colors for startup avatars
-                const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-red-500', 'bg-orange-500', 'bg-indigo-500'];
+                const colors = ['bg-blue-500', 'bg-green-500', 'bg-blue-600', 'bg-emerald-500', 'bg-blue-700', 'bg-emerald-600'];
                 const avatarColor = colors[index % colors.length];
                 
                 const row = document.createElement('tr');
@@ -339,19 +353,19 @@
                                 ${(startup.company_name || 'U').charAt(0).toUpperCase()}
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">${startup.company_name || 'Unknown Company'}</div>
-                                <div class="text-sm text-gray-500">${startup.industry || 'N/A'}</div>
+                                <div class="text-sm font-medium text-gray-100">${startup.company_name || 'Unknown Company'}</div>
+                                <div class="text-sm text-gray-400">${startup.industry || 'N/A'}</div>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${analytics.total_views || 0}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${analytics.unique_viewers || 0}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${analytics.total_comparisons || 0}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${analytics.total_views || 0}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${analytics.unique_viewers || 0}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${analytics.total_comparisons || 0}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                         ${analytics.recent_views || 0} views, ${analytics.recent_comparisons || 0} comparisons
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="#" onclick="viewStartupReport(${startup.id})" class="text-blue-600 hover:text-blue-900">View Report</a>
+                        <a href="#" onclick="viewStartupReport(${startup.id})" class="text-brand.blue hover:text-brand.emerald transition">View</a>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -359,13 +373,12 @@
         }
 
         function createViewsChart(startups) {
-            const ctx = document.getElementById('viewsChart').getContext('2d');
+            const ctx = getCachedElement('viewsChart').getContext('2d');
             
             if (viewsChart) {
                 viewsChart.destroy();
             }
 
-            // Filter startups that have analytics data or show all with 0 values
             const chartData = startups.map(startup => ({
                 name: startup.company_name || 'Unknown',
                 views: (startup.analytics && startup.analytics.total_views) ? parseInt(startup.analytics.total_views) : 0
@@ -376,7 +389,7 @@
                 datasets: [{
                     label: 'Total Views',
                     data: chartData.map(item => item.views),
-                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.6)',
                     borderColor: 'rgba(59, 130, 246, 1)',
                     borderWidth: 1
                 }]
@@ -388,6 +401,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: { duration: 0 },
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -420,13 +434,12 @@
         }
 
         function createComparisonsChart(startups) {
-            const ctx = document.getElementById('comparisonsChart').getContext('2d');
+            const ctx = getCachedElement('comparisonsChart').getContext('2d');
             
             if (comparisonsChart) {
                 comparisonsChart.destroy();
             }
 
-            // Filter startups that have analytics data or show all with 0 values
             const chartData = startups.map(startup => ({
                 name: startup.company_name || 'Unknown',
                 comparisons: (startup.analytics && startup.analytics.total_comparisons) ? parseInt(startup.analytics.total_comparisons) : 0
@@ -437,8 +450,8 @@
                 datasets: [{
                     label: 'Total Comparisons',
                     data: chartData.map(item => item.comparisons),
-                    backgroundColor: 'rgba(147, 51, 234, 0.5)',
-                    borderColor: 'rgba(147, 51, 234, 1)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
                     borderWidth: 1
                 }]
             };
@@ -449,6 +462,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: { duration: 0 },
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -481,7 +495,6 @@
         }
 
         function viewStartupReport(startupId) {
-            // Navigate to the startup report page with correct Module_3/ path
             window.location.href = `View_Startup_Report.html?id=${startupId}`;
         }
 
@@ -496,10 +509,9 @@
             }, 5000);
         }
 
-        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             loadAnalytics();
-        });
+        }, { passive: true });
     </script>
 </body>
 </html>
