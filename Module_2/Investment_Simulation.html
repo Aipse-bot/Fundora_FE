@@ -51,16 +51,34 @@
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); 
     }
     @keyframes fadeIn { 
-      from { opacity: 0; } 
-      to { opacity: 1; } 
+      from { opacity: 0; transform: translateY(8px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
     }
     .fade-in { 
-      animation: fadeIn 0.4s ease-out forwards;
+      animation: fadeIn 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    .slide-down {
+      animation: slideDown 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    .scale-in {
+      animation: scaleIn 0.6s ease-out forwards;
       opacity: 0;
     }
     .delay-1 { animation-delay: 0.1s; }
     .delay-2 { animation-delay: 0.2s; }
     .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
     .card-base {
       background-color: rgba(15, 23, 42, 0.8);
       contain: layout style;
@@ -69,14 +87,26 @@
       transition: all 150ms ease-out;
       will-change: color, background-color;
     }
+    .button-press {
+      transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .button-press:active {
+      transform: scale(0.98);
+    }
+    .chart-container {
+      position: relative;
+      height: 350px;
+      width: 100%;
+      margin-bottom: 24px;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
   <!-- Header -->
-  <header class="border-b border-slate-800 fade-in">
+  <header class="border-b border-slate-800 slide-down">
     <div class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
       <div class="flex items-center">
-        <button id="back-button" class="mr-6 p-2.5 hover:bg-slate-800/50 rounded-lg transition-all border border-slate-700">
+        <button id="back-button" class="mr-6 p-2.5 hover:bg-slate-800/50 rounded-lg transition-all border border-slate-700 button-press">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
@@ -98,49 +128,69 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:justify-center">
         <div>
           <label class="text-sm font-medium text-gray-300 mb-3 block">Investment Amount</label>
-          <input type="number" id="investment-input" placeholder="Enter amount in ₱"  min="1000" step="1000" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-brand-500">
+          <input type="number" id="investment-input" placeholder="Enter amount in ₱"  min="1000" step="1000" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-smooth">
         </div>
 
         <div>
           <label class="text-sm font-medium text-gray-300 mb-3 block">Investment Duration (Years)</label>
-          <input type="number" id="duration-input" placeholder="Enter years (max 5 years)" min="1" max="5" step="1" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-brand-500">
+          <input type="number" id="duration-input" placeholder="Enter years (max 5 years)" min="1" max="5" step="1" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-smooth">
         </div>
       </div>
 
-      <button id="simulate-btn" class="mt-8 w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-6 rounded-lg transition-all">Run Simulation</button>
+      <button id="simulate-btn" class="mt-8 w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-6 rounded-lg transition-smooth button-press relative overflow-hidden">
+        <span id="btn-text">Run Simulation</span>
+        <span id="btn-spinner" class="hidden ml-2 inline-block">
+          <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </span>
+      </button>
     </section>
 
     <!-- Results Section (Hidden until simulation runs) -->
     <section id="results-section" class="hidden">
-      <div class="card-base border border-slate-800 rounded-2xl p-8 mb-8 fade-in delay-3">
-        <h2 class="text-2xl font-semibold mb-6">Investment Returns</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div class="bg-slate-900/50 rounded-lg p-4 border border-slate-700">
-            <p class="text-xs text-gray-500 mb-2">Initial Investment</p>
-            <p class="text-xl font-semibold text-white" id="initial-investment">₱0</p>
-          </div>
-          <div class="bg-slate-900/50 rounded-lg p-4 border border-slate-700">
-            <p class="text-xs text-gray-500 mb-2">Duration</p>
-            <p class="text-xl font-semibold text-white"><span id="duration-display">0</span> years</p>
-          </div>
-          <div class="bg-slate-900/50 rounded-lg p-4 border border-slate-700">
-            <p class="text-xs text-gray-500 mb-2">Final Value</p>
-            <p class="text-xl font-semibold text-accent-400" id="final-value">₱0</p>
-          </div>
-          <div class="bg-slate-900/50 rounded-lg p-4 border border-slate-700">
-            <p class="text-xs text-gray-500 mb-2">Total Gain</p>
-            <p class="text-xl font-semibold text-accent-300" id="total-gain">₱0</p>
-          </div>
+      <!-- Key Metrics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 scale-in delay-2">
+        <div class="card-base border border-slate-800 rounded-xl p-6 hover:border-brand-500/50 transition-smooth">
+          <p class="text-xs text-gray-400 uppercase tracking-wide mb-3 font-medium">Initial Investment</p>
+          <p class="text-2xl font-bold text-white" id="initial-investment">₱0</p>
         </div>
-
-        <div class="bg-slate-900/50 rounded-lg p-6 border border-slate-700 mb-8">
-          <p class="text-sm text-gray-400 mb-3">Return on Investment (ROI)</p>
-          <p class="text-4xl font-bold text-accent-400" id="roi-percentage">0%</p>
+        <div class="card-base border border-slate-800 rounded-xl p-6 hover:border-brand-500/50 transition-smooth">
+          <p class="text-xs text-gray-400 uppercase tracking-wide mb-3 font-medium">Duration</p>
+          <p class="text-2xl font-bold text-white"><span id="duration-display">0</span> years</p>
+        </div>
+        <div class="card-base border border-slate-800 rounded-xl p-6 hover:border-accent-600/50 transition-smooth">
+          <p class="text-xs text-gray-400 uppercase tracking-wide mb-3 font-medium">Final Value</p>
+          <p class="text-2xl font-bold text-accent-400" id="final-value">₱0</p>
+        </div>
+        <div class="card-base border border-slate-800 rounded-xl p-6 hover:border-accent-600/50 transition-smooth">
+          <p class="text-xs text-gray-400 uppercase tracking-wide mb-3 font-medium">Total Gain</p>
+          <p class="text-2xl font-bold text-accent-300" id="total-gain">₱0</p>
         </div>
       </div>
 
-      <div class="card-base border border-slate-800 rounded-2xl p-8 fade-in delay-3">
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Investment Growth Chart -->
+        <div class="card-base border border-slate-800 rounded-2xl p-8 scale-in delay-3">
+          <h3 class="text-lg font-semibold mb-6">Investment Growth Projection</h3>
+          <div class="chart-container">
+            <canvas id="growthChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Annual Growth Chart -->
+        <div class="card-base border border-slate-800 rounded-2xl p-8 scale-in delay-4">
+          <h3 class="text-lg font-semibold mb-6">Annual Growth Amount</h3>
+          <div class="chart-container">
+            <canvas id="annualChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Year-by-Year Breakdown Table -->
+      <div class="card-base border border-slate-800 rounded-2xl p-8 fade-in delay-5">
         <h2 class="text-2xl font-semibold mb-6">Year-by-Year Breakdown</h2>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
@@ -164,14 +214,15 @@
   </main>
 
   <script>
+    let growthChartInstance = null;
+    let annualChartInstance = null;
+
     const domCache = {
       investmentInput: document.getElementById('investment-input'),
       durationInput: document.getElementById('duration-input'),
-      growthRateDisplay: document.getElementById('growth-rate-display'),
       simulateBtn: document.getElementById('simulate-btn'),
-      cagrSource: document.getElementById('cagr-source'),
-      dataSourceText: document.getElementById('data-source-text'),
-      cagrValue: document.getElementById('cagr-value'),
+      btnText: document.getElementById('btn-text'),
+      btnSpinner: document.getElementById('btn-spinner'),
       backButton: document.getElementById('back-button'),
       startupName: document.getElementById('startupName'),
       riskBadge: document.getElementById('risk-badge'),
@@ -180,7 +231,6 @@
       durationDisplay: document.getElementById('duration-display'),
       finalValue: document.getElementById('final-value'),
       totalGain: document.getElementById('total-gain'),
-      roiPercentage: document.getElementById('roi-percentage'),
       breakdownTable: document.getElementById('breakdown-table')
     };
 
@@ -251,7 +301,7 @@
           
           domCache.simulateBtn.disabled = true;
           domCache.simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
-          domCache.simulateBtn.textContent = 'Insufficient Data';
+          domCache.btnText.textContent = 'Insufficient Data';
           
           domCache.riskBadge.textContent = 'No Financial Data';
           domCache.riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
@@ -312,69 +362,81 @@
         return;
       }
 
-      console.log('[v0] === RUNNING SIMULATION ===');
-      console.log('[v0] Startup Type:', isDeckBuilder ? 'Pitch Deck' : 'Regular Startup');
-      console.log('[v0] Investment Amount:', investmentAmount);
-      console.log('[v0] Duration:', durationYears, 'years');
-      console.log('[v0] Base Growth Rate:', projectedReturn.toFixed(2) + '%');
+      domCache.simulateBtn.disabled = true;
+      domCache.btnText.classList.add('hidden');
+      domCache.btnSpinner.classList.remove('hidden');
 
-      // Apply risk adjustment ONLY for regular startups, NOT for pitch decks
-      let adjustedGrowthRate = projectedReturn;
-      
-      if (!isDeckBuilder && riskLevel) {
-        const riskMultipliers = {
-          'Low': 1.00,
-          'Medium': 0.75,
-          'High': 0.50
-        };
-        const multiplier = riskMultipliers[riskLevel] || 0.75;
-        adjustedGrowthRate = projectedReturn * multiplier;
+      // Simulate async computation with smooth delay
+      setTimeout(() => {
+        console.log('[v0] === RUNNING SIMULATION ===');
+        console.log('[v0] Startup Type:', isDeckBuilder ? 'Pitch Deck' : 'Regular Startup');
+        console.log('[v0] Investment Amount:', investmentAmount);
+        console.log('[v0] Duration:', durationYears, 'years');
+        console.log('[v0] Base Growth Rate:', projectedReturn.toFixed(2) + '%');
+
+        // Apply risk adjustment ONLY for regular startups, NOT for pitch decks
+        let adjustedGrowthRate = projectedReturn;
         
-        console.log('[v0] Risk Level:', riskLevel);
-        console.log('[v0] Risk Multiplier:', multiplier);
-        console.log('[v0] Risk-Adjusted Growth Rate:', adjustedGrowthRate.toFixed(2) + '%');
-      } else if (isDeckBuilder) {
-        console.log('[v0] Pitch Deck - No risk adjustment applied');
-      }
+        if (!isDeckBuilder && riskLevel) {
+          const riskMultipliers = {
+            'Low': 1.00,
+            'Medium': 0.75,
+            'High': 0.50
+          };
+          const multiplier = riskMultipliers[riskLevel] || 0.75;
+          adjustedGrowthRate = projectedReturn * multiplier;
+          
+          console.log('[v0] Risk Level:', riskLevel);
+          console.log('[v0] Risk Multiplier:', multiplier);
+          console.log('[v0] Risk-Adjusted Growth Rate:', adjustedGrowthRate.toFixed(2) + '%');
+        } else if (isDeckBuilder) {
+          console.log('[v0] Pitch Deck - No risk adjustment applied');
+        }
 
-      console.log('[v0] Formula: FV = amount × (1 + adjustedGrowthRate)^years');
+        console.log('[v0] Formula: FV = amount × (1 + adjustedGrowthRate)^years');
 
-      // Calculate using risk-adjusted rate
-      const growthRate = adjustedGrowthRate / 100;
-      const finalValue = investmentAmount * Math.pow(1 + growthRate, durationYears);
-      const totalGain = finalValue - investmentAmount;
-      const roiPercentage = (totalGain / investmentAmount) * 100;
+        // Calculate using risk-adjusted rate
+        const growthRate = adjustedGrowthRate / 100;
+        const finalValue = investmentAmount * Math.pow(1 + growthRate, durationYears);
+        const totalGain = finalValue - investmentAmount;
+        const roiPercentage = (totalGain / investmentAmount) * 100;
 
-      const yearlyBreakdown = [];
-      let currentValue = investmentAmount;
-      for (let year = 1; year <= durationYears; year++) {
-        const start = currentValue;
-        const growth = start * growthRate;
-        const end = start + growth;
-        yearlyBreakdown.push({ year, start, growth, end });
-        currentValue = end;
-      }
+        const yearlyBreakdown = [];
+        let currentValue = investmentAmount;
+        for (let year = 1; year <= durationYears; year++) {
+          const start = currentValue;
+          const growth = start * growthRate;
+          const end = start + growth;
+          yearlyBreakdown.push({ year, start, growth, end });
+          currentValue = end;
+        }
 
-      simulationData = { 
-        investmentAmount, 
-        durationYears, 
-        finalValue, 
-        totalGain, 
-        roiPercentage, 
-        yearlyBreakdown,
-        growthRate: adjustedGrowthRate,
-        baseGrowthRate: projectedReturn,
-        riskAdjusted: !isDeckBuilder && riskLevel != null
-      };
+        simulationData = { 
+          investmentAmount, 
+          durationYears, 
+          finalValue, 
+          totalGain, 
+          roiPercentage, 
+          yearlyBreakdown,
+          growthRate: adjustedGrowthRate,
+          baseGrowthRate: projectedReturn,
+          riskAdjusted: !isDeckBuilder && riskLevel != null
+        };
 
-      console.log('[v0] Simulation Results:', {
-        finalValue: finalValue.toFixed(2),
-        totalGain: totalGain.toFixed(2),
-        roi: roiPercentage.toFixed(2) + '%',
-        riskAdjusted: simulationData.riskAdjusted
-      });
+        console.log('[v0] Simulation Results:', {
+          finalValue: finalValue.toFixed(2),
+          totalGain: totalGain.toFixed(2),
+          roi: roiPercentage.toFixed(2) + '%',
+          riskAdjusted: simulationData.riskAdjusted
+        });
 
-      displayResults();
+        displayResults();
+
+        // Reset button state
+        domCache.simulateBtn.disabled = false;
+        domCache.btnText.classList.remove('hidden');
+        domCache.btnSpinner.classList.add('hidden');
+      }, 600);
     }
 
     function displayResults() {
@@ -384,10 +446,9 @@
       domCache.durationDisplay.textContent = durationYears;
       domCache.finalValue.textContent = `₱${Math.round(finalValue).toLocaleString()}`;
       domCache.totalGain.textContent = `₱${Math.round(totalGain).toLocaleString()}`;
-      domCache.roiPercentage.textContent = `${roiPercentage.toFixed(2)}%`;
 
       domCache.breakdownTable.innerHTML = yearlyBreakdown.map(({ year, start, growth, end }) => `
-        <tr class="hover:bg-slate-800/30">
+        <tr class="hover:bg-slate-800/30 transition-smooth">
           <td class="px-6 py-4 text-sm font-semibold text-white">Year ${year}</td>
           <td class="px-6 py-4 text-sm text-gray-300">₱${Math.round(start).toLocaleString()}</td>
           <td class="px-6 py-4 text-sm text-accent-400 font-medium">₱${Math.round(growth).toLocaleString()}</td>
@@ -395,7 +456,169 @@
         </tr>
       `).join('');
 
+      renderGrowthChart(yearlyBreakdown);
+      
+      renderAnnualChart(yearlyBreakdown);
+
       domCache.resultsSection.classList.remove('hidden');
+    }
+
+    function renderGrowthChart(yearlyBreakdown) {
+      const ctx = document.getElementById('growthChart');
+      
+      if (growthChartInstance) {
+        growthChartInstance.destroy();
+      }
+
+      const labels = yearlyBreakdown.map(d => `Year ${d.year}`);
+      const data = yearlyBreakdown.map(d => Math.round(d.end));
+
+      growthChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Investment Value',
+            data,
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 6,
+            pointBackgroundColor: '#2563eb',
+            pointBorderColor: '#1e293b',
+            pointBorderWidth: 2,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              backgroundColor: 'rgba(15, 23, 42, 0.9)',
+              borderColor: '#2563eb',
+              borderWidth: 1,
+              padding: 12,
+              titleFont: { size: 13, weight: '600' },
+              bodyFont: { size: 12 },
+              callbacks: {
+                label: function(context) {
+                  return `₱${context.parsed.y.toLocaleString()}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              grid: {
+                color: 'rgba(148, 163, 184, 0.1)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: { size: 11 },
+                callback: function(value) {
+                  return '₱' + (value / 1000).toFixed(0) + 'K';
+                }
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: { size: 11 }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderAnnualChart(yearlyBreakdown) {
+      const ctx = document.getElementById('annualChart');
+      
+      if (annualChartInstance) {
+        annualChartInstance.destroy();
+      }
+
+      const labels = yearlyBreakdown.map(d => `Year ${d.year}`);
+      const data = yearlyBreakdown.map(d => Math.round(d.growth));
+
+      annualChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Annual Growth',
+            data,
+            backgroundColor: '#059669',
+            borderColor: '#047857',
+            borderWidth: 1,
+            borderRadius: 8,
+            hoverBackgroundColor: '#10b981'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'x',
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              backgroundColor: 'rgba(15, 23, 42, 0.9)',
+              borderColor: '#059669',
+              borderWidth: 1,
+              padding: 12,
+              titleFont: { size: 13, weight: '600' },
+              bodyFont: { size: 12 },
+              callbacks: {
+                label: function(context) {
+                  return `₱${context.parsed.y.toLocaleString()}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(148, 163, 184, 0.1)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: { size: 11 },
+                callback: function(value) {
+                  return '₱' + (value / 1000).toFixed(0) + 'K';
+                }
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: { size: 11 }
+              }
+            }
+          }
+        }
+      });
     }
   </script>
 </body>

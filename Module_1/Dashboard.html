@@ -43,17 +43,18 @@
   </script>
   <style>
     body { 
-      font-family: 'Inter', sans-serif; 
-      background: #0f1419;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%);
       background-attachment: fixed;
     }
+    /* Enhanced card styling with gradient borders and improved hover effects */
     .startup-card {
-      transition: all 0.15s ease;
-      background: #1a1f29;
-      border: 2px solid #2a3442;
+      transition: all 0.2s ease;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.2);
       position: relative;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
     .startup-card::before {
       content: '';
@@ -61,20 +62,21 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
+      height: 2px;
       background: linear-gradient(90deg, #3b82f6, #10b981);
       opacity: 0;
-      transition: opacity 0.15s ease;
+      transition: opacity 0.2s ease;
     }
     .startup-card:hover::before {
       opacity: 1;
     }
     .startup-card:hover {
-      transform: translateY(-4px);
-      border-color: #3b82f6;
-      background: #212935;
-      box-shadow: 0 12px 24px rgba(59, 130, 246, 0.15);
+      transform: translateY(-6px);
+      border-color: rgba(59, 130, 246, 0.4);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
     }
+    /* Improved sidebar styling with gradient background */
     aside {
       position: sticky;
       top: 80px;
@@ -82,10 +84,11 @@
       overflow-y: auto;
       overflow-x: hidden;
       align-self: flex-start;
-      background: #1a1f29;
-      border: 1px solid #2a3442;
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.15);
       border-radius: 12px;
       padding: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
     aside::-webkit-scrollbar {
       width: 6px;
@@ -94,14 +97,17 @@
       background: transparent;
     }
     aside::-webkit-scrollbar-thumb {
-      background: #475569;
+      background: rgba(59, 130, 246, 0.3);
       border-radius: 3px;
+    }
+    aside::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.5);
     }
   </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen">
+<body class="text-white min-h-screen">
   <!-- Header -->
-  <header class="sticky top-0 z-50 bg-slate-900/40 border-b border-slate-800/50 backdrop-blur-sm">
+  <header class="sticky top-0 z-50 bg-slate-900/80 border-b border-slate-800/50 backdrop-blur-lg">
     <div class="max-w-[1920px] mx-auto px-6 py-4">
       <div class="flex justify-between items-center">
         <div class="flex items-center space-x-3">
@@ -121,23 +127,23 @@
               </defs>
             </svg>
           </div>
-          <h1 class="text-2xl font-bold">Fundora</h1>
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-brand-400 to-accent-400 bg-clip-text text-transparent">Fundora</h1>
         </div>
         <div class="flex items-center space-x-3">
-          <a href="/Module_2/Compare_Startups.html?return=/Module_1/Dashboard.html" class="bg-accent-600 hover:bg-accent-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center space-x-2">
+          <a href="/Module_2/Compare_Startups.html?return=/Module_1/Dashboard.html" class="bg-accent-600 hover:bg-accent-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
             <span>Compare Startups</span>
           </a>
-          <a id="watchlistLink" href="/Module_1/Watchlist.html" class="relative bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center space-x-2">
+          <a id="watchlistLink" href="/Module_1/Watchlist.html" class="relative bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
             </svg>
             <span>My Watchlist</span>
-            <span id="watchlist-badge" class="absolute -top-2 -right-2 bg-brand-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">0</span>
+            <span id="watchlist-badge" class="absolute -top-2 -right-2 bg-brand-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg">0</span>
           </a>
-          <a href="/Module_1/Profile.html" class="bg-slate-800/30 hover:bg-slate-700/30 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-slate-700/50 flex items-center space-x-2">
+          <a href="/Module_1/Profile.html" class="bg-slate-800/50 hover:bg-slate-700/50 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-slate-700/50 flex items-center space-x-2 hover:border-brand-500/50 hover:scale-105">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
             </svg>
@@ -148,28 +154,27 @@
     </div>
   </header>
 
-  <div class="flex max-w-[1920px] mx-auto gap-6 px-6">
+  <div class="flex max-w-[1920px] mx-auto gap-6 px-6 py-8">
     <!-- Sidebar -->
-    <aside class="w-64 bg-slate-900/30 border-r border-slate-800/50 p-4">
+    <aside class="w-64">
       <form id="filterForm" class="space-y-4">
         <!-- Quick Presets -->
-        <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 shadow-lg">
+        <div class="bg-gradient-to-br from-brand-600/10 via-slate-800/40 to-slate-900/40 p-4 rounded-lg border border-brand-500/20 shadow-lg">
           <label class="block text-sm font-semibold text-gray-200 mb-3">Quick Presets</label>
           <div class="grid grid-cols-1 gap-2">
-            <!-- Presets now automatically apply filters and render startups -->
-            <button type="button" onclick="applyPreset('conservative'); renderStartups(false)" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
+            <button type="button" onclick="applyPreset('conservative'); renderStartups(false)" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-accent-500 transition-all hover:shadow-md">
               <div class="flex items-center justify-between">
                 <span class="font-medium text-white">Conservative</span>
                 <span class="text-xs text-gray-400">Low Risk</span>
               </div>
             </button>
-            <button type="button" onclick="applyPreset('balanced'); renderStartups(false)" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
+            <button type="button" onclick="applyPreset('balanced'); renderStartups(false)" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all hover:shadow-md">
               <div class="flex items-center justify-between">
                 <span class="font-medium text-white">Balanced</span>
                 <span class="text-xs text-gray-400">Mixed</span>
               </div>
             </button>
-            <button type="button" onclick="applyPreset('aggressive'); renderStartups(false)" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
+            <button type="button" onclick="applyPreset('aggressive'); renderStartups(false)" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-red-500 transition-all hover:shadow-md">
               <div class="flex items-center justify-between">
                 <span class="font-medium text-white">Aggressive</span>
                 <span class="text-xs text-gray-400">High Risk</span>
@@ -182,10 +187,10 @@
         <div>
           <label class="block text-sm font-semibold text-gray-200 mb-3">Startup Type</label>
           <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="setStartupType('financial')" id="type-financial" class="type-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
+            <button type="button" onclick="setStartupType('financial')" id="type-financial" class="type-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all hover:shadow-md">
               Financial
             </button>
-            <button type="button" onclick="setStartupType('pitch_deck')" id="type-pitch_deck" class="type-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
+            <button type="button" onclick="setStartupType('pitch_deck')" id="type-pitch_deck" class="type-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all hover:shadow-md">
               Pitch Decks
             </button>
           </div>
@@ -194,9 +199,9 @@
 
         <!-- Financial Data Filters -->
         <div id="financial-filters" class="space-y-6">
-          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4 hover:border-slate-600 transition-all">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Sort By</label>
-            <select name="sort_by" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <select name="sort_by" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all hover:border-slate-600">
               <option value="">Default Order</option>
               <option value="growth_rate_desc">Highest Growth Rate First</option>
               <option value="growth_rate_asc">Lowest Growth Rate First</option>
@@ -207,9 +212,9 @@
             </select>
           </div>
 
-          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4 hover:border-slate-600 transition-all">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Industry</label>
-            <select name="industry" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <select name="industry" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all hover:border-slate-600">
               <option value="">All Industries</option>
               <option value="Technology">Technology</option>
               <option value="Finance">Finance</option>
@@ -227,27 +232,25 @@
             </select>
           </div>
 
-          <!-- Risk Tolerance now properly filters startups based on risk level -->
           <div>
             <label class="block text-sm font-semibold text-gray-200 mb-3">Risk Tolerance</label>
             <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-accent-500 transition-all">
+              <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-accent-500 transition-all hover:shadow-md">
                 Low
               </button>
-              <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-yellow-500 transition-all">
+              <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-yellow-500 transition-all hover:shadow-md">
                 Medium
               </button>
-              <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-red-500 transition-all">
+              <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-red-500 transition-all hover:shadow-md">
                 High
               </button>
             </div>
             <input type="hidden" name="risk_level" id="risk-hidden">
           </div>
 
-          <!-- Growth rate filter now excludes pitch decks -->
-          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4 hover:border-slate-600 transition-all">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Minimum Estimated Growth Rate</label>
-            <select name="min_growth_rate" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <select name="min_growth_rate" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all hover:border-slate-600">
               <option value="">Any Growth Rate</option>
               <option value="5">5% or higher</option>
               <option value="10">10% or higher</option>
@@ -263,9 +266,9 @@
 
         <!-- Pitch Deck Filters -->
         <div id="pitch-deck-filters" class="space-y-6 hidden">
-          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4 hover:border-slate-600 transition-all">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Sort By</label>
-            <select name="deck_sort_by" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <select name="deck_sort_by" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all hover:border-slate-600">
               <option value="">Default Order</option>
               <option value="funding_ask_desc">Highest Funding Ask</option>
               <option value="funding_ask_asc">Lowest Funding Ask</option>
@@ -275,9 +278,9 @@
             </select>
           </div>
 
-          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4 hover:border-slate-600 transition-all">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Funding Ask Range</label>
-            <select name="funding_ask_range" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <select name="funding_ask_range" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all hover:border-slate-600">
               <option value="">Any Amount</option>
               <option value="0-100000">Up to $100K</option>
               <option value="100000-500000">$100K - $500K</option>
@@ -290,22 +293,22 @@
           <div>
             <label class="block text-sm font-semibold text-gray-200 mb-3">Market Growth Rate</label>
             <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="setMarketGrowth('Low')" id="growth-Low" class="growth-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
+              <button type="button" onclick="setMarketGrowth('Low')" id="growth-Low" class="growth-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all hover:shadow-md">
                 0-10%
               </button>
-              <button type="button" onclick="setMarketGrowth('Medium')" id="growth-Medium" class="growth-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
+              <button type="button" onclick="setMarketGrowth('Medium')" id="growth-Medium" class="growth-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all hover:shadow-md">
                 10-30%
               </button>
-              <button type="button" onclick="setMarketGrowth('High')" id="growth-High" class="growth-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
+              <button type="button" onclick="setMarketGrowth('High')" id="growth-High" class="growth-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all hover:shadow-md">
                 30%+
               </button>
             </div>
             <input type="hidden" name="market_growth_filter" id="growth-hidden">
           </div>
 
-          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4 hover:border-slate-600 transition-all">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Minimum Market Growth</label>
-            <select name="min_market_growth" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <select name="min_market_growth" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all hover:border-slate-600">
               <option value="">Any Growth Rate</option>
               <option value="5">5% or higher</option>
               <option value="10">10% or higher</option>
@@ -317,9 +320,9 @@
           </div>
         </div>
 
-        <div class="space-y-3 pt-6 border-t-2 border-slate-700/50">
-          <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3 px-4 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl">Apply Filters</button>
-          <button type="button" onclick="clearAllFilters()" class="w-full bg-slate-800/50 hover:bg-slate-700/50 text-white py-3 px-4 rounded-lg font-medium transition-all border-2 border-slate-700/50 hover:border-slate-600">Clear All</button>
+        <div class="space-y-3 pt-6 border-t border-slate-700/50">
+          <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white py-3 px-4 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105">Apply Filters</button>
+          <button type="button" onclick="clearAllFilters()" class="w-full bg-slate-800/50 hover:bg-slate-700/50 text-white py-3 px-4 rounded-lg font-medium transition-all border border-slate-700/50 hover:border-slate-600 hover:scale-105">Clear All</button>
         </div>
       </form>
     </aside>
@@ -327,11 +330,11 @@
     <!-- Main Content -->
     <main class="flex-1 py-6">
       <div class="mb-8">
-        <h2 class="text-4xl font-bold mb-2">Investment Opportunities</h2>
-        <p class="text-gray-400 text-lg">Discover startups tailored to your investment profile</p>
+        <h2 class="text-5xl font-black text-white mb-2">Investment Opportunities</h2>
+        <p class="text-gray-400 text-lg font-light">Discover startups tailored to your investment profile</p>
       </div>
 
-      <div class="mb-6 bg-slate-800/40 border-2 border-slate-700/50 p-5 rounded-xl flex items-center justify-between shadow-md">
+      <div class="mb-6 bg-gradient-to-r from-brand-600/10 via-slate-800/40 to-slate-900/40 border border-brand-500/20 p-5 rounded-xl flex items-center justify-between shadow-lg">
         <p class="text-sm text-gray-300">Showing <span id="startup-count" class="font-bold text-white text-xl mx-1">0</span> startup<span id="startup-plural">s</span></p>
         <div id="clear-filters" class="hidden"></div>
       </div>
@@ -339,10 +342,10 @@
       <div id="startup-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
       <div id="no-startups" class="col-span-full text-center py-16 hidden">
-        <div class="text-6xl mb-4">→</div>
-        <h3 class="text-2xl font-semibold mb-2">No startups found</h3>
+        <div class="text-6xl mb-4 opacity-50">→</div>
+        <h3 class="text-2xl font-semibold mb-2 text-gray-300">No startups found</h3>
         <p class="text-gray-400 text-lg mb-6">No startups match your current filters.</p>
-        <button onclick="renderStartups()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2 rounded-lg font-medium transition-all">
+        <button onclick="renderStartups()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2 rounded-lg font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105">
           Retry
         </button>
       </div>
