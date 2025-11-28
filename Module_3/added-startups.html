@@ -166,24 +166,15 @@
 
 
     <script>
-      const domCache = {};
-      function getCachedElement(id) {
-          if (!domCache[id]) {
-              domCache[id] = document.getElementById(id);
-          }
-          return domCache[id];
-      }
+        async function loadUserInfo() {
+            const token = localStorage.getItem('authToken');
+            const userEmailElement = document.getElementById('user-email');
 
-      // Load user information
-      async function loadUserInfo() {
-          const token = localStorage.getItem('authToken');
-          const userEmailElement = getCachedElement('user-email'); // Use getCachedElement
-
-          if (!token) {
-              userEmailElement.textContent = 'No user logged in';
-              userEmailElement.className = 'font-semibold text-red-600';
-              return;
-          }
+            // Check if element exists before trying to update it
+            if (!userEmailElement) {
+                console.log('User email element not found in DOM');
+                return;
+            }
 
           // First try to get stored user data from login
           const storedUserData = localStorage.getItem('userData');
@@ -241,25 +232,31 @@
               }
 
               if (response.ok) {
-                  const userData = await response.json();
-                  console.log('User profile fetched:', userData);
-                  
-                  // Display user email - try different possible field names
-                  const displayEmail = userData.email || 
-                                     userData.user?.email || 
-                                     userData.username || 
-                                     userData.user?.username ||
-                                     'Unknown user';
-                  userEmailElement.textContent = displayEmail;
-                  userEmailElement.className = 'font-semibold text-green-600';
+                const userData = await response.json();
+                console.log('User profile fetched:', userData);
+                
+                if (!userEmailElement) {
+                    console.log('User email element removed from DOM');
+                    return;
+                }
+                
+                const displayEmail = userData.email || 
+                                userData.user?.email || 
+                                userData.username || 
+                                userData.user?.username ||
+                                'Unknown user';
+                userEmailElement.textContent = displayEmail;
+                userEmailElement.className = 'font-semibold text-green-600';
                   
                   // Store user data for future use
                   localStorage.setItem('userData', JSON.stringify(userData));
                   
               } else if (response.status === 401) {
-                  // Token is invalid
-                  userEmailElement.textContent = 'Please log in again';
-                  userEmailElement.className = 'font-semibold text-red-600';
+                // Token is invalid
+                if (userEmailElement) {
+                    userEmailElement.textContent = 'Please log in again';
+                    userEmailElement.className = 'font-semibold text-red-600';
+                }
                   console.warn('Invalid token, user needs to log in again');
               } else {
                   // API error but token exists
@@ -275,14 +272,13 @@
           }
       }
 
-      // Add New Startup button event listener - only if button exists
-      const createDeckBtn = getCachedElement('createDeckBtn'); // Use getCachedElement
-      if (createDeckBtn) {
-        createDeckBtn.addEventListener('click', { handleEvent: function() { // Use object for event listener
-          // Navigate to Company Information Form
-          window.location.href = 'Company_Information_Form.html';
-        }}, { passive: true }); // Use passive listener
-      }
+      const createDeckBtn = document.getElementById('createDeckBtn');
+        if (createDeckBtn) {
+        createDeckBtn.addEventListener('click', function() {
+            // Navigate to Company Information Form
+            window.location.href = 'Company_Information_Form.html';
+        }, { passive: true });
+        }
 
     function toggleModal() {
       const modal = getCachedElement('startupModal');
@@ -347,10 +343,15 @@
         console.log('Loading startups at:', new Date().toISOString());
         
         const token = localStorage.getItem('authToken');
-        const grid = getCachedElement('startupsGrid'); // Use getCachedElement
-        const messageContainer = getCachedElement('messageContainer'); // Use getCachedElement
+        const grid = document.getElementById('startupsGrid');
+        const messageContainer = document.getElementById('messageContainer');
 
-        // Clear any previous messages
+        if (!grid || !messageContainer) {
+            console.error('Required DOM elements not found');
+            isLoadingStartups = false;
+            return;
+        }
+
         messageContainer.innerHTML = '';
 
         if (!token) {
@@ -722,7 +723,7 @@
     }
 
     function showMessage(message, type = 'info') {
-        const messageContainer = getCachedElement('messageContainer'); // Use getCachedElement
+        const messageContainer = document.getElementById('messageContainer');
         if (!messageContainer) {
             console.error('Message container not found');
             return;
