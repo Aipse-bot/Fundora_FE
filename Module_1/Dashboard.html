@@ -42,21 +42,40 @@
     }
   </script>
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(148, 163, 184, 0.1); }
-    .startup-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+    /* Updated body background to match index.html hero gradient */
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%);
+      background-attachment: fixed;
     }
+    /* Optimized card styling with professional hover effects and gradient borders */
     .startup-card {
-      transition: all 0.3s ease;
+      transition: all 0.15s ease;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .startup-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+    }
+    .startup-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.4);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.1);
     }
   </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen hero-gradient">
+<body class="bg-slate-950 text-white min-h-screen">
   <!-- Header -->
-  <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+  <header class="sticky top-0 z-50 bg-slate-900/40 border-b border-slate-800/50 backdrop-blur-sm">
     <div class="max-w-[1920px] mx-auto px-6 py-4">
       <div class="flex justify-between items-center">
         <div class="flex items-center space-x-3">
@@ -90,9 +109,9 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
             </svg>
             <span>My Watchlist</span>
-            <span id="watchlist-badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">0</span>
+            <span id="watchlist-badge" class="absolute -top-2 -right-2 bg-brand-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">0</span>
           </a>
-          <a href="/Module_1/Profile.html" class="bg-slate-800/50 hover:bg-slate-700/50 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-slate-700 flex items-center space-x-2">
+          <a href="/Module_1/Profile.html" class="bg-slate-800/30 hover:bg-slate-700/30 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-slate-700/50 flex items-center space-x-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
             </svg>
@@ -105,25 +124,25 @@
 
   <div class="flex max-w-[1920px] mx-auto">
     <!-- Sidebar -->
-    <aside class="sticky top-20 h-[calc(100vh-80px)] w-80 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800 p-6 overflow-y-auto">
+    <aside class="sticky top-20 h-[calc(100vh-80px)] w-80 bg-slate-900/30 border-r border-slate-800/50 p-6 overflow-y-auto">
       <form id="filterForm" class="space-y-6">
         <!-- Quick Presets -->
-        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-          <label class="block text-sm font-semibold text-gray-300 mb-3">Quick Presets</label>
+        <div class="bg-slate-800/20 p-4 rounded-lg border border-slate-700/30">
+          <label class="block text-sm font-semibold text-gray-200 mb-3">Quick Presets</label>
           <div class="grid grid-cols-1 gap-2">
-            <button type="button" onclick="applyPreset('conservative')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-700/50 hover:border-brand-500 transition-all">
+            <button type="button" onclick="applyPreset('conservative')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
               <div class="flex items-center justify-between">
                 <span class="font-medium text-white">Conservative</span>
                 <span class="text-xs text-gray-400">Low Risk</span>
               </div>
             </button>
-            <button type="button" onclick="applyPreset('balanced')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-700/50 hover:border-brand-500 transition-all">
+            <button type="button" onclick="applyPreset('balanced')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
               <div class="flex items-center justify-between">
                 <span class="font-medium text-white">Balanced</span>
                 <span class="text-xs text-gray-400">Mixed</span>
               </div>
             </button>
-            <button type="button" onclick="applyPreset('aggressive')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-700/50 hover:border-brand-500 transition-all">
+            <button type="button" onclick="applyPreset('aggressive')" class="preset-btn w-full text-left px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg hover:bg-slate-700/40 hover:border-brand-500 transition-all">
               <div class="flex items-center justify-between">
                 <span class="font-medium text-white">Aggressive</span>
                 <span class="text-xs text-gray-400">High Risk</span>
@@ -134,12 +153,12 @@
 
         <!-- Startup Type -->
         <div>
-          <label class="block text-sm font-semibold text-gray-300 mb-3">Startup Type</label>
+          <label class="block text-sm font-semibold text-gray-200 mb-3">Startup Type</label>
           <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="setStartupType('financial')" id="type-financial" class="type-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
-              Financial Data
+            <button type="button" onclick="setStartupType('financial')" id="type-financial" class="type-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
+              Financial
             </button>
-            <button type="button" onclick="setStartupType('pitch_deck')" id="type-pitch_deck" class="type-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
+            <button type="button" onclick="setStartupType('pitch_deck')" id="type-pitch_deck" class="type-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
               Pitch Decks
             </button>
           </div>
@@ -149,8 +168,8 @@
         <!-- Financial Data Filters -->
         <div id="financial-filters" class="space-y-6">
           <div>
-            <label class="block text-sm font-semibold text-gray-300 mb-2">Sort By</label>
-            <select name="sort_by" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <label class="block text-sm font-semibold text-gray-200 mb-2">Sort By</label>
+            <select name="sort_by" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Default Order</option>
               <option value="projected_return_desc">Highest Returns First</option>
               <option value="projected_return_asc">Lowest Returns First</option>
@@ -162,8 +181,8 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-gray-300 mb-2">Industry</label>
-            <select name="industry" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <label class="block text-sm font-semibold text-gray-200 mb-2">Industry</label>
+            <select name="industry" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">All Industries</option>
               <option value="Technology">Technology</option>
               <option value="Finance">Finance</option>
@@ -176,15 +195,15 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-gray-300 mb-3">Risk Tolerance</label>
+            <label class="block text-sm font-semibold text-gray-200 mb-3">Risk Tolerance</label>
             <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-accent-500 transition-all">
+              <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-accent-500 transition-all">
                 Low
               </button>
-              <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-yellow-500 transition-all">
+              <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-yellow-500 transition-all">
                 Medium
               </button>
-              <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-red-500 transition-all">
+              <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-red-500 transition-all">
                 High
               </button>
             </div>
@@ -192,8 +211,8 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-gray-300 mb-2">Minimum Projected Return</label>
-            <select name="min_return" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <label class="block text-sm font-semibold text-gray-200 mb-2">Minimum Projected Return</label>
+            <select name="min_return" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Any Return</option>
               <option value="5">5% or higher</option>
               <option value="10">10% or higher</option>
@@ -210,8 +229,8 @@
         <!-- Pitch Deck Filters -->
         <div id="pitch-deck-filters" class="space-y-6 hidden">
           <div>
-            <label class="block text-sm font-semibold text-gray-300 mb-2">Sort By</label>
-            <select name="deck_sort_by" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <label class="block text-sm font-semibold text-gray-200 mb-2">Sort By</label>
+            <select name="deck_sort_by" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Default Order</option>
               <option value="funding_ask_desc">Highest Funding Ask</option>
               <option value="funding_ask_asc">Lowest Funding Ask</option>
@@ -222,8 +241,8 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-gray-300 mb-2">Funding Ask Range</label>
-            <select name="funding_ask_range" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <label class="block text-sm font-semibold text-gray-200 mb-2">Funding Ask Range</label>
+            <select name="funding_ask_range" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Any Amount</option>
               <option value="0-100000">Up to $100K</option>
               <option value="100000-500000">$100K - $500K</option>
@@ -234,15 +253,15 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-gray-300 mb-3">Market Growth Rate</label>
+            <label class="block text-sm font-semibold text-gray-200 mb-3">Market Growth Rate</label>
             <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="setMarketGrowth('Low')" id="growth-Low" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
+              <button type="button" onclick="setMarketGrowth('Low')" id="growth-Low" class="growth-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
                 0-10%
               </button>
-              <button type="button" onclick="setMarketGrowth('Medium')" id="growth-Medium" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
+              <button type="button" onclick="setMarketGrowth('Medium')" id="growth-Medium" class="growth-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
                 10-30%
               </button>
-              <button type="button" onclick="setMarketGrowth('High')" id="growth-High" class="growth-btn px-3 py-2.5 text-sm font-medium border-2 border-slate-700 bg-slate-800/50 rounded-lg hover:border-brand-500 transition-all">
+              <button type="button" onclick="setMarketGrowth('High')" id="growth-High" class="growth-btn px-3 py-2.5 text-sm font-medium border border-slate-700/50 bg-slate-800/30 rounded-lg hover:border-brand-500 transition-all">
                 30%+
               </button>
             </div>
@@ -250,8 +269,8 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-gray-300 mb-2">Minimum Market Growth</label>
-            <select name="min_market_growth" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+            <label class="block text-sm font-semibold text-gray-200 mb-2">Minimum Market Growth</label>
+            <select name="min_market_growth" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Any Growth Rate</option>
               <option value="5">5% or higher</option>
               <option value="10">10% or higher</option>
@@ -263,9 +282,9 @@
           </div>
         </div>
 
-        <div class="space-y-3 pt-4 border-t border-slate-800">
+        <div class="space-y-3 pt-4 border-t border-slate-700/30">
           <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-all">Apply Filters</button>
-          <button type="button" onclick="clearAllFilters()" class="w-full bg-slate-800/50 hover:bg-slate-700/50 text-white py-2.5 px-4 rounded-lg font-medium transition-all border border-slate-700">Clear All</button>
+          <button type="button" onclick="clearAllFilters()" class="w-full bg-slate-800/30 hover:bg-slate-700/30 text-white py-2.5 px-4 rounded-lg font-medium transition-all border border-slate-700/50">Clear All</button>
         </div>
       </form>
     </aside>
@@ -277,7 +296,7 @@
         <p class="text-gray-400 text-lg">Discover startups tailored to your investment profile</p>
       </div>
 
-      <div class="mb-6 bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-4 rounded-xl flex items-center justify-between">
+      <div class="mb-6 bg-slate-900/20 border border-slate-800/30 p-4 rounded-lg flex items-center justify-between">
         <p class="text-sm text-gray-300">Showing <span id="startup-count" class="font-semibold text-white text-lg">0</span> startup<span id="startup-plural">s</span></p>
         <div id="clear-filters" class="hidden"></div>
       </div>
@@ -285,7 +304,7 @@
       <div id="startup-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
       <div id="no-startups" class="col-span-full text-center py-16 hidden">
-        <div class="text-6xl mb-4">🔍</div>
+        <div class="text-6xl mb-4">→</div>
         <h3 class="text-2xl font-semibold mb-2">No startups found</h3>
         <p class="text-gray-400 text-lg mb-6">No startups match your current filters.</p>
       </div>
@@ -383,7 +402,7 @@
     async function removeFromWatchlist(startupId, btn) {
       try {
         const res = await fetch(REMOVE_WATCHLIST_ENDPOINT(startupId), {
-          method: 'DELETE',
+          method: 'POST',
           headers: authHeaders()
         });
         if (res.ok) {
@@ -403,157 +422,42 @@
 
     function updateWatchlistBadge() {
       const badge = document.getElementById('watchlist-badge');
-      if (badge) {
-        badge.textContent = watchlistIdsSet.size;
-      }
+      badge.textContent = watchlistIdsSet.size;
     }
 
-    function setStartupType(type) {
-      document.querySelectorAll('.type-btn').forEach(btn => {
-        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
-        btn.classList.add('border-slate-700');
-      });
-      
-      const selectedBtn = document.getElementById(`type-${type}`);
-      if (selectedBtn) {
-        selectedBtn.classList.remove('border-slate-700');
-        selectedBtn.classList.add('border-brand-500', 'bg-brand-500/20');
-      }
-      
-      document.getElementById('type-hidden').value = type;
-      
-      const financialFilters = document.getElementById('financial-filters');
-      const pitchDeckFilters = document.getElementById('pitch-deck-filters');
-      
-      if (type === 'pitch_deck') {
-        financialFilters.classList.add('hidden');
-        pitchDeckFilters.classList.remove('hidden');
-      } else {
-        financialFilters.classList.remove('hidden');
-        pitchDeckFilters.classList.add('hidden');
-      }
-      
-      console.log('Startup type set to:', type);
+    function escapeHtml(text) {
+      if (!text) return '';
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return text.replace(/[&<>"']/g, m => map[m]);
     }
 
-    function setMarketGrowth(level) {
-      document.querySelectorAll('.growth-btn').forEach(btn => {
-        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
-        btn.classList.add('border-slate-700');
-      });
-      
-      const selectedBtn = document.getElementById(`growth-${level}`);
-      if (selectedBtn) {
-        selectedBtn.classList.remove('border-slate-700');
-        selectedBtn.classList.add('border-brand-500', 'bg-brand-500/20');
+    function watchIcon(isWatched) {
+      if (isWatched) {
+        return '<svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
       }
-      
-      document.getElementById('growth-hidden').value = level;
-      console.log('Market growth set to:', level);
+      return '<svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
     }
 
-    async function fetchStartups() {
-      try {
-        const token = getAuthToken();
-        if (!token) throw new Error('No auth token found');
-
-        const form = document.getElementById('filterForm');
-        const params = new URLSearchParams();
-
-        const sortVal = form.elements.sort_by?.value;
-        if (sortVal) {
-          params.set('sort_by', sortVal);
-        }
-
-        const industry = form.elements.industry?.value;
-        if (industry) {
-          params.set('industry', industry);
-        }
-
-        const minReturn = form.elements.min_return?.value;
-        if (minReturn) {
-          params.set('min_return', minReturn);
-        }
-
-        const riskLevel = document.getElementById('risk-hidden')?.value;
-        if (riskLevel) {
-          params.set('risk_level', riskLevel);
-        }
-
-        const url = STARTUPS_ENDPOINT + (params.toString() ? `?${params.toString()}` : '');
-        console.log('Full URL:', url);
-
-        const [startupsData] = await Promise.allSettled([
-          fetchJSON(url, { method: 'GET' }),
-          refreshWatchlist()
-        ]);
-
-        const startupPayload = (startupsData.status === 'fulfilled') ? (startupsData.value) : null;
-        let startups = [];
-        if (startupPayload) {
-          startups = startupPayload.results || startupPayload.startups || startupPayload;
-          if (!Array.isArray(startups)) {
-            if (startupPayload.startups && Array.isArray(startupPayload.startups)) {
-              startups = startupPayload.startups;
-            } else if (Array.isArray(startupPayload)) {
-              startups = startupPayload;
-            } else {
-              startups = [];
-            }
-          }
-        }
-
-        console.log('Fetched startups count:', startups.length);
-        return startups || [];
-      } catch (error) {
-        console.error('Error fetching startups:', error);
-        return [];
-      }
-    }
-
-    function sortStartups(startups, sortBy) {
-      const copy = [...startups];
-      if (!sortBy) return copy;
-      
-      if (sortBy === 'funding_ask_desc') return copy.sort((a, b) => (parseFloat(b.funding_ask) || 0) - (parseFloat(a.funding_ask) || 0));
-      if (sortBy === 'funding_ask_asc') return copy.sort((a, b) => (parseFloat(a.funding_ask) || 0) - (parseFloat(b.funding_ask) || 0));
-      if (sortBy === 'market_growth_desc') return copy.sort((a, b) => (parseFloat(b.market_growth_rate ?? b.market_growth) || 0) - (parseFloat(a.market_growth_rate ?? a.market_growth) || 0));
-      if (sortBy === 'market_growth_asc') return copy.sort((a, b) => (parseFloat(a.market_growth_rate ?? a.market_growth) || 0) - (parseFloat(b.market_growth_rate ?? b.market_growth) || 0));
-      
-      switch (sortBy) {
-        case 'projected_return_desc': return copy.sort((a, b) => (b.projected_return || 0) - (a.projected_return || 0));
-        case 'projected_return_asc': return copy.sort((a, b) => (a.projected_return || 0) - (b.projected_return || 0));
-        case 'reward_potential_desc': return copy.sort((a, b) => (b.reward_potential || 0) - (a.reward_potential || 0));
-        case 'confidence_desc': return copy.sort((a, b) => (confidenceToNum(b.data_source_confidence) - confidenceToNum(a.data_source_confidence)));
-        case 'risk_asc': return copy.sort((a, b) => riskLevelToNum(a.risk_level) - riskLevelToNum(b.risk_level));
-        case 'company_name': return copy.sort((a, b) => (a.company_name || '').localeCompare(b.company_name || ''));
-        default: return copy;
-      }
-    }
-
-    function createStartupCard(startup) {
+    function renderStartup(startup, isDeck = false) {
       const card = document.createElement('div');
-      card.className = 'startup-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 hover:shadow-2xl transition-all flex flex-col';
-      const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
+      card.className = 'startup-card bg-slate-900/40 border border-slate-800/50 rounded-lg p-6 flex flex-col';
       card.setAttribute('data-startup-id', startup.id);
-      card.setAttribute('data-is-deck-builder', isDeck ? 'true' : 'false');
+      card.setAttribute('data-is-deck-builder', isDeck);
 
-      let riskBadge;
       let hasDataPending = false;
-      if (isDeck) {
-          riskBadge = '<span class="bg-purple-500/20 text-purple-300 text-xs font-medium px-3 py-1 rounded-full border border-purple-500/30">Pitch Deck</span>';
-      } else if (startup.risk_level) {
-          const riskLevel = startup.risk_level.toLowerCase();
-          if (riskLevel === 'low') {
-              riskBadge = '<span class="bg-green-500/20 text-green-300 text-xs font-medium px-3 py-1 rounded-full border border-green-500/30">Low Risk</span>';
-          } else if (riskLevel === 'medium') {
-              riskBadge = '<span class="bg-yellow-500/20 text-yellow-300 text-xs font-medium px-3 py-1 rounded-full border border-yellow-500/30">Medium Risk</span>';
+      let riskBadge;
+      
+      if (!isDeck && startup.confidence && startup.confidence !== null) {
+          if (startup.risk_level === 'Low') {
+              riskBadge = '<span class="bg-accent-600/20 text-accent-300 text-xs font-medium px-3 py-1 rounded-full border border-accent-600/30">Low Risk</span>';
+          } else if (startup.risk_level === 'Medium') {
+              riskBadge = '<span class="bg-yellow-600/20 text-yellow-300 text-xs font-medium px-3 py-1 rounded-full border border-yellow-600/30">Medium Risk</span>';
           } else {
-              riskBadge = '<span class="bg-red-500/20 text-red-300 text-xs font-medium px-3 py-1 rounded-full border border-red-500/30">High Risk</span>';
+              riskBadge = '<span class="bg-red-600/20 text-red-300 text-xs font-medium px-3 py-1 rounded-full border border-red-600/30">High Risk</span>';
           }
       } else {
           hasDataPending = true;
-          riskBadge = '<span class="bg-gray-500/20 text-gray-300 text-xs font-medium px-3 py-1 rounded-full border border-gray-500/30">Data Pending</span>';
+          riskBadge = '<span class="bg-gray-600/20 text-gray-300 text-xs font-medium px-3 py-1 rounded-full border border-gray-600/30">Data Pending</span>';
       }
 
       const industry = isDeck ? (startup.tagline || '—') : (startup.industry || '—');
@@ -569,7 +473,7 @@
 
       let metricsSection;
       if (isDeck) {
-          const fundingAmount = startup.funding_ask ? `${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
+          const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
           const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
           const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
           
@@ -577,7 +481,7 @@
               <div class="space-y-3 mb-4 flex-grow">
                   <div class="flex justify-between items-center">
                       <span class="text-sm text-gray-400">Funding Ask</span>
-                      <span class="text-sm font-semibold text-purple-400">${escapeHtml(fundingAmount)}</span>
+                      <span class="text-sm font-semibold text-brand-400">${escapeHtml(fundingAmount)}</span>
                   </div>
                   <div class="flex justify-between items-center">
                       <span class="text-sm text-gray-400">Market Growth</span>
@@ -615,9 +519,9 @@
           </div>
           ${metricsSection}
           <div class="flex gap-2 mt-auto">
-              <button class="view-details-btn flex-1 px-4 py-2.5 border border-slate-700 bg-slate-800/50 text-white rounded-lg hover:bg-slate-700/50 hover:border-slate-600 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
+              <button class="view-details-btn flex-1 px-4 py-2.5 border border-slate-700/50 bg-slate-800/30 text-white rounded-lg hover:bg-slate-700/40 hover:border-slate-600 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
               ${hasDataPending 
-              ? '<button class="invest-btn flex-1 px-4 py-2.5 bg-gray-500/20 text-gray-400 rounded-lg text-sm text-center cursor-not-allowed border border-gray-500/30" disabled title="Cannot invest - data pending">Invest</button>'
+              ? '<button class="invest-btn flex-1 px-4 py-2.5 bg-gray-600/20 text-gray-400 rounded-lg text-sm text-center cursor-not-allowed border border-gray-600/30" disabled title="Cannot invest - data pending">Invest</button>'
               : `<a class="invest-btn flex-1 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm text-center font-medium transition-all" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>`
           }
           </div>
@@ -661,161 +565,104 @@
       });
 
       return card;
-  }
-
-    function watchIcon(active) {
-      if (active) {
-        return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
-      }
-      return `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35l-0.45-0.41C6.4 15.36 3 12.28 3 8.5 3 6 5 4 7.5 4c1.54 0 3.04 .99 3.57 2.36h0.87C13.46 4.99 14.96 4 16.5 4 19 4 21 6 21 8.5z"/></svg>`;
     }
 
-    function escapeHtml(unsafe) {
-      if (unsafe === null || unsafe === undefined) return '';
-      return String(unsafe)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
+    async function renderStartups(shouldRefreshWatchlist = true) {
+      try {
+        const grid = document.getElementById('startup-grid');
+        grid.innerHTML = '';
 
-    function applyClientSideFilters(startups) {
-      let filtered = [...startups];
-      
-      const form = document.getElementById('filterForm');
-      
-      const startupType = document.getElementById('type-hidden')?.value;
-      if (startupType && startupType.trim() !== '') {
-        const beforeCount = filtered.length;
-        if (startupType === 'pitch_deck') {
-          filtered = filtered.filter(s => {
-            return !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
-          });
-          
-          const fundingAskRange = form.elements.funding_ask_range?.value;
-          if (fundingAskRange && fundingAskRange !== '') {
-            filtered = filtered.filter(s => {
-              const fundingAsk = parseFloat(s.funding_ask);
-              if (isNaN(fundingAsk)) return false;
-              
-              if (fundingAskRange === '0-100000') return fundingAsk <= 100000;
-              if (fundingAskRange === '100000-500000') return fundingAsk >= 100000 && fundingAsk <= 500000;
-              if (fundingAskRange === '500000-1000000') return fundingAsk >= 500000 && fundingAsk <= 1000000;
-              if (fundingAskRange === '1000000-5000000') return fundingAsk >= 1000000 && fundingAsk <= 5000000;
-              if (fundingAskRange === '5000000+') return fundingAsk >= 5000000;
-              return true;
-            });
-          }
-          
-          const marketGrowthFilter = document.getElementById('growth-hidden')?.value;
-          if (marketGrowthFilter && marketGrowthFilter !== '') {
-            filtered = filtered.filter(s => {
-              const growth = parseFloat(s.market_growth_rate ?? s.market_growth);
-              if (isNaN(growth)) return false;
-              
-              if (marketGrowthFilter === 'Low') return growth >= 0 && growth < 10;
-              if (marketGrowthFilter === 'Medium') return growth >= 10 && growth < 30;
-              if (marketGrowthFilter === 'High') return growth >= 30;
-              return true;
-            });
-          }
-          
-          const minMarketGrowth = form.elements.min_market_growth?.value;
-          if (minMarketGrowth && minMarketGrowth !== '') {
-            const minGrowthValue = parseFloat(minMarketGrowth);
-            filtered = filtered.filter(s => {
-              const growth = parseFloat(s.market_growth_rate ?? s.market_growth);
-              return !isNaN(growth) && growth >= minGrowthValue;
-            });
-          }
-          
-        } else if (startupType === 'financial') {
-          filtered = filtered.filter(s => {
-            return !(s.is_deck_builder || s.source_deck_id || s.source_deck);
-          });
-          
-          const riskLevel = document.getElementById('risk-hidden')?.value;
-          if (riskLevel && riskLevel.trim() !== '') {
-            filtered = filtered.filter(s => {
-              return s.risk_level === riskLevel;
-            });
-          }
-          
-          const minReturn = form.elements.min_return?.value;
-          if (minReturn && minReturn.trim() !== '') {
-            const minReturnValue = parseFloat(minReturn);
-            filtered = filtered.filter(s => {
-              const projReturn = s.projected_return;
-              return projReturn !== null && projReturn !== undefined && projReturn >= minReturnValue;
-            });
-          }
+        if (shouldRefreshWatchlist) {
+          await refreshWatchlist();
         }
-        console.log(`Client-side Type filter: ${startupType} | Before: ${beforeCount}, After: ${filtered.length}`);
+
+        const formData = new FormData(document.getElementById('filterForm'));
+        const params = new URLSearchParams(formData);
+
+        const data = await fetchJSON(`${STARTUPS_ENDPOINT}?${params.toString()}`);
+        const startups = data.results || data || [];
+
+        document.getElementById('startup-count').textContent = startups.length;
+        document.getElementById('startup-plural').textContent = startups.length === 1 ? '' : 's';
+
+        if (startups.length === 0) {
+          document.getElementById('no-startups').classList.remove('hidden');
+        } else {
+          document.getElementById('no-startups').classList.add('hidden');
+          startups.forEach(startup => {
+            const isDeck = formData.get('startup_type') === 'pitch_deck';
+            grid.appendChild(renderStartup(startup, isDeck));
+          });
+        }
+      } catch (err) {
+        console.error('Error rendering startups', err);
+        document.getElementById('startup-grid').innerHTML = '<p class="text-red-400">Error loading startups.</p>';
       }
-      
-      return filtered;
     }
 
-    async function renderStartups() {
-      console.log('Rendering startups...');
+    function setStartupType(type) {
+      document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
+        btn.classList.add('border-slate-700/50');
+      });
       
-      const grid = document.getElementById('startup-grid');
-      const noStartups = document.getElementById('no-startups');
-      grid.innerHTML = '<div class="col-span-full text-center py-16"><div class="text-4xl mb-4">⏳</div><p class="text-gray-400">Loading startups...</p></div>';
-      noStartups.classList.add('hidden');
+      const selectedBtn = document.getElementById(`type-${type}`);
+      if (selectedBtn) {
+        selectedBtn.classList.remove('border-slate-700/50');
+        selectedBtn.classList.add('border-brand-500', 'bg-brand-500/20');
+      }
       
-      const startups = await fetchStartups();
-      console.log('Raw startups from backend:', startups.length);
+      document.getElementById('type-hidden').value = type;
       
-      const clientFiltered = applyClientSideFilters(startups);
-      
-      const form = document.getElementById('filterForm');
-      const startupType = document.getElementById('type-hidden')?.value;
-      let sortBy;
-      if (startupType === 'pitch_deck') {
-        sortBy = form.elements.deck_sort_by?.value;
+      if (type === 'pitch_deck') {
+        document.getElementById('financial-filters').classList.add('hidden');
+        document.getElementById('pitch-deck-filters').classList.remove('hidden');
       } else {
-        sortBy = form.elements.sort_by?.value;
+        document.getElementById('financial-filters').classList.remove('hidden');
+        document.getElementById('pitch-deck-filters').classList.add('hidden');
+      }
+    }
+
+    function applyPreset(preset) {
+      if (preset === 'conservative') {
+        setStartupType('financial');
+        setRiskLevel('Low');
+        document.querySelector('select[name="sort_by"]').value = 'risk_asc';
+      } else if (preset === 'balanced') {
+        setStartupType('financial');
+        setRiskLevel('Medium');
+        document.querySelector('select[name="sort_by"]').value = 'projected_return_desc';
+      } else if (preset === 'aggressive') {
+        setStartupType('financial');
+        setRiskLevel('High');
+        document.querySelector('select[name="sort_by"]').value = 'projected_return_desc';
+      }
+    }
+
+    function setMarketGrowth(growth) {
+      document.querySelectorAll('.growth-btn').forEach(btn => {
+        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
+        btn.classList.add('border-slate-700/50');
+      });
+      
+      const selectedBtn = document.getElementById(`growth-${growth}`);
+      if (selectedBtn) {
+        selectedBtn.classList.remove('border-slate-700/50');
+        selectedBtn.classList.add('border-brand-500', 'bg-brand-500/20');
       }
       
-      const sorted = sortStartups(clientFiltered, sortBy);
-
-      const countSpan = document.getElementById('startup-count');
-      const clearBtn = document.getElementById('clear-filters');
-      grid.innerHTML = '';
-
-      if (!sorted || sorted.length === 0) {
-        noStartups.classList.remove('hidden');
-        countSpan.textContent = '0';
-        clearBtn.classList.add('hidden');
-        console.log('No startups found after filtering');
-        return;
-      }
-
-      noStartups.classList.add('hidden');
-      countSpan.textContent = sorted.length;
-      document.getElementById('startup-plural').textContent = sorted.length === 1 ? '' : 's';
-      clearBtn.classList.remove('hidden');
-
-      console.log('Rendering', sorted.length, 'startup cards');
-      for (const s of sorted) {
-        const card = createStartupCard(s);
-        grid.appendChild(card);
-      }
+      document.getElementById('growth-hidden').value = growth;
     }
 
     function setRiskLevel(level) {
-      setStartupType('financial');
-      
       document.querySelectorAll('.risk-btn').forEach(btn => {
         btn.classList.remove('border-accent-500', 'bg-accent-500/20', 'border-yellow-500', 'bg-yellow-500/20', 'border-red-500', 'bg-red-500/20');
-        btn.classList.add('border-slate-700');
+        btn.classList.add('border-slate-700/50');
       });
       
       const selectedBtn = document.getElementById(`risk-${level}`);
       if (selectedBtn) {
-        selectedBtn.classList.remove('border-slate-700');
+        selectedBtn.classList.remove('border-slate-700/50');
         if (level === 'Low') {
           selectedBtn.classList.add('border-accent-500', 'bg-accent-500/20');
         } else if (level === 'Medium') {
@@ -826,7 +673,6 @@
       }
       
       document.getElementById('risk-hidden').value = level;
-      console.log('Risk level set to:', level);
     }
 
     function clearAllFilters() {
@@ -835,7 +681,7 @@
       
       document.querySelectorAll('.type-btn').forEach(btn => {
         btn.classList.remove('border-brand-500', 'bg-brand-500/20');
-        btn.classList.add('border-slate-700');
+        btn.classList.add('border-slate-700/50');
       });
       document.getElementById('type-hidden').value = '';
       
@@ -844,12 +690,12 @@
       
       document.querySelectorAll('.risk-btn').forEach(btn => {
         btn.classList.remove('border-accent-500', 'bg-accent-500/20', 'border-yellow-500', 'bg-yellow-500/20', 'border-red-500', 'bg-red-500/20');
-        btn.classList.add('border-slate-700');
+        btn.classList.add('border-slate-700/50');
       });
       
       document.querySelectorAll('.growth-btn').forEach(btn => {
         btn.classList.remove('border-brand-500', 'bg-brand-500/20');
-        btn.classList.add('border-slate-700');
+        btn.classList.add('border-slate-700/50');
       });
       
       document.getElementById('risk-hidden').value = '';
@@ -858,60 +704,30 @@
       renderStartups();
     }
 
-    function applyPreset(preset) {
-      const form = document.getElementById('filterForm');
-      
-      setStartupType('financial');
-      
-      form.elements.sort_by.value = '';
-      form.elements.industry.value = '';
-      form.elements.min_return.value = '';
-      
-      if (preset === 'conservative') { 
-        setRiskLevel('Low');
-      }
-      else if (preset === 'balanced') { 
-        setRiskLevel('Medium');
-      }
-      else if (preset === 'aggressive') { 
-        setRiskLevel('High');
-        form.elements.min_return.value = '20'; 
-      }
-      
-      renderStartups();
-    }
-
-    async function logoutUser() {
-      try {
-        await fetch(LOGOUT_ENDPOINT, { method: 'POST', headers: authHeaders() });
-      } catch (err) {
-        console.warn('Logout error (ignored):', err);
-      } finally {
-        localStorage.removeItem('authToken');
-        window.location.href = '/login.html';
-      }
-    }
-
-    document.getElementById('filterForm').addEventListener('submit', async (e) => {
+    // Form submission
+    document.getElementById('filterForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      console.log('Apply Filters clicked!');
-      await renderStartups();
+      renderStartups(false);
     });
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
       const token = getAuthToken();
       if (!token) { window.location.href = '/login.html'; return; }
-
-      try {
-        await refreshWatchlist();
-      } catch (e) { /* ignore */ }
-
-      await renderStartups();
+      renderStartups();
     });
 
     window._fundora = {
       refreshWatchlist,
-      fetchStartups,
+      fetchStartups: async () => { // Renamed for clarity as it's not used directly in DOM events
+        const form = document.getElementById('filterForm');
+        const params = new URLSearchParams();
+        const formData = new FormData(form);
+        for (const [key, value] of formData) {
+          if (value) params.append(key, value);
+        }
+        return fetchJSON(`${STARTUPS_ENDPOINT}?${params.toString()}`);
+      },
       renderStartups,
       addToWatchlist,
       removeFromWatchlist

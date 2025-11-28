@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fundora - My Profile</title>
+  <title>My Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
@@ -44,19 +44,20 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(148, 163, 184, 0.1); }
+    .glass-card { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(59, 130, 246, 0.2); }
     .stat-card {
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
     .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
     }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
   <!-- Header -->
-  <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+  <!-- Removed backdrop-blur-xl, using solid background instead -->
+  <header class="sticky top-0 z-50 bg-slate-900 border-b border-slate-800">
     <div class="max-w-[1920px] mx-auto px-6 py-4">
       <div class="flex justify-between items-center">
         <div class="flex items-center space-x-3">
@@ -104,7 +105,7 @@
 
   <div class="max-w-7xl mx-auto px-6 py-8">
     <!-- Profile Header -->
-    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 mb-6">
+    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-8 mb-6">
       <div class="flex items-start justify-between">
         <div class="flex items-center space-x-6">
           <div class="w-24 h-24 rounded-full bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-3xl font-bold">
@@ -128,7 +129,7 @@
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <!-- Watchlist Stats -->
-      <div class="stat-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+      <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-4">
           <div class="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
             <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,7 +143,7 @@
       </div>
 
       <!-- Views Stats -->
-      <div class="stat-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+      <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-4">
           <div class="w-12 h-12 rounded-xl bg-accent-500/20 flex items-center justify-center">
             <svg class="w-6 h-6 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,7 +158,7 @@
       </div>
 
       <!-- Comparisons Stats -->
-      <div class="stat-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+      <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-4">
           <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
             <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,7 +175,7 @@
     <!-- Recent Activity Sections -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Recent Views -->
-      <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+      <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-xl font-bold">Recent Views</h3>
           <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,7 +188,7 @@
       </div>
 
       <!-- Recent Comparisons -->
-      <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
+      <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-xl font-bold">Recent Comparisons</h3>
           <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -201,7 +202,7 @@
     </div>
 
   <!-- Edit Profile Modal -->
-  <div id="editModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="editModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full">
       <h3 class="text-2xl font-bold mb-6">Edit Profile</h3>
       <form id="editForm" class="space-y-4">
@@ -230,6 +231,26 @@
     const PROFILE_ENDPOINT = `${API_BASE}/api/profile/`;
     const UPDATE_PROFILE_ENDPOINT = `${API_BASE}/api/profile/update/`;
     const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
+
+    const cachedElements = {
+      userName: document.getElementById('userName'),
+      userEmail: document.getElementById('userEmail'),
+      userInitials: document.getElementById('userInitials'),
+      userLabel: document.getElementById('userLabel'),
+      watchlistCount: document.getElementById('watchlistCount'),
+      viewsCount: document.getElementById('viewsCount'),
+      comparisonsCount: document.getElementById('comparisonsCount'),
+      recentViews: document.getElementById('recentViews'),
+      recentComparisons: document.getElementById('recentComparisons'),
+      editModal: document.getElementById('editModal'),
+      editForm: document.getElementById('editForm'),
+      editFirstName: document.getElementById('editFirstName'),
+      editLastName: document.getElementById('editLastName'),
+      editEmail: document.getElementById('editEmail'),
+      logoutBtn: document.getElementById('logoutBtn'),
+      editProfileBtn: document.getElementById('editProfileBtn'),
+      cancelEdit: document.getElementById('cancelEdit')
+    };
 
     function getAuthToken() {
       return localStorage.getItem('authToken');
@@ -289,11 +310,11 @@
       try {
         const data = await fetchJSON(PROFILE_ENDPOINT);
         
-        document.getElementById('userName').textContent = `${data.first_name} ${data.last_name}`;
-        document.getElementById('userEmail').textContent = data.email;
-        document.getElementById('userInitials').textContent = getInitials(data.first_name, data.last_name);
+        cachedElements.userName.textContent = `${data.first_name} ${data.last_name}`;
+        cachedElements.userEmail.textContent = data.email;
+        cachedElements.userInitials.textContent = getInitials(data.first_name, data.last_name);
         
-        const labelEl = document.getElementById('userLabel');
+        const labelEl = cachedElements.userLabel;
         if (data.label === 'investor') {
           labelEl.textContent = 'Investor';
           labelEl.className = 'inline-block px-4 py-1.5 rounded-full text-sm font-medium mt-2 bg-brand-500/20 text-brand-300 border border-brand-500/30';
@@ -305,13 +326,12 @@
           labelEl.className = 'inline-block px-4 py-1.5 rounded-full text-sm font-medium mt-2 bg-gray-500/20 text-gray-300 border border-gray-500/30';
         }
 
-        document.getElementById('watchlistCount').textContent = data.watchlist_count || 0;
-        document.getElementById('viewsCount').textContent = data.views_count || 0;
-        document.getElementById('comparisonsCount').textContent = data.comparisons_count || 0;
+        cachedElements.watchlistCount.textContent = data.watchlist_count || 0;
+        cachedElements.viewsCount.textContent = data.views_count || 0;
+        cachedElements.comparisonsCount.textContent = data.comparisons_count || 0;
 
         renderRecentViews(data.recent_views || []);
         renderRecentComparisons(data.recent_comparisons || []);
-        renderDownloads(data.downloads || []);
 
       } catch (error) {
         console.error('Error loading profile:', error);
@@ -320,7 +340,7 @@
     }
 
     function renderRecentViews(views) {
-      const container = document.getElementById('recentViews');
+      const container = cachedElements.recentViews;
       
       if (!views || views.length === 0) {
         container.innerHTML = '<div class="text-center py-8 text-gray-400">No recent views</div>';
@@ -339,7 +359,7 @@
     }
 
     function renderRecentComparisons(comparisons) {
-      const container = document.getElementById('recentComparisons');
+      const container = cachedElements.recentComparisons;
       
       if (!comparisons || comparisons.length === 0) {
         container.innerHTML = '<div class="text-center py-8 text-gray-400">No recent comparisons</div>';
@@ -378,31 +398,31 @@
       }
     }
 
-    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+    cachedElements.logoutBtn.addEventListener('click', logoutUser);
 
-    document.getElementById('editProfileBtn').addEventListener('click', async () => {
+    cachedElements.editProfileBtn.addEventListener('click', async () => {
       try {
         const data = await fetchJSON(PROFILE_ENDPOINT);
-        document.getElementById('editFirstName').value = data.first_name || '';
-        document.getElementById('editLastName').value = data.last_name || '';
-        document.getElementById('editEmail').value = data.email || '';
-        document.getElementById('editModal').classList.remove('hidden');
+        cachedElements.editFirstName.value = data.first_name || '';
+        cachedElements.editLastName.value = data.last_name || '';
+        cachedElements.editEmail.value = data.email || '';
+        cachedElements.editModal.classList.remove('hidden');
       } catch (error) {
         console.error('Error loading profile for edit:', error);
       }
     });
 
-    document.getElementById('cancelEdit').addEventListener('click', () => {
-      document.getElementById('editModal').classList.add('hidden');
+    cachedElements.cancelEdit.addEventListener('click', () => {
+      cachedElements.editModal.classList.add('hidden');
     });
 
-    document.getElementById('editForm').addEventListener('submit', async (e) => {
+    cachedElements.editForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const formData = {
-        first_name: document.getElementById('editFirstName').value,
-        last_name: document.getElementById('editLastName').value,
-        email: document.getElementById('editEmail').value
+        first_name: cachedElements.editFirstName.value,
+        last_name: cachedElements.editLastName.value,
+        email: cachedElements.editEmail.value
       };
 
       try {
@@ -412,7 +432,7 @@
           body: JSON.stringify(formData)
         });
 
-        document.getElementById('editModal').classList.add('hidden');
+        cachedElements.editModal.classList.add('hidden');
         await loadProfile();
         alert('Profile updated successfully!');
       } catch (error) {
@@ -430,5 +450,6 @@
       loadProfile();
     });
   </script>
+</div>
 </body>
 </html>

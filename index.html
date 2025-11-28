@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fundora - Connect Startups with Investors</title>
+  <title>Fundora</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
@@ -45,18 +45,55 @@
   </script>
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+    .hero-gradient { background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%); }
     .text-gradient { background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15); }
-    .glow-blue { box-shadow: 0 0 30px rgba(59, 130, 246, 0.15); }
-    .glow-green { box-shadow: 0 0 30px rgba(16, 185, 129, 0.15); }
+    .subtle-grid { 
+      background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .accent-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    .glow-blue { background: #3b82f6; }
+    .glow-green { background: #10b981; }
+    .card-hover { transition: all 0.2s ease; }
+    .card-hover:hover { 
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+      background-color: rgba(30, 41, 59, 0.9);
+    }
+    .stat-box {
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
+    }
+    .badge-gradient {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .features-section {
+      background: linear-gradient(to bottom, rgba(59, 130, 246, 0.03) 0%, rgba(79, 70, 229, 0.02) 100%);
+    }
+    .how-it-works-section {
+      background: linear-gradient(to bottom, rgba(139, 92, 246, 0.03) 0%, rgba(168, 85, 247, 0.02) 100%);
+    }
+    .about-section {
+      background: linear-gradient(to bottom, rgba(34, 197, 94, 0.03) 0%, rgba(16, 185, 129, 0.02) 100%);
+    }
+    .cta-section {
+      background: linear-gradient(to bottom, rgba(236, 72, 153, 0.03) 0%, rgba(244, 63, 94, 0.02) 100%);
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-gray-100">
   
   <!-- Navbar -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 border-b border-slate-700/50 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-6 py-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -79,41 +116,40 @@
           <span class="text-2xl font-bold text-white">Fundora</span>
         </div>
         <div class="hidden md:flex items-center space-x-8">
-          <a href="#features" class="text-gray-400 hover:text-white transition-colors font-medium">Features</a>
-          <a href="#how-it-works" class="text-gray-400 hover:text-white transition-colors font-medium">How It Works</a>
-          <a href="#about" class="text-gray-400 hover:text-white transition-colors font-medium">About</a>
+          <a href="#features" class="text-gray-400 hover:text-white transition-colors duration-150 font-medium">Features</a>
+          <a href="#how-it-works" class="text-gray-400 hover:text-white transition-colors duration-150 font-medium">How It Works</a>
+          <a href="#about" class="text-gray-400 hover:text-white transition-colors duration-150 font-medium">About</a>
         </div>
-        <a href="login.html" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors">Sign In</a>
+        <a href="login.html" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors duration-150">Sign In</a>
       </div>
     </div>
   </nav>
 
   <!-- Hero Section -->
-  <section class="relative pt-32 pb-20 px-6 hero-gradient overflow-hidden">
-    <div class="absolute inset-0 opacity-20">
-      <div class="absolute top-20 left-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500 rounded-full blur-3xl"></div>
-    </div>
+  <section class="relative pt-32 pb-32 px-6 hero-gradient overflow-hidden">
+    <div class="absolute inset-0 subtle-grid"></div>
+    <div class="absolute top-20 right-10 w-96 h-96 glow-blue accent-glow"></div>
+    <div class="absolute bottom-0 left-20 w-80 h-80 glow-green accent-glow"></div>
     
     <div class="relative max-w-6xl mx-auto text-center">
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 border border-slate-700 rounded-md text-xs font-medium mb-8 text-gray-400">
-        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
+      <div class="inline-flex items-center gap-2 px-4 py-2 badge-gradient rounded-full text-sm font-semibold mb-8 text-accent-300">
+        <span class="w-2 h-2 bg-accent-400 rounded-full animate-pulse"></span>
         Currently in Beta
       </div>
       
-      <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight text-white">
-        Connect with investors.<br/>Fund your next big idea.
+      <h1 class="text-6xl md:text-7xl font-black mb-8 leading-tight text-white">
+        Connect with<br/><span class="text-gradient">investors</span>.<br/>Fund your next big idea.
       </h1>
       
-      <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12">
-        Fundora helps startups find investors and investors discover opportunities. Build your pitch, compare companies, and simulate investments—all in one place.
+      <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+        Fundora helps startups find investors and investors discover opportunities. Build your pitch, compare companies, and simulate investments—all in one platform.
       </p>
       
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="Module_3/startup_register.html" class="w-full sm:w-auto px-7 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium transition-colors">
+        <a href="Module_3/startup_register.html" class="w-full sm:w-auto px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-semibold transition-all duration-150 shadow-lg hover:shadow-xl">
           For Startups
         </a>
-        <a href="Module_1/investor_register.html" class="w-full sm:w-auto px-7 py-3 bg-accent-600 hover:bg-accent-700 text-white rounded-lg font-medium transition-colors">
+        <a href="Module_1/investor_register.html" class="w-full sm:w-auto px-8 py-4 bg-accent-600 hover:bg-accent-700 text-white rounded-lg font-semibold transition-all duration-150 shadow-lg hover:shadow-xl">
           For Investors
         </a>
       </div>
@@ -121,137 +157,133 @@
   </section>
 
   <!-- Features Section -->
-  <section id="features" class="py-20 px-6 bg-slate-900">
+  <section id="features" class="py-24 px-6 bg-slate-950 border-y border-slate-800/50 features-section">
     <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-3">Platform Features</h2>
-        <p class="text-gray-400 max-w-2xl mx-auto">Tools for startups to pitch their ideas and for investors to analyze opportunities.</p>
+      <div class="text-center mb-20">
+        <h2 class="text-4xl md:text-5xl font-black text-white mb-4">Features</h2>
+        <p class="text-gray-400 max-w-2xl mx-auto text-lg font-light">Everything you need to analyze and invest with confidence</p>
       </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Startup Features -->
-        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover backdrop-blur-sm">
-          <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center mb-6">
-            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-gradient-to-br from-blue-600/10 via-slate-800/40 to-slate-900/40 border border-blue-500/20 rounded-xl p-8 card-hover group">
+          <div class="w-14 h-14 bg-blue-500/20 border border-blue-400/40 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
+            <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Pitch Deck Builder</h3>
-          <p class="text-gray-400">Create comprehensive pitch decks with guided templates for financials, market analysis, and your team.</p>
+          <h3 class="text-lg font-bold text-white mb-3">Pitch Deck Builder</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Create comprehensive pitch decks with guided templates for financials, market analysis, and your team.</p>
         </div>
 
-        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover backdrop-blur-sm">
-          <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center mb-6">
-            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <div class="bg-gradient-to-br from-blue-600/10 via-slate-800/40 to-slate-900/40 border border-blue-500/20 rounded-xl p-8 card-hover group">
+          <div class="w-14 h-14 bg-blue-500/20 border border-blue-400/40 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
+            <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Startup Analytics</h3>
-          <p class="text-gray-400">Track how investors engage with your startup profile and pitch deck.</p>
+          <h3 class="text-lg font-bold text-white mb-3">Startup Analytics</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Track how investors engage with your startup profile and pitch deck.</p>
         </div>
 
-        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover backdrop-blur-sm">
-          <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center mb-6">
-            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+        <div class="bg-gradient-to-br from-blue-600/10 via-slate-800/40 to-slate-900/40 border border-blue-500/20 rounded-xl p-8 card-hover group">
+          <div class="w-14 h-14 bg-blue-500/20 border border-blue-400/40 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
+            <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Company Profiles</h3>
-          <p class="text-gray-400">Present your startup with detailed company information and financial health reports.</p>
+          <h3 class="text-lg font-bold text-white mb-3">Company Profiles</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Present your startup with detailed company information and financial health reports.</p>
         </div>
 
-        <!-- Investor Features -->
-        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover backdrop-blur-sm">
-          <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
-            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
+        <div class="bg-gradient-to-br from-emerald-600/10 via-slate-800/40 to-slate-900/40 border border-emerald-500/20 rounded-xl p-8 card-hover group">
+          <div class="w-14 h-14 bg-emerald-500/20 border border-emerald-400/40 rounded-lg flex items-center justify-center mb-6 group-hover:bg-emerald-500/30 transition-colors">
+            <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Compare Startups</h3>
-          <p class="text-gray-400">Side-by-side comparison of startups with risk analysis and financial metrics.</p>
+          <h3 class="text-lg font-bold text-white mb-3">Compare Startups</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Side-by-side comparison of startups financial metrics.</p>
         </div>
 
-        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover backdrop-blur-sm">
-          <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
-            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div class="bg-gradient-to-br from-emerald-600/10 via-slate-800/40 to-slate-900/40 border border-emerald-500/20 rounded-xl p-8 card-hover group">
+          <div class="w-14 h-14 bg-emerald-500/20 border border-emerald-400/40 rounded-lg flex items-center justify-center mb-6 group-hover:bg-emerald-500/30 transition-colors">
+            <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Investment Simulation</h3>
-          <p class="text-gray-400">Run investment scenarios with CAPM-based models to evaluate potential returns.</p>
+          <h3 class="text-lg font-bold text-white mb-3">Investment Simulation</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Run investment scenarios with Internal Rate of Return to evaluate potential returns.</p>
         </div>
 
-        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover backdrop-blur-sm">
-          <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
-            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+        <div class="bg-gradient-to-br from-emerald-600/10 via-slate-800/40 to-slate-900/40 border border-emerald-500/20 rounded-xl p-8 card-hover group">
+          <div class="w-14 h-14 bg-emerald-500/20 border border-emerald-400/40 rounded-lg flex items-center justify-center mb-6 group-hover:bg-emerald-500/30 transition-colors">
+            <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Watchlist</h3>
-          <p class="text-gray-400">Save and track promising startups to monitor their progress over time.</p>
+          <h3 class="text-lg font-bold text-white mb-3">Watchlist</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Save and track promising startups to monitor their progress over time.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- How It Works -->
-  <section id="how-it-works" class="py-20 px-6 bg-slate-950">
+  <section id="how-it-works" class="py-24 px-6 bg-slate-900 how-it-works-section">
     <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-3">How It Works</h2>
-        <p class="text-gray-400">Get started in three simple steps</p>
+      <div class="text-center mb-20">
+        <h2 class="text-4xl md:text-5xl font-black text-white mb-4">How It Works</h2>
+        <p class="text-gray-400 text-lg font-light">Get started in three simple steps</p>
       </div>
 
       <div class="grid md:grid-cols-2 gap-12">
-        <!-- For Startups -->
-        <div class="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-3xl p-10 backdrop-blur-sm">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="w-12 h-12 bg-brand-600 rounded-xl flex items-center justify-center">
+        <div class="bg-gradient-to-br from-purple-600/5 to-slate-900/50 border border-purple-500/20 rounded-xl p-12">
+          <div class="flex items-center gap-3 mb-12">
+            <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center shrink-0">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
             </div>
             <h3 class="text-2xl font-bold text-white">For Startups</h3>
           </div>
-          <div class="space-y-6">
+          <div class="space-y-8">
             <div class="flex gap-4">
-              <div class="w-8 h-8 bg-brand-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0">1</div>
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0 shadow-lg">1</div>
               <div>
-                <h4 class="font-semibold text-white mb-1">Create Your Profile</h4>
-                <p class="text-gray-400 text-sm">Add your company details and financial information</p>
+                <h4 class="font-semibold text-white mb-2">Create Your Profile</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">Add your company details and financial information</p>
               </div>
             </div>
             <div class="flex gap-4">
-              <div class="w-8 h-8 bg-brand-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0">2</div>
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0 shadow-lg">2</div>
               <div>
-                <h4 class="font-semibold text-white mb-1">Build Your Pitch</h4>
-                <p class="text-gray-400 text-sm">Use our deck builder to create compelling presentations</p>
+                <h4 class="font-semibold text-white mb-2">Build Your Pitch</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">Use our deck builder to create compelling presentations</p>
               </div>
             </div>
             <div class="flex gap-4">
-              <div class="w-8 h-8 bg-brand-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0">3</div>
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0 shadow-lg">3</div>
               <div>
-                <h4 class="font-semibold text-white mb-1">Get Discovered</h4>
-                <p class="text-gray-400 text-sm">Let investors find and analyze your startup</p>
+                <h4 class="font-semibold text-white mb-2">Get Discovered</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">Let investors find and analyze your startup</p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- For Investors -->
-        <div class="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 rounded-3xl p-10 backdrop-blur-sm">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="w-12 h-12 bg-accent-600 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+        <div class="bg-gradient-to-br from-purple-600/5 to-slate-900/50 border border-purple-500/20 rounded-xl p-12">
+          <div class="flex items-center gap-3 mb-12">
+            <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
             </div>
             <h3 class="text-2xl font-bold text-white">For Investors</h3>
           </div>
-          <div class="space-y-6">
+          <div class="space-y-8">
             <div class="flex gap-4">
-              <div class="w-8 h-8 bg-accent-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0">1</div>
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0 shadow-lg">1</div>
               <div>
-                <h4 class="font-semibold text-white mb-1">Browse Opportunities</h4>
-                <p class="text-gray-400 text-sm">Filter startups by industry, stage, and risk level</p>
+                <h4 class="font-semibold text-white mb-2">Browse Startups</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">Explore vetted startups with detailed profiles and metrics</p>
               </div>
             </div>
             <div class="flex gap-4">
-              <div class="w-8 h-8 bg-accent-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0">2</div>
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0 shadow-lg">2</div>
               <div>
-                <h4 class="font-semibold text-white mb-1">Analyze & Compare</h4>
-                <p class="text-gray-400 text-sm">Use our tools to evaluate multiple startups side-by-side</p>
+                <h4 class="font-semibold text-white mb-2">Analyze Opportunities</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">Review financials and pitch decks in one platform</p>
               </div>
             </div>
             <div class="flex gap-4">
-              <div class="w-8 h-8 bg-accent-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0">3</div>
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg flex items-center justify-center font-bold shrink-0 shadow-lg">3</div>
               <div>
-                <h4 class="font-semibold text-white mb-1">Simulate Investments</h4>
-                <p class="text-gray-400 text-sm">Run scenarios to understand potential outcomes</p>
+                <h4 class="font-semibold text-white mb-2">Connect & Invest</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">Message teams and move forward with due diligence</p>
               </div>
             </div>
           </div>
@@ -260,29 +292,29 @@
     </div>
   </section>
 
-  <!-- About/Status Section -->
-  <section id="about" class="py-20 px-6 bg-slate-900">
+  <!-- About Section -->
+  <section id="about" class="py-24 px-6 bg-slate-900 border-y border-slate-800/50 about-section">
     <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">About Fundora</h2>
-      <p class="text-lg text-gray-400 leading-relaxed mb-6">
+      <h2 class="text-4xl md:text-5xl font-black text-white mb-8">About Fundora</h2>
+      <p class="text-lg text-gray-300 leading-relaxed mb-6">
         We're building a platform to make startup funding more accessible. Our goal is to help founders connect with the right investors and give investors better tools to evaluate opportunities.
       </p>
-      <p class="text-gray-500">
+      <p class="text-gray-500 font-light">
         Currently in beta. Have feedback? We'd love to hear from you.
       </p>
     </div>
   </section>
 
   <!-- CTA Section -->
-  <section class="py-20 px-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-t border-slate-700">
+  <section class="py-24 px-6 bg-slate-900 cta-section">
     <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Get Started</h2>
-      <p class="text-lg text-gray-400 mb-8">Join Fundora and start exploring opportunities.</p>
+      <h2 class="text-4xl md:text-5xl font-black text-white mb-6">Ready to Get Started?</h2>
+      <p class="text-lg text-gray-400 mb-12 font-light">Join Fundora today and start exploring opportunities.</p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="Module_3/startup_register.html" class="w-full sm:w-auto px-7 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium transition-colors">
+        <a href="Module_3/startup_register.html" class="w-full sm:w-auto px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-semibold transition-all duration-150 shadow-lg hover:shadow-xl">
           Register as Startup
         </a>
-        <a href="Module_1/investor_register.html" class="w-full sm:w-auto px-7 py-3 bg-accent-600 hover:bg-accent-700 text-white rounded-lg font-medium transition-colors">
+        <a href="Module_1/investor_register.html" class="w-full sm:w-auto px-8 py-4 bg-accent-600 hover:bg-accent-700 text-white rounded-lg font-semibold transition-all duration-150 shadow-lg hover:shadow-xl">
           Register as Investor
         </a>
       </div>
@@ -290,7 +322,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="py-12 px-6 bg-slate-950 border-t border-slate-800">
+  <section class="py-12 px-6 bg-slate-950 border-t border-slate-800">
     <div class="max-w-7xl mx-auto">
       <div class="flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="flex items-center space-x-3">
@@ -310,17 +342,17 @@
               </defs>
             </svg>
           </div>
-          <span class="text-xl font-bold text-white">Fundora</span>
+          <span class="text-lg font-bold text-white">Fundora</span>
         </div>
         <p class="text-gray-500 text-sm">© 2025 Fundora. Connecting startups with investors.</p>
         <div class="flex items-center gap-6">
-          <a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy</a>
-          <a href="#" class="text-gray-400 hover:text-white transition-colors">Terms</a>
-          <a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-150 text-sm">Privacy</a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-150 text-sm">Terms</a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors duration-150 text-sm">Contact</a>
         </div>
       </div>
     </div>
-  </footer>
+  </section>
 
 </body>
 </html>
