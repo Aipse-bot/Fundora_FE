@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fundora - Create Startup Account</title>
+  <title>Create Startup Account</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
@@ -51,7 +51,17 @@
     @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-100%); opacity: 0; } }
     .toast-enter { animation: slideIn 0.3s ease-out; }
     .toast-exit { animation: slideOut 0.3s ease-out; }
-    .password-strength-bar { height: 4px; transition: all 0.3s ease; }
+    .bg-gradient { background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%); }
+    .subtle-grid { background-image: 
+      linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .accent-dots {
+      background-image: 
+        radial-gradient(circle, rgba(16, 185, 129, 0.1) 2px, transparent 2px);
+      background-size: 60px 60px;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-gray-100 min-h-screen">
@@ -60,13 +70,10 @@
   <div id="toastContainer" class="fixed top-4 right-4 z-[9999] space-y-2"></div>
 
   <!-- Background Effects -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
-    <div class="absolute top-20 left-20 w-96 h-96 bg-emerald-500 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-20 right-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-  </div>
+  <div class="fixed inset-0 bg-gradient subtle-grid accent-dots opacity-40 pointer-events-none"></div>
 
   <!-- Navbar -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 border-b border-slate-700/50 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-6 py-4">
       <div class="flex items-center justify-between">
         <a href="/" class="flex items-center space-x-3">
@@ -99,7 +106,7 @@
       
       <!-- Left Side - Marketing Content -->
       <div class="flex-1 text-center lg:text-left space-y-6 max-w-xl">
-        <div class="inline-block px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-md text-blue-400 text-xs font-medium mb-4">
+        <div class="inline-block px-3 py-1.5 bg-blue-500/20 border border-blue-400/40 rounded-md text-blue-300 text-xs font-medium mb-4">
           For Startups
         </div>
         <h1 class="text-4xl md:text-5xl font-bold leading-tight text-white">
@@ -112,10 +119,15 @@
 
       <!-- Right Side - Registration Form -->
       <div class="w-full max-w-md">
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-blue-600/10 via-slate-900/60 to-slate-900/40 border border-blue-500/30 rounded-2xl p-8 backdrop-blur-sm">
           <div class="mb-8">
             <h2 class="text-2xl font-bold text-white mb-2">Create Your Account</h2>
             <p class="text-gray-400">Start building your pitch today</p>
+          </div>
+
+          <!-- Added error message container for inline errors -->
+          <div id="errorContainer" class="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg hidden">
+            <p id="errorMessage" class="text-red-400 text-sm"></p>
           </div>
 
           <form id="createAccountForm" class="space-y-5">
@@ -124,13 +136,13 @@
               <div>
                 <label for="first_name" class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
                 <input type="text" id="first_name" name="first_name"
-                  class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                  class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
                 <p class="text-red-400 text-xs mt-1.5 hidden" id="firstNameError"></p>
               </div>
               <div>
                 <label for="last_name" class="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
                 <input type="text" id="last_name" name="last_name"
-                  class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                  class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
                 <p class="text-red-400 text-xs mt-1.5 hidden" id="lastNameError"></p>
               </div>
             </div>
@@ -139,7 +151,7 @@
             <div>
               <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
               <input type="email" id="email" name="email"
-                class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
               <p class="text-red-400 text-xs mt-1.5 hidden" id="emailError"></p>
             </div>
 
@@ -147,20 +159,12 @@
             <div>
               <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
               <div class="relative">
-                <input type="password" id="password" name="password"
-                  class="w-full px-4 py-2.5 pr-12 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
-                <button type="button" onclick="togglePassword('password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                <input type="password" id="password" name="password" required class="w-full px-4 py-2.5 pr-12 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                <button type="button" onclick="togglePassword('password')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300">
                   <svg id="passwordEyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                   </svg>
                 </button>
-              </div>
-              <div class="mt-2">
-                <div class="password-strength-bar bg-slate-800 rounded-full overflow-hidden">
-                  <div id="strengthBar" class="h-full bg-gray-600 rounded-full" style="width: 0%"></div>
-                </div>
-                <p id="strengthText" class="text-xs mt-1 text-gray-400"></p>
               </div>
               <p class="text-red-400 text-xs mt-1.5 hidden" id="passwordError"></p>
             </div>
@@ -169,12 +173,10 @@
             <div>
               <label for="confirm_password" class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
               <div class="relative">
-                <input type="password" id="confirm_password" name="confirm_password"
-                  class="w-full px-4 py-2.5 pr-12 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
-                <button type="button" onclick="togglePassword('confirm_password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                <input type="password" id="confirm_password" name="confirm_password" required class="w-full px-4 py-2.5 pr-12 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                <button type="button" onclick="togglePassword('confirm_password')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300">
                   <svg id="confirm_passwordEyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                   </svg>
                 </button>
               </div>
@@ -227,7 +229,7 @@
             : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
         
         toast.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-xl flex items-center space-x-3 min-w-[300px] toast-enter`;
-        toast.innerHTML = `
+        toast.innerHTML = ` 
             <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 ${icon}
             </svg>
@@ -246,86 +248,33 @@
         }, 3000);
     }
 
-    // Enhanced email validation
     function isValidEmail(email) {
         const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        
         if (!emailRegex.test(email)) return false;
-        
         const parts = email.split('@');
         if (parts.length !== 2) return false;
-        
         const domain = parts[1];
         if (!domain.includes('.')) return false;
-        
         const domainParts = domain.split('.');
         const tld = domainParts[domainParts.length - 1];
-        
         if (tld.length < 2) return false;
-        
         const invalidTLDs = ['co', 'cm', 'con', 'cmo', 'comm', 'om', 'ocm'];
         if (invalidTLDs.includes(tld.toLowerCase())) return false;
-        
         return true;
     }
 
-    // Password visibility toggle
     function togglePassword(fieldId) {
         const field = document.getElementById(fieldId);
         const icon = document.getElementById(fieldId + 'EyeIcon');
-        
         if (field.type === 'password') {
             field.type = 'text';
-            icon.innerHTML = `
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-            `;
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>';
         } else {
             field.type = 'password';
-            icon.innerHTML = `
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-            `;
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
         }
     }
 
-    // Password strength checker
-    function checkPasswordStrength(password) {
-        let strength = 0;
-        const strengthBar = document.getElementById('strengthBar');
-        const strengthText = document.getElementById('strengthText');
-        
-        if (password.length >= 8) strength += 25;
-        if (password.length >= 12) strength += 25;
-        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 25;
-        if (/\d/.test(password)) strength += 12.5;
-        if (/[^a-zA-Z0-9]/.test(password)) strength += 12.5;
-        
-        strengthBar.style.width = strength + '%';
-        
-        if (strength <= 25) {
-            strengthBar.className = 'h-full bg-red-500 rounded-full password-strength-bar';
-            strengthText.textContent = 'Weak password';
-            strengthText.className = 'text-xs mt-1 text-red-400';
-        } else if (strength <= 50) {
-            strengthBar.className = 'h-full bg-yellow-500 rounded-full password-strength-bar';
-            strengthText.textContent = 'Fair password';
-            strengthText.className = 'text-xs mt-1 text-yellow-400';
-        } else if (strength <= 75) {
-            strengthBar.className = 'h-full bg-blue-500 rounded-full password-strength-bar';
-            strengthText.textContent = 'Good password';
-            strengthText.className = 'text-xs mt-1 text-blue-400';
-        } else {
-            strengthBar.className = 'h-full bg-green-500 rounded-full password-strength-bar';
-            strengthText.textContent = 'Strong password';
-            strengthText.className = 'text-xs mt-1 text-green-400';
-        }
-    }
-
-    document.getElementById('password').addEventListener('input', function(e) {
-        checkPasswordStrength(e.target.value);
-    });
-
-    // Clear error messages
     function clearError(fieldId) {
         const errorElement = document.getElementById(fieldId + 'Error');
         const inputElement = document.getElementById(fieldId);
@@ -338,7 +287,6 @@
         }
     }
 
-    // Show error messages
     function showError(fieldId, message) {
         const errorElement = document.getElementById(fieldId + 'Error');
         const inputElement = document.getElementById(fieldId);
@@ -351,7 +299,11 @@
         }
     }
 
-    // Add input listeners to clear errors
+    function hideErrorBanner() {
+        const container = document.getElementById('errorContainer');
+        container.classList.add('hidden');
+    }
+
     ['first_name', 'last_name', 'email', 'password', 'confirm_password'].forEach(fieldId => {
         const element = document.getElementById(fieldId);
         if (element) {
@@ -361,17 +313,15 @@
 
     document.getElementById('terms').addEventListener('change', () => clearError('terms'));
 
-    // Form submission
     document.getElementById('createAccountForm').addEventListener('submit', async function (e) {
         e.preventDefault();
         
-        // Clear all previous errors
+        hideErrorBanner();
+        
         ['firstName', 'lastName', 'email', 'password', 'confirmPassword', 'terms'].forEach(clearError);
         
         const submitBtn = document.getElementById('submitBtn');
         const originalText = submitBtn.textContent;
-        
-        // Capture form data
         const firstName = document.getElementById('first_name').value.trim();
         const lastName = document.getElementById('last_name').value.trim();
         const email = document.getElementById('email').value.trim();
@@ -381,54 +331,18 @@
         
         let hasError = false;
         
-        // Client-side validation
-        if (firstName.length < 2) {
-            showError('firstName', 'First name must be at least 2 characters');
-            hasError = true;
-        }
+        if (firstName.length < 2) { showError('firstName', 'First name must be at least 2 characters'); hasError = true; }
+        if (lastName.length < 2) { showError('lastName', 'Last name must be at least 2 characters'); hasError = true; }
+        if (!isValidEmail(email)) { showError('email', 'Please enter a valid email address'); hasError = true; }
+        if (password.length < 8) { showError('password', 'Password must be at least 8 characters'); hasError = true; }
+        else if (!/(?=.*[a-z])(?=.*[A-Z])/.test(password)) { showError('password', 'Password must contain uppercase and lowercase letters'); hasError = true; }
+        else if (!/(?=.*\d)/.test(password)) { showError('password', 'Password must contain at least one number'); hasError = true; }
+        if (password !== confirmPassword) { showError('confirmPassword', 'Passwords do not match'); hasError = true; }
+        if (!terms) { showError('terms', 'You must agree to the Terms and Privacy Policy'); hasError = true; }
         
-        if (lastName.length < 2) {
-            showError('lastName', 'Last name must be at least 2 characters');
-            hasError = true;
-        }
+        if (hasError) return;
         
-        if (!isValidEmail(email)) {
-            showError('email', 'Please enter a valid email address');
-            hasError = true;
-        }
-        
-        if (password.length < 8) {
-            showError('password', 'Password must be at least 8 characters');
-            hasError = true;
-        }
-        
-        if (password !== confirmPassword) {
-            showError('confirmPassword', 'Passwords do not match');
-            hasError = true;
-        }
-        
-        if (!terms) {
-            showError('terms', 'You must agree to the Terms and Privacy Policy');
-            hasError = true;
-        }
-        
-        if (hasError) {
-            showToast('Please fix the errors in the form', 'error');
-            return;
-        }
-        
-        // Prepare payload
-        const payload = {
-            first_name: firstName,
-            last_name: lastName,
-            email: email,
-            password: password,
-            confirm_password: confirmPassword,
-            label: 'startup',
-            terms: terms
-        };
-        
-        // Disable submit button and show loading state
+        const payload = { first_name: firstName, last_name: lastName, email: email, password: password, confirm_password: confirmPassword, label: 'startup', terms: terms };
         submitBtn.disabled = true;
         submitBtn.textContent = 'Creating Account...';
         
@@ -438,56 +352,31 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            
             const data = await res.json();
-            
             if (res.ok) {
-                showToast('Account created successfully! Redirecting...', 'success');
-                setTimeout(() => window.location.href = '/login.html', 2000);
+                setTimeout(() => window.location.href = '/login.html', 1500);
             } else {
-                // Handle server-side validation errors
                 if (data.errors) {
-                    if (typeof data.errors === 'string') {
-                        showToast(data.errors, 'error');
-                    } else if (typeof data.errors === 'object') {
-                        const errorMessages = [];
-                        for (const [field, messages] of Object.entries(data.errors)) {
-                            const errorMsg = Array.isArray(messages) ? messages[0] : messages;
-                            errorMessages.push(errorMsg);
-                            
-                            // Map field names to form field IDs
-                            const fieldMap = {
-                                'first_name': 'firstName',
-                                'last_name': 'lastName',
-                                'email': 'email',
-                                'password': 'password',
-                                'confirm_password': 'confirmPassword'
-                            };
-                            
+                    if (typeof data.errors === 'string') { showError('email', data.errors); }
+                    else if (typeof data.errors === 'object') {
+                        Object.keys(data.errors).forEach(field => {
+                            const errorMsg = Array.isArray(data.errors[field]) ? data.errors[field][0] : data.errors[field];
+                            const fieldMap = { 'first_name': 'firstName', 'last_name': 'lastName', 'email': 'email', 'password': 'password', 'confirm_password': 'confirmPassword' };
                             const fieldId = fieldMap[field] || field;
                             showError(fieldId, errorMsg);
-                        }
-                        showToast('Please check the form for errors', 'error');
+                        });
                     }
-                } else if (data.error) {
-                    showToast(data.error, 'error');
-                } else if (data.message) {
-                    showToast(data.message, 'error');
-                } else {
-                    showToast('Registration failed. Please try again.', 'error');
-                }
-                
+                } else if (data.error) { showError('email', data.error); }
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
             }
         } catch (err) {
             console.error('Registration error:', err);
-            showToast('Connection error. Please check your internet and try again.', 'error');
+            showError('email', 'Connection error. Please check your internet and try again.');
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
     });
 </script>
-  
 </body>
 </html>

@@ -44,15 +44,18 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(148, 163, 184, 0.1); }
-        .startup-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2); }
-        .startup-card { transition: all 0.3s ease; }
+        /* Removed backdrop-filter blur effects for performance */
+        .glass-card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); }
+        .startup-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15); }
+        .startup-card { transition: all 0.2s ease; }
+        /* Removed grid pattern overlay for performance */
+        .content-wrapper { position: relative; z-index: 1; }
         @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .fade-in { animation: slideIn 0.3s ease-out; }
     </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
-    <div class="max-w-7xl mx-auto p-6">
+    <div class="content-wrapper max-w-7xl mx-auto p-6">
         <!-- Header -->
         <div class="flex items-center mb-8 fade-in">
             <a href="Dashboard.html" class="mr-4 p-2.5 hover:bg-slate-800/50 rounded-lg transition-all border border-slate-700">
@@ -67,7 +70,8 @@
         </div>
 
         <!-- Tab Navigation -->
-        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl mb-8 p-2 fade-in">
+        <!-- Removed backdrop-blur-xl, updated to solid background for performance -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl mb-8 p-2 fade-in">
             <nav class="flex space-x-2">
                 <button id="saved-tab" class="tab-button flex-1 py-3 px-6 rounded-lg font-medium text-sm focus:outline-none transition-all duration-200" onclick="switchTab('saved')">
                     <div class="flex items-center justify-center space-x-2">
@@ -94,8 +98,11 @@
             <div id="saved-content" class="tab-content">
                 <div id="saved-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 <div id="saved-empty" class="text-center py-16 hidden">
-                    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-12 max-w-md mx-auto">
-                        <div class="text-6xl mb-4">💔</div>
+                    <!-- Removed emoji, made text more professional -->
+                    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-12 max-w-md mx-auto">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
                         <h3 class="text-xl font-semibold mb-2">No saved startups yet</h3>
                         <p class="text-gray-400 mb-6">Start building your watchlist by saving startups you're interested in.</p>
                         <a href="Dashboard.html" class="inline-block bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-lg font-medium transition-all">
@@ -109,8 +116,11 @@
             <div id="compared-content" class="tab-content hidden">
                 <div id="compared-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 <div id="compared-empty" class="text-center py-16 hidden">
-                    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-12 max-w-md mx-auto">
-                        <div class="text-6xl mb-4">📊</div>
+                    <!-- Removed emoji, made text more professional -->
+                    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-12 max-w-md mx-auto">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
                         <h3 class="text-xl font-semibold mb-2">No comparisons yet</h3>
                         <p class="text-gray-400 mb-6">Compare startups side-by-side to make informed investment decisions.</p>
                         <a href="../Module_2/Compare_Startups.html" class="inline-block bg-accent-600 hover:bg-accent-700 text-white px-6 py-3 rounded-lg font-medium transition-all">
@@ -254,7 +264,7 @@
 
                 results.forEach(startup => {
                     const card = document.createElement('div');
-                    card.className = 'startup-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 hover:shadow-2xl transition-all flex flex-col';
+                    card.className = 'startup-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 hover:shadow-xl transition-all flex flex-col';
                     
                     const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
                     const hasDataPending = !isDeck && !startup.risk_level;
@@ -358,7 +368,7 @@
                                 View Details
                             </a>
                             ${hasDataPending 
-                                ? '<button class="flex-1 px-4 py-2.5 bg-gray-500/20 text-gray-400 rounded-lg text-sm text-center cursor-not-allowed border border-gray-500/30" disabled title="Cannot invest - data pending">Invest</button>'
+                                ? '<button class="flex-1 px-4 py-2.5 bg-gray-500/20 text-gray-400 rounded-lg text-sm font-medium cursor-not-allowed">Data Pending</button>'
                                 : `<a href="../Module_2/Investment_Simulation.html?startup_id=${startup.id}&return=${encodeURIComponent(returnPath)}" 
                                       class="flex-1 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm text-center font-medium transition-all">Invest</a>`
                             }
@@ -411,7 +421,7 @@
 
                 results.forEach(comparison => {
                     const card = document.createElement('div');
-                    card.className = 'startup-card bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 hover:shadow-2xl transition-all flex flex-col';
+                    card.className = 'startup-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 hover:shadow-xl transition-all flex flex-col';
                     
                     const startupNames = comparison.startups.map(s => s.company_name);
                     const displayName = startupNames.length > 2 

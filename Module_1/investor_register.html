@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fundora - Create Investor Account</title>
+  <title>Create Investor Account</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
@@ -45,28 +45,23 @@
   </script>
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    .text-gradient { background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-100%); opacity: 0; } }
-    .toast-enter { animation: slideIn 0.3s ease-out; }
-    .toast-exit { animation: slideOut 0.3s ease-out; }
-    .password-strength-bar { height: 4px; transition: all 0.3s ease; }
+    .bg-gradient { background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%); }
+    .subtle-grid { background-image: 
+      linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .accent-dots {
+      background-image: 
+        radial-gradient(circle, rgba(16, 185, 129, 0.1) 2px, transparent 2px);
+      background-size: 60px 60px;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-gray-100 min-h-screen">
 
-  <!-- Toast Container - Fixed with higher z-index -->
-  <div id="toastContainer" class="fixed top-4 right-4 z-[9999] space-y-2"></div>
-
-  <!-- Background Effects -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
-    <div class="absolute top-20 left-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500 rounded-full blur-3xl"></div>
-  </div>
-
   <!-- Navbar -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 border-b border-slate-700/50 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-6 py-4">
       <div class="flex items-center justify-between">
         <a href="/" class="flex items-center space-x-3">
@@ -93,13 +88,16 @@
     </div>
   </nav>
 
+  <!-- Made background patterns much more visible -->
+  <div class="fixed inset-0 bg-gradient subtle-grid accent-dots pointer-events-none"></div>
+
   <!-- Main Content -->
   <div class="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-4">
     <div class="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
       
       <!-- Left Side - Marketing Content -->
       <div class="flex-1 text-center lg:text-left space-y-6 max-w-xl">
-        <div class="inline-block px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-md text-emerald-400 text-xs font-medium mb-4">
+        <div class="inline-block px-3 py-1.5 bg-emerald-500/20 border border-emerald-400/40 rounded-md text-emerald-300 text-xs font-medium mb-4">
           For Investors
         </div>
         <h1 class="text-4xl md:text-5xl font-bold leading-tight text-white">
@@ -112,7 +110,7 @@
 
       <!-- Right Side - Registration Form -->
       <div class="w-full max-w-md">
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-emerald-600/10 via-slate-900/60 to-slate-900/40 border border-emerald-500/30 rounded-2xl p-8 backdrop-blur-sm">
           <div class="mb-8">
             <h2 class="text-2xl font-bold text-white mb-2">Create Your Account</h2>
             <p class="text-gray-400">Start investing in startups today</p>
@@ -124,13 +122,13 @@
               <div>
                 <label for="firstName" class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
                 <input type="text" id="firstName" name="firstName"
-                  class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                  class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
                 <p class="text-red-400 text-xs mt-1.5 hidden" id="firstNameError"></p>
               </div>
               <div>
                 <label for="lastName" class="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
                 <input type="text" id="lastName" name="lastName"
-                  class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                  class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
                 <p class="text-red-400 text-xs mt-1.5 hidden" id="lastNameError"></p>
               </div>
             </div>
@@ -139,7 +137,7 @@
             <div>
               <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
               <input type="email" id="email" name="email"
-                class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
               <p class="text-red-400 text-xs mt-1.5 hidden" id="emailError"></p>
             </div>
 
@@ -148,19 +146,13 @@
               <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
               <div class="relative">
                 <input type="password" id="password" name="password"
-                  class="w-full px-4 py-2.5 pr-12 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                  class="w-full px-4 py-2.5 pr-12 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
                 <button type="button" onclick="togglePassword('password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
                   <svg id="passwordEyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                   </svg>
                 </button>
-              </div>
-              <div class="mt-2">
-                <div class="password-strength-bar bg-slate-800 rounded-full overflow-hidden">
-                  <div id="strengthBar" class="h-full bg-gray-600 rounded-full" style="width: 0%"></div>
-                </div>
-                <p id="strengthText" class="text-xs mt-1 text-gray-400"></p>
               </div>
               <p class="text-red-400 text-xs mt-1.5 hidden" id="passwordError"></p>
             </div>
@@ -170,7 +162,7 @@
               <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
               <div class="relative">
                 <input type="password" id="confirmPassword" name="confirmPassword"
-                  class="w-full px-4 py-2.5 pr-12 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
+                  class="w-full px-4 py-2.5 pr-12 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
                 <button type="button" onclick="togglePassword('confirmPassword')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
                   <svg id="confirmPasswordEyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -211,41 +203,6 @@
   </div>
 
 <script>
-    // Toast notification system
-    let activeToasts = new Set();
-    
-    function showToast(message, type = 'success') {
-        if (activeToasts.has(message)) return;
-        
-        activeToasts.add(message);
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        
-        const bgColor = type === 'success' ? 'bg-emerald-600' : 'bg-red-600';
-        const icon = type === 'success' 
-            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>'
-            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
-        
-        toast.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-xl flex items-center space-x-3 min-w-[300px] toast-enter`;
-        toast.innerHTML = `
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                ${icon}
-            </svg>
-            <span class="flex-1 font-medium">${message}</span>
-        `;
-        
-        container.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.classList.remove('toast-enter');
-            toast.classList.add('toast-exit');
-            setTimeout(() => {
-                toast.remove();
-                activeToasts.delete(message);
-            }, 300);
-        }, 3000);
-    }
-
     // Enhanced email validation
     function isValidEmail(email) {
         const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -287,43 +244,6 @@
             `;
         }
     }
-
-    // Password strength checker
-    function checkPasswordStrength(password) {
-        let strength = 0;
-        const strengthBar = document.getElementById('strengthBar');
-        const strengthText = document.getElementById('strengthText');
-        
-        if (password.length >= 8) strength += 25;
-        if (password.length >= 12) strength += 25;
-        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 25;
-        if (/\d/.test(password)) strength += 12.5;
-        if (/[^a-zA-Z0-9]/.test(password)) strength += 12.5;
-        
-        strengthBar.style.width = strength + '%';
-        
-        if (strength <= 25) {
-            strengthBar.className = 'h-full bg-red-500 rounded-full password-strength-bar';
-            strengthText.textContent = 'Weak password';
-            strengthText.className = 'text-xs mt-1 text-red-400';
-        } else if (strength <= 50) {
-            strengthBar.className = 'h-full bg-yellow-500 rounded-full password-strength-bar';
-            strengthText.textContent = 'Fair password';
-            strengthText.className = 'text-xs mt-1 text-yellow-400';
-        } else if (strength <= 75) {
-            strengthBar.className = 'h-full bg-blue-500 rounded-full password-strength-bar';
-            strengthText.textContent = 'Good password';
-            strengthText.className = 'text-xs mt-1 text-blue-400';
-        } else {
-            strengthBar.className = 'h-full bg-green-500 rounded-full password-strength-bar';
-            strengthText.textContent = 'Strong password';
-            strengthText.className = 'text-xs mt-1 text-green-400';
-        }
-    }
-
-    document.getElementById('password').addEventListener('input', function(e) {
-        checkPasswordStrength(e.target.value);
-    });
 
     // Clear error messages
     function clearError(fieldId) {
@@ -416,7 +336,6 @@
         }
         
         if (hasError) {
-            showToast('Please fix the errors in the form', 'error');
             return;
         }
         
@@ -443,12 +362,11 @@
             const data = await res.json();
             
             if (res.ok) {
-                showToast('Account created successfully! Redirecting...', 'success');
-                setTimeout(() => window.location.href = '/login.html', 2000);
+                setTimeout(() => window.location.href = '/login.html', 1500);
             } else {
                 if (data.errors) {
                     if (typeof data.errors === 'string') {
-                        showToast(data.errors, 'error');
+                        showError('email', data.errors);
                     } else if (typeof data.errors === 'object') {
                         Object.keys(data.errors).forEach(field => {
                             const errorMsg = Array.isArray(data.errors[field]) 
@@ -466,12 +384,9 @@
                             const fieldId = fieldMap[field] || field;
                             showError(fieldId, errorMsg);
                         });
-                        showToast('Please check the form for errors', 'error');
                     }
                 } else if (data.error) {
-                    showToast(data.error, 'error');
-                } else {
-                    showToast('Registration failed. Please try again.', 'error');
+                    showError('email', data.error);
                 }
                 
                 submitBtn.disabled = false;
@@ -479,12 +394,11 @@
             }
         } catch (err) {
             console.error('Registration error:', err);
-            showToast('Connection error. Please check your internet and try again.', 'error');
+            showError('email', 'Connection error. Please check your internet and try again.');
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
     });
 </script>
-  
 </body>
 </html>
