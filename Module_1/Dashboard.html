@@ -73,9 +73,10 @@
     aside {
       position: sticky;
       top: 80px;
-      height: calc(100vh - 80px);
+      height: calc(100vh - 96px);
       overflow-y: auto;
       overflow-x: hidden;
+      align-self: flex-start;
     }
     aside::-webkit-scrollbar {
       width: 6px;
@@ -140,10 +141,10 @@
 
   <div class="flex max-w-[1920px] mx-auto">
     <!-- Sidebar -->
-    <aside class="w-64 bg-slate-900/30 border-r border-slate-800/50 p-6">
-      <form id="filterForm" class="space-y-6">
+    <aside class="w-64 bg-slate-900/30 border-r border-slate-800/50 p-4">
+      <form id="filterForm" class="space-y-4">
         <!-- Quick Presets -->
-        <div class="bg-slate-800/20 p-4 rounded-lg border border-slate-700/30">
+        <div class="bg-slate-800/20 p-3 rounded-lg border border-slate-700/30">
           <label class="block text-sm font-semibold text-gray-200 mb-3">Quick Presets</label>
           <div class="grid grid-cols-1 gap-2">
             <!-- Presets now automatically apply filters and render startups -->
@@ -465,7 +466,7 @@
     }
 
     function renderStartup(startup) {
-      const isPitchDeck = startup.is_deck_builder === true || startup.is_deck_builder === 'true' || startup.startup_type === 'pitch_deck';
+      const isPitchDeck = startup.source_deck_id != null || startup.is_deck_builder === true || startup.is_deck_builder === 'true' || startup.startup_type === 'pitch_deck';
       
       const card = document.createElement('div');
       card.className = 'startup-card bg-slate-900/40 border border-slate-800/50 rounded-lg p-6 flex flex-col';
@@ -474,7 +475,7 @@
 
       let hasDataPending = false;
       let riskBadge;
-      
+
       if (isPitchDeck) {
           riskBadge = '<span class="bg-brand-600/20 text-brand-300 text-xs font-medium px-3 py-1 rounded-full border border-brand-600/30">Pitch Deck</span>';
       } else if (startup.risk_level && startup.risk_level !== 'Data Pending') {
@@ -490,8 +491,8 @@
           riskBadge = '<span class="bg-gray-600/20 text-gray-300 text-xs font-medium px-3 py-1 rounded-full border border-gray-600/30">Data Pending</span>';
       }
 
-      if (!startup.risk_level || startup.risk_level === 'Data Pending') {
-        console.log("[v0] Startup:", startup.name, "is_deck_builder:", startup.is_deck_builder, "startup_type:", startup.startup_type, "isPitchDeck:", isPitchDeck);
+      if (isPitchDeck) {
+          hasDataPending = false;
       }
 
       const industry = isPitchDeck ? (startup.tagline || '—') : (startup.industry || '—');
