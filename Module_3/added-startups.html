@@ -281,8 +281,13 @@
         }
 
     function toggleModal() {
-      const modal = getCachedElement('startupModal');
+      const modal = document.getElementById('startupModal');
+      if (!modal) {
+        console.error('Modal element not found');
+        return;
+      }
       modal.classList.toggle('hidden');
+      console.log('Modal toggled, hidden class:', modal.classList.contains('hidden'));
     }
 
     async function goToDeckBuilder() {

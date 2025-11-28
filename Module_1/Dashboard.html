@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fundora - Investment Dashboard</title>
+  <title>Investment Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
@@ -313,6 +313,9 @@
         <div class="text-6xl mb-4">→</div>
         <h3 class="text-2xl font-semibold mb-2">No startups found</h3>
         <p class="text-gray-400 text-lg mb-6">No startups match your current filters.</p>
+        <button onclick="renderStartups()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2 rounded-lg font-medium transition-all">
+          Retry
+        </button>
       </div>
     </main>
   </div>
@@ -444,16 +447,18 @@
       return '<svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
     }
 
-    function renderStartup(startup, isDeck = false) {
+    function renderStartup(startup) {
+      const isPitchDeck = startup.is_pitch_deck === true;
+      
       const card = document.createElement('div');
       card.className = 'startup-card bg-slate-900/40 border border-slate-800/50 rounded-lg p-6 flex flex-col';
       card.setAttribute('data-startup-id', startup.id);
-      card.setAttribute('data-is-deck-builder', isDeck);
+      card.setAttribute('data-is-deck-builder', isPitchDeck);
 
       let hasDataPending = false;
       let riskBadge;
       
-      if (!isDeck && startup.confidence && startup.confidence !== null) {
+      if (!isPitchDeck && startup.confidence && startup.confidence !== null) {
           if (startup.risk_level === 'Low') {
               riskBadge = '<span class="bg-accent-600/20 text-accent-300 text-xs font-medium px-3 py-1 rounded-full border border-accent-600/30">Low Risk</span>';
           } else if (startup.risk_level === 'Medium') {
@@ -466,19 +471,19 @@
           riskBadge = '<span class="bg-gray-600/20 text-gray-300 text-xs font-medium px-3 py-1 rounded-full border border-gray-600/30">Data Pending</span>';
       }
 
-      const industry = isDeck ? (startup.tagline || '—') : (startup.industry || '—');
+      const industry = isPitchDeck ? (startup.tagline || '—') : (startup.industry || '—');
       
       const reward = startup.reward_potential;
       const rewardDisplay = (reward != null) ? `${reward}/5` : 'N/A';
       
-      const projected = (startup.projected_return != null && startup.projected_return !== '') 
-          ? `${startup.projected_return >= 0 ? '+' : ''}${startup.projected_return}%` 
+      const estimatedGrowth = (startup.estimated_growth_rate != null && startup.estimated_growth_rate !== '') 
+          ? `${startup.estimated_growth_rate >= 0 ? '+' : ''}${startup.estimated_growth_rate}%` 
           : 'N/A';
 
       const inWatchlist = watchlistIdsSet.has(Number(startup.id));
 
       let metricsSection;
-      if (isDeck) {
+      if (isPitchDeck) {
           const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
           const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
           const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
@@ -503,8 +508,8 @@
                       <span class="text-sm font-semibold text-white">${escapeHtml(rewardDisplay)}</span>
                   </div>
                   <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-400">Projected Return</span>
-                      <span class="text-sm font-semibold ${startup.projected_return != null && startup.projected_return >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(projected)}</span>
+                      <span class="text-sm text-gray-400">Estimated Growth Rate</span>
+                      <span class="text-sm font-semibold ${startup.estimated_growth_rate != null && startup.estimated_growth_rate >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(estimatedGrowth)}</span>
                   </div>
               </div>
           `;
@@ -614,8 +619,7 @@
         } else {
           document.getElementById('no-startups').classList.add('hidden');
           startups.forEach(startup => {
-            const isDeck = formData.get('startup_type') === 'pitch_deck';
-            grid.appendChild(renderStartup(startup, isDeck));
+            grid.appendChild(renderStartup(startup));
           });
         }
       } catch (err) {
