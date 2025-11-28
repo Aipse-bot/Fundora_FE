@@ -348,6 +348,8 @@
     const COMPANY_PROFILE_DB_PAGE = '../Module_2/Company_ProfileDB.html';
     const INVEST_PAGE = '../Module_2/Investment_Simulation.html';
 
+    let watchlistIdsSet = new Set();
+
     function getAuthToken() {
       return localStorage.getItem('authToken');
     }
@@ -387,10 +389,9 @@
       }
       const ct = res.headers.get('content-type') || '';
       if (ct.includes('application/json')) return await res.json();
-      return null;
+      return await res.text();
     }
 
-    let watchlistIdsSet = new Set();
     async function refreshWatchlist() {
         try {
             const data = await fetchJSON(WATCHLIST_ENDPOINT, { method: 'GET' });
@@ -413,7 +414,6 @@
         if (res.status === 201 || res.ok) {
           watchlistIdsSet.add(Number(startupId));
           updateWatchlistBadge();
-          btn && btn.classList.add('text-brand-400');
           return true;
         } else {
           console.warn('Add failed', res.status);
@@ -434,7 +434,6 @@
         if (res.ok) {
           watchlistIdsSet.delete(Number(startupId));
           updateWatchlistBadge();
-          btn && btn.classList.remove('text-brand-400');
           return true;
         } else {
           console.warn('Remove failed', res.status);
@@ -452,9 +451,9 @@
     }
 
     function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
+      if (!text) return '';
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return text.replace(/[&<>"']/g, m => map[m]);
     }
 
     function watchIcon(filled) {
@@ -476,7 +475,7 @@
       
       if (isPitchDeck) {
           riskBadge = '<span class="bg-brand-600/20 text-brand-300 text-xs font-medium px-3 py-1 rounded-full border border-brand-600/30">Pitch Deck</span>';
-      } else if (startup.confidence_percentage != null) {
+      } else if (startup.risk_level && startup.risk_level !== 'Data Pending') {
           if (startup.risk_level === 'Low') {
               riskBadge = '<span class="bg-accent-600/20 text-accent-300 text-xs font-medium px-3 py-1 rounded-full border border-accent-600/30">Low Risk</span>';
           } else if (startup.risk_level === 'Medium') {
@@ -541,7 +540,6 @@
               </div>
               <div class="flex flex-col items-end space-y-2">
                   ${riskBadge}
-                  <!-- Heart button now properly toggles watchlist on click -->
                   <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
                       ${inWatchlist ? watchIcon(true) : watchIcon(false)}
                   </button>
@@ -549,7 +547,6 @@
           </div>
           ${metricsSection}
           <div class="flex gap-2 mt-auto">
-              <!-- View Details button now checks if it's a pitch deck and routes to correct page -->
               <button class="view-details-btn flex-1 px-4 py-2.5 border border-slate-700/50 bg-slate-800/30 text-white rounded-lg hover:bg-slate-700/40 hover:border-slate-600 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
               ${hasDataPending 
               ? '<button class="invest-btn flex-1 px-4 py-2.5 bg-gray-600/20 text-gray-400 rounded-lg text-sm text-center cursor-not-allowed border border-gray-600/30" disabled title="Cannot invest - data pending">Invest</button>'
@@ -568,6 +565,7 @@
       const watchBtn = card.querySelector('.watch-toggle');
       watchBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
+          e.preventDefault();
           const sid = startup.id;
           const currently = watchlistIdsSet.has(Number(sid));
           if (!currently) {
@@ -622,9 +620,6 @@
         if (queryString) {
           url += '?' + queryString;
         }
-        
-        console.log('Fetching startups from:', url);
-        console.log('Query params:', Object.fromEntries(params));
 
         const data = await fetchJSON(url);
         const startups = data.results || data || [];
@@ -642,158 +637,93 @@
             grid.appendChild(renderStartup(startup));
           });
         }
-      } catch (err) {
-        console.error('Error rendering startups:', err);
-        const grid = document.getElementById('startup-grid');
-        grid.innerHTML = `
-          <div class="col-span-full bg-red-900/20 border border-red-700/50 rounded-lg p-6 text-center">
-            <div class="text-red-400 mb-2">
-              <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Error Loading Startups</h3>
-            <p class="text-gray-300 mb-4">There was a problem connecting to the server.</p>
-            <button onclick="renderStartups()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2 rounded-lg font-medium transition-all">
-              Retry
-            </button>
-          </div>
-        `;
-      }
-    }
-
-    function setStartupType(type) {
-      document.querySelectorAll('.type-btn').forEach(btn => {
-        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
-        btn.classList.add('border-slate-700/50');
-      });
-      
-      const selectedBtn = document.getElementById(`type-${type}`);
-      if (selectedBtn) {
-        selectedBtn.classList.remove('border-slate-700/50');
-        selectedBtn.classList.add('border-brand-500', 'bg-brand-500/20');
-      }
-      
-      document.getElementById('type-hidden').value = type;
-      
-      if (type === 'pitch_deck') {
-        document.getElementById('financial-filters').classList.add('hidden');
-        document.getElementById('pitch-deck-filters').classList.remove('hidden');
-      } else {
-        document.getElementById('financial-filters').classList.remove('hidden');
-        document.getElementById('pitch-deck-filters').classList.add('hidden');
+      } catch (error) {
+        console.error('Error rendering startups:', error);
+        document.getElementById('startup-grid').innerHTML = '<p class="text-red-400 text-center py-8">Error loading startups. Please try again.</p>';
       }
     }
 
     function applyPreset(preset) {
+      document.getElementById('type-hidden').value = 'financial';
+      document.getElementById('type-financial').style.borderColor = 'rgb(59 130 246)';
+      document.getElementById('type-pitch_deck').style.borderColor = '';
+      setStartupType('financial');
+      
+      document.getElementById('financial-filters').classList.remove('hidden');
+      document.getElementById('pitch-deck-filters').classList.add('hidden');
+
       if (preset === 'conservative') {
-        setStartupType('financial');
-        setRiskLevel('Low');
-        document.querySelector('select[name="sort_by"]').value = 'risk_asc';
+          document.getElementById('risk-Low').style.borderColor = 'rgb(34 197 94)';
+          setRiskLevel('Low');
       } else if (preset === 'balanced') {
-        setStartupType('financial');
-        setRiskLevel('Medium');
-        document.querySelector('select[name="sort_by"]').value = 'growth_rate_desc';
+          document.getElementById('risk-Medium').style.borderColor = 'rgb(202 138 4)';
+          setRiskLevel('Medium');
       } else if (preset === 'aggressive') {
-        setStartupType('financial');
-        setRiskLevel('High');
-        document.querySelector('select[name="sort_by"]').value = 'growth_rate_desc';
+          document.getElementById('risk-High').style.borderColor = 'rgb(239 68 68)';
+          setRiskLevel('High');
       }
     }
 
-    function setMarketGrowth(growth) {
-      document.querySelectorAll('.growth-btn').forEach(btn => {
-        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
-        btn.classList.add('border-slate-700/50');
-      });
+    function setStartupType(type) {
+      document.getElementById('type-hidden').value = type;
+      const finBtn = document.getElementById('type-financial');
+      const deckBtn = document.getElementById('type-pitch_deck');
       
-      const selectedBtn = document.getElementById(`growth-${growth}`);
-      if (selectedBtn) {
-        selectedBtn.classList.remove('border-slate-700/50');
-        selectedBtn.classList.add('border-brand-500', 'bg-brand-500/20');
+      if (type === 'financial') {
+          finBtn.style.borderColor = 'rgb(59 130 246)';
+          deckBtn.style.borderColor = '';
+          document.getElementById('financial-filters').classList.remove('hidden');
+          document.getElementById('pitch-deck-filters').classList.add('hidden');
+      } else {
+          finBtn.style.borderColor = '';
+          deckBtn.style.borderColor = 'rgb(59 130 246)';
+          document.getElementById('financial-filters').classList.add('hidden');
+          document.getElementById('pitch-deck-filters').classList.remove('hidden');
       }
-      
-      document.getElementById('growth-hidden').value = growth;
     }
 
     function setRiskLevel(level) {
-      document.querySelectorAll('.risk-btn').forEach(btn => {
-        btn.classList.remove('border-accent-500', 'bg-accent-500/20', 'border-yellow-500', 'bg-yellow-500/20', 'border-red-500', 'bg-red-500/20');
-        btn.classList.add('border-slate-700/50');
-      });
-      
-      const selectedBtn = document.getElementById(`risk-${level}`);
-      if (selectedBtn) {
-        selectedBtn.classList.remove('border-slate-700/50');
-        if (level === 'Low') {
-          selectedBtn.classList.add('border-accent-500', 'bg-accent-500/20');
-        } else if (level === 'Medium') {
-          selectedBtn.classList.add('border-yellow-500', 'bg-yellow-500/20');
-        } else {
-          selectedBtn.classList.add('border-red-500', 'bg-red-500/20');
-        }
-      }
-      
       document.getElementById('risk-hidden').value = level;
+      const buttons = document.querySelectorAll('.risk-btn');
+      buttons.forEach(btn => {
+        btn.style.borderColor = '';
+      });
+      document.getElementById(`risk-${level}`).style.borderColor = 
+        level === 'Low' ? 'rgb(34 197 94)' : (level === 'Medium' ? 'rgb(202 138 4)' : 'rgb(239 68 68)');
+    }
+
+    function setMarketGrowth(level) {
+      document.getElementById('growth-hidden').value = level;
+      const buttons = document.querySelectorAll('.growth-btn');
+      buttons.forEach(btn => {
+        btn.style.borderColor = '';
+      });
+      document.getElementById(`growth-${level}`).style.borderColor = 'rgb(59 130 246)';
     }
 
     function clearAllFilters() {
-      const form = document.getElementById('filterForm');
-      form.reset();
-      
-      document.querySelectorAll('.type-btn').forEach(btn => {
-        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
-        btn.classList.add('border-slate-700/50');
-      });
+      document.getElementById('filterForm').reset();
+      document.getElementById('risk-hidden').value = '';
       document.getElementById('type-hidden').value = '';
+      document.getElementById('growth-hidden').value = '';
+      
+      document.querySelectorAll('.risk-btn').forEach(btn => btn.style.borderColor = '');
+      document.querySelectorAll('.type-btn').forEach(btn => btn.style.borderColor = '');
+      document.querySelectorAll('.growth-btn').forEach(btn => btn.style.borderColor = '');
       
       document.getElementById('financial-filters').classList.remove('hidden');
       document.getElementById('pitch-deck-filters').classList.add('hidden');
       
-      document.querySelectorAll('.risk-btn').forEach(btn => {
-        btn.classList.remove('border-accent-500', 'bg-accent-500/20', 'border-yellow-500', 'bg-yellow-500/20', 'border-red-500', 'bg-red-500/20');
-        btn.classList.add('border-slate-700/50');
-      });
-      
-      document.querySelectorAll('.growth-btn').forEach(btn => {
-        btn.classList.remove('border-brand-500', 'bg-brand-500/20');
-        btn.classList.add('border-slate-700/50');
-      });
-      
-      document.getElementById('risk-hidden').value = '';
-      document.getElementById('growth-hidden').value = '';
-      
-      renderStartups();
+      renderStartups(false);
     }
 
-    // Form submission
     document.getElementById('filterForm').addEventListener('submit', (e) => {
       e.preventDefault();
       renderStartups(false);
     });
 
-    // Initial load
-    document.addEventListener('DOMContentLoaded', () => {
-      const token = getAuthToken();
-      if (!token) { window.location.href = '/login.html'; return; }
-      renderStartups();
-    });
-
-    window._fundora = {
-      refreshWatchlist,
-      fetchStartups: async () => {
-        const form = document.getElementById('filterForm');
-        const params = new URLSearchParams();
-        const formData = new FormData(form);
-        for (const [key, value] of formData) {
-          if (value) params.append(key, value);
-        }
-        return fetchJSON(`${STARTUPS_ENDPOINT}?${params.toString()}`);
-      },
-      renderStartups,
-      addToWatchlist,
-      removeFromWatchlist
-    };
+    // Initial render
+    renderStartups();
   </script>
 </body>
 </html>
