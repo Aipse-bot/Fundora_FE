@@ -50,9 +50,10 @@
     .startup-card {
       transition: all 0.15s ease;
       background: #1a1f29;
-      border: 1px solid #2a3038;
+      border: 2px solid #2a3442;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
     .startup-card::before {
       content: '';
@@ -60,16 +61,20 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 1px;
-      background: #2a3038;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .startup-card:hover::before {
+      opacity: 1;
     }
     .startup-card:hover {
-      transform: translateY(-2px);
-      border-color: #3a4250;
-      background: #202733;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transform: translateY(-4px);
+      border-color: #3b82f6;
+      background: #212935;
+      box-shadow: 0 12px 24px rgba(59, 130, 246, 0.15);
     }
-    /* Fix scrollable sidebar - make it not scrollable */
     aside {
       position: sticky;
       top: 80px;
@@ -77,6 +82,10 @@
       overflow-y: auto;
       overflow-x: hidden;
       align-self: flex-start;
+      background: #1a1f29;
+      border: 1px solid #2a3442;
+      border-radius: 12px;
+      padding: 20px;
     }
     aside::-webkit-scrollbar {
       width: 6px;
@@ -139,12 +148,12 @@
     </div>
   </header>
 
-  <div class="flex max-w-[1920px] mx-auto">
+  <div class="flex max-w-[1920px] mx-auto gap-6 px-6">
     <!-- Sidebar -->
     <aside class="w-64 bg-slate-900/30 border-r border-slate-800/50 p-4">
       <form id="filterForm" class="space-y-4">
         <!-- Quick Presets -->
-        <div class="bg-slate-800/20 p-3 rounded-lg border border-slate-700/30">
+        <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 shadow-lg">
           <label class="block text-sm font-semibold text-gray-200 mb-3">Quick Presets</label>
           <div class="grid grid-cols-1 gap-2">
             <!-- Presets now automatically apply filters and render startups -->
@@ -185,7 +194,7 @@
 
         <!-- Financial Data Filters -->
         <div id="financial-filters" class="space-y-6">
-          <div>
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Sort By</label>
             <select name="sort_by" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Default Order</option>
@@ -198,7 +207,7 @@
             </select>
           </div>
 
-          <div>
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Industry</label>
             <select name="industry" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">All Industries</option>
@@ -236,7 +245,7 @@
           </div>
 
           <!-- Growth rate filter now excludes pitch decks -->
-          <div>
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Minimum Estimated Growth Rate</label>
             <select name="min_growth_rate" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Any Growth Rate</option>
@@ -254,7 +263,7 @@
 
         <!-- Pitch Deck Filters -->
         <div id="pitch-deck-filters" class="space-y-6 hidden">
-          <div>
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Sort By</label>
             <select name="deck_sort_by" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Default Order</option>
@@ -266,7 +275,7 @@
             </select>
           </div>
 
-          <div>
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Funding Ask Range</label>
             <select name="funding_ask_range" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Any Amount</option>
@@ -294,7 +303,7 @@
             <input type="hidden" name="market_growth_filter" id="growth-hidden">
           </div>
 
-          <div>
+          <div class="bg-slate-800/40 p-4 rounded-lg border border-slate-700/50 mb-4">
             <label class="block text-sm font-semibold text-gray-200 mb-2">Minimum Market Growth</label>
             <select name="min_market_growth" class="w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
               <option value="">Any Growth Rate</option>
@@ -308,22 +317,22 @@
           </div>
         </div>
 
-        <div class="space-y-3 pt-4 border-t border-slate-700/30">
-          <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-all">Apply Filters</button>
-          <button type="button" onclick="clearAllFilters()" class="w-full bg-slate-800/30 hover:bg-slate-700/30 text-white py-2.5 px-4 rounded-lg font-medium transition-all border border-slate-700/50">Clear All</button>
+        <div class="space-y-3 pt-6 border-t-2 border-slate-700/50">
+          <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3 px-4 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl">Apply Filters</button>
+          <button type="button" onclick="clearAllFilters()" class="w-full bg-slate-800/50 hover:bg-slate-700/50 text-white py-3 px-4 rounded-lg font-medium transition-all border-2 border-slate-700/50 hover:border-slate-600">Clear All</button>
         </div>
       </form>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-6">
+    <main class="flex-1 py-6">
       <div class="mb-8">
         <h2 class="text-4xl font-bold mb-2">Investment Opportunities</h2>
         <p class="text-gray-400 text-lg">Discover startups tailored to your investment profile</p>
       </div>
 
-      <div class="mb-6 bg-slate-900/20 border border-slate-800/30 p-4 rounded-lg flex items-center justify-between">
-        <p class="text-sm text-gray-300">Showing <span id="startup-count" class="font-semibold text-white text-lg">0</span> startup<span id="startup-plural">s</span></p>
+      <div class="mb-6 bg-slate-800/40 border-2 border-slate-700/50 p-5 rounded-xl flex items-center justify-between shadow-md">
+        <p class="text-sm text-gray-300">Showing <span id="startup-count" class="font-bold text-white text-xl mx-1">0</span> startup<span id="startup-plural">s</span></p>
         <div id="clear-filters" class="hidden"></div>
       </div>
 
