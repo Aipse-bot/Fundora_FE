@@ -162,7 +162,7 @@
               Pitch Decks
             </button>
           </div>
-          <input type="hidden" name="startup_type" id="type-hidden" value="">
+          <input type="hidden" name="startup_type" id="type-hidden">
         </div>
 
         <!-- Financial Data Filters -->
@@ -213,7 +213,7 @@
                 High
               </button>
             </div>
-            <input type="hidden" name="risk_level" id="risk-hidden" value="">
+            <input type="hidden" name="risk_level" id="risk-hidden">
           </div>
 
           <div>
@@ -271,7 +271,7 @@
                 30%+
               </button>
             </div>
-            <input type="hidden" name="market_growth_filter" id="growth-hidden" value="">
+            <input type="hidden" name="market_growth_filter" id="growth-hidden">
           </div>
 
           <div>
@@ -576,18 +576,36 @@
     async function renderStartups(shouldRefreshWatchlist = true) {
       try {
         const grid = document.getElementById('startup-grid');
-        grid.innerHTML = '';
+        grid.innerHTML = '<p class="text-gray-400 text-center py-8">Loading startups...</p>';
 
         if (shouldRefreshWatchlist) {
           await refreshWatchlist();
         }
 
-        const formData = new FormData(document.getElementById('filterForm'));
-        const params = new URLSearchParams(formData);
+        const form = document.getElementById('filterForm');
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
+        
+        formData.forEach((value, key) => {
+          if (value != null && value.toString().trim() !== '') {
+            params.append(key, value.toString().trim());
+          }
+        });
 
-        const data = await fetchJSON(`${STARTUPS_ENDPOINT}?${params.toString()}`);
+        let url = STARTUPS_ENDPOINT;
+        const queryString = params.toString();
+        if (queryString) {
+          url += '?' + queryString;
+        }
+        
+        console.log('Fetching startups from:', url);
+        console.log('Query params:', Object.fromEntries(params));
+
+        const data = await fetchJSON(url);
         const startups = data.results || data || [];
 
+        grid.innerHTML = '';
+        
         document.getElementById('startup-count').textContent = startups.length;
         document.getElementById('startup-plural').textContent = startups.length === 1 ? '' : 's';
 
@@ -601,8 +619,22 @@
           });
         }
       } catch (err) {
-        console.error('Error rendering startups', err);
-        document.getElementById('startup-grid').innerHTML = '<p class="text-red-400">Error loading startups.</p>';
+        console.error('Error rendering startups:', err);
+        const grid = document.getElementById('startup-grid');
+        grid.innerHTML = `
+          <div class="col-span-full bg-red-900/20 border border-red-700/50 rounded-lg p-6 text-center">
+            <div class="text-red-400 mb-2">
+              <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Error Loading Startups</h3>
+            <p class="text-gray-300 mb-4">There was a problem connecting to the server.</p>
+            <button onclick="renderStartups()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2 rounded-lg font-medium transition-all">
+              Retry
+            </button>
+          </div>
+        `;
       }
     }
 

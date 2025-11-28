@@ -565,7 +565,14 @@
                     });
                     
                     if (!response.ok) {
-                        const errorData = await response.json();
+                        let errorData;
+                        try {
+                            errorData = await response.json();
+                        } catch (parseError) {
+                            console.error('Server returned non-JSON response:', parseError);
+                            showErrorMessage(`Server error (${response.status}). Please try again later or contact support.`);
+                            return;
+                        }
                         
                         if (response.status === 400 && errorData.errors) {
                             const errorMessages = Object.entries(errorData.errors)
@@ -585,7 +592,14 @@
                         return;
                     }
                     
-                    const result = await response.json();
+                    let result;
+                    try {
+                        result = await response.json();
+                    } catch (parseError) {
+                        console.error('Failed to parse success response:', parseError);
+                        showErrorMessage('Server error: Invalid response format. Please contact support.');
+                        return;
+                    }
                     
                     if (result.success) {
                         hasSuccessfulSubmission = true;
