@@ -235,35 +235,65 @@
     }
 
     .features-section .grid > div:nth-child(1) {
-      animation: scaleIn 0.6s ease-out 0.1s backwards;
+      animation: fadeIn 0.6s ease-out 0.1s backwards;
     }
 
     .features-section .grid > div:nth-child(2) {
-      animation: scaleIn 0.6s ease-out 0.2s backwards;
+      animation: fadeIn 0.6s ease-out 0.2s backwards;
     }
 
     .features-section .grid > div:nth-child(3) {
-      animation: scaleIn 0.6s ease-out 0.3s backwards;
+      animation: fadeIn 0.6s ease-out 0.3s backwards;
     }
 
     .features-section .grid > div:nth-child(4) {
-      animation: scaleIn 0.6s ease-out 0.4s backwards;
+      animation: fadeIn 0.6s ease-out 0.4s backwards;
     }
 
     .features-section .grid > div:nth-child(5) {
-      animation: scaleIn 0.6s ease-out 0.5s backwards;
+      animation: fadeIn 0.6s ease-out 0.5s backwards;
     }
 
     .features-section .grid > div:nth-child(6) {
-      animation: scaleIn 0.6s ease-out 0.6s backwards;
+      animation: fadeIn 0.6s ease-out 0.6s backwards;
     }
 
-    .how-it-works-section .grid > div:first-child {
+    .how-it-works-section .grid > div {
+      animation: fadeIn 0.6s ease-out backwards;
+    }
+
+    .how-it-works-section .grid > div:first-child h3,
+    .how-it-works-section .grid > div:first-child .space-y-8 > div {
       animation: slideInLeft 0.8s ease-out backwards;
     }
 
-    .how-it-works-section .grid > div:last-child {
+    .how-it-works-section .grid > div:last-child h3,
+    .how-it-works-section .grid > div:last-child .space-y-8 > div {
       animation: slideInRight 0.8s ease-out backwards;
+    }
+
+    .how-it-works-section .grid > div:first-child .space-y-8 > div:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+
+    .how-it-works-section .grid > div:first-child .space-y-8 > div:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .how-it-works-section .grid > div:first-child .space-y-8 > div:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    .how-it-works-section .grid > div:last-child .space-y-8 > div:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+
+    .how-it-works-section .grid > div:last-child .space-y-8 > div:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .how-it-works-section .grid > div:last-child .space-y-8 > div:nth-child(3) {
+      animation-delay: 0.4s;
     }
 
     a[href*="startup_register"], a[href*="investor_register"], a[href*="login"] {
@@ -285,7 +315,6 @@
       transform: translateY(0);
     }
 
-    /* Ripple effect for buttons */
     .ripple-button {
       position: relative;
       overflow: hidden;
@@ -310,7 +339,6 @@
       transition: 0s;
     }
 
-    /* Icon animations on hover */
     .card-hover svg {
       transition: transform 0.3s ease;
     }
@@ -319,12 +347,10 @@
       transform: scale(1.1) rotate(5deg);
     }
 
-    /* Smooth scroll behavior */
     html {
       scroll-behavior: smooth;
     }
 
-    /* Section fade-in on scroll (handled by Intersection Observer) */
     .fade-in-section {
       opacity: 0;
       transform: translateY(30px);
