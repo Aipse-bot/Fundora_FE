@@ -8,86 +8,137 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        min-height: 100vh;
-    }
-    header {
-        contain: layout style paint;
-    }
-    .startup-card {
-        contain: layout style;
-    }
-  </style>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+        }
+        header {
+            contain: layout style paint;
+            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.8);
+        }
+        .startup-card {
+            contain: layout style;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .startup-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-down {
+            animation: slideDown 0.3s ease-out;
+        }
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
+        }
+        .modal-content {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .choice-card {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .choice-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .choice-card:hover::before {
+            opacity: 1;
+        }
+        .choice-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+    </style>
 </head>
 <body>
   <!-- Header will be injected via JS or static include -->
-    <header class="sticky top-0 z-50 bg-slate-900 border-b border-slate-800">
+    <header class="sticky top-0 z-50 bg-slate-900 border-b border-slate-800 slide-down">
         <div class="max-w-[1920px] mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="relative w-10 h-10">
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)" stroke="#3b82f6" stroke-width="2"/>
-                    <path d="M20 10 L20 30 M12 20 L28 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-                    <circle cx="20" cy="12" r="2" fill="white"/>
-                    <circle cx="20" cy="28" r="2" fill="white"/>
-                    <circle cx="12" cy="20" r="2" fill="white"/>
-                    <circle cx="28" cy="20" r="2" fill="white"/>
-                    <defs>
-                    <linearGradient id="logo-gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#3b82f6"/>
-                        <stop offset="100%" stop-color="#10b981"/>
-                    </linearGradient>
-                    </defs>
-                </svg>
+                <div class="flex items-center space-x-3 group">
+                    <div class="relative w-10 h-10 transform transition-transform group-hover:scale-110">
+                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)" stroke="#3b82f6" stroke-width="2"/>
+                            <path d="M20 10 L20 30 M12 20 L28 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="20" cy="12" r="2" fill="white"/>
+                            <circle cx="20" cy="28" r="2" fill="white"/>
+                            <circle cx="12" cy="20" r="2" fill="white"/>
+                            <circle cx="28" cy="20" r="2" fill="white"/>
+                            <defs>
+                                <linearGradient id="logo-gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#3b82f6"/>
+                                    <stop offset="100%" stop-color="#10b981"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Fundora</h1>
+                        <p class="text-sm text-gray-400">My Startups Dashboard</p>
+                    </div>
                 </div>
-                <div>
-                <h1 class="text-2xl font-bold text-white">Fundora</h1>
-                <p class="text-sm text-gray-400">My Startups Dashboard</p>
+                <div class="flex items-center space-x-3">
+                    <a href="startup-analytics.html" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 border border-slate-700 flex items-center space-x-2 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <span>Analytics</span>
+                    </a>
+                    <a href="/Module_3/Profile_Startup.html" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 border border-slate-700 flex items-center space-x-2 hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span>Profile</span>
+                    </a>
                 </div>
-            </div>
-            <div class="flex items-center space-x-3">
-                <a href="startup-analytics.html" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-slate-700 flex items-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-                <span>Analytics</span>
-                </a>
-                <a href="/Module_3/Profile_Startup.html" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all border border-slate-700 flex items-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-                <span>Profile</span>
-                </a>
-            </div>
             </div>
         </div>
     </header>
 
   <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 mt-6">
-    <div class="mb-6">
-      <div class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-900 border border-slate-800 rounded-xl p-6">
-        <div>
-            <h2 class="text-2xl font-bold text-white mb-2">My Startups</h2>
-            <p class="text-gray-400">Manage your registered companies and pitch decks</p>
-        </div>
-        <div class="flex gap-3">
-            <a href="/deck-builder.html" class="inline-flex items-center space-x-2 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-            <span>My Pitch Decks</span>
-            </a>
-            <button onclick="toggleModal()" class="py-2.5 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all flex items-center space-x-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            <span>Add New Startup</span>
-            </button>
-        </div>
+    <div class="mb-6 fade-in">
+        <div class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl">
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-2 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">My Startups</h2>
+                <p class="text-gray-400">Manage your registered companies and pitch decks</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/deck-builder.html" class="inline-flex items-center space-x-2 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>My Pitch Decks</span>
+                </a>
+                <button onclick="toggleModal()" class="py-2.5 px-4 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-semibold transition-all duration-300 flex items-center space-x-2 hover:shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>Add New Startup</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -132,37 +183,44 @@
     </div>
   </div>
 
-<div id="startupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-  <div class="bg-slate-800 rounded-xl p-6 w-full max-w-3xl mx-4 shadow-lg flex flex-col gap-4 border border-slate-700">
-    
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold text-white">Create New Startup</h2>
-      <button onclick="toggleModal()" class="text-slate-400 hover:text-white transition text-2xl font-light">
-        ×
-      </button>
-    </div>
+    <div id="startupModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 hidden">
+        <div class="modal-content bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 w-full max-w-3xl mx-4 shadow-2xl flex flex-col gap-6 border border-slate-700">
+            
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-1">Create New Startup</h2>
+                    <p class="text-slate-400 text-sm">Choose how you want to add your startup</p>
+                </div>
+                <button onclick="toggleModal()" class="text-slate-400 hover:text-white transition-colors duration-300 text-3xl font-light hover:rotate-90 transform transition-transform">
+                    ×
+                </button>
+            </div>
 
-    <div class="flex flex-col sm:flex-row gap-4">
-      
-      <div onclick="goToDeckBuilder()" class="flex-1 flex flex-col items-center justify-center border border-slate-600 p-8 text-center rounded-lg transition duration-300 hover:border-blue-500 hover:bg-blue-500/5 cursor-pointer">
-        <div class="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xl font-bold mb-3">
-          Deck
+            <div class="flex flex-col sm:flex-row gap-6">
+                
+                <div onclick="goToDeckBuilder()" class="choice-card flex-1 flex flex-col items-center justify-center border-2 border-slate-600 p-10 text-center rounded-xl transition-all duration-300 hover:border-blue-500 cursor-pointer bg-slate-800/50">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <p class="font-semibold text-white text-xl mb-2">Pitch Deck Builder</p>
+                    <p class="text-slate-400 text-sm">Build and customize your pitch deck with our interactive builder</p>
+                </div>
+
+                <div onclick="goToCompanyForm()" class="choice-card flex-1 flex flex-col items-center justify-center border-2 border-slate-600 p-10 text-center rounded-xl transition-all duration-300 hover:border-emerald-500 cursor-pointer bg-slate-800/50">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg shadow-emerald-500/30 transform transition-transform group-hover:scale-110">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <p class="font-semibold text-white text-xl mb-2">Company Form</p>
+                    <p class="text-slate-400 text-sm">Add your business information through our detailed form</p>
+                </div>
+
+            </div>
         </div>
-        <p class="font-semibold text-white text-lg">Pitch Deck Builder</p>
-        <p class="text-slate-400 text-sm mt-1">Build and customize your pitch deck</p>
-      </div>
-
-      <div onclick="goToCompanyForm()" class="flex-1 flex flex-col items-center justify-center border border-slate-600 p-8 text-center rounded-lg transition duration-300 hover:border-emerald-500 hover:bg-emerald-500/5 cursor-pointer">
-        <div class="w-12 h-12 rounded-lg bg-emerald-600 flex items-center justify-center text-white text-xl font-bold mb-3">
-          Co.
-        </div>
-        <p class="font-semibold text-white text-lg">Company Form</p>
-        <p class="text-slate-400 text-sm mt-1">Add your business information</p>
-      </div>
-
     </div>
-  </div>
-</div>
 
 
     <script>
@@ -699,14 +757,14 @@
 
             <div class="flex gap-2">
                 <button onclick="editStartup(${startupId})"
-                        class="flex-1 bg-emerald-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2">
+                        class="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold py-3 px-4 rounded-lg hover:from-emerald-700 hover:to-emerald-600 transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Edit ${hasDeckInfo ? 'Deck' : 'Info'}
                 </button>
                 <button onclick="startupReport(${startupId})"
-                        class="flex-1 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                        class="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-600 transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>

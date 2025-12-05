@@ -47,21 +47,55 @@
     body { font-family: 'Inter', sans-serif; }
     .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
     .text-gradient { background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    
     @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-100%); opacity: 0; } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    
     .toast-enter { animation: slideIn 0.3s ease-out; }
     .toast-exit { animation: slideOut 0.3s ease-out; }
-    .bg-gradient { background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%); }
-    .subtle-grid { background-image: 
-      linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px);
-      background-size: 40px 40px;
+    .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+    
+    .bg-gradient { 
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%); 
     }
+    
+    .subtle-grid { 
+      background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: pulse 4s ease-in-out infinite;
+    }
+    
     .accent-dots {
       background-image: 
         radial-gradient(circle, rgba(16, 185, 129, 0.1) 2px, transparent 2px);
       background-size: 60px 60px;
     }
+
+    input:focus, button:focus { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+    input, button, a { transition: all 0.3s ease; }
+    
+    button[type="submit"]:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+    }
+    button[type="submit"]:active:not(:disabled) { transform: translateY(0); }
+    
+    .bg-gradient-to-br { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .bg-gradient-to-br:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.3); }
+    
+    input:hover:not(:focus) { border-color: rgba(59, 130, 246, 0.5); }
+    input[type="checkbox"]:hover { transform: scale(1.1); }
+    
+    .space-y-5 > div:nth-child(1) { animation-delay: 0.1s; }
+    .space-y-5 > div:nth-child(2) { animation-delay: 0.2s; }
+    .space-y-5 > div:nth-child(3) { animation-delay: 0.3s; }
+    .space-y-5 > div:nth-child(4) { animation-delay: 0.4s; }
+    .space-y-5 > div:nth-child(5) { animation-delay: 0.5s; }
+    .space-y-5 > button { animation-delay: 0.6s; }
   </style>
 </head>
 <body class="bg-slate-950 text-gray-100 min-h-screen">
@@ -72,6 +106,7 @@
   <!-- Background Effects -->
   <div class="fixed inset-0 bg-gradient subtle-grid accent-dots opacity-40 pointer-events-none"></div>
 
+   TODO: Remove Logo, turn it into a back button.
   <!-- Navbar -->
   <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 border-b border-slate-700/50 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-6 py-4">
@@ -105,7 +140,7 @@
     <div class="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
       
       <!-- Left Side - Marketing Content -->
-      <div class="flex-1 text-center lg:text-left space-y-6 max-w-xl">
+      <div class="flex-1 text-center lg:text-left space-y-6 max-w-xl fade-in-up">
         <div class="inline-block px-3 py-1.5 bg-blue-500/20 border border-blue-400/40 rounded-md text-blue-300 text-xs font-medium mb-4">
           For Startups
         </div>
@@ -118,7 +153,7 @@
       </div>
 
       <!-- Right Side - Registration Form -->
-      <div class="w-full max-w-md">
+      <div class="w-full max-w-md fade-in-up" style="animation-delay: 0.2s;">
         <div class="bg-gradient-to-br from-blue-600/10 via-slate-900/60 to-slate-900/40 border border-blue-500/30 rounded-2xl p-8 backdrop-blur-sm">
           <div class="mb-8">
             <h2 class="text-2xl font-bold text-white mb-2">Create Your Account</h2>
@@ -132,7 +167,7 @@
 
           <form id="createAccountForm" class="space-y-5">
             <!-- Name Fields -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4 fade-in-up">
               <div>
                 <label for="first_name" class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
                 <input type="text" id="first_name" name="first_name"
@@ -148,7 +183,7 @@
             </div>
 
             <!-- Email -->
-            <div>
+            <div class="fade-in-up">
               <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
               <input type="email" id="email" name="email"
                 class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
@@ -156,7 +191,7 @@
             </div>
 
             <!-- Password -->
-            <div>
+            <div class="fade-in-up">
               <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
               <div class="relative">
                 <input type="password" id="password" name="password" required class="w-full px-4 py-2.5 pr-12 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
@@ -170,7 +205,7 @@
             </div>
 
             <!-- Confirm Password -->
-            <div>
+            <div class="fade-in-up">
               <label for="confirm_password" class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
               <div class="relative">
                 <input type="password" id="confirm_password" name="confirm_password" required class="w-full px-4 py-2.5 pr-12 bg-slate-800/60 border border-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-white placeholder-gray-500 transition-colors">
@@ -182,17 +217,6 @@
               </div>
               <p class="text-red-400 text-xs mt-1.5 hidden" id="confirmPasswordError"></p>
             </div>
-
-            <!-- Terms -->
-            <div class="flex items-start">
-              <input type="checkbox" id="terms" name="terms" required
-                class="mt-1 h-4 w-4 text-brand-600 focus:ring-brand-500 border-slate-600 rounded bg-slate-800">
-              <label for="terms" class="ml-3 text-sm text-gray-400">
-                I agree to the <a href="#" class="text-brand-400 hover:text-brand-300">Terms of Service</a> and
-                <a href="#" class="text-brand-400 hover:text-brand-300">Privacy Policy</a>
-              </label>
-            </div>
-            <p class="text-red-400 text-xs mt-1.5 hidden" id="termsError"></p>
 
             <!-- Submit Button -->
             <button type="submit" id="submitBtn"

@@ -45,18 +45,63 @@
     body { font-family: 'Inter', sans-serif; }
     .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
     .glass-card { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(59, 130, 246, 0.2); }
+    
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+    .scale-in { animation: scaleIn 0.5s ease-out forwards; opacity: 0; }
+    .slide-down { animation: slideDown 0.4s ease-out forwards; opacity: 0; }
+    
     .stat-card {
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out forwards;
     }
     .stat-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(59, 130, 246, 0.2);
+    }
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    
+    header { animation: slideDown 0.5s ease-out; }
+    
+    button, a { transition: all 0.3s ease; }
+    button:hover:not(:disabled), a:hover {
+      transform: translateY(-1px);
+    }
+    button:active:not(:disabled), a:active {
+      transform: translateY(0);
+    }
+    
+    input:focus {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    #editModal {
+      backdrop-filter: blur(8px);
+      animation: fadeInUp 0.3s ease-out;
+    }
+    
+    #editModal > div {
+      animation: scaleIn 0.3s ease-out;
+    }
+    
+    .activity-item {
+      transition: all 0.3s ease;
+    }
+    .activity-item:hover {
+      transform: translateX(4px);
+      background-color: rgba(51, 65, 85, 0.5) !important;
     }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
   <!-- Header -->
-  <!-- Removed backdrop-blur-xl, using solid background instead -->
   <header class="sticky top-0 z-50 bg-slate-900 border-b border-slate-800">
     <div class="max-w-[1920px] mx-auto px-6 py-4">
       <div class="flex justify-between items-center">
@@ -105,7 +150,7 @@
 
   <div class="max-w-7xl mx-auto px-6 py-8">
     <!-- Profile Header -->
-    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-8 mb-6">
+    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-8 mb-6 fade-in-up">
       <div class="flex items-start justify-between">
         <div class="flex items-center space-x-6">
           <div class="w-24 h-24 rounded-full bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-3xl font-bold">
@@ -173,7 +218,7 @@
     </div>
 
     <!-- Recent Activity Sections -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 0.4s;">
       <!-- Recent Views -->
       <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-6">
@@ -349,7 +394,7 @@
       }
 
       container.innerHTML = views.slice(0, 5).map(view => `
-        <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-all">
+        <div class="activity-item flex items-center justify-between p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-all">
           <div class="flex-1">
             <h4 class="font-semibold text-white">${escapeHtml(view.startup_name || 'Unknown')}</h4>
             <p class="text-sm text-gray-400">${escapeHtml(view.startup_industry || 'N/A')}</p>
@@ -368,7 +413,7 @@
       }
 
       container.innerHTML = comparisons.slice(0, 5).map(comp => `
-        <div class="p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-all">
+        <div class="activity-item p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-all">
           <div class="flex items-center justify-between mb-2">
             <span class="text-sm font-medium text-purple-400">${comp.startup_count || 0} startups</span>
             <span class="text-sm text-gray-500">${formatDate(comp.created_at)}</span>
