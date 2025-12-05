@@ -42,10 +42,11 @@
     }
   </script>
   <style>
+    /* ===== NEW ANIMATIONS ===== */
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
       }
       to {
         opacity: 1;
@@ -53,120 +54,66 @@
       }
     }
 
-    @keyframes fadeIn {
+    @keyframes cardSlideIn {
       from {
         opacity: 0;
+        transform: translateY(30px) scale(0.95);
       }
       to {
         opacity: 1;
+        transform: translateY(0) scale(1);
       }
     }
 
-    @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-40px);
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
       }
-      to {
-        opacity: 1;
-        transform: translateX(0);
+      100% {
+        background-position: 1000px 0;
       }
     }
 
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @keyframes scaleIn {
-      from {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes float {
+    @keyframes pulse-glow {
       0%, 100% {
-        transform: translateY(0px);
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
       }
       50% {
-        transform: translateY(-20px);
-      }
-    }
-
-    @keyframes pulse-subtle {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.8;
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
       }
     }
 
     body { 
       font-family: 'Inter', sans-serif;
-    }
-
-    nav {
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    .hero-gradient { 
       background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%);
+      background-attachment: fixed;
+      animation: fadeInUp 0.6s ease-out;
     }
 
-    .text-gradient { 
-      background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-      background-clip: text;
-      animation: pulse-subtle 3s ease-in-out infinite;
-    }
-
-    .subtle-grid { 
-      background-image: 
-        linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
-      background-size: 50px 50px;
-      animation: fadeIn 1s ease-out;
-    }
-
-    .accent-glow {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(40px);
-      opacity: 0.15;
-      pointer-events: none;
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .glow-blue { 
-      background: #3b82f6;
-      animation-delay: 0s;
-    }
-
-    .glow-green { 
-      background: #10b981;
-      animation-delay: 1s;
-    }
-
-    .card-hover { 
+    .startup-card {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.2);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      animation: cardSlideIn 0.5s ease-out forwards;
     }
 
-    .card-hover::before {
+    .startup-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .startup-card::after {
       content: '';
       position: absolute;
       top: -50%;
@@ -179,141 +126,45 @@
       pointer-events: none;
     }
 
-    .card-hover:hover::before {
+    .startup-card:hover::before {
       opacity: 1;
     }
 
-    .card-hover:hover { 
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
-      background-color: rgba(30, 41, 59, 0.9);
+    .startup-card:hover::after {
+      opacity: 1;
     }
 
-    .stat-box {
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
+    .startup-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(59, 130, 246, 0.5);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.25), 0 0 20px rgba(59, 130, 246, 0.1);
     }
 
-    .badge-gradient {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    /* Stagger animation for cards */
+    .startup-card:nth-child(1) { animation-delay: 0.05s; }
+    .startup-card:nth-child(2) { animation-delay: 0.1s; }
+    .startup-card:nth-child(3) { animation-delay: 0.15s; }
+    .startup-card:nth-child(4) { animation-delay: 0.2s; }
+    .startup-card:nth-child(5) { animation-delay: 0.25s; }
+    .startup-card:nth-child(6) { animation-delay: 0.3s; }
+    .startup-card:nth-child(n+7) { animation-delay: 0.35s; }
+
+    /* Loading skeleton */
+    .skeleton-card {
+      background: linear-gradient(
+        90deg,
+        rgba(30, 41, 59, 0.6) 0%,
+        rgba(59, 130, 246, 0.2) 50%,
+        rgba(30, 41, 59, 0.6) 100%
+      );
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite linear;
+      border-radius: 12px;
+      height: 280px;
     }
 
-    .features-section {
-      background: linear-gradient(to bottom, rgba(59, 130, 246, 0.03) 0%, rgba(79, 70, 229, 0.02) 100%);
-    }
-
-    .how-it-works-section {
-      background: linear-gradient(to bottom, rgba(139, 92, 246, 0.03) 0%, rgba(168, 85, 247, 0.02) 100%);
-    }
-
-    .about-section {
-      background: linear-gradient(to bottom, rgba(34, 197, 94, 0.03) 0%, rgba(16, 185, 129, 0.02) 100%);
-    }
-
-    .cta-section {
-      background: linear-gradient(to bottom, rgba(236, 72, 153, 0.03) 0%, rgba(244, 63, 94, 0.02) 100%);
-    }
-
-    .hero-gradient > .relative {
-      animation: fadeInUp 0.8s ease-out 0.3s backwards;
-    }
-
-    .hero-gradient h1 {
-      animation: fadeInUp 1s ease-out 0.4s backwards;
-    }
-
-    .hero-gradient p {
-      animation: fadeInUp 1s ease-out 0.6s backwards;
-    }
-
-    .hero-gradient .flex {
-      animation: fadeInUp 1s ease-out 0.8s backwards;
-    }
-
-    .features-section .grid > div:nth-child(1) {
-      animation: fadeIn 0.6s ease-out 0.1s backwards;
-    }
-
-    .features-section .grid > div:nth-child(2) {
-      animation: fadeIn 0.6s ease-out 0.2s backwards;
-    }
-
-    .features-section .grid > div:nth-child(3) {
-      animation: fadeIn 0.6s ease-out 0.3s backwards;
-    }
-
-    .features-section .grid > div:nth-child(4) {
-      animation: fadeIn 0.6s ease-out 0.4s backwards;
-    }
-
-    .features-section .grid > div:nth-child(5) {
-      animation: fadeIn 0.6s ease-out 0.5s backwards;
-    }
-
-    .features-section .grid > div:nth-child(6) {
-      animation: fadeIn 0.6s ease-out 0.6s backwards;
-    }
-
-    .how-it-works-section .grid > div {
-      animation: fadeIn 0.6s ease-out backwards;
-    }
-
-    .how-it-works-section .grid > div:first-child h3,
-    .how-it-works-section .grid > div:first-child .space-y-8 > div {
-      animation: slideInLeft 0.8s ease-out backwards;
-    }
-
-    .how-it-works-section .grid > div:last-child h3,
-    .how-it-works-section .grid > div:last-child .space-y-8 > div {
-      animation: slideInRight 0.8s ease-out backwards;
-    }
-
-    .how-it-works-section .grid > div:first-child .space-y-8 > div:nth-child(1) {
-      animation-delay: 0.2s;
-    }
-
-    .how-it-works-section .grid > div:first-child .space-y-8 > div:nth-child(2) {
-      animation-delay: 0.3s;
-    }
-
-    .how-it-works-section .grid > div:first-child .space-y-8 > div:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    .how-it-works-section .grid > div:last-child .space-y-8 > div:nth-child(1) {
-      animation-delay: 0.2s;
-    }
-
-    .how-it-works-section .grid > div:last-child .space-y-8 > div:nth-child(2) {
-      animation-delay: 0.3s;
-    }
-
-    .how-it-works-section .grid > div:last-child .space-y-8 > div:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    /* Button hover effects */
-    a[href*="startup_register"], a[href*="investor_register"], a[href*="login"] {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    a[href*="startup_register"]:hover, 
-    a[href*="investor_register"]:hover, 
-    a[href*="login"]:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-    }
-
-    a[href*="startup_register"]:active, 
-    a[href*="investor_register"]:active, 
-    a[href*="login"]:active {
-      transform: translateY(0);
-    }
-
+    /* Button ripple effect */
     .ripple-button {
       position: relative;
       overflow: hidden;
@@ -338,27 +189,95 @@
       transition: 0s;
     }
 
-    .card-hover svg {
-      transition: transform 0.3s ease;
+    /* Enhanced button hover effects */
+    button, .invest-btn, .view-details-btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
 
-    .card-hover:hover svg {
-      transform: scale(1.1) rotate(5deg);
+    button:hover:not(:disabled), .invest-btn:hover, .view-details-btn:hover {
+      transform: translateY(-2px);
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
-    .fade-in-section {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    }
-
-    .fade-in-section.is-visible {
-      opacity: 1;
+    button:active:not(:disabled), .invest-btn:active, .view-details-btn:active {
       transform: translateY(0);
+    }
+
+    /* Watchlist icon animation */
+    .watch-toggle {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .watch-toggle:hover {
+      transform: scale(1.15);
+    }
+
+    .watch-toggle:active {
+      transform: scale(0.95);
+    }
+
+    /* Badge pulse on update */
+    .badge-update {
+      animation: pulse-glow 0.6s ease-out;
+    }
+
+    /* Main content entrance */
+    main {
+      animation: fadeInUp 0.6s ease-out 0.1s backwards;
+    }
+
+    /* Header entrance */
+    header {
+      animation: fadeInUp 0.5s ease-out backwards;
+    }
+
+    aside {
+      animation: fadeInUp 0.5s ease-out 0.2s backwards;
+      position: fixed;
+      left: 24px;
+      top: 96px;
+      width: 320px;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+
+    aside::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    aside::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    aside::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 3px;
+      transition: background 0.3s;
+    }
+
+    aside::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.5);
+    }
+
+    /* Filter transitions */
+    select:hover {
+      border-color: rgba(59, 130, 246, 0.4) !important;
+    }
+
+    select:focus {
+      transform: scale(1.01);
+      transition: transform 0.2s ease;
+    }
+
+    .preset-btn:active, .type-btn:active, .risk-btn:active, .growth-btn:active {
+      transform: scale(0.97);
     }
   </style>
 </head>
