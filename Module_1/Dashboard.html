@@ -42,67 +42,323 @@
     }
   </script>
   <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes pulse-subtle {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.8;
+      }
+    }
+
     body { 
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%);
-      background-attachment: fixed;
     }
-    /* Enhanced card styling with gradient borders and improved hover effects */
-    .startup-card {
-      transition: all 0.2s ease;
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.2);
+
+    nav {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .hero-gradient { 
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%);
+    }
+
+    .text-gradient { 
+      background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      background-clip: text;
+      animation: pulse-subtle 3s ease-in-out infinite;
+    }
+
+    .subtle-grid { 
+      background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    .accent-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.15;
+      pointer-events: none;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .glow-blue { 
+      background: #3b82f6;
+      animation-delay: 0s;
+    }
+
+    .glow-green { 
+      background: #10b981;
+      animation-delay: 1s;
+    }
+
+    .card-hover { 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
-    .startup-card::before {
+
+    .card-hover::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #3b82f6, #10b981);
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
       opacity: 0;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
-    .startup-card:hover::before {
+
+    .card-hover:hover::before {
       opacity: 1;
     }
-    .startup-card:hover {
+
+    .card-hover:hover { 
       transform: translateY(-6px);
-      border-color: rgba(59, 130, 246, 0.4);
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
       box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+      background-color: rgba(30, 41, 59, 0.9);
     }
-    aside {
-      position: fixed;
-      left: 24px;
-      top: 96px;
-      width: 320px;
-      height: calc(100vh - 120px);
-      overflow-y: auto;
-      overflow-x: hidden;
-      background: linear-gradient(180deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.15);
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      z-index: 10;
+
+    .stat-box {
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
     }
-    aside::-webkit-scrollbar {
-      width: 6px;
+
+    .badge-gradient {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
     }
-    aside::-webkit-scrollbar-track {
-      background: transparent;
+
+    .features-section {
+      background: linear-gradient(to bottom, rgba(59, 130, 246, 0.03) 0%, rgba(79, 70, 229, 0.02) 100%);
     }
-    aside::-webkit-scrollbar-thumb {
-      background: rgba(59, 130, 246, 0.3);
-      border-radius: 3px;
+
+    .how-it-works-section {
+      background: linear-gradient(to bottom, rgba(139, 92, 246, 0.03) 0%, rgba(168, 85, 247, 0.02) 100%);
     }
-    aside::-webkit-scrollbar-thumb:hover {
-      background: rgba(59, 130, 246, 0.5);
+
+    .about-section {
+      background: linear-gradient(to bottom, rgba(34, 197, 94, 0.03) 0%, rgba(16, 185, 129, 0.02) 100%);
+    }
+
+    .cta-section {
+      background: linear-gradient(to bottom, rgba(236, 72, 153, 0.03) 0%, rgba(244, 63, 94, 0.02) 100%);
+    }
+
+    .hero-gradient > .relative {
+      animation: fadeInUp 0.8s ease-out 0.3s backwards;
+    }
+
+    .hero-gradient h1 {
+      animation: fadeInUp 1s ease-out 0.4s backwards;
+    }
+
+    .hero-gradient p {
+      animation: fadeInUp 1s ease-out 0.6s backwards;
+    }
+
+    .hero-gradient .flex {
+      animation: fadeInUp 1s ease-out 0.8s backwards;
+    }
+
+    .features-section .grid > div:nth-child(1) {
+      animation: fadeIn 0.6s ease-out 0.1s backwards;
+    }
+
+    .features-section .grid > div:nth-child(2) {
+      animation: fadeIn 0.6s ease-out 0.2s backwards;
+    }
+
+    .features-section .grid > div:nth-child(3) {
+      animation: fadeIn 0.6s ease-out 0.3s backwards;
+    }
+
+    .features-section .grid > div:nth-child(4) {
+      animation: fadeIn 0.6s ease-out 0.4s backwards;
+    }
+
+    .features-section .grid > div:nth-child(5) {
+      animation: fadeIn 0.6s ease-out 0.5s backwards;
+    }
+
+    .features-section .grid > div:nth-child(6) {
+      animation: fadeIn 0.6s ease-out 0.6s backwards;
+    }
+
+    .how-it-works-section .grid > div {
+      animation: fadeIn 0.6s ease-out backwards;
+    }
+
+    .how-it-works-section .grid > div:first-child h3,
+    .how-it-works-section .grid > div:first-child .space-y-8 > div {
+      animation: slideInLeft 0.8s ease-out backwards;
+    }
+
+    .how-it-works-section .grid > div:last-child h3,
+    .how-it-works-section .grid > div:last-child .space-y-8 > div {
+      animation: slideInRight 0.8s ease-out backwards;
+    }
+
+    .how-it-works-section .grid > div:first-child .space-y-8 > div:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+
+    .how-it-works-section .grid > div:first-child .space-y-8 > div:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .how-it-works-section .grid > div:first-child .space-y-8 > div:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    .how-it-works-section .grid > div:last-child .space-y-8 > div:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+
+    .how-it-works-section .grid > div:last-child .space-y-8 > div:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .how-it-works-section .grid > div:last-child .space-y-8 > div:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    /* Button hover effects */
+    a[href*="startup_register"], a[href*="investor_register"], a[href*="login"] {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    a[href*="startup_register"]:hover, 
+    a[href*="investor_register"]:hover, 
+    a[href*="login"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+    }
+
+    a[href*="startup_register"]:active, 
+    a[href*="investor_register"]:active, 
+    a[href*="login"]:active {
+      transform: translateY(0);
+    }
+
+    .ripple-button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ripple-button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .ripple-button:active::after {
+      width: 300px;
+      height: 300px;
+      transition: 0s;
+    }
+
+    .card-hover svg {
+      transition: transform 0.3s ease;
+    }
+
+    .card-hover:hover svg {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .fade-in-section {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .fade-in-section.is-visible {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
@@ -473,6 +729,27 @@
     function updateWatchlistBadge() {
       const badge = document.getElementById('watchlist-badge');
       badge.textContent = watchlistIdsSet.size;
+      badge.classList.add('badge-update');
+      setTimeout(() => badge.classList.remove('badge-update'), 600);
+    }
+
+    function showLoadingSkeletons(count = 6) {
+      const grid = document.getElementById('startup-grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        const skeleton = document.createElement('div');
+        skeleton.className = 'skeleton-card';
+        grid.appendChild(skeleton);
+      }
+    }
+
+    function addRippleEffect() {
+      const buttons = document.querySelectorAll('button:not(.watch-toggle), .invest-btn, .view-details-btn');
+      buttons.forEach(button => {
+        if (!button.classList.contains('ripple-button')) {
+          button.classList.add('ripple-button');
+        }
+      });
     }
 
     function escapeHtml(text) {
@@ -628,7 +905,7 @@
     async function renderStartups(shouldRefreshWatchlist = true) {
       try {
         const grid = document.getElementById('startup-grid');
-        grid.innerHTML = '<p class="text-gray-400 text-center py-8">Loading startups...</p>';
+          showLoadingSkeletons(6);
 
         if (shouldRefreshWatchlist) {
           await refreshWatchlist();
@@ -678,6 +955,7 @@
           startups.forEach(startup => {
             grid.appendChild(renderStartup(startup));
           });
+          addRippleEffect();
         }
       } catch (error) {
         console.error('Error rendering startups:', error);
@@ -766,6 +1044,7 @@
 
     // Initial render
     renderStartups();
+    addRippleEffect();
   </script>
 </body>
 </html>

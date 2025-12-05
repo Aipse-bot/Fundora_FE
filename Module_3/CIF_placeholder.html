@@ -14,7 +14,7 @@
   <style>
     body {
       font-family: "Inter", sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
       min-height: 100vh;
       margin: 0;
       color: #e2e8f0;
@@ -25,7 +25,7 @@
       background-color: #1e293b;
       border: 1px solid #334155;
       color: #f1f5f9;
-      transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       contain: layout style;
     }
 
@@ -37,45 +37,50 @@
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
       outline: none;
+      transform: translateY(-1px);
     }
 
     .form-input-modern:hover {
       border-color: #475569;
+      background-color: #1e293bee;
     }
 
     .dynamic-tooltip {
       visibility: hidden;
-      background-color: #1e293b;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       color: #f8fafc;
       text-align: center;
-      border-radius: 6px;
-      padding: 8px 12px;
+      border-radius: 8px;
+      padding: 10px 14px;
       position: fixed;
       z-index: 100;
       opacity: 0;
-      transition: opacity 0.2s;
+      transition: opacity 0.3s ease, transform 0.3s ease;
       max-width: 220px;
       font-size: 0.875rem;
       pointer-events: none;
       border: 1px solid #334155;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      transform: translateY(5px);
     }
 
     .dynamic-tooltip.visible {
       visibility: visible;
       opacity: 1;
+      transform: translateY(0);
     }
 
     .dynamic-tooltip::after {
       content: "";
       position: absolute;
-      border-width: 5px;
+      border-width: 6px;
       border-style: solid;
     }
 
     .tooltip-top::after {
       top: 100%;
       left: 50%;
-      margin-left: -5px;
+      margin-left: -6px;
       border-color: #1e293b transparent transparent transparent;
     }
 
@@ -83,27 +88,80 @@
       width: 8px;
     }
     ::-webkit-scrollbar-thumb {
-      background-color: #475569;
+      background: linear-gradient(180deg, #475569 0%, #334155 100%);
       border-radius: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
     }
 
     header {
       contain: layout style paint;
       will-change: auto;
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.9);
     }
 
     #completeness-bar {
       will-change: width;
-      transition: width 0.3s ease-out;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     @keyframes fadeIn {
       from {
         opacity: 0;
+        transform: translateY(20px);
       }
       to {
         opacity: 1;
+        transform: translateY(0);
       }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .slide-down {
+      animation: slideDown 0.4s ease-out;
+    }
+
+    .section-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .section-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.2);
+    }
+
+    .tooltip-trigger svg {
+      transition: all 0.3s ease;
+    }
+
+    .tooltip-trigger:hover svg {
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.5));
     }
   </style>
 </head>
@@ -111,24 +169,24 @@
 <body class="flex flex-col min-h-screen">
 
   <!-- Header -->
-  <header class="bg-slate-900 border-b border-slate-700 shadow-sm sticky top-0 z-50">
+  <header class="bg-slate-900 border-b border-slate-700 shadow-sm sticky top-0 z-50 slide-down">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        <div class="flex items-center space-x-3">
-          <div class="bg-blue-600 p-2 rounded-lg">
+        <div class="flex items-center space-x-3 group">
+          <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-2 rounded-lg shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
             <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
               viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
             </svg>
           </div>
-          <span class="text-2xl font-bold text-white tracking-tight">Fundora</span>
+          <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent tracking-tight">Fundora</span>
         </div>
         <div class="flex items-center space-x-4">
           <span class="text-slate-400 text-sm">
             Welcome, <span class="font-semibold text-blue-400" id="user-email">Loading...</span>
           </span>
-          <img class="h-9 w-9 rounded-full object-cover border border-slate-600"
+          <img class="h-9 w-9 rounded-full object-cover border-2 border-blue-500/50 shadow-lg transform transition-transform hover:scale-110"
             src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User Avatar" />
         </div>
       </div>
@@ -137,15 +195,20 @@
 
   <main class="flex-1 py-6 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto bg-slate-900 border border-slate-700 rounded-2xl shadow-lg p-6 sm:p-8">
-      <div class="mb-6 bg-slate-800 rounded-lg p-4 border border-slate-700">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-sm font-medium text-slate-300">Form Completeness</span>
-          <span class="text-sm text-slate-400" id="completeness-text">Please fill the form</span>
-        </div>
-        <div class="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
-          <div id="completeness-bar" class="h-2.5 rounded-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
-        </div>
-        <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low" />
+      <div class="mb-6 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-5 border border-slate-700 shadow-xl fade-in">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="text-sm font-semibold text-slate-200">Form Completeness</span>
+            </div>
+            <span class="text-sm font-medium text-slate-300" id="completeness-text">Please fill the form</span>
+          </div>
+          <div class="w-full bg-slate-700 rounded-full h-3 overflow-hidden shadow-inner">
+            <div id="completeness-bar" class="h-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-500 shadow-lg" style="width: 0%"></div>
+          </div>
+          <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low" />
       </div>
 
       <form id="companyForm" novalidate class="space-y-8">
@@ -153,11 +216,11 @@
 
           <!-- Left Column -->
           <div class="lg:col-span-2">
-            <div class="flex items-center gap-3 mb-6">
-              <div class="bg-blue-600 p-2 rounded-lg">
-                <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-              </div>
-              <h2 class="text-xl font-bold text-white">Company Profile</h2>
+            <div class="flex items-center gap-3 mb-6 group">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-2.5 rounded-lg shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
+                  <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                </div>
+                <h2 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Company Profile</h2>
             </div>
             <div class="space-y-6">
               <div>
@@ -210,9 +273,9 @@
           <div class="lg:col-span-3 space-y-8">
             
             <!-- Income Statement -->
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
-                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 section-card shadow-lg">
+              <h3 class="font-semibold text-white mb-4 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50 animate-pulse"></span>
                 Income Statement
               </h3>
               <div class="space-y-3">
@@ -275,9 +338,9 @@
             </div>
 
             <!-- Balance Sheet -->
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
-                <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full"></span>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 section-card shadow-lg">
+              <h3 class="font-semibold text-white mb-4 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/50 animate-pulse"></span>
                 Balance Sheet
               </h3>
               <div class="space-y-3">
@@ -340,9 +403,9 @@
             </div>
 
             <!-- Cash Flow -->
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
-                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 section-card shadow-lg">
+              <h3 class="font-semibold text-white mb-4 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50 animate-pulse"></span>
                 Cash Flow
               </h3>
               <div class="space-y-3">
@@ -361,9 +424,9 @@
             </div>
 
             <!-- Valuation -->
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
-                <span class="inline-block w-2 h-2 bg-purple-500 rounded-full"></span>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 section-card shadow-lg">
+              <h3 class="font-semibold text-white mb-4 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 bg-purple-500 rounded-full shadow-lg shadow-purple-500/50 animate-pulse"></span>
                 Valuation
               </h3>
               <div class="space-y-3">
@@ -404,9 +467,9 @@
             </div>
 
             <!-- Qualitative Assessment -->
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-              <h3 class="font-semibold text-white mb-3 text-center text-sm flex items-center justify-center gap-2">
-                <span class="inline-block w-2 h-2 bg-orange-500 rounded-full"></span>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 section-card shadow-lg">
+              <h3 class="font-semibold text-white mb-4 text-center text-sm flex items-center justify-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 bg-orange-500 rounded-full shadow-lg shadow-orange-500/50 animate-pulse"></span>
                 Qualitative Assessment
               </h3>
               <div class="space-y-3">
@@ -452,10 +515,13 @@
         </div>
 
         <div class="flex justify-end gap-3 pt-6 border-t border-slate-700">
-          <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200">
+          <button type="submit" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-lg font-semibold transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
             Save Profile
           </button>
-        </div>
+      </div>
       </form>
     </div>
   </main>

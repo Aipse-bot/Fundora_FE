@@ -12,6 +12,55 @@
     #mainContent { contain: layout style paint; }
     #card-panel { contain: layout style paint; }
     #reportModal { contain: layout style paint; }
+    
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    
+    aside { animation: slideInLeft 0.5s ease-out; }
+    #mainContent { animation: fadeInUp 0.5s ease-out; animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards; }
+    #card-panel { animation: slideInRight 0.5s ease-out; animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards; }
+    
+    #deckSections button {
+      transition: all 0.3s ease;
+    }
+    #deckSections button:hover {
+      transform: translateX(4px);
+    }
+    
+    button, a, input, textarea, select {
+      transition: all 0.3s ease;
+    }
+    
+    button:hover:not(:disabled), a:hover {
+      transform: translateY(-1px);
+    }
+    button:active:not(:disabled), a:active {
+      transform: translateY(0);
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    #reportModal {
+      backdrop-filter: blur(8px);
+      animation: fadeInUp 0.3s ease-out;
+    }
+    
+    #reportModal > div {
+      animation: scaleIn 0.4s ease-out;
+    }
+    
+    .team-form, .financial-row {
+      animation: fadeInUp 0.3s ease-out;
+    }
+    
+    canvas {
+      transition: opacity 0.3s ease;
+    }
   </style>
 </head>
 
@@ -25,7 +74,7 @@
       <!-- Back Button -->
       <div class="mb-6">
         <a href="/deck-builder.html"
-          class="flex items-center space-x-2 py-2.5 px-4 rounded-lg bg-slate-700 hover:bg-slate-600 text-gray-200 hover:text-white font-medium transition duration-200 ease-in-out">
+          class="flex items-center space-x-2 py-2.5 px-4 rounded-lg bg-slate-700 hover:bg-slate-600 text-gray-200 hover:text-white font-medium transition-all duration-200 ease-in-out">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
           </svg>
@@ -38,7 +87,7 @@
     </div>
 
     <button onclick="openModal()"
-      class="mt-6 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xl font-semibold transition duration-200 ease-in-out shadow-lg">
+      class="mt-6 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xl font-semibold transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl">
       Generate Report
     </button>
   </aside>
@@ -98,7 +147,7 @@
         </div>
         <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <button onclick="closeModal()"
-            class="bg-slate-200 rounded-lg text-gray-800 px-4 py-2 hover:bg-slate-300 transition">Back to Builder</button>
+            class="bg-slate-200 rounded-lg text-gray-800 px-4 py-2 hover:bg-slate-300 transition-all">Back to Builder</button>
         </div>
       </div>
 
@@ -220,7 +269,7 @@
 
       sections.forEach(section => {
         const button = document.createElement('button');
-        button.className = "block w-full text-left py-2 px-4 rounded hover:bg-blue-500 hover:text-white text-lg font-semibold transition duration-200 ease-in-out";
+        button.className = "block w-full text-left py-2 px-4 rounded hover:bg-blue-500 hover:text-white text-lg font-semibold transition-all duration-200 ease-in-out";
         button.textContent = section.display_name;
         button.dataset.section = section.key;
         button.addEventListener('click', () => loadSection(section.key, deckId, section), { passive: true });

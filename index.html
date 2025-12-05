@@ -44,49 +44,296 @@
     }
   </script>
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .hero-gradient { background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%); }
-    .text-gradient { background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes pulse-subtle {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.8;
+      }
+    }
+
+    body { 
+      font-family: 'Inter', sans-serif;
+    }
+
+    nav {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .hero-gradient { 
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%);
+    }
+
+    .text-gradient { 
+      background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      background-clip: text;
+      animation: pulse-subtle 3s ease-in-out infinite;
+    }
+
     .subtle-grid { 
       background-image: 
         linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
         linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
       background-size: 50px 50px;
+      animation: fadeIn 1s ease-out;
     }
+
     .accent-glow {
       position: absolute;
       border-radius: 50%;
       filter: blur(40px);
       opacity: 0.15;
       pointer-events: none;
+      animation: float 6s ease-in-out infinite;
     }
-    .glow-blue { background: #3b82f6; }
-    .glow-green { background: #10b981; }
-    .card-hover { transition: all 0.2s ease; }
+
+    .glow-blue { 
+      background: #3b82f6;
+      animation-delay: 0s;
+    }
+
+    .glow-green { 
+      background: #10b981;
+      animation-delay: 1s;
+    }
+
+    .card-hover { 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-hover::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .card-hover:hover::before {
+      opacity: 1;
+    }
+
     .card-hover:hover { 
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
       background-color: rgba(30, 41, 59, 0.9);
     }
+
     .stat-box {
       border: 1px solid rgba(59, 130, 246, 0.2);
       background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
     }
+
     .badge-gradient {
       background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
       border: 1px solid rgba(59, 130, 246, 0.3);
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
     }
+
     .features-section {
       background: linear-gradient(to bottom, rgba(59, 130, 246, 0.03) 0%, rgba(79, 70, 229, 0.02) 100%);
     }
+
     .how-it-works-section {
       background: linear-gradient(to bottom, rgba(139, 92, 246, 0.03) 0%, rgba(168, 85, 247, 0.02) 100%);
     }
+
     .about-section {
       background: linear-gradient(to bottom, rgba(34, 197, 94, 0.03) 0%, rgba(16, 185, 129, 0.02) 100%);
     }
+
     .cta-section {
       background: linear-gradient(to bottom, rgba(236, 72, 153, 0.03) 0%, rgba(244, 63, 94, 0.02) 100%);
+    }
+
+    .hero-gradient > .relative {
+      animation: fadeInUp 0.8s ease-out 0.3s backwards;
+    }
+
+    .hero-gradient h1 {
+      animation: fadeInUp 1s ease-out 0.4s backwards;
+    }
+
+    .hero-gradient p {
+      animation: fadeInUp 1s ease-out 0.6s backwards;
+    }
+
+    .hero-gradient .flex {
+      animation: fadeInUp 1s ease-out 0.8s backwards;
+    }
+
+    .features-section .grid > div:nth-child(1) {
+      animation: scaleIn 0.6s ease-out 0.1s backwards;
+    }
+
+    .features-section .grid > div:nth-child(2) {
+      animation: scaleIn 0.6s ease-out 0.2s backwards;
+    }
+
+    .features-section .grid > div:nth-child(3) {
+      animation: scaleIn 0.6s ease-out 0.3s backwards;
+    }
+
+    .features-section .grid > div:nth-child(4) {
+      animation: scaleIn 0.6s ease-out 0.4s backwards;
+    }
+
+    .features-section .grid > div:nth-child(5) {
+      animation: scaleIn 0.6s ease-out 0.5s backwards;
+    }
+
+    .features-section .grid > div:nth-child(6) {
+      animation: scaleIn 0.6s ease-out 0.6s backwards;
+    }
+
+    .how-it-works-section .grid > div:first-child {
+      animation: slideInLeft 0.8s ease-out backwards;
+    }
+
+    .how-it-works-section .grid > div:last-child {
+      animation: slideInRight 0.8s ease-out backwards;
+    }
+
+    a[href*="startup_register"], a[href*="investor_register"], a[href*="login"] {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    a[href*="startup_register"]:hover, 
+    a[href*="investor_register"]:hover, 
+    a[href*="login"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+    }
+
+    a[href*="startup_register"]:active, 
+    a[href*="investor_register"]:active, 
+    a[href*="login"]:active {
+      transform: translateY(0);
+    }
+
+    /* Ripple effect for buttons */
+    .ripple-button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ripple-button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .ripple-button:active::after {
+      width: 300px;
+      height: 300px;
+      transition: 0s;
+    }
+
+    /* Icon animations on hover */
+    .card-hover svg {
+      transition: transform 0.3s ease;
+    }
+
+    .card-hover:hover svg {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Smooth scroll behavior */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Section fade-in on scroll (handled by Intersection Observer) */
+    .fade-in-section {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .fade-in-section.is-visible {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
@@ -96,25 +343,11 @@
   <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 border-b border-slate-700/50 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-6 py-4">
       <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="relative w-10 h-10">
-            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)" stroke="#3b82f6" stroke-width="2"/>
-              <path d="M20 10 L20 30 M12 20 L28 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="20" cy="12" r="2" fill="white"/>
-              <circle cx="20" cy="28" r="2" fill="white"/>
-              <circle cx="12" cy="20" r="2" fill="white"/>
-              <circle cx="28" cy="20" r="2" fill="white"/>
-              <defs>
-                <linearGradient id="logo-gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#3b82f6"/>
-                  <stop offset="100%" stop-color="#10b981"/>
-                </linearGradient>
-              </defs>
-            </svg>
+        <a href="/index.html" class="flex items-center space-x-3 group logo-spin">
+          <div class="relative w-12 h-12 transition-transform duration-300 group-hover:scale-110">
+            <img src="Fundora_Logo.png" alt="Fundora Logo" class="w-full h-full object-contain">
           </div>
-          <span class="text-2xl font-bold text-white">Fundora</span>
-        </div>
+        </a>
         <div class="hidden md:flex items-center space-x-8">
           <a href="#features" class="text-gray-400 hover:text-white transition-colors duration-150 font-medium">Features</a>
           <a href="#how-it-works" class="text-gray-400 hover:text-white transition-colors duration-150 font-medium">How It Works</a>
@@ -354,5 +587,56 @@
     </div>
   </section>
 
+  <script>
+    function addRippleEffect() {
+      const buttons = document.querySelectorAll('a[href*="startup_register"], a[href*="investor_register"], a[href*="login"]');
+      buttons.forEach(button => {
+        if (!button.classList.contains('ripple-button')) {
+          button.classList.add('ripple-button');
+        }
+      });
+    }
+
+    function setupScrollAnimations() {
+      const sections = document.querySelectorAll('#features, #how-it-works, #about, .cta-section');
+      
+      const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-section', 'is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach(section => {
+        section.classList.add('fade-in-section');
+        observer.observe(section);
+      });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      addRippleEffect();
+      setupScrollAnimations();
+    });
+  </script>
 </body>
 </html>

@@ -18,11 +18,18 @@
       margin: 0;
     }
 
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    
+    .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
+    .scale-in { animation: scaleIn 0.4s ease-out forwards; opacity: 0; }
+
     .form-input-modern {
       background-color: #1e293b;
       border: 1px solid #334155;
       color: #f1f5f9;
-      transition: border-color 0.2s ease-in-out;
+      transition: all 0.3s ease;
       contain: layout style;
     }
     .form-input-modern::placeholder {
@@ -32,20 +39,30 @@
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
       outline: none;
+      transform: translateY(-1px);
     }
-    .form-input-modern:hover {
+    .form-input-modern:hover:not(:focus) {
       border-color: #475569;
+      transform: translateY(-1px);
     }
 
     .financial-section {
       background-color: #1e293b;
       border-left: 4px solid;
-      transition: box-shadow 0.2s ease;
+      transition: all 0.3s ease;
       contain: layout style paint;
+      opacity: 0;
+      animation: fadeInUp 0.5s ease-out forwards;
     }
     .financial-section:hover {
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      transform: translateX(4px);
     }
+    
+    .financial-section:nth-of-type(1) { animation-delay: 0.1s; }
+    .financial-section:nth-of-type(2) { animation-delay: 0.2s; }
+    .financial-section:nth-of-type(3) { animation-delay: 0.3s; }
+    .financial-section:nth-of-type(4) { animation-delay: 0.4s; }
 
     .dynamic-tooltip {
       visibility: hidden;
@@ -79,11 +96,13 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(4px);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 9999;
+      animation: fadeInUp 0.3s ease-out;
     }
     .loading-overlay.hidden {
       display: none;
@@ -94,12 +113,27 @@
       overflow-x: hidden;
     }
 
+    button, a { transition: all 0.3s ease; }
+    button:hover:not(:disabled), a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    button:active:not(:disabled), a:active {
+      transform: translateY(0);
+    }
+
+    header { animation: slideDown 0.5s ease-out; }
+
     ::-webkit-scrollbar {
       width: 8px;
     }
     ::-webkit-scrollbar-thumb {
       background-color: #475569;
       border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #64748b;
     }
   </style>
 </head>
@@ -154,7 +188,7 @@
           <div class="grid lg:grid-cols-5 gap-6 h-full">
 
             <!-- LEFT COLUMN -->
-            <div class="lg:col-span-2 flex flex-col space-y-4 h-full">
+            <div class="lg:col-span-2 flex flex-col space-y-4 h-full fade-in-up">
               <div class="bg-slate-800 rounded-lg p-5 border border-slate-700 flex-1 flex flex-col">
                 <h3 class="text-base font-bold text-slate-100 mb-4">Core Information</h3>
 
@@ -204,7 +238,7 @@
               </div>
 
               <!-- Data Completeness -->
-              <div class="bg-slate-800 rounded-lg p-5 border border-slate-700">
+              <div class="bg-slate-800 rounded-lg p-5 border border-slate-700 scale-in" style="animation-delay: 0.2s;">
                 <div class="flex items-center justify-between mb-3">
                   <h4 class="text-sm font-bold text-slate-100">Confidence Level</h4>
                   <span id="completeness-text"
@@ -221,7 +255,7 @@
             </div>
 
             <!-- Right Column: Financials & Actions -->
-            <div class="lg:col-span-3 flex flex-col space-y-4 h-full">
+            <div class="lg:col-span-3 flex flex-col space-y-4 h-full fade-in-up" style="animation-delay: 0.1s;">
               <!-- Income Statement Section -->
               <div class="financial-section border-blue-500 rounded-lg p-5 flex-1">
                 <h3 class="text-base font-bold text-slate-100 mb-3">Income Statement</h3>
@@ -498,6 +532,94 @@
                 </div>
               </div>
 
+              </div>
+
+              <!-- Contact Information Section -->
+              <div class="financial-section border-blue-500 rounded-lg p-5 flex-1">
+                <h3 class="text-base font-bold text-slate-100 mb-3">Contact Information</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label for="contact-email" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Contact Email
+                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    </label>
+                    <input type="email" id="contact-email" name="contact-email" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="contact@company.com" />
+                  </div>
+                  <div>
+                    <label for="contact-phone" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Contact Phone
+                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    </label>
+                    <input type="tel" id="contact-phone" name="contact-phone" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="+63 XXX XXX XXXX" />
+                  </div>
+                  <div>
+                    <label for="website-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Website URL
+                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    </label>
+                    <input type="url" id="website-url" name="website-url" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="https://yourcompany.com" />
+                  </div>
+                  <div>
+                    <label for="linkedin-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      LinkedIn URL
+                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    </label>
+                    <input type="url" id="linkedin-url" name="linkedin-url" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="https://linkedin.com/company/..." />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label for="location" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Location
+                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    </label>
+                    <input type="text" id="location" name="location" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="Cebu City, Philippines" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Founder Information Section -->
+              <div class="financial-section border-purple-500 rounded-lg p-5 flex-1">
+                <h3 class="text-base font-bold text-slate-100 mb-3">Founder Information</h3>
+                <div class="space-y-4">
+                  <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label for="founder-name" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                        Founder Name
+                        <span class="ml-2 text-xs text-purple-400">?</span>
+                      </label>
+                      <input type="text" id="founder-name" name="founder-name" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="John Doe" />
+                    </div>
+                    <div>
+                      <label for="founder-title" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                        Founder Title
+                        <span class="ml-2 text-xs text-purple-400">?</span>
+                      </label>
+                      <input type="text" id="founder-title" name="founder-title" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="CEO & Founder" />
+                    </div>
+                  </div>
+                  <div>
+                    <label for="founder-linkedin" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Founder LinkedIn
+                      <span class="ml-2 text-xs text-purple-400">?</span>
+                    </label>
+                    <input type="url" id="founder-linkedin" name="founder-linkedin" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="https://linkedin.com/in/..." />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Company Details Section -->
+              <div class="financial-section border-emerald-500 rounded-lg p-5 flex-1">
+                <h3 class="text-base font-bold text-slate-100 mb-3">Company Details</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label for="year-founded" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                      Year Founded
+                      <span class="ml-2 text-xs text-emerald-400">?</span>
+                    </label>
+                    <input type="number" id="year-founded" name="year-founded" min="1900" max="2025" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="2024" />
+                  </div>
+                </div>
+              </div>
+
               <!-- Action Buttons -->
               <div class="flex flex-col sm:flex-row gap-4 pt-4">
                 <button type="submit"
@@ -636,6 +758,21 @@
         document.getElementById('team-strength').value = startup.team_strength || '';
         document.getElementById('market-position').value = startup.market_position || '';
         document.getElementById('brand-reputation').value = startup.brand_reputation || '';
+
+        // Contact Information
+        document.getElementById('contact-email').value = startup.contact_email || '';
+        document.getElementById('contact-phone').value = startup.contact_phone || '';
+        document.getElementById('website-url').value = startup.website_url || '';
+        document.getElementById('linkedin-url').value = startup.linkedin_url || '';
+        document.getElementById('location').value = startup.location || '';
+
+        // Founder Information
+        document.getElementById('founder-name').value = startup.founder_name || '';
+        document.getElementById('founder-title').value = startup.founder_title || '';
+        document.getElementById('founder-linkedin').value = startup.founder_linkedin || '';
+
+        // Company Details
+        document.getElementById('year-founded').value = startup.year_founded || '';
 
         calculateEquity();
         updateCompleteness();
@@ -791,6 +928,21 @@
           team_strength: document.getElementById('team-strength').value.trim(),
           market_position: document.getElementById('market-position').value.trim(),
           brand_reputation: document.getElementById('brand-reputation').value.trim(),
+
+          // Contact Information
+          contact_email: document.getElementById('contact-email').value.trim(),
+          contact_phone: document.getElementById('contact-phone').value.trim(),
+          website_url: document.getElementById('website-url').value.trim(),
+          linkedin_url: document.getElementById('linkedin-url').value.trim(),
+          location: document.getElementById('location').value.trim(),
+          
+          // Founder Information
+          founder_name: document.getElementById('founder-name').value.trim(),
+          founder_title: document.getElementById('founder-title').value.trim(),
+          founder_linkedin: document.getElementById('founder-linkedin').value.trim(),
+          
+          // Company Details
+          year_founded: parseNumericValue(document.getElementById('year-founded').value),
           
           data_completeness_level: confidenceLevel,
           confidence_percentage: actualPercentage

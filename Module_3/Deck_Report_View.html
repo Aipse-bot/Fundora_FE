@@ -48,18 +48,49 @@
         body { 
             font-family: 'Inter', sans-serif;
         }
+        
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
+        .slide-down { animation: slideDown 0.4s ease-out forwards; }
+        
         .card-hover {
-            transition: box-shadow 0.2s ease;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: scaleIn 0.5s ease-out forwards;
         }
         .card-hover:hover {
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
         }
+        
         .card-container {
             contain: layout style paint;
         }
         .navbar-fixed {
             contain: layout style;
         }
+        
+        .card-hover:nth-of-type(1) { animation-delay: 0.1s; }
+        .card-hover:nth-of-type(2) { animation-delay: 0.15s; }
+        .card-hover:nth-of-type(3) { animation-delay: 0.2s; }
+        .card-hover:nth-of-type(4) { animation-delay: 0.25s; }
+        .card-hover:nth-of-type(5) { animation-delay: 0.3s; }
+        .card-hover:nth-of-type(6) { animation-delay: 0.35s; }
+        
+        button, a { transition: all 0.3s ease; }
+        button:hover:not(:disabled), a:hover {
+            transform: translateY(-1px);
+        }
+        button:active:not(:disabled), a:active {
+            transform: translateY(0);
+        }
+        
+        nav { animation: slideDown 0.5s ease-out; }
+        
+        canvas { transition: opacity 0.3s ease; }
     </style>
 </head>
 <body class="bg-slate-950 text-gray-100">
@@ -97,7 +128,7 @@
         <div class="max-w-7xl mx-auto space-y-8">
             
             <!-- Header Card -->
-            <div class="card-container bg-blue-500/5 border border-blue-500/20 rounded-2xl p-8">
+            <div class="card-container bg-blue-500/5 border border-blue-500/20 rounded-2xl p-8 fade-in-up">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div class="flex items-start gap-4">
                         <div id="deck-initial" class="w-16 h-16 bg-brand-600 text-white font-bold flex items-center justify-center text-2xl rounded-xl shrink-0">
@@ -118,7 +149,7 @@
             </div>
 
             <!-- Problem & Solution -->
-            <div class="grid md:grid-cols-2 gap-6">
+            <div class="grid md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 0.1s;">
                 <div class="card-container bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center">
@@ -145,7 +176,7 @@
             </div>
 
             <!-- Market Analysis & Financial Projections -->
-            <div class="grid md:grid-cols-2 gap-6">
+            <div class="grid md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 0.2s;">
                 
                 <!-- Market Analysis -->
                 <div class="card-container bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover">
@@ -203,7 +234,7 @@
             </div>
 
             <!-- The Ask & Team -->
-            <div class="grid md:grid-cols-2 gap-6">
+            <div class="grid md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 0.3s;">
                 
                 <!-- The Ask -->
                 <div class="card-container bg-slate-800/50 border border-slate-700 rounded-2xl p-8 card-hover">
