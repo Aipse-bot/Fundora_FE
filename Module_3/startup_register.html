@@ -341,7 +341,7 @@
         
         hideErrorBanner();
         
-        ['firstName', 'lastName', 'email', 'password', 'confirmPassword', 'terms'].forEach(clearError);
+        ['firstName', 'lastName', 'email', 'password', 'confirmPassword'].forEach(clearError);
         
         const submitBtn = document.getElementById('submitBtn');
         const originalText = submitBtn.textContent;
@@ -350,7 +350,6 @@
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm_password').value;
-        const terms = document.getElementById('terms').checked;
         
         let hasError = false;
         
@@ -361,11 +360,10 @@
         else if (!/(?=.*[a-z])(?=.*[A-Z])/.test(password)) { showError('password', 'Password must contain uppercase and lowercase letters'); hasError = true; }
         else if (!/(?=.*\d)/.test(password)) { showError('password', 'Password must contain at least one number'); hasError = true; }
         if (password !== confirmPassword) { showError('confirmPassword', 'Passwords do not match'); hasError = true; }
-        if (!terms) { showError('terms', 'You must agree to the Terms and Privacy Policy'); hasError = true; }
         
         if (hasError) return;
         
-        const payload = { first_name: firstName, last_name: lastName, email: email, password: password, confirm_password: confirmPassword, label: 'startup', terms: terms };
+        const payload = { first_name: firstName, last_name: lastName, email: email, password: password, confirm_password: confirmPassword, label: 'startup'};
         submitBtn.disabled = true;
         submitBtn.textContent = 'Creating Account...';
         

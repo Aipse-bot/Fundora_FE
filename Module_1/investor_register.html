@@ -333,7 +333,7 @@
     document.getElementById('investorForm').addEventListener('submit', async function (e) {
         e.preventDefault();
         
-        ['firstName', 'lastName', 'email', 'password', 'confirmPassword', 'terms'].forEach(clearError);
+        ['firstName', 'lastName', 'email', 'password', 'confirmPassword',].forEach(clearError);
         
         const submitBtn = document.getElementById('submitBtn');
         const originalText = submitBtn.textContent;
@@ -343,7 +343,6 @@
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
-        const terms = document.getElementById('terms').checked;
         
         let hasError = false;
         
@@ -378,11 +377,6 @@
             hasError = true;
         }
         
-        if (!terms) {
-            showError('terms', 'You must agree to the Terms and Privacy Policy');
-            hasError = true;
-        }
-        
         if (hasError) {
             return;
         }
@@ -394,7 +388,6 @@
             password: password,
             confirm_password: confirmPassword,
             label: 'investor',
-            terms: terms
         };
         
         submitBtn.disabled = true;
