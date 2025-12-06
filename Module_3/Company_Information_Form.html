@@ -20,7 +20,6 @@
             border: 1px solid #334155;
             color: #f1f5f9;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            contain: layout style;
         }
         .form-input-modern:focus {
             border-color: #3b82f6;
@@ -52,7 +51,6 @@
             border: 1px solid #334155;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
             transform: translateY(5px);
-            contain: layout style paint;
         }
         .dynamic-tooltip.visible {
             visibility: visible;
@@ -66,10 +64,10 @@
             border-style: solid;
         }
         .tooltip-top::after {
-        top: 100%;
-        left: 50%;
-        margin-left: -6px;
-        border-color: #1e293b transparent transparent transparent;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-color: #1e293b transparent transparent transparent;
         }
         @keyframes fadeIn {
             from { 
@@ -106,19 +104,15 @@
             animation: slideDown 0.4s ease-out;
         }
         header {
-            contain: layout style paint;
             backdrop-filter: blur(10px);
             background: rgba(15, 23, 42, 0.9);
         }
         .section-card {
-            contain: layout style paint;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .section-card:hover {
-            transform: translateY(-2px);
         }
         .financial-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
         }
         .financial-card:hover {
             transform: translateY(-2px);
@@ -154,18 +148,27 @@
         ::-webkit-scrollbar-track {
             background: #1e293b;
         }
+        .card-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        @media (min-width: 1280px) {
+            .card-grid-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen hero-gradient">
+<body class="bg-slate-950 text-white min-h-screen">
 
     <!-- Header -->
     <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 slide-down">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-3 group">
                     <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-2 rounded-lg shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
                         <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
                         </svg>
                     </div>
                     <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent tracking-tight">Fundora</span>
@@ -180,199 +183,202 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto p-6">
-        <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 fade-in">
+    <main class="max-w-[1600px] mx-auto p-6 lg:p-8">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-6 lg:p-10 fade-in">
             <form id="companyForm" novalidate class="h-full">
-                <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Header Section -->
+                <div class="mb-8 pb-6 border-b border-slate-700">
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                        Company Information Form
+                    </h1>
+                    <p class="text-slate-400 text-sm">
+                        Fill in your company details to generate a comprehensive investment analysis report
+                    </p>
+                </div>
 
-                    <!-- Left Column: Core Info -->
-                    <div class="section-card">
-                        <div class="flex items-center gap-3 mb-6 group">
-                            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
+                <div class="grid lg:grid-cols-12 gap-8">
+                    <!-- Left Column: Company Profile (4 columns) -->
+                    <div class="lg:col-span-4 space-y-6">
+                        <!-- Core Company Info -->
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                </div>
+                                <h2 class="text-xl font-bold text-white">Company Profile</h2>
                             </div>
-                            <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Company Profile</h2>
-                        </div>
-                        <div class="space-y-6">
-                            <div>
-                                <label for="company-name" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                    Company Name
-                                    <span class="tooltip-trigger ml-2" data-tooltip-text="Enter the full legal name of the company.">?</span>
-                                </label>
-                                <input type="text" name="company-name" id="company-name" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="e.g., Acme Corporation" required>
-                            </div>
-                            <div>
-                                <label for="industry" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                    Industry
-                                    <span class="tooltip-trigger ml-2" data-tooltip-text="Select the primary industry sector.">?</span>
-                                </label>
-                                <select id="industry" name="industry" class="w-full px-4 py-2.5 rounded-lg appearance-none form-input-modern text-sm" required>
-                                    <option value="" disabled selected>Select an industry</option>
-                                    <option value="Technology">Technology</option>
-                                    <option value="Finance">Finance</option>
-                                    <option value="Healthcare">Healthcare</option>
-                                    <option value="E-commerce">E-commerce</option>
-                                    <option value="Education">Education</option>
-                                    <option value="Real Estate">Real Estate</option>
-                                    <option value="Manufacturing">Manufacturing</option>
-                                    <option value="Retail">Retail</option>
-                                    <option value="Food & Beverage">Food & Beverage</option>
-                                    <option value="Transportation">Transportation</option>
-                                    <option value="Energy">Energy</option>
-                                    <option value="Entertainment">Entertainment</option>
-                                    <option value="Agriculture">Agriculture</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="company-description" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                    Company Description
-                                    <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the company's core business and target market.">?</span>
-                                </label>
-                                <textarea id="company-description" name="company-description" rows="5" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Provide a brief overview of the company's mission..."></textarea>
-                            </div>
-
-                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 financial-card shadow-lg">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2.5 h-2.5 bg-orange-500 rounded-full shadow-lg shadow-orange-500/50 animate-pulse"></span>
-                                    Qualitative Assessment
-                                </h3>
-                                <div class="space-y-5">
-                                    <div>
-                                        <label for="team-strength" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Team Strength
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the leadership team's experience and skills.">?</span>
-                                        </label>
-                                        <textarea id="team-strength" name="team-strength" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Describe the team's expertise and key strengths..."></textarea>
-                                    </div>
-                                    <div>
-                                        <label for="market-position" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Market Position
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the company's competitive position.">?</span>
-                                        </label>
-                                        <textarea id="market-position" name="market-position" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Explain the company's market standing..."></textarea>
-                                    </div>
-                                    <div>
-                                        <label for="brand-reputation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Brand Reputation
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Assess the company's brand value and perception.">?</span>
-                                        </label>
-                                        <textarea id="brand-reputation" name="brand-reputation" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Describe brand recognition and reputation..."></textarea>
-                                    </div>
+                            <div class="space-y-5">
+                                <div>
+                                    <label for="company-name" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Company Name
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Enter the full legal name of the company.">?</span>
+                                    </label>
+                                    <input type="text" name="company-name" id="company-name" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="e.g., Acme Corporation" required>
+                                </div>
+                                <div>
+                                    <label for="industry" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Industry
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Select the primary industry sector.">?</span>
+                                    </label>
+                                    <select id="industry" name="industry" class="w-full px-4 py-2.5 rounded-lg appearance-none form-input-modern text-sm" required>
+                                        <option value="" disabled selected>Select an industry</option>
+                                        <option value="Technology">Technology</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="Healthcare">Healthcare</option>
+                                        <option value="E-commerce">E-commerce</option>
+                                        <option value="Education">Education</option>
+                                        <option value="Real Estate">Real Estate</option>
+                                        <option value="Manufacturing">Manufacturing</option>
+                                        <option value="Retail">Retail</option>
+                                        <option value="Food & Beverage">Food & Beverage</option>
+                                        <option value="Transportation">Transportation</option>
+                                        <option value="Energy">Energy</option>
+                                        <option value="Entertainment">Entertainment</option>
+                                        <option value="Agriculture">Agriculture</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="company-description" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Company Description
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the company's core business and target market.">?</span>
+                                    </label>
+                                    <textarea id="company-description" name="company-description" rows="4" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Provide a brief overview of the company's mission..."></textarea>
+                                </div>
+                                <div>
+                                    <label for="year-founded" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Year Founded
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Year the company was established.">?</span>
+                                    </label>
+                                    <input type="number" id="year-founded" name="year-founded" min="1900" max="2025" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="2024">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Contact Information Section -->
-                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 financial-card shadow-lg">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2.5 h-2.5 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50 animate-pulse"></span>
-                                    Contact Information
-                                </h3>
-                                <div class="space-y-5">
-                                    <div>
-                                        <label for="contact-email" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Contact Email
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Primary email for investor inquiries.">?</span>
-                                        </label>
-                                        <input type="email" id="contact-email" name="contact-email" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="contact@company.com">
-                                    </div>
-                                    <div>
-                                        <label for="contact-phone" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Contact Phone
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Business contact number.">?</span>
-                                        </label>
-                                        <input type="tel" id="contact-phone" name="contact-phone" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="+63 XXX XXX XXXX">
-                                    </div>
-                                    <div>
-                                        <label for="website-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Website URL
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Company website address.">?</span>
-                                        </label>
-                                        <input type="url" id="website-url" name="website-url" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="https://yourcompany.com">
-                                    </div>
-                                    <div>
-                                        <label for="linkedin-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            LinkedIn URL
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Company LinkedIn profile.">?</span>
-                                        </label>
-                                        <input type="url" id="linkedin-url" name="linkedin-url" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="https://linkedin.com/company/...">
-                                    </div>
-                                    <div>
-                                        <label for="location" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Location
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Company location (City, Country).">?</span>
-                                        </label>
-                                        <input type="text" id="location" name="location" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="Cebu City, Philippines">
-                                    </div>
+                        <!-- Qualitative Assessment -->
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
+                            <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                                <span class="inline-block w-2 h-2 bg-orange-500 rounded-full shadow-lg shadow-orange-500/50"></span>
+                                Qualitative Assessment
+                            </h3>
+                            <div class="space-y-5">
+                                <div>
+                                    <label for="team-strength" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Team Strength
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the leadership team's experience and skills.">?</span>
+                                    </label>
+                                    <textarea id="team-strength" name="team-strength" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Describe the team's expertise and key strengths..."></textarea>
+                                </div>
+                                <div>
+                                    <label for="market-position" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Market Position
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the company's competitive position.">?</span>
+                                    </label>
+                                    <textarea id="market-position" name="market-position" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Explain the company's market standing..."></textarea>
+                                </div>
+                                <div>
+                                    <label for="brand-reputation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Brand Reputation
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Assess the company's brand value and perception.">?</span>
+                                    </label>
+                                    <textarea id="brand-reputation" name="brand-reputation" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Describe brand recognition and reputation..."></textarea>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Founder Information Section -->
-                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 financial-card shadow-lg">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2.5 h-2.5 bg-purple-500 rounded-full shadow-lg shadow-purple-500/50 animate-pulse"></span>
-                                    Founder Information
-                                </h3>
-                                <div class="space-y-5">
-                                    <div>
-                                        <label for="founder-name" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Founder Name
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Full name of the primary founder.">?</span>
-                                        </label>
-                                        <input type="text" id="founder-name" name="founder-name" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="John Doe">
-                                    </div>
-                                    <div>
-                                        <label for="founder-title" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Founder Title
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Founder's position in the company.">?</span>
-                                        </label>
-                                        <input type="text" id="founder-title" name="founder-title" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="CEO & Founder">
-                                    </div>
-                                    <div>
-                                        <label for="founder-linkedin" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Founder LinkedIn
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Founder's personal LinkedIn profile.">?</span>
-                                        </label>
-                                        <input type="url" id="founder-linkedin" name="founder-linkedin" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="https://linkedin.com/in/...">
-                                    </div>
+                        <!-- Contact Information -->
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
+                            <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50"></span>
+                                Contact Information
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="contact-email" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Contact Email
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Primary email for investor inquiries.">?</span>
+                                    </label>
+                                    <input type="email" id="contact-email" name="contact-email" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="contact@company.com">
+                                </div>
+                                <div>
+                                    <label for="contact-phone" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Contact Phone
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Business contact number.">?</span>
+                                    </label>
+                                    <input type="tel" id="contact-phone" name="contact-phone" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="+63 XXX XXX XXXX">
+                                </div>
+                                <div>
+                                    <label for="website-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Website URL
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Company website address.">?</span>
+                                    </label>
+                                    <input type="url" id="website-url" name="website-url" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="https://yourcompany.com">
+                                </div>
+                                <div>
+                                    <label for="linkedin-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        LinkedIn URL
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Company LinkedIn profile.">?</span>
+                                    </label>
+                                    <input type="url" id="linkedin-url" name="linkedin-url" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="https://linkedin.com/company/...">
+                                </div>
+                                <div>
+                                    <label for="location" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Location
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Company location (City, Country).">?</span>
+                                    </label>
+                                    <input type="text" id="location" name="location" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="Cebu City, Philippines">
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Company Details Section -->
-                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 financial-card shadow-lg">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/50 animate-pulse"></span>
-                                    Company Details
-                                </h3>
-                                <div class="space-y-5">
-                                    <div>
-                                        <label for="year-founded" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Year Founded
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Year the company was established.">?</span>
-                                        </label>
-                                        <input type="number" id="year-founded" name="year-founded" min="1900" max="2025" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="2024">
-                                    </div>
+                        <!-- Founder Information -->
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
+                            <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                                <span class="inline-block w-2 h-2 bg-purple-500 rounded-full shadow-lg shadow-purple-500/50"></span>
+                                Founder Information
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="founder-name" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Founder Name
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Full name of the primary founder.">?</span>
+                                    </label>
+                                    <input type="text" id="founder-name" name="founder-name" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label for="founder-title" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Founder Title
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Founder's position in the company.">?</span>
+                                    </label>
+                                    <input type="text" id="founder-title" name="founder-title" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="CEO & Founder">
+                                </div>
+                                <div>
+                                    <label for="founder-linkedin" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                        Founder LinkedIn
+                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Founder's personal LinkedIn profile.">?</span>
+                                    </label>
+                                    <input type="url" id="founder-linkedin" name="founder-linkedin" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="https://linkedin.com/in/...">
                                 </div>
                             </div>
+                        </div>
                     </div>
 
-                    <!-- Right Column: Financials & Actions -->
-                    <div class="section-card">
-                        <div class="flex items-center gap-3 mb-6 group">
-                            <div class="w-12 h-12 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-500/30 transform transition-transform group-hover:scale-110">
+                    <!-- Right Column: Financial Metrics (8 columns) -->
+                    <div class="lg:col-span-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-emerald-500/30">
                                 $
                             </div>
-                            <h2 class="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Financial Metrics</h2>
+                            <h2 class="text-xl font-bold text-white">Financial Metrics</h2>
                         </div>
-                        <div class="space-y-6">
 
+                        <div class="card-grid card-grid-2">
                             <!-- Income Statement -->
-                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 financial-card shadow-lg">
+                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
                                 <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2.5 h-2.5 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50 animate-pulse"></span>
+                                    <span class="inline-block w-2 h-2 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50"></span>
                                     Income Statement
                                 </h3>
                                 <div class="space-y-4">
@@ -415,9 +421,9 @@
                             </div>
 
                             <!-- Balance Sheet -->
-                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 financial-card shadow-lg">
+                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
                                 <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/50 animate-pulse"></span>
+                                    <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/50"></span>
                                     Balance Sheet
                                 </h3>
                                 <div class="space-y-4">
@@ -460,9 +466,9 @@
                             </div>
 
                             <!-- Cash Flow -->
-                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 financial-card shadow-lg">
+                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
                                 <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2.5 h-2.5 bg-cyan-500 rounded-full shadow-lg shadow-cyan-500/50 animate-pulse"></span>
+                                    <span class="inline-block w-2 h-2 bg-cyan-500 rounded-full shadow-lg shadow-cyan-500/50"></span>
                                     Cash Flow
                                 </h3>
                                 <div class="space-y-4">
@@ -477,9 +483,9 @@
                             </div>
 
                             <!-- Valuation -->
-                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 financial-card shadow-lg">
+                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
                                 <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2.5 h-2.5 bg-purple-500 rounded-full shadow-lg shadow-purple-500/50 animate-pulse"></span>
+                                    <span class="inline-block w-2 h-2 bg-purple-500 rounded-full shadow-lg shadow-purple-500/50"></span>
                                     Valuation
                                 </h3>
                                 <div class="space-y-4">
@@ -507,32 +513,101 @@
                                 </div>
                             </div>
 
-                            <!-- Actions & Confidence -->
-                            <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-xl">
-                                <div class="mb-6">
-                                    <h3 class="font-semibold text-white mb-4 text-base flex items-center gap-2">
-                                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        Data Confidence
-                                    </h3>
-                                    <div class="w-full bg-slate-700 rounded-full h-3 mb-3 shadow-inner">
-                                        <div id="completeness-bar" class="bg-gradient-to-r from-blue-500 to-blue-400 h-3 rounded-full transition-all duration-500 shadow-lg" style="width: 0%"></div>
+                            <!-- Market Metrics -->
+                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
+                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                                    <span class="inline-block w-2 h-2 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50"></span>
+                                    Market Metrics
+                                </h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="market-size" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                            Total Addressable Market (₱)
+                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Total market demand for the product or service.">?</span>
+                                        </label>
+                                        <input type="number" name="market-size" id="market-size" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="50,000,000">
                                     </div>
-                                    <p id="completeness-text" class="text-sm text-slate-300 text-center font-medium">Please fill the form</p>
-                                    <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low">
+                                    <div>
+                                        <label for="market-share" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                            Current Market Share (%)
+                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Percentage of market currently captured.">?</span>
+                                        </label>
+                                        <input type="number" name="market-share" id="market-share" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="5" step="0.1" min="0" max="100">
+                                    </div>
+                                    <div>
+                                        <label for="customer-count" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                            Total Customers
+                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Current number of active customers.">?</span>
+                                        </label>
+                                        <input type="number" name="customer-count" id="customer-count" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="1000">
+                                    </div>
                                 </div>
-                                <div class="space-y-3">
-                                    <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-3.5 px-4 rounded-lg shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-slate-900 transition-all duration-300 hover:-translate-y-0.5">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                        Save & Generate Report
-                                    </button>
-                                    <button type="button" onclick="window.history.back()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 focus:ring-offset-slate-900 transition-all duration-300 border border-slate-600 hover:border-slate-500">
-                                        Cancel
-                                    </button>
+                            </div>
+
+                            <!-- Growth Metrics -->
+                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
+                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                                    <span class="inline-block w-2 h-2 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50"></span>
+                                    Growth & Efficiency
+                                </h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="monthly-growth-rate" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                            Monthly Growth Rate (%)
+                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Average month-over-month revenue growth.">?</span>
+                                        </label>
+                                        <input type="number" name="monthly-growth-rate" id="monthly-growth-rate" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="15" step="0.1">
+                                    </div>
+                                    <div>
+                                        <label for="customer-acquisition-cost" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                            Customer Acquisition Cost (₱)
+                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Average cost to acquire one customer.">?</span>
+                                        </label>
+                                        <input type="number" name="customer-acquisition-cost" id="customer-acquisition-cost" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="500">
+                                    </div>
+                                    <div>
+                                        <label for="customer-lifetime-value" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                            Customer Lifetime Value (₱)
+                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Total revenue expected from one customer.">?</span>
+                                        </label>
+                                        <input type="number" name="customer-lifetime-value" id="customer-lifetime-value" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="2000">
+                                    </div>
+                                    <div>
+                                        <label for="burn-rate" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                            Monthly Burn Rate (₱)
+                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Monthly cash spending rate.">?</span>
+                                        </label>
+                                        <input type="number" name="burn-rate" id="burn-rate" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="50,000">
+                                    </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions & Confidence Section -->
+                        <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-xl mt-6">
+                            <div class="mb-6">
+                                <h3 class="font-semibold text-white mb-4 text-base flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Data Confidence
+                                </h3>
+                                <div class="w-full bg-slate-700 rounded-full h-3 mb-3 shadow-inner">
+                                    <div id="completeness-bar" class="bg-gradient-to-r from-blue-500 to-blue-400 h-3 rounded-full transition-all duration-500 shadow-lg" style="width: 0%"></div>
+                                </div>
+                                <p id="completeness-text" class="text-sm text-slate-300 text-center font-medium">Please fill the form</p>
+                                <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low">
+                            </div>
+                            <div class="space-y-3">
+                                <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-3.5 px-4 rounded-lg shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-slate-900 transition-all duration-300 hover:-translate-y-0.5">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    Save & Generate Report
+                                </button>
+                                <button type="button" onclick="window.history.back()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 focus:ring-offset-slate-900 transition-all duration-300 border border-slate-600 hover:border-slate-500">
+                                    Cancel
+                                </button>
                             </div>
                         </div>
                     </div>
