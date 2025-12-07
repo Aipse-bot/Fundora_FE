@@ -529,7 +529,7 @@
 
             try {
                 const res = await fetch(`https://fundora-be-singapore.onrender.com/api/investor/watchlist/remove/${startupId}/`, {
-                    method: 'DELETE',
+                    method: 'POST',
                     headers: authHeaders()
                 });
                 
@@ -542,6 +542,7 @@
                 const data = await res.json();
                 showMessage(data.message || 'Removed from watchlist.', 'success');
                 loadWatchlist();
+                loadTabCounts();
             } catch (err) {
                 console.error('Error removing from watchlist:', err);
                 if (err.message !== 'Unauthorized') {

@@ -204,6 +204,28 @@
             .replace(/'/g, "&#039;");
     }
 
+    async function recordView() {
+        try {
+            const response = await fetch(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/view/`, {
+                method: 'POST',
+                headers: authHeaders()
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('View recorded successfully:', result);
+                console.log('Total views:', result.total_views);
+                console.log('Unique viewers:', result.unique_viewers);
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                console.warn('Failed to record view:', response.status, errorData);
+            }
+        } catch (err) {
+            console.error('Failed to record view:', err);
+            // Don't block page loading if view recording fails
+        }
+    }
+
     async function loadCompany() {
         if (!startupId || !token) {
             alert('Missing startup ID or authentication');
@@ -212,6 +234,9 @@
         }
 
         console.log('Loading company with ID:', startupId);
+
+        // Record the view
+        await recordView();
 
         try {
             const res = await fetch(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`, {
@@ -222,7 +247,11 @@
                 throw new Error('Failed to load startup data');
             }
             
-            const data = await res.json();
+            const responseData = await res.json();
+            console.log('Startup API response:', responseData);
+            
+            // Handle DRF response format - extract startup data
+            const data = responseData.startup || responseData;
             console.log('Startup data loaded:', data);
             console.log('Is in watchlist:', data.is_in_watchlist);
 
@@ -506,12 +535,11 @@
 
         try {
             const action = shouldAdd ? 'add' : 'remove';
-            const method = shouldAdd ? 'POST' : 'DELETE';
             
             console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
             
             const res = await fetch(`https://fundora-be-singapore.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
-                method: method,
+                method: 'POST',
                 headers: authHeaders()
             });
             
@@ -527,7 +555,7 @@
             console.log('Watchlist response:', result);
             
             currentWatchlistState = result.added !== false && action === 'add' ? true : 
-                                  result.removed !== false && action === 'remove' ? false :
+                                  result.success !== false && action === 'remove' ? false :
                                   currentWatchlistState;
             
             showNotification(result.message || `Watchlist ${shouldAdd ? 'added' : 'removed'} successfully`, 'success');

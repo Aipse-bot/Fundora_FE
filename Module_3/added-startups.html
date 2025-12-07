@@ -900,11 +900,35 @@
       if (!token) {
         alert('Please log in to view startup reports.');
         return;
-      }
+        }
 
       localStorage.setItem('startupId', startupId);
 
       try {
+        // First, record the view with proper DRF format
+        try {
+          const viewResponse = await fetch(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/view/`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
+
+          if (viewResponse.ok) {
+            const viewResult = await viewResponse.json();
+            console.log('View recorded:', viewResult);
+          } else {
+            const errorData = await viewResponse.json().catch(() => ({}));
+            console.warn('Failed to record view:', viewResponse.status, errorData);
+          }
+        } catch (viewError) {
+          console.error('Error recording view:', viewError);
+          // Don't block navigation if view recording fails
+        }
+
+        // Then fetch the startup data
         const response = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -925,7 +949,7 @@
         }
 
         const data = await response.json();
-        // Safely access the startup data
+        // Safely access the startup data - DRF compatible
         const startup = data.startup || data;
         
         // Check if startup has deck info for routing decision
