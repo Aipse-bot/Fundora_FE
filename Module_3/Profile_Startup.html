@@ -509,12 +509,15 @@
     function renderCompanies(companies) {
       const container = getCachedElement('companiesList');
       
-      if (!companies || companies.length === 0) {
+      // Filter out pitch deck companies (only show regular startups)
+      const regularStartups = companies.filter(company => !company.is_deck_builder);
+      
+      if (!regularStartups || regularStartups.length === 0) {
         container.innerHTML = '<div class="text-center py-8 text-gray-400">No companies registered yet</div>';
         return;
       }
 
-      container.innerHTML = companies.map(company => `
+      container.innerHTML = regularStartups.map(company => `
         <div class="activity-item flex items-center justify-between p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors">
           <div class="flex-1">
             <h4 class="font-semibold text-white mb-1">${escapeHtml(company.company_name || 'Untitled')}</h4>
