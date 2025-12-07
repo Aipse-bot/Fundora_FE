@@ -377,6 +377,10 @@
       document.getElementById('use-of-funds').textContent = escapeHtml(ask.usage_description || ask.use_of_funds || ask.description || '—');
     }
 
+    async function loadStartupData(startupIdParam) {
+      return tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupIdParam}/profile/`);
+    }
+
     function renderFinancialTable(financials) {
       const container = document.getElementById("financial-table-container");
       if (!financials || financials.length === 0) {
