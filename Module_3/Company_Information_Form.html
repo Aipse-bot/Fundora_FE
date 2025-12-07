@@ -197,8 +197,7 @@
                 </div>
 
                 <div class="grid lg:grid-cols-12 gap-8">
-                    <!-- Left Column: Company Profile (4 columns) -->
-                    <div class="lg:col-span-4 space-y-6">
+                    <div class="lg:col-span-5 space-y-6">
                         <!-- Core Company Info -->
                         <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
                             <div class="flex items-center gap-3 mb-6">
@@ -288,85 +287,8 @@
                             </div>
                         </div>
 
-                        <!-- Contact Information -->
-                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
-                            <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50"></span>
-                                Contact Information
-                            </h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="contact-email" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Contact Email
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Primary email for investor inquiries.">?</span>
-                                    </label>
-                                    <input type="email" id="contact-email" name="contact-email" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="contact@company.com">
-                                </div>
-                                <div>
-                                    <label for="contact-phone" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Contact Phone
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Business contact number.">?</span>
-                                    </label>
-                                    <input type="tel" id="contact-phone" name="contact-phone" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="+63 XXX XXX XXXX">
-                                </div>
-                                <div>
-                                    <label for="website-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Website URL
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Company website address.">?</span>
-                                    </label>
-                                    <input type="url" id="website-url" name="website-url" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="https://yourcompany.com">
-                                </div>
-                                <div>
-                                    <label for="linkedin-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        LinkedIn URL
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Company LinkedIn profile.">?</span>
-                                    </label>
-                                    <input type="url" id="linkedin-url" name="linkedin-url" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="https://linkedin.com/company/...">
-                                </div>
-                                <div>
-                                    <label for="location" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Location
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Company location (City, Country).">?</span>
-                                    </label>
-                                    <input type="text" id="location" name="location" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="Cebu City, Philippines">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Founder Information -->
-                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
-                            <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                <span class="inline-block w-2 h-2 bg-purple-500 rounded-full shadow-lg shadow-purple-500/50"></span>
-                                Founder Information
-                            </h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="founder-name" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Founder Name
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Full name of the primary founder.">?</span>
-                                    </label>
-                                    <input type="text" id="founder-name" name="founder-name" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="John Doe">
-                                </div>
-                                <div>
-                                    <label for="founder-title" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Founder Title
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Founder's position in the company.">?</span>
-                                    </label>
-                                    <input type="text" id="founder-title" name="founder-title" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="CEO & Founder">
-                                </div>
-                                <div>
-                                    <label for="founder-linkedin" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Founder LinkedIn
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Founder's personal LinkedIn profile.">?</span>
-                                    </label>
-                                    <input type="url" id="founder-linkedin" name="founder-linkedin" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="https://linkedin.com/in/...">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Financial Metrics (8 columns) -->
-                    <div class="lg:col-span-8">
+                    <!-- Right Column: Financial Metrics (7 columns) -->
+                    <div class="lg:col-span-7">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-emerald-500/30">
                                 $
@@ -812,18 +734,6 @@
                     team_strength: document.getElementById('team-strength').value.trim(),
                     market_position: document.getElementById('market-position').value.trim(),
                     brand_reputation: document.getElementById('brand-reputation').value.trim(),
-                    
-                    // Contact Information
-                    contact_email: document.getElementById('contact-email').value.trim(),
-                    contact_phone: document.getElementById('contact-phone').value.trim(),
-                    website_url: document.getElementById('website-url').value.trim(),
-                    linkedin_url: document.getElementById('linkedin-url').value.trim(),
-                    location: document.getElementById('location').value.trim(),
-                    
-                    // Founder Information
-                    founder_name: document.getElementById('founder-name').value.trim(),
-                    founder_title: document.getElementById('founder-title').value.trim(),
-                    founder_linkedin: document.getElementById('founder-linkedin').value.trim(),
                     
                     // Company Details
                     year_founded: parseNumericValue(document.getElementById('year-founded').value),
