@@ -470,6 +470,29 @@
       return tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupIdParam}/profile/`);
     }
 
+    function populateTeam(teamMembers) {
+      const container = document.getElementById('team-container');
+      
+      if (!teamMembers || teamMembers.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-400">—</p>';
+        return;
+      }
+
+      container.innerHTML = teamMembers.map(member => `
+        <div class="bg-slate-800/30 border border-slate-700 rounded-lg p-4 hover:border-blue-500/50 transition-all">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+              ${escapeHtml(member.name).charAt(0).toUpperCase()}
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-sm font-bold text-white truncate">${escapeHtml(member.name || '—')}</h3>
+              <p class="text-xs text-blue-400 truncate">${escapeHtml(member.title || '—')}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
     async function loadAllData() {
       if (!startupId) {
         alert('Missing startup id');
@@ -478,22 +501,36 @@
 
       await refreshWatchlist();
 
-      let report = await loadDeckReport(startupId);
-      if (report && report.report_type === 'deck') {
-        const deckInfo = report.deck_info || {};
-        const problem = report.problem || null;
-        const solution = report.solution || null;
-        const market = report.market_analysis || null;
-        const ask = report.ask || null;
-        const financials = report.financials || [];
+      // Load startup data directly
+      let startup = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`);
+      
+      if (!startup) {
+        document.getElementById("deck-name").textContent = "Startup not found";
+        return;
+      }
 
-        populateHeaderFromStartup({ company_name: deckInfo.company_name, company_description: deckInfo.tagline });
+      // Check if this is a deck-builder startup
+      if (startup.report_type === 'deck') {
+        // Use deck data
+        const deckInfo = startup.deck_info || {};
+        const problem = startup.problem || null;
+        const solution = startup.solution || null;
+        const market = startup.market_analysis || null;
+        const ask = startup.ask || null;
+        const financials = startup.financials || [];
+        const teamMembers = startup.team_members || [];
+
+        populateHeaderFromStartup({ 
+          company_name: deckInfo.company_name, 
+          company_description: deckInfo.tagline 
+        });
         populateProblemSolution(problem, solution);
         populateMarket(market);
         populateAsk(ask);
         renderFinancialTable(financials);
+        populateTeam(teamMembers);
         
-        const inWatchlist = watchlistIdsSet.has(Number(startupId));
+        const inWatchlist = startup.is_in_watchlist === true;
         currentWatchlistState = inWatchlist;
         updateWatchlistButton(inWatchlist);
         
@@ -503,54 +540,9 @@
         return;
       }
 
-      const profile = await loadStartupProfile(startupId);
-      if (!profile) {
-        const fallback = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`);
-        if (fallback) {
-          populateHeaderFromStartup(fallback);
-          const inWatchlist = watchlistIdsSet.has(Number(startupId));
-          currentWatchlistState = inWatchlist;
-          updateWatchlistButton(inWatchlist);
-        } else {
-          document.getElementById("deck-name").textContent = "Startup not found";
-        }
-        renderFinancialTable([]);
-        populateProblemSolution(null, null);
-        populateMarket(null);
-        populateAsk(null);
-        return;
-      }
-
-      const data = profile;
-      const startupObj = data.startup || data;
-      const deckObj = data.deck || null;
-
-      populateHeaderFromStartup({
-        company_name: startupObj.company_name || startupObj.company_name,
-        company_description: startupObj.company_description || startupObj.company_description
-      });
-
-      if (deckObj) {
-        populateProblemSolution(deckObj.problem, deckObj.solution);
-        populateMarket(deckObj.market_analysis || {});
-        populateAsk(deckObj.ask || {});
-        renderFinancialTable(deckObj.financials || []);
-      } else {
-        populateProblemSolution(data.problem, data.solution);
-        populateMarket({
-          primary_market: data.primary_market,
-          target_audience: data.target_audience,
-          market_growth_rate: data.market_growth,
-          competitive_advantage: data.competitive_advantage
-        });
-        populateAsk({
-          amount: data.funding_goal ?? data.funding_ask ?? data.funding_goal,
-          usage_description: data.use_of_funds ?? data.usage_description ?? data.usage
-        });
-        renderFinancialTable(data.financials || []);
-      }
-
-      const inWatchlist = watchlistIdsSet.has(Number(startupId));
+      // Regular startup (non-deck)
+      populateHeaderFromStartup(startup);
+      const inWatchlist = startup.is_in_watchlist === true;
       currentWatchlistState = inWatchlist;
       updateWatchlistButton(inWatchlist);
       

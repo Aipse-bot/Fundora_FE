@@ -191,6 +191,16 @@
         return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : {};
     }
 
+    function escapeHtml(unsafe) {
+        if (unsafe === null || unsafe === undefined) return '';
+        return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     async function loadCompany() {
         if (!startupId || !token) {
             alert('Missing startup ID or authentication');

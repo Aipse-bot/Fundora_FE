@@ -452,6 +452,9 @@
         cachedElements.editFirstName.value = data.first_name || '';
         cachedElements.editLastName.value = data.last_name || '';
         cachedElements.editEmail.value = data.email || '';
+        
+        document.body.style.overflow = 'hidden';
+        
         cachedElements.editModal.classList.remove('hidden');
       } catch (error) {
         console.error('Error loading profile for edit:', error);
@@ -460,6 +463,7 @@
 
     cachedElements.cancelEdit.addEventListener('click', () => {
       cachedElements.editModal.classList.add('hidden');
+      document.body.style.overflow = '';
     });
 
     cachedElements.editForm.addEventListener('submit', async (e) => {
@@ -479,6 +483,8 @@
         });
 
         cachedElements.editModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        
         await loadProfile();
         alert('Profile updated successfully!');
       } catch (error) {
