@@ -148,122 +148,152 @@
   </div>
 
   <!-- Header -->
-  <header class="bg-slate-900 border-b border-slate-700 shadow-sm sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center space-x-3">
-          <div class="bg-blue-600 p-2 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"></path>
+  <header class="sticky top-0 z-50 bg-slate-900 border-b border-slate-800 slide-down">
+    <div class="max-w-[1920px] mx-auto px-6 py-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-3 group">
+          <div class="relative w-10 h-10 transform transition-transform group-hover:scale-110">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)" stroke="#3b82f6" stroke-width="2"/>
+              <path d="M20 10 L20 30 M12 20 L28 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="20" cy="12" r="2" fill="white"/>
+              <circle cx="20" cy="28" r="2" fill="white"/>
+              <circle cx="12" cy="20" r="2" fill="white"/>
+              <circle cx="28" cy="20" r="2" fill="white"/>
+              <defs>
+                <linearGradient id="logo-gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#3b82f6"/>
+                  <stop offset="100%" stop-color="#10b981"/>
+                </linearGradient>
+              </defs>
             </svg>
           </div>
-          <span class="text-2xl font-bold text-white tracking-tight">Fundora</span>
+          <div>
+            <h1 class="text-2xl font-bold text-white">Fundora</h1>
+            <p class="text-sm text-gray-400">Edit Startup Information</p>
+          </div>
         </div>
-        <div class="flex items-center space-x-4">
-          <span class="text-slate-400 text-sm">
-            Welcome, <span class="font-semibold text-blue-400" id="user-email">Loading...</span>
-          </span>
-          <button onclick="window.location.href='added-startups.html'"
-            class="text-slate-400 hover:text-blue-400 text-sm font-medium flex items-center space-x-1 transition">
-            ← Back to Startups
-          </button>
+        <div class="flex items-center space-x-3">
+          <a href="startup-analytics.html" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 border border-slate-700 flex items-center space-x-2 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <span>Analytics</span>
+          </a>
+          <a href="added-startups.html" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 border border-slate-700 flex items-center space-x-2 hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span>Back to Startups</span>
+          </a>
         </div>
       </div>
     </div>
   </header>
 
   <!-- Main Form -->
-  <main class="flex-1 min-h-0 py-2 overflow-hidden">
-    <div class="max-w-full mx-auto px-2 h-full">
-      <form id="editStartupForm" novalidate class="bg-slate-900 rounded-xl shadow-xl border border-slate-700 h-full flex flex-col">
+  <main class="flex-1 min-h-0 py-6 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 h-full">
+      <form id="editStartupForm" novalidate method="post" action="javascript:void(0);" class="bg-slate-900 rounded-xl shadow-xl border border-slate-700 h-full flex flex-col">
 
         <!-- Form Header -->
-        <div class="bg-blue-600 rounded-t-xl px-6 py-3">
-          <h2 class="text-xl font-bold text-white">Edit Startup Information</h2>
+        <div class="px-6 py-4 border-b border-slate-700">
+          <h2 class="text-2xl font-bold text-white mb-1">Edit Startup Information</h2>
+          <p class="text-sm text-gray-400">Update your company's financial and operational details</p>
         </div>
 
         <!-- Form Content -->
-        <div class="form-container flex-1 px-6 py-4 overflow-y-auto overflow-x-hidden">
-          <div class="grid lg:grid-cols-5 gap-6 h-full">
-
-            <!-- LEFT COLUMN -->
-            <div class="lg:col-span-2 flex flex-col space-y-4 h-full fade-in-up">
-              <div class="bg-slate-800 rounded-lg p-5 border border-slate-700 flex-1 flex flex-col">
-                <h3 class="text-base font-bold text-slate-100 mb-4">Core Information</h3>
-
-                <div class="flex-1 flex flex-col justify-between">
-                  <div class="mb-4">
-                    <label for="company-name" class="block text-sm font-semibold text-slate-300 mb-2">
-                      Company Name <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" id="company-name" name="company-name"
-                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg"
-                      placeholder="Enter company name" required />
-                  </div>
-
-                  <div class="mb-4">
-                    <label for="industry" class="block text-sm font-semibold text-slate-300 mb-2">
-                      Industry <span class="text-red-500">*</span>
-                    </label>
-                    <select id="industry" name="industry"
-                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" required>
-                      <option value="">Select Industry</option>
-                      <option>Technology</option>
-                      <option>Finance</option>
-                      <option>Healthcare</option>
-                      <option>E-commerce</option>
-                      <option>Education</option>
-                      <option>Real Estate</option>
-                      <option>Manufacturing</option>
-                      <option>Retail</option>
-                      <option>Food & Beverage</option>
-                      <option>Transportation</option>
-                      <option>Energy</option>
-                      <option>Entertainment</option>
-                      <option>Agriculture</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-
-                  <div class="mb-0 flex-1 flex flex-col">
-                    <label for="company-description" class="block text-sm font-semibold text-slate-300 mb-2">
-                      Company Description
-                    </label>
-                    <textarea id="company-description" name="company-description"
-                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg resize-none flex-1"
-                      placeholder="Brief description of your company..."></textarea>
-                  </div>
-                </div>
+        <div class="form-container flex-1 px-6 py-6 overflow-y-auto overflow-x-hidden">
+          
+          <!-- Progress Indicator -->
+          <div class="mb-8 bg-slate-800 rounded-lg p-5 border border-slate-700 fade-in-up">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h4 class="text-base font-bold text-slate-100">Data Completeness</h4>
+                <p class="text-xs text-slate-400 mt-1">Complete more fields to improve your startup's visibility</p>
               </div>
+              <span id="completeness-text" class="text-sm font-semibold text-slate-300 bg-slate-700 px-4 py-2 rounded-full">0% Complete</span>
+            </div>
+            <div class="w-full bg-slate-700 rounded-full h-3 shadow-inner">
+              <div id="completeness-bar" class="h-3 rounded-full transition-all duration-500 bg-blue-500" style="width: 0%"></div>
+            </div>
+            <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low" />
+          </div>
 
-              <!-- Data Completeness -->
-              <div class="bg-slate-800 rounded-lg p-5 border border-slate-700 scale-in" style="animation-delay: 0.2s;">
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-bold text-slate-100">Confidence Level</h4>
-                  <span id="completeness-text"
-                    class="text-sm font-semibold text-slate-300 bg-slate-700 px-3 py-1 rounded-full">0% Complete</span>
+          <!-- Section 1: Core Information -->
+          <div class="mb-6 fade-in-up" style="animation-delay: 0.1s;">
+            <div class="flex items-center mb-4">
+              <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-100">Core Information</h3>
+            </div>
+            <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label for="company-name" class="block text-sm font-semibold text-slate-300 mb-2">
+                    Company Name <span class="text-red-500">*</span>
+                  </label>
+                  <input type="text" id="company-name" name="company-name"
+                    class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg"
+                    placeholder="Enter company name" required />
                 </div>
-                <div class="w-full bg-slate-700 rounded-full h-3 shadow-inner">
-                  <div id="completeness-bar"
-                    class="h-3 rounded-full transition-all duration-500 bg-blue-500"
-                    style="width: 0%"></div>
+                <div>
+                  <label for="industry" class="block text-sm font-semibold text-slate-300 mb-2">
+                    Industry <span class="text-red-500">*</span>
+                  </label>
+                  <select id="industry" name="industry"
+                    class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" required>
+                    <option value="">Select Industry</option>
+                    <option>Technology</option>
+                    <option>Finance</option>
+                    <option>Healthcare</option>
+                    <option>E-commerce</option>
+                    <option>Education</option>
+                    <option>Real Estate</option>
+                    <option>Manufacturing</option>
+                    <option>Retail</option>
+                    <option>Food & Beverage</option>
+                    <option>Transportation</option>
+                    <option>Energy</option>
+                    <option>Entertainment</option>
+                    <option>Agriculture</option>
+                    <option>Other</option>
+                  </select>
                 </div>
-                <p class="text-xs text-slate-400 mt-3">Fill in more fields to increase confidence level</p>
-                <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low" />
+                <div class="md:col-span-2">
+                  <label for="company-description" class="block text-sm font-semibold text-slate-300 mb-2">
+                    Company Description
+                  </label>
+                  <textarea id="company-description" name="company-description"
+                    class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg resize-none" rows="4"
+                    placeholder="Brief description of your company..."></textarea>
+                </div>
               </div>
             </div>
+          </div>
 
-            <!-- Right Column: Financials & Actions -->
-            <div class="lg:col-span-3 flex flex-col space-y-4 h-full fade-in-up" style="animation-delay: 0.1s;">
-              <!-- Income Statement Section -->
-              <div class="financial-section border-blue-500 rounded-lg p-5 flex-1">
-                <h3 class="text-base font-bold text-slate-100 mb-3">Income Statement</h3>
-                <div class="grid md:grid-cols-2 gap-4">
+          <!-- Section 2: Financial Information -->
+          <div class="mb-6 fade-in-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center mb-4">
+              <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-100">Financial Information</h3>
+            </div>
+            
+            <div class="space-y-6">
+              <!-- Income Statement -->
+              <div class="bg-slate-800 rounded-lg p-6 border-l-4 border-blue-500">
+                <h4 class="text-base font-semibold text-slate-100 mb-4">Income Statement</h4>
+                <div class="grid md:grid-cols-3 gap-4">
                   <div>
-                    <label for="current-revenue" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="current-revenue" class="block text-sm font-medium text-slate-300 mb-2">
                       Current Period Revenue (PHP)
-                      <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -275,9 +305,8 @@
                     />
                   </div>
                   <div>
-                    <label for="prior-revenue" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="prior-revenue" class="block text-sm font-medium text-slate-300 mb-2">
                       Prior Period Revenue (PHP)
-                      <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -289,9 +318,21 @@
                     />
                   </div>
                   <div>
-                    <label for="current-net-income" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="time-between-periods" class="block text-sm font-medium text-slate-300 mb-2">
+                      Time Between Periods (Days)
+                    </label>
+                    <input 
+                      type="number" 
+                      id="time-between-periods" 
+                      name="time-between-periods" 
+                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
+                      placeholder="365"
+                      step="1"
+                    />
+                  </div>
+                  <div>
+                    <label for="current-net-income" class="block text-sm font-medium text-slate-300 mb-2">
                       Current Period Net Income (PHP)
-                      <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -303,9 +344,8 @@
                     />
                   </div>
                   <div>
-                    <label for="ebit" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="ebit" class="block text-sm font-medium text-slate-300 mb-2">
                       EBIT (PHP)
-                      <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -316,31 +356,16 @@
                       step="0.01"
                     />
                   </div>
-                  <div>
-                    <label for="time-between-periods" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Time Between Periods (Days)
-                      <span class="ml-2 text-xs text-blue-400">?</span>
-                    </label>
-                    <input 
-                      type="number" 
-                      id="time-between-periods" 
-                      name="time-between-periods" 
-                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" 
-                      placeholder="365"
-                      step="1"
-                    />
-                  </div>
                 </div>
               </div>
 
-              <!-- Balance Sheet Section -->
-              <div class="financial-section border-emerald-500 rounded-lg p-5 flex-1">
-                <h3 class="text-base font-bold text-slate-100 mb-3">Balance Sheet</h3>
-                <div class="grid md:grid-cols-2 gap-4">
+              <!-- Balance Sheet -->
+              <div class="bg-slate-800 rounded-lg p-6 border-l-4 border-emerald-500">
+                <h4 class="text-base font-semibold text-slate-100 mb-4">Balance Sheet</h4>
+                <div class="grid md:grid-cols-3 gap-4">
                   <div>
-                    <label for="total-assets" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="total-assets" class="block text-sm font-medium text-slate-300 mb-2">
                       Total Assets (PHP)
-                      <span class="ml-2 text-xs text-emerald-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -352,9 +377,8 @@
                     />
                   </div>
                   <div>
-                    <label for="current-assets" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="current-assets" class="block text-sm font-medium text-slate-300 mb-2">
                       Current Assets (PHP)
-                      <span class="ml-2 text-xs text-emerald-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -366,9 +390,8 @@
                     />
                   </div>
                   <div>
-                    <label for="total-liabilities" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="total-liabilities" class="block text-sm font-medium text-slate-300 mb-2">
                       Total Liabilities (PHP)
-                      <span class="ml-2 text-xs text-emerald-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -380,9 +403,8 @@
                     />
                   </div>
                   <div>
-                    <label for="current-liabilities" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="current-liabilities" class="block text-sm font-medium text-slate-300 mb-2">
                       Current Liabilities (PHP)
-                      <span class="ml-2 text-xs text-emerald-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -394,9 +416,8 @@
                     />
                   </div>
                   <div>
-                    <label for="retained-earnings" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="retained-earnings" class="block text-sm font-medium text-slate-300 mb-2">
                       Retained Earnings (PHP)
-                      <span class="ml-2 text-xs text-emerald-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -407,9 +428,9 @@
                       step="0.01"
                     />
                   </div>
-                  <div class="md:col-span-1">
-                    <label for="shareholder-equity" class="text-sm font-medium text-slate-300 mb-2 block">
-                      Shareholder Equity (PHP) - Auto-calculated
+                  <div>
+                    <label for="shareholder-equity" class="block text-sm font-medium text-slate-300 mb-2">
+                      Shareholder Equity (Auto-calculated)
                     </label>
                     <input 
                       type="text" 
@@ -423,14 +444,13 @@
                 </div>
               </div>
 
-              <!-- Cash Flow Section -->
-              <div class="financial-section border-purple-500 rounded-lg p-5 flex-1">
-                <h3 class="text-base font-bold text-slate-100 mb-3">Cash Flow & Valuation</h3>
+              <!-- Cash Flow & Valuation -->
+              <div class="bg-slate-800 rounded-lg p-6 border-l-4 border-purple-500">
+                <h4 class="text-base font-semibold text-slate-100 mb-4">Cash Flow & Valuation</h4>
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label for="cash-flow" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="cash-flow" class="block text-sm font-medium text-slate-300 mb-2">
                       Operations Cash Flow (PHP)
-                      <span class="ml-2 text-xs text-purple-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -442,9 +462,8 @@
                     />
                   </div>
                   <div>
-                    <label for="current-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="current-valuation" class="block text-sm font-medium text-slate-300 mb-2">
                       Current Valuation (PHP)
-                      <span class="ml-2 text-xs text-purple-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -456,9 +475,8 @@
                     />
                   </div>
                   <div>
-                    <label for="expected-future-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="expected-future-valuation" class="block text-sm font-medium text-slate-300 mb-2">
                       Expected Future Valuation (PHP)
-                      <span class="ml-2 text-xs text-purple-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -470,9 +488,8 @@
                     />
                   </div>
                   <div>
-                    <label for="years-to-future-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="years-to-future-valuation" class="block text-sm font-medium text-slate-300 mb-2">
                       Years to Future Valuation
-                      <span class="ml-2 text-xs text-purple-400">?</span>
                     </label>
                     <input 
                       type="number" 
@@ -485,155 +502,163 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <!-- Qualitative Assessment Section -->
-              <div class="financial-section border-slate-600 rounded-lg p-5 flex-1">
-                <h3 class="text-base font-bold text-slate-100 mb-3">Qualitative Assessment</h3>
-                <div class="space-y-4">
-                  <div>
-                    <label for="team-strength" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Team Strength
-                      <span class="ml-2 text-xs text-slate-400">?</span>
-                    </label>
-                    <textarea 
-                      id="team-strength" 
-                      name="team-strength" 
-                      rows="3" 
-                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg resize-none" 
-                      placeholder="Describe the team's expertise and experience..."
-                    ></textarea>
-                  </div>
-                  <div>
-                    <label for="market-position" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Market Position
-                      <span class="ml-2 text-xs text-slate-400">?</span>
-                    </label>
-                    <textarea 
-                      id="market-position" 
-                      name="market-position" 
-                      rows="3" 
-                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg resize-none" 
-                      placeholder="Explain market standing and competitive advantages..."
-                    ></textarea>
-                  </div>
-                  <div>
-                    <label for="brand-reputation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Brand Reputation
-                      <span class="ml-2 text-xs text-slate-400">?</span>
-                    </label>
-                    <textarea 
-                      id="brand-reputation" 
-                      name="brand-reputation" 
-                      rows="3" 
-                      class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg resize-none" 
-                      placeholder="Describe brand recognition and reputation..."
-                    ></textarea>
-                  </div>
-                </div>
+          <!-- Section 3: Company Details -->
+          <div class="mb-6 fade-in-up" style="animation-delay: 0.3s;">
+            <div class="flex items-center mb-4">
+              <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
               </div>
+              <h3 class="text-xl font-bold text-slate-100">Company & Contact Details</h3>
+            </div>
 
-              </div>
-
-              <!-- Contact Information Section -->
-              <div class="financial-section border-blue-500 rounded-lg p-5 flex-1">
-                <h3 class="text-base font-bold text-slate-100 mb-3">Contact Information</h3>
+            <div class="space-y-6">
+              <!-- Contact Information -->
+              <div class="bg-slate-800 rounded-lg p-6 border-l-4 border-blue-500">
+                <h4 class="text-base font-semibold text-slate-100 mb-4">Contact Information</h4>
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label for="contact-email" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="contact-email" class="block text-sm font-medium text-slate-300 mb-2">
                       Contact Email
-                      <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input type="email" id="contact-email" name="contact-email" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="contact@company.com" />
                   </div>
                   <div>
-                    <label for="contact-phone" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="contact-phone" class="block text-sm font-medium text-slate-300 mb-2">
                       Contact Phone
-                      <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input type="tel" id="contact-phone" name="contact-phone" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="+63 XXX XXX XXXX" />
                   </div>
                   <div>
-                    <label for="website-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="website-url" class="block text-sm font-medium text-slate-300 mb-2">
                       Website URL
-                      <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input type="url" id="website-url" name="website-url" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="https://yourcompany.com" />
                   </div>
                   <div>
-                    <label for="linkedin-url" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      LinkedIn URL
-                      <span class="ml-2 text-xs text-blue-400">?</span>
+                    <label for="linkedin-url" class="block text-sm font-medium text-slate-300 mb-2">
+                      Company LinkedIn
                     </label>
                     <input type="url" id="linkedin-url" name="linkedin-url" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="https://linkedin.com/company/..." />
                   </div>
-                  <div class="md:col-span-2">
-                    <label for="location" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                  <div>
+                    <label for="location" class="block text-sm font-medium text-slate-300 mb-2">
                       Location
-                      <span class="ml-2 text-xs text-blue-400">?</span>
                     </label>
                     <input type="text" id="location" name="location" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="Cebu City, Philippines" />
                   </div>
-                </div>
-              </div>
-
-              <!-- Founder Information Section -->
-              <div class="financial-section border-purple-500 rounded-lg p-5 flex-1">
-                <h3 class="text-base font-bold text-slate-100 mb-3">Founder Information</h3>
-                <div class="space-y-4">
-                  <div class="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label for="founder-name" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                        Founder Name
-                        <span class="ml-2 text-xs text-purple-400">?</span>
-                      </label>
-                      <input type="text" id="founder-name" name="founder-name" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="John Doe" />
-                    </div>
-                    <div>
-                      <label for="founder-title" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                        Founder Title
-                        <span class="ml-2 text-xs text-purple-400">?</span>
-                      </label>
-                      <input type="text" id="founder-title" name="founder-title" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="CEO & Founder" />
-                    </div>
-                  </div>
                   <div>
-                    <label for="founder-linkedin" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                      Founder LinkedIn
-                      <span class="ml-2 text-xs text-purple-400">?</span>
-                    </label>
-                    <input type="url" id="founder-linkedin" name="founder-linkedin" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="https://linkedin.com/in/..." />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Company Details Section -->
-              <div class="financial-section border-emerald-500 rounded-lg p-5 flex-1">
-                <h3 class="text-base font-bold text-slate-100 mb-3">Company Details</h3>
-                <div class="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label for="year-founded" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                    <label for="year-founded" class="block text-sm font-medium text-slate-300 mb-2">
                       Year Founded
-                      <span class="ml-2 text-xs text-emerald-400">?</span>
                     </label>
                     <input type="number" id="year-founded" name="year-founded" min="1900" max="2025" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="2024" />
                   </div>
                 </div>
               </div>
 
-              <!-- Action Buttons -->
-              <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                <button type="submit"
-                  class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center shadow-lg">
-                  Update Startup
-                </button>
-                <button type="button" onclick="window.location.href='added-startups.html'"
-                  class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3.5 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center">
-                  Cancel
-                </button>
+              <!-- Founder Information -->
+              <div class="bg-slate-800 rounded-lg p-6 border-l-4 border-purple-500">
+                <h4 class="text-base font-semibold text-slate-100 mb-4">Founder Information</h4>
+                <div class="grid md:grid-cols-3 gap-4">
+                  <div>
+                    <label for="founder-name" class="block text-sm font-medium text-slate-300 mb-2">
+                      Founder Name
+                    </label>
+                    <input type="text" id="founder-name" name="founder-name" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="John Doe" />
+                  </div>
+                  <div>
+                    <label for="founder-title" class="block text-sm font-medium text-slate-300 mb-2">
+                      Founder Title
+                    </label>
+                    <input type="text" id="founder-title" name="founder-title" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="CEO & Founder" />
+                  </div>
+                  <div>
+                    <label for="founder-linkedin" class="block text-sm font-medium text-slate-300 mb-2">
+                      Founder LinkedIn
+                    </label>
+                    <input type="url" id="founder-linkedin" name="founder-linkedin" class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg" placeholder="https://linkedin.com/in/..." />
+                  </div>
+                </div>
               </div>
             </div>
-
           </div>
+
+          <!-- Section 4: Qualitative Assessment -->
+          <div class="mb-6 fade-in-up" style="animation-delay: 0.4s;">
+            <div class="flex items-center mb-4">
+              <div class="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-100">Qualitative Assessment</h3>
+            </div>
+            <div class="bg-slate-800 rounded-lg p-6 border-l-4 border-orange-500">
+              <div class="space-y-4">
+                <div>
+                  <label for="team-strength" class="block text-sm font-medium text-slate-300 mb-2">
+                    Team Strength
+                  </label>
+                  <textarea 
+                    id="team-strength" 
+                    name="team-strength" 
+                    rows="3" 
+                    class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg resize-none" 
+                    placeholder="Describe the team's expertise, experience, and key skills..."
+                  ></textarea>
+                </div>
+                <div>
+                  <label for="market-position" class="block text-sm font-medium text-slate-300 mb-2">
+                    Market Position
+                  </label>
+                  <textarea 
+                    id="market-position" 
+                    name="market-position" 
+                    rows="3" 
+                    class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg resize-none" 
+                    placeholder="Explain your market standing, competitive advantages, and differentiation..."
+                  ></textarea>
+                </div>
+                <div>
+                  <label for="brand-reputation" class="block text-sm font-medium text-slate-300 mb-2">
+                    Brand Reputation
+                  </label>
+                  <textarea 
+                    id="brand-reputation" 
+                    name="brand-reputation" 
+                    rows="3" 
+                    class="form-input-modern w-full px-4 py-2.5 text-base rounded-lg resize-none" 
+                    placeholder="Describe brand recognition, customer perception, and market reputation..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="sticky bottom-0 bg-slate-900 border-t border-slate-700 pt-6 pb-4 mt-8 fade-in-up" style="animation-delay: 0.5s;">
+            <div class="flex flex-col gap-3 max-w-md mx-auto">
+              <button type="submit"
+                class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Update Startup Information
+              </button>
+              <button type="button" onclick="window.location.href='added-startups.html'"
+                class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Cancel Changes
+              </button>
+            </div>
+          </div>
+
         </div>
       </form>
     </div>
@@ -650,7 +675,6 @@
         completenessText: document.getElementById('completeness-text'),
         completenessHiddenInput: document.getElementById('data-completeness-level'),
         loadingOverlay: document.getElementById('loadingOverlay'),
-        userEmailElement: document.getElementById('user-email'),
         submitButton: form.querySelector('button[type="submit"]')
       };
       
@@ -661,40 +685,29 @@
 
       function getStartupIdFromUrl() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('id');
+        const id = urlParams.get('id');
+        console.log('Startup ID from URL:', id);
+        console.log('Full URL:', window.location.href);
+        return id;
       }
 
       async function loadUserInfo() {
         const token = sessionStorage.getItem('authToken');
 
         if (!token) {
-          domCache.userEmailElement.textContent = 'No user logged in';
-          domCache.userEmailElement.className = 'font-semibold text-red-600';
           alert('Please log in to access this page.');
           window.location.href = '../login.html';
           return;
         }
-
-        const storedUserData = localStorage.getItem('userData');
-        if (storedUserData) {
-          try {
-            const userData = JSON.parse(storedUserData);
-            domCache.userEmailElement.textContent = userData.email || 'User';
-            domCache.userEmailElement.className = 'font-semibold text-slate-300';
-            return;
-          } catch (error) {
-            console.error('Error parsing user data:', error);
-          }
-        }
-
-        domCache.userEmailElement.textContent = 'Token found, no user info';
       }
 
       async function loadStartupData() {
         startupId = getStartupIdFromUrl();
         
-        if (!startupId || startupId === 'unknown') {
-          alert('Invalid startup ID. Redirecting back...');
+        console.log('Loading startup with ID:', startupId);
+        
+        if (!startupId || startupId === 'unknown' || startupId === 'null') {
+          alert(`Invalid startup ID: ${startupId}. Redirecting back...`);
           window.location.href = 'added-startups.html';
           return;
         }
@@ -953,6 +966,12 @@
         const originalText = domCache.submitButton.innerHTML;
         
         try {
+          console.log('Attempting to update startup with ID:', startupId);
+          
+          if (!startupId || startupId === 'null' || startupId === 'undefined') {
+            throw new Error(`Invalid startup ID: ${startupId}`);
+          }
+          
           domCache.submitButton.disabled = true;
           domCache.submitButton.innerHTML = 'Updating...';
 
@@ -960,6 +979,9 @@
           if (!token) {
             throw new Error('No authentication token found');
           }
+
+          console.log('Sending PUT request to:', `https://fundora-be-singapore.onrender.com/api/startup/${startupId}/`);
+          console.log('Request payload:', startupData);
 
           const response = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/`, {
             method: 'PUT',
@@ -970,7 +992,9 @@
             body: JSON.stringify(startupData)
           });
 
+          console.log('Response status:', response.status);
           const data = await response.json();
+          console.log('Response data:', data);
 
           if (!response.ok) {
             if (response.status === 401) {
