@@ -247,10 +247,11 @@
     </div>
 
   <!-- Edit Profile Modal -->
-  <div id="editModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full">
-      <h3 class="text-2xl font-bold mb-6">Edit Profile</h3>
-      <form id="editForm" class="space-y-4">
+  <form id="editForm" class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+    <!-- Basic Information -->
+    <div class="border-b border-slate-700 pb-4 mb-4">
+      <h4 class="text-lg font-semibold mb-3 text-brand-400">Basic Information</h4>
+      <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
           <input type="text" id="editFirstName" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required>
@@ -259,17 +260,64 @@
           <label class="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
           <input type="text" id="editLastName" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-          <input type="email" id="editEmail" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required>
-        </div>
-        <div class="flex space-x-3 pt-4">
-          <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-all">Save Changes</button>
-          <button type="button" id="cancelEdit" class="flex-1 bg-slate-800/50 hover:bg-slate-700/50 text-white py-2.5 px-4 rounded-lg font-medium transition-all border border-slate-700">Cancel</button>
-        </div>
-      </form>
+      </div>
     </div>
-  </div>
+
+    <!-- Contact Information -->
+    <div class="border-b border-slate-700 pb-4 mb-4">
+      <h4 class="text-lg font-semibold mb-3 text-brand-400">Contact Information</h4>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Contact Email</label>
+          <input type="email" id="editContactEmail" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" placeholder="contact@company.com">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Contact Phone</label>
+          <input type="tel" id="editContactPhone" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" placeholder="+1 (555) 000-0000">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Website URL</label>
+          <input type="url" id="editWebsiteUrl" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" placeholder="https://company.com">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">LinkedIn URL</label>
+          <input type="url" id="editLinkedinUrl" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" placeholder="https://linkedin.com/company/...">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Location</label>
+          <input type="text" id="editLocation" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" placeholder="City, Country">
+        </div>
+      </div>
+    </div>
+
+    <!-- Founder Information -->
+    <div class="pb-4 mb-4">
+      <h4 class="text-lg font-semibold mb-3 text-brand-400">Founder Information</h4>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Founder Name</label>
+          <input type="text" id="editFounderName" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" placeholder="John Doe">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Founder Title</label>
+          <input type="text" id="editFounderTitle" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" placeholder="CEO & Founder">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Founder LinkedIn</label>
+          <input type="url" id="editFounderLinkedin" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" placeholder="https://linkedin.com/in/...">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Year Founded</label>
+          <input type="number" id="editYearFounded" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" placeholder="2020" min="1900" max="2025">
+        </div>
+      </div>
+    </div>
+
+    <div class="flex space-x-3 pt-4">
+      <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-all">Save Changes</button>
+      <button type="button" id="cancelEdit" class="flex-1 bg-slate-800/50 hover:bg-slate-700/50 text-white py-2.5 px-4 rounded-lg font-medium transition-all border border-slate-700">Cancel</button>
+    </div>
+  </form>
 
   <script>
     const API_BASE = 'https://fundora-be-singapore.onrender.com';
@@ -294,7 +342,16 @@
       editEmail: document.getElementById('editEmail'),
       logoutBtn: document.getElementById('logoutBtn'),
       editProfileBtn: document.getElementById('editProfileBtn'),
-      cancelEdit: document.getElementById('cancelEdit')
+      cancelEdit: document.getElementById('cancelEdit'),
+      editContactEmail: document.getElementById('editContactEmail'),
+      editContactPhone: document.getElementById('editContactPhone'),
+      editWebsiteUrl: document.getElementById('editWebsiteUrl'),
+      editLinkedinUrl: document.getElementById('editLinkedinUrl'),
+      editLocation: document.getElementById('editLocation'),
+      editFounderName: document.getElementById('editFounderName'),
+      editFounderTitle: document.getElementById('editFounderTitle'),
+      editFounderLinkedin: document.getElementById('editFounderLinkedin'),
+      editYearFounded: document.getElementById('editYearFounded')
     };
 
     // TODO: change to session
@@ -449,9 +506,23 @@
     cachedElements.editProfileBtn.addEventListener('click', async () => {
       try {
         const data = await fetchJSON(PROFILE_ENDPOINT);
+        // Basic info
         cachedElements.editFirstName.value = data.first_name || '';
         cachedElements.editLastName.value = data.last_name || '';
         cachedElements.editEmail.value = data.email || '';
+
+        // Contact info
+        cachedElements.editContactEmail.value = data.contact_email || '';
+        cachedElements.editContactPhone.value = data.contact_phone || '';
+        cachedElements.editWebsiteUrl.value = data.website_url || '';
+        cachedElements.editLinkedinUrl.value = data.linkedin_url || '';
+        cachedElements.editLocation.value = data.location || '';
+        
+        // Founder info
+        cachedElements.editFounderName.value = data.founder_name || '';
+        cachedElements.editFounderTitle.value = data.founder_title || '';
+        cachedElements.editFounderLinkedin.value = data.founder_linkedin || '';
+        cachedElements.editYearFounded.value = data.year_founded || '';
         cachedElements.editModal.classList.remove('hidden');
       } catch (error) {
         console.error('Error loading profile for edit:', error);
@@ -468,7 +539,16 @@
       const formData = {
         first_name: cachedElements.editFirstName.value,
         last_name: cachedElements.editLastName.value,
-        email: cachedElements.editEmail.value
+        email: cachedElements.editEmail.value,
+        contact_email: cachedElements.editContactEmail.value || null,
+        contact_phone: cachedElements.editContactPhone.value || null,
+        website_url: cachedElements.editWebsiteUrl.value || null,
+        linkedin_url: cachedElements.editLinkedinUrl.value || null,
+        location: cachedElements.editLocation.value || null,
+        founder_name: cachedElements.editFounderName.value || null,
+        founder_title: cachedElements.editFounderTitle.value || null,
+        founder_linkedin: cachedElements.editFounderLinkedin.value || null,
+        year_founded: cachedElements.editYearFounded.value ? parseInt(cachedElements.editYearFounded.value) : null
       };
 
       try {
