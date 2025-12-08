@@ -196,7 +196,9 @@
   </div>
 
   <script>
+    // const apiBase = "http://127.0.0.1:8000/api";
     const apiBase = "https://fundora-be-singapore.onrender.com/api";
+    const RECORD_COMPARISON_ENDPOINT = `${apiBase}/analytics/comparison/`;
     let startups = [];
     let selectedStartups = new Set();
     const maxSelections = 3;
@@ -293,10 +295,7 @@
           allStartups = [];
         }
         
-        startups = allStartups.filter(s => {
-          const isPitchDeck = s.source_deck_id != null || s.is_deck_builder || s.source_deck || s.is_pitch_deck;
-          return !isPitchDeck;
-        });
+        startups = allStartups;
         
         renderStartups(startups);
       } catch (error) {
@@ -458,9 +457,8 @@
         domCache.compareBtn.classList.remove("bg-slate-700", "text-gray-400", "cursor-not-allowed");
         domCache.compareBtn.classList.add("bg-brand-600", "hover:bg-brand-700", "text-white", "btn-pulse");
         domCache.compareBtn.textContent = `Compare Selected Startups (${selectedStartups.size})`;
-        domCache.compareBtn.onclick = () => {
-          const ids = Array.from(selectedStartups);
-          window.location.href = `Startup_Comparison.html?startups=${ids.join(",")}`;
+        domCache.compareBtn.onclick = async () => {
+          await recordComparisonAndNavigate();
         };
       } else {
         domCache.compareBtn.disabled = true;
@@ -468,6 +466,75 @@
         domCache.compareBtn.classList.add("bg-slate-700", "text-gray-400", "cursor-not-allowed");
         domCache.compareBtn.textContent = "Select at least 2-3 startups to compare";
         domCache.compareBtn.onclick = null;
+      }
+    }
+
+    async function recordComparisonAndNavigate() {
+      const ids = Array.from(selectedStartups).map(id => parseInt(id));
+      
+      console.log('📊 Recording comparison for startups:', ids);
+      
+      // Show loading state
+      domCache.compareBtn.disabled = true;
+      const originalText = domCache.compareBtn.textContent;
+      domCache.compareBtn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Recording comparison...
+      `;
+      
+      try {
+        const token = getAuthToken();
+        const response = await fetch(RECORD_COMPARISON_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ startup_ids: ids }),
+          mode: 'cors',
+          credentials: 'include'
+        });
+
+        const responseText = await response.text();
+        let result;
+        try {
+          result = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('Failed to parse response:', parseError);
+          throw new Error('Invalid server response');
+        }
+
+        if (response.ok || response.status === 201) {
+          console.log('✅ Comparison recorded successfully:', result);
+          console.log('📊 Analytics:', {
+            total_comparisons: result.total_comparisons,
+            unique_comparers: result.unique_comparers
+          });
+          
+          // Mark that a comparison was made (to trigger refresh on added-startups)
+          localStorage.setItem('comparisonMade', Date.now().toString());
+          
+          // Add a small delay to ensure database transaction completes
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // Navigate to comparison page
+          window.location.href = `Startup_Comparison.html?startups=${ids.join(",")}`;
+        } else {
+          console.error('❌ Failed to record comparison:', result);
+          // Still mark comparison attempt and navigate
+          localStorage.setItem('comparisonMade', Date.now().toString());
+          window.location.href = `Startup_Comparison.html?startups=${ids.join(",")}`;
+        }
+      } catch (error) {
+        console.error('❌ Error recording comparison:', error);
+        // Mark comparison attempt even on error
+        localStorage.setItem('comparisonMade', Date.now().toString());
+        // Navigate anyway even if recording fails
+        window.location.href = `Startup_Comparison.html?startups=${ids.join(",")}`;
       }
     }
 

@@ -250,11 +250,11 @@
       comparissonCount: document.getElementById('comparison-count')
     };
 
-    const API_BASE = 'https://fundora-be-singapore.onrender.com/api';
-    const STARTUPS_ENDPOINT = `${API_BASE}/startups/`;
-    const SAVE_COMPARISON_ENDPOINT = `${API_BASE}/investor/comparisons/save/`;
-    const CHECK_COMPARISON_ENDPOINT = `${API_BASE}/investor/comparisons/`;
-    const RECORD_COMPARISON_ENDPOINT = `${API_BASE}/analytics/comparison/`;
+    // const API_BASE = 'http://127.0.0.1:8000';
+    const API_BASE = 'https://fundora-be-singapore.onrender.com';
+    const STARTUPS_ENDPOINT = `${API_BASE}/api/startups/`;
+    const SAVE_COMPARISON_ENDPOINT = `${API_BASE}/api/investor/comparisons/save/`;
+    const CHECK_COMPARISON_ENDPOINT = `${API_BASE}/api/investor/comparisons/`;
 
     let startupsData = [];
     let currentComparisonIds = [];
@@ -269,8 +269,14 @@
 
     function authHeaders() {
       const token = getAuthToken();
-      if (!token) return {};
-      return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+      const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      return headers;
     }
 
     function escapeHtml(unsafe) {
@@ -321,54 +327,6 @@
 
     function hideNotification() {
       domCache.notification.classList.add('hidden');
-    }
-
-    async function recordComparison(startupIds) {
-      try {
-        console.log('📤 Recording comparison...');
-        console.log('  Endpoint:', RECORD_COMPARISON_ENDPOINT);
-        console.log('  Startup IDs:', startupIds);
-        console.log('  Auth token:', getAuthToken() ? '✓ Present' : '✗ Missing');
-        
-        const response = await fetch(RECORD_COMPARISON_ENDPOINT, {
-          method: 'POST',
-          headers: authHeaders(),
-          body: JSON.stringify({ startup_ids: startupIds })
-        });
-
-        console.log('📥 Response status:', response.status, response.statusText);
-        console.log('📥 Response URL:', response.url);
-
-        if (response.ok) {
-          const result = await response.json();
-          console.log('✅ Comparison recorded successfully:', result);
-          console.log('📊 Comparison set ID:', result.comparison_set_id);
-          
-          // Log analytics for each startup
-          console.log('\n📈 Comparison Analytics:');
-          for (const startupId of startupIds) {
-            console.log(`\nStartup ${startupId}:`);
-            console.log(`  📊 Total comparisons: ${result.total_comparisons[startupId]}`);
-            console.log(`  👥 Unique comparers: ${result.unique_comparers[startupId]}`);
-          }
-          
-          return result;
-        } else {
-          const errorData = await response.json().catch(() => ({}));
-          console.error('❌ Failed to record comparison:');
-          console.error('  Status:', response.status);
-          console.error('  Status Text:', response.statusText);
-          console.error('  URL:', response.url);
-          console.error('  Error data:', errorData);
-          return null;
-        }
-      } catch (err) {
-        console.error('❌ Exception while recording comparison:', err);
-        console.error('  Error type:', err.name);
-        console.error('  Error message:', err.message);
-        // Don't block page loading if comparison recording fails
-        return null;
-      }
     }
 
     async function checkIfComparisonExists() {
@@ -493,7 +451,7 @@
       `;
 
       try {
-        const deleteUrl = `${API_BASE}/api/investor/comparisons/delete/${savedComparisonId}/`;
+        const deleteUrl = `${API_BASE}/investor/comparisons/delete/${savedComparisonId}/`;
         
         const response = await fetch(deleteUrl, {
           method: 'DELETE',
@@ -517,13 +475,29 @@
       }
     }
 
-    async function fetchStartupById(id) {
+    async function fetchStartupById(id, bustCache = false) {
       try {
-        const response = await fetch(`${STARTUPS_ENDPOINT}${id}/`, {
-          headers: authHeaders()
+        // Add cache-busting parameter if requested
+        const url = bustCache 
+          ? `${STARTUPS_ENDPOINT}${id}/?_=${Date.now()}`
+          : `${STARTUPS_ENDPOINT}${id}/`;
+        
+        const response = await fetch(url, {
+          headers: authHeaders(),
+          mode: 'cors',
+          credentials: 'include',
+          cache: bustCache ? 'no-cache' : 'default'
         });
-        if (!response.ok) throw new Error(`Failed to fetch startup ${id}`);
-        return await response.json();
+        if (!response.ok) {
+          console.error(`Failed to fetch startup ${id}: ${response.status} ${response.statusText}`);
+          throw new Error(`Failed to fetch startup ${id}`);
+        }
+        const data = await response.json();
+        console.log(`Fetched startup ${id}${bustCache ? ' (fresh)' : ''}:`, {
+          name: data.company_name,
+          analytics: data.analytics
+        });
+        return data;
       } catch (error) {
         console.error(`Error fetching startup ${id}:`, error);
         return null;
@@ -551,7 +525,9 @@
         `Comparing ${startupIds.length} startup${startupIds.length > 1 ? 's' : ''}`;
 
       try {
-        const promises = startupIds.map(id => fetchStartupById(id));
+        // Fetch startup data with cache-busting to get fresh analytics
+        console.log('🔄 Fetching startup data with fresh analytics...');
+        const promises = startupIds.map(id => fetchStartupById(id, true));
         const results = await Promise.all(promises);
         startupsData = results.filter(s => s !== null);
 
@@ -560,15 +536,10 @@
           return;
         }
 
-        // Record the comparison
-        await recordComparison(currentComparisonIds);
-
-        // Refetch startup data to get updated analytics
-        console.log('🔄 Refetching startup data to get updated analytics...');
-        const refetchPromises = startupIds.map(id => fetchStartupById(id));
-        const refetchResults = await Promise.all(refetchPromises);
-        startupsData = refetchResults.filter(s => s !== null);
-        console.log('✅ Startup data refetched with updated analytics');
+        console.log('✅ Startup data loaded with analytics:', startupsData.map(s => ({
+          name: s.company_name,
+          analytics: s.analytics
+        })));
 
         domCache.loadingState.classList.add('hidden');
         
