@@ -25,11 +25,11 @@
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
             outline: none;
-            transform: translateY(-1px);
+            background-color: #1e293b;
         }
         .form-input-modern:hover {
             border-color: #475569;
-            background-color: #1e293bee;
+            background-color: #283548;
         }
         .form-input-modern::placeholder {
             color: #64748b;
@@ -112,11 +112,6 @@
         }
         .financial-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            height: 100%;
-        }
-        .financial-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.15);
         }
         .tooltip-trigger {
             display: inline-flex;
@@ -153,53 +148,80 @@
 <body class="bg-slate-950 text-white min-h-screen">
 
     <!-- Header -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 slide-down">
-        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+    <header class="sticky top-0 z-50 bg-slate-900 border-b border-slate-800 slide-down">
+        <div class="max-w-[1920px] mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3 group">
-                    <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-2 rounded-lg shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
-                        <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                    <div class="relative w-10 h-10 transform transition-transform group-hover:scale-110">
+                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)" stroke="#3b82f6" stroke-width="2"/>
+                            <path d="M20 10 L20 30 M12 20 L28 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="20" cy="12" r="2" fill="white"/>
+                            <circle cx="20" cy="28" r="2" fill="white"/>
+                            <circle cx="12" cy="20" r="2" fill="white"/>
+                            <circle cx="28" cy="20" r="2" fill="white"/>
+                            <defs>
+                                <linearGradient id="logo-gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#3b82f6"/>
+                                    <stop offset="100%" stop-color="#10b981"/>
+                                </linearGradient>
+                            </defs>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent tracking-tight">Fundora</span>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Fundora</h1>
+                        <p class="text-sm text-gray-400">Company Information Form</p>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-slate-400 text-sm">
-                        Welcome, <span class="font-semibold text-blue-400" id="user-email">Loading...</span>
-                    </span>
-                    <img class="h-9 w-9 rounded-full object-cover border-2 border-blue-500/50 shadow-lg transform transition-transform hover:scale-110" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User Avatar">
+                <div class="flex items-center space-x-3">
+                    <a href="added-startups.html" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 border border-slate-700 flex items-center space-x-2 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        <span>My Startups</span>
+                    </a>
+                    <a href="Profile_Startup.html" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 border border-slate-700 flex items-center space-x-2 hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span>Profile</span>
+                    </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1600px] mx-auto p-6 lg:p-8">
-        <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-6 lg:p-10 fade-in">
-            <form id="companyForm" novalidate class="h-full">
-                <!-- Header Section -->
-                <div class="mb-8 pb-6 border-b border-slate-700">
+    <main class="max-w-[1920px] mx-auto px-6 py-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div>
                     <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-400 bg-clip-text text-transparent mb-2">
                         Company Information Form
                     </h1>
-                    <p class="text-slate-400 text-sm">
+                    <p class="text-slate-400 text-base">
                         Fill in your company details to generate a comprehensive investment analysis report
                     </p>
                 </div>
+            </div>
 
-                <div class="grid lg:grid-cols-2 gap-8">
-                    <div class="space-y-6">
-                        <!-- Core Company Info -->
-                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                    </svg>
-                                </div>
-                                <h2 class="text-xl font-bold text-white">Company Profile</h2>
-                            </div>
-                            <div class="space-y-5">
+            <form id="companyForm" novalidate class="space-y-6">
+
+                <!-- Section 1: Company Profile -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-xl shadow-xl p-8 fade-in">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Company Profile</h2>
+                            <p class="text-sm text-slate-400">Basic information about your company</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+
                                 <div>
                                     <label for="company-name" class="flex items-center text-sm font-medium text-slate-300 mb-2">
                                         Company Name
@@ -231,29 +253,36 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="company-description" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Company Description
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the company's core business and target market.">?</span>
-                                    </label>
-                                    <textarea id="company-description" name="company-description" rows="4" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Provide a brief overview of the company's mission..."></textarea>
-                                </div>
-                                <div>
                                     <label for="year-founded" class="flex items-center text-sm font-medium text-slate-300 mb-2">
                                         Year Founded
                                         <span class="tooltip-trigger ml-2" data-tooltip-text="Year the company was established.">?</span>
                                     </label>
                                     <input type="number" id="year-founded" name="year-founded" min="1900" max="2025" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="2024">
                                 </div>
-                            </div>
+                        <div class="md:col-span-2">
+                            <label for="company-description" class="flex items-center text-sm font-medium text-slate-300 mb-2">
+                                Company Description
+                                <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the company's core business and target market.">?</span>
+                            </label>
+                            <textarea id="company-description" name="company-description" rows="4" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Provide a brief overview of the company's mission..."></textarea>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Qualitative Assessment -->
-                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
-                            <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                <span class="inline-block w-2 h-2 bg-orange-500 rounded-full shadow-lg shadow-orange-500/50"></span>
-                                Qualitative Assessment
-                            </h3>
-                            <div class="space-y-5">
+                <!-- Section 2: Qualitative Assessment -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-xl shadow-xl p-8 fade-in">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-600 to-orange-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-500/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Qualitative Assessment</h2>
+                            <p class="text-sm text-slate-400">Evaluate team, market position, and brand strength</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6">
                                 <div>
                                     <label for="team-strength" class="flex items-center text-sm font-medium text-slate-300 mb-2">
                                         Team Strength
@@ -275,22 +304,27 @@
                                     </label>
                                     <textarea id="brand-reputation" name="brand-reputation" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Describe brand recognition and reputation..."></textarea>
                                 </div>
-                            </div>
-                        </div>
+                    </div>
+                </div>
 
-                    <!-- Right Column: Financial Metrics -->
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-emerald-500/30">
-                                $
-                            </div>
-                            <h2 class="text-xl font-bold text-white">Financial Metrics</h2>
+                <!-- Section 3: Financial Metrics -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-xl shadow-xl p-8 fade-in">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
+                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
                         </div>
-
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Financial Metrics</h2>
+                            <p class="text-sm text-slate-400">Comprehensive financial data and projections</p>
+                        </div>
+                    </div>
+                    <div class="grid lg:grid-cols-2 gap-8">
                         <div class="space-y-6">
                             <!-- Income Statement -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                            <div class="bg-slate-800/40 border border-slate-700/50 rounded-lg p-6">
+                                <h3 class="font-semibold text-white mb-5 text-lg flex items-center gap-2">
                                     <span class="inline-block w-2 h-2 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50"></span>
                                     Income Statement
                                 </h3>
@@ -334,8 +368,8 @@
                             </div>
 
                             <!-- Balance Sheet -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                            <div class="bg-slate-800/40 border border-slate-700/50 rounded-lg p-6">
+                                <h3 class="font-semibold text-white mb-5 text-lg flex items-center gap-2">
                                     <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/50"></span>
                                     Balance Sheet
                                 </h3>
@@ -379,8 +413,8 @@
                             </div>
 
                             <!-- Cash Flow -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                            <div class="bg-slate-800/40 border border-slate-700/50 rounded-lg p-6">
+                                <h3 class="font-semibold text-white mb-5 text-lg flex items-center gap-2">
                                     <span class="inline-block w-2 h-2 bg-cyan-500 rounded-full shadow-lg shadow-cyan-500/50"></span>
                                     Cash Flow
                                 </h3>
@@ -395,9 +429,11 @@
                                 </div>
                             </div>
 
+                        </div>
+                        <div class="space-y-6">
                             <!-- Valuation -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                            <div class="bg-slate-800/40 border border-slate-700/50 rounded-lg p-6">
+                                <h3 class="font-semibold text-white mb-5 text-lg flex items-center gap-2">
                                     <span class="inline-block w-2 h-2 bg-purple-500 rounded-full shadow-lg shadow-purple-500/50"></span>
                                     Valuation
                                 </h3>
@@ -427,8 +463,8 @@
                             </div>
 
                             <!-- Market Metrics -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                            <div class="bg-slate-800/40 border border-slate-700/50 rounded-lg p-6">
+                                <h3 class="font-semibold text-white mb-5 text-lg flex items-center gap-2">
                                     <span class="inline-block w-2 h-2 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50"></span>
                                     Market Metrics
                                 </h3>
@@ -458,8 +494,8 @@
                             </div>
 
                             <!-- Growth Metrics -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
+                            <div class="bg-slate-800/40 border border-slate-700/50 rounded-lg p-6">
+                                <h3 class="font-semibold text-white mb-5 text-lg flex items-center gap-2">
                                     <span class="inline-block w-2 h-2 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50"></span>
                                     Growth & Efficiency
                                 </h3>
@@ -495,32 +531,36 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Actions & Confidence Section - Full Width -->
-                <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-xl mt-8">
-                    <div class="mb-6">
-                        <h3 class="font-semibold text-white mb-4 text-base flex items-center gap-2">
-                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Data Confidence
-                        </h3>
-                        <div class="w-full bg-slate-700 rounded-full h-3 mb-3 shadow-inner">
-                            <div id="completeness-bar" class="bg-gradient-to-r from-blue-500 to-blue-400 h-3 rounded-full transition-all duration-500 shadow-lg" style="width: 0%"></div>
-                        </div>
-                        <p id="completeness-text" class="text-sm text-slate-300 text-center font-medium">Please fill the form</p>
-                        <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low">
                     </div>
-                    <div class="space-y-3">
-                        <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-3.5 px-4 rounded-lg shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-slate-900 transition-all duration-300 hover:-translate-y-0.5">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Save & Generate Report
-                        </button>
-                        <button type="button" onclick="window.history.back()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 focus:ring-offset-slate-900 transition-all duration-300 border border-slate-600 hover:border-slate-500">
-                            Cancel
-                        </button>
+                </div>
+
+                <!-- Section 4: Submit Actions -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-xl shadow-xl p-8 fade-in">
+                    <div class="max-w-2xl mx-auto">
+                        <div class="mb-8">
+                            <h3 class="font-semibold text-white mb-4 text-lg flex items-center gap-2">
+                                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Data Completeness Level
+                            </h3>
+                            <div class="w-full bg-slate-800 rounded-full h-4 mb-3 shadow-inner border border-slate-700">
+                                <div id="completeness-bar" class="h-4 rounded-full transition-all duration-500 shadow-lg" style="width: 0%"></div>
+                            </div>
+                            <p id="completeness-text" class="text-base text-slate-300 text-center font-medium">Please fill the form</p>
+                            <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low">
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <button type="submit" class="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-4 px-6 rounded-lg shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-slate-900 transition-all duration-300 hover:-translate-y-0.5">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Save & Generate Report
+                            </button>
+                            <button type="button" onclick="window.location.href='added-startups.html'" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-4 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 focus:ring-offset-slate-900 transition-all duration-300 border border-slate-600 hover:border-slate-500">
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -533,8 +573,7 @@
             form: null,
             completenessBar: null,
             completenessText: null,
-            completenessHiddenInput: null,
-            userEmailElement: null
+            completenessHiddenInput: null
         };
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -542,44 +581,13 @@
             domCache.completenessBar = document.getElementById('completeness-bar');
             domCache.completenessText = document.getElementById('completeness-text');
             domCache.completenessHiddenInput = document.getElementById('data-completeness-level');
-            domCache.userEmailElement = document.getElementById('user-email');
 
-            const formInputs = Array.from(domCache.form.querySelectorAll('input[type="text"], input[type="number"], select, textarea')).filter(el => !el.disabled);
+            const formInputs = Array.from(domCache.form.querySelectorAll('input[type="text"], input[type="number"], select, textarea')).filter(el => !el.disabled && el.type !== 'hidden' && el.id !== 'data-completeness-level');
             const totalFields = formInputs.length;
             
             // Submission state management
             let isSubmitting = false;
             let hasSuccessfulSubmission = false;
-
-            // --- Load User Information ---
-            async function loadUserInfo() {
-                const token = sessionStorage.getItem('authToken');
-
-                if (!token) {
-                    domCache.userEmailElement.textContent = 'No user logged in';
-                    domCache.userEmailElement.className = 'font-semibold text-red-400';
-                    alert('Please log in to access this page.');
-                    window.location.href = '../login.html';
-                    return;
-                }
-
-                const storedUserData = localStorage.getItem('userData');
-                if (storedUserData) {
-                    try {
-                        const user = JSON.parse(storedUserData);
-                        domCache.userEmailElement.textContent = user.email || 'Unknown user';
-                        domCache.userEmailElement.className = 'font-semibold text-blue-400';
-                        return;
-                    } catch (error) {
-                        console.error('Error parsing user data:', error);
-                    }
-                }
-
-                domCache.userEmailElement.textContent = 'Token found, no user info';
-                domCache.userEmailElement.className = 'font-semibold text-yellow-400';
-            }
-
-            loadUserInfo();
 
             // --- Dynamic Tooltip Logic ---
             function createTooltip() {
