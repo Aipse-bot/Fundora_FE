@@ -161,6 +161,20 @@
           <div id="dataConfidence" class="text-center"></div>
         </div>
 
+        <!-- View Analytics -->
+        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 fade-in delay-4" id="viewAnalyticsCard" style="display: none;">
+          <div class="flex items-center mb-6">
+            <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center mr-3">
+              <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <h2 class="text-xl font-semibold">Profile Views</h2>
+          </div>
+          <div id="viewAnalytics" class="grid grid-cols-2 gap-4"></div>
+        </div>
+
         <!-- Action Buttons -->
         <div class="space-y-3 fade-in delay-4">
           <button id="watchlistBtn" class="w-full font-semibold py-3.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center" disabled>
@@ -463,6 +477,24 @@
             }
 
             contactInfo.innerHTML = contactHTML;
+
+            // Display view analytics if available
+            if (data.analytics && (data.analytics.total_views > 0 || data.analytics.unique_viewers > 0)) {
+                const viewAnalyticsCard = document.getElementById('viewAnalyticsCard');
+                const viewAnalytics = document.getElementById('viewAnalytics');
+                
+                viewAnalyticsCard.style.display = 'block';
+                viewAnalytics.innerHTML = `
+                    <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-purple-400 mb-1">${data.analytics.total_views || 0}</div>
+                        <div class="text-sm text-gray-400">Total Views</div>
+                    </div>
+                    <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-purple-400 mb-1">${data.analytics.unique_viewers || 0}</div>
+                        <div class="text-sm text-gray-400">Unique Viewers</div>
+                    </div>
+                `;
+            }
 
             const isInWatchlist = data.is_in_watchlist === true;
             currentWatchlistState = isInWatchlist;
