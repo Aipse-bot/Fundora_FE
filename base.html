@@ -214,7 +214,14 @@
 
   async function bindCoverFormEvents(deckId) {
     const form = document.getElementById('coverForm');
+    const companyInput = document.getElementById('company_name');
+    const taglineInput = document.getElementById('tagline');
+    const previewCompany = document.getElementById('preview-company-name');
+    const previewTagline = document.getElementById('preview-tagline');
+    const previewInitial = document.getElementById('preview-initial');
     const token = sessionStorage.getItem('authToken');
+
+    if (!form) return;
 
     // Load existing data if available
     try {
@@ -223,14 +230,25 @@
       });
       if (res.ok) {
         const data = await res.json();
-        document.getElementById('company_name').value = data.company_name || '';
-        document.getElementById('tagline').value = data.tagline || '';
+        companyInput.value = data.company_name || '';
+        taglineInput.value = data.tagline || '';
+        previewCompany.textContent = data.company_name || 'Your company name...';
+        previewTagline.textContent = data.tagline || 'Your tagline...';
       }
     } catch (err) {
       console.warn('No existing cover data found or failed to load:', err);
     }
 
     console.log('Binding cover form events for deck ID:', deckId);
+
+    // Live preview updates
+    companyInput.addEventListener('input', () => {
+      previewCompany.textContent = companyInput.value.trim() || 'Your company name...';
+    }, { passive: true });
+
+    taglineInput.addEventListener('input', () => {
+      previewTagline.textContent = taglineInput.value.trim() || 'Your tagline...';
+    }, { passive: true });
 
     // Bind form submission
     form.addEventListener('submit', async function (e) {
@@ -250,7 +268,7 @@
 
         if (response.ok) {
           localStorage.setItem('deck_id', data.deck_id);
-          loadSection('the-problem', deckId);
+          loadSection('the-problem', data.deck_id); // ✅ use fresh ID
         } else {
           document.getElementById('errorCompanyName').textContent = data.errors?.company_name || '';
           document.getElementById('errorCompanyName').classList.toggle('hidden', !data.errors?.company_name);
