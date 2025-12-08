@@ -505,8 +505,8 @@
 
       await refreshWatchlist();
 
-      // Load startup data directly
-      let startup = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`);
+      // Load startup data from the profile endpoint which includes deck data
+      let startup = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/profile/`);
       
       if (!startup) {
         document.getElementById("deck-name").textContent = "Startup not found";
