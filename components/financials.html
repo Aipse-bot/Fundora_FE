@@ -30,7 +30,7 @@
         <!-- Key Metrics Section -->
         <div class="bg-slate-900/30 border border-slate-600/50 rounded-xl p-6">
           <h2 class="text-xl font-bold text-white mb-6 flex items-center">
-          <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
             </svg>
             Key Financial Metrics
@@ -257,15 +257,40 @@ function initializeFinancialForm() {
       const deckId = localStorage.getItem('deck_id');
       if (!deckId) return;
 
-      const savedData = localStorage.getItem(`financials_pitch_${deckId}`);
-      if (savedData) {
-        const data = JSON.parse(savedData);
-        currentValuationInput.value = data.currentValuation || '';
-        industryMultipleInput.value = data.industryValuationMultiple || '';
-        yearsInput.value = data.yearsToProjection || '';
-        revenueInput.value = data.projectedRevenue || '';
-        updateCalculations();
+      const token = sessionStorage.getItem('authToken');
+      
+      // Load financial projections
+      const finResponse = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/financial-list/?deck_id=${deckId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (finResponse.ok) {
+        const financials = await finResponse.json();
+        if (financials && financials.length > 0) {
+          const sorted = financials.sort((a, b) => a.year - b.year);
+          const first = sorted[0];
+          const last = sorted[sorted.length - 1];
+          
+          currentValuationInput.value = first.revenue || '';
+          revenueInput.value = last.revenue || '';
+          yearsInput.value = (last.year - first.year) || '';
+        }
       }
+      
+      // Load market analysis for valuation multiple
+      const marketResponse = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/market-analysis/?deck_id=${deckId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (marketResponse.ok) {
+        const market = await marketResponse.json();
+        if (market && market.valuation_multiple) {
+          industryMultipleInput.value = market.valuation_multiple;
+        }
+      }
+      
+      updateCalculations();
+      
     } catch (error) {
       console.error('Error loading financials:', error);
     }
@@ -279,19 +304,37 @@ function initializeFinancialForm() {
 
     // Clear preview if any field is empty
     if (!currentVal || !industryMultiple || !years || !futureRevenue) {
-        const previewTable = document.getElementById('financialPreviewTable');
-        previewTable.innerHTML = `
-          <tr>
-            <td colspan="2" class="text-center py-8 text-gray-400">
-              <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-              </svg>
-              <p class="text-sm">Fill in the form to see calculations</p>
-            </td>
-          </tr>
-        `;
-        return;
+      const previewTable = document.getElementById('financialPreviewTable');
+      previewTable.innerHTML = `
+        <tr>
+          <td colspan="2" class="text-center py-8 text-gray-400">
+            <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            <p class="text-sm">Fill in the form to see calculations</p>
+          </td>
+        </tr>
+      `;
+      
+      // Clear chart
+      if (chartInstance) {
+        chartInstance.destroy();
+        chartInstance = null;
+      }
+      
+      return;
     }
+
+    // Calculate future valuation and IRR
+    const futureValuation = futureRevenue * industryMultiple;
+    const irrDecimal = Math.pow(futureValuation / currentVal, 1 / years) - 1;
+    const irrPercentage = irrDecimal * 100;
+
+    // Update preview table
+    updatePreviewTable(currentVal, futureRevenue, industryMultiple, futureValuation, irrPercentage, years);
+    
+    // Update chart
+    updateIRRChart(irrPercentage, years, currentVal, futureValuation);
   }
 
   function updatePreviewTable(currentVal, futureRevenue, industryMultiple, futureValuation, irrPercentage, years) {
@@ -314,9 +357,9 @@ function initializeFinancialForm() {
         <td class="py-3 text-blue-300 text-sm font-bold">Future Valuation</td>
         <td class="py-3 text-right text-blue-400 font-bold text-lg">₱${futureValuation.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
       </tr>
-      <tr class="bg-blue-500/10 hover:bg-blue-500/20 transition">
-        <td class="py-3 text-blue-300 text-sm font-bold">IRR (${years} years)</td>
-        <td class="py-3 text-right text-blue-400 font-bold text-lg">${irrPercentage.toFixed(2)}%</td>
+      <tr class="bg-emerald-500/10 hover:bg-emerald-500/20 transition">
+        <td class="py-3 text-emerald-300 text-sm font-bold">IRR (${years} years)</td>
+        <td class="py-3 text-right text-emerald-400 font-bold text-lg">${irrPercentage.toFixed(2)}%</td>
       </tr>
     `;
   }
@@ -394,7 +437,12 @@ function initializeFinancialForm() {
               color: '#9ca3af',
               font: { size: 10 },
               callback: function(value) {
-                return '₱' + (value / 1000000).toFixed(1) + 'M';
+                if (value >= 1000000) {
+                  return '₱' + (value / 1000000).toFixed(1) + 'M';
+                } else if (value >= 1000) {
+                  return '₱' + (value / 1000).toFixed(1) + 'K';
+                }
+                return '₱' + value.toFixed(0);
               }
             },
             grid: { color: 'rgba(148, 163, 184, 0.1)' }
@@ -455,7 +503,7 @@ function initializeFinancialForm() {
         console.error('Error saving market analysis:', error);
       }
 
-      // Step 2: Save financial projections
+      // Step 2: Save financial projections (year 0 and final year)
       const financialResponse = await fetch('https://fundora-be-singapore.onrender.com/api/deck/financial/', {
         method: 'POST',
         headers: {
@@ -468,12 +516,12 @@ function initializeFinancialForm() {
             {
               year: 0,
               revenue: currentVal,
-              profit: currentVal * 0.2
+              profit: currentVal * 0.2  // Assuming 20% profit margin
             },
             {
               year: years,
               revenue: futureRevenue,
-              profit: futureRevenue * 0.2
+              profit: futureRevenue * 0.2  // Assuming 20% profit margin
             }
           ]
         })
@@ -488,14 +536,6 @@ function initializeFinancialForm() {
 
       const result = await financialResponse.json();
       console.log('Financials saved successfully:', result);
-
-      // Save to localStorage
-      localStorage.setItem(`financials_pitch_${deckId}`, JSON.stringify({
-        currentValuation: currentVal,
-        industryValuationMultiple: industryMultiple,
-        yearsToProjection: years,
-        projectedRevenue: futureRevenue
-      }));
 
       // Navigate to next section
       if (window.parent && typeof window.parent.loadSection === 'function') {
