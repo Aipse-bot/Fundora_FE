@@ -25,7 +25,7 @@
       </div>
 
       <!-- Form Content -->
-      <form id="financialForm" class="p-8 space-y-8">
+      <form id="financialFormCustom" class="p-8 space-y-8">
         
         <!-- Key Metrics Section -->
         <div class="bg-slate-900/30 border border-slate-600/50 rounded-xl p-6">
@@ -234,12 +234,7 @@ function initializeFinancialForm() {
   const yearsInput = document.getElementById('yearsToProjection');
   const revenueInput = document.getElementById('futureProjectedRevenue');
   
-  if (!financialForm) {
-    console.error('Financial form not found!');
-    return;
-  }
-
-  console.log('Initializing financial form...');
+  if (!financialForm) return;
 
   // Load existing data
   loadExistingFinancials();
@@ -254,55 +249,33 @@ function initializeFinancialForm() {
   financialForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Form submit triggered');
     await saveFinancials();
   });
 
   async function loadExistingFinancials() {
     try {
       const deckId = localStorage.getItem('deck_id');
-      if (!deckId) {
-        console.log('No deck_id found');
-        return;
-      }
+      if (!deckId) return;
 
       const token = sessionStorage.getItem('authToken');
-      
-      // Load financial projections
-      const finResponse = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/financial-list/?deck_id=${deckId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (finResponse.ok) {
-        const financials = await finResponse.json();
-        console.log('Loaded financials:', financials);
-        if (financials && financials.length > 0) {
-          const sorted = financials.sort((a, b) => a.year - b.year);
-          const first = sorted[0];
-          const last = sorted[sorted.length - 1];
-          
-          currentValuationInput.value = first.revenue || '';
-          revenueInput.value = last.revenue || '';
-          yearsInput.value = (last.year - first.year) || '';
+      if (!token) return;
+
+      // Try to load from API
+      const response = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/financial/?deck_id=${deckId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      }
-      
-      // Load market analysis for valuation multiple
-      const marketResponse = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/market-analysis/?deck_id=${deckId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
       });
-      
-      if (marketResponse.ok) {
-        const market = await marketResponse.json();
-        console.log('Loaded market:', market);
-        if (market && market.valuation_multiple) {
-          industryMultipleInput.value = market.valuation_multiple;
-        }
+
+      if (response.ok) {
+        const data = await response.json();
+        currentValuationInput.value = data.current_valuation || '';
+        industryMultipleInput.value = data.valuation_multiple || '';
+        yearsInput.value = data.years_to_projection || '';
+        revenueInput.value = data.projected_revenue_final_year || '';
+        updateCalculations();
       }
-      
-      // Trigger calculations after loading
-      updateCalculations();
-      
     } catch (error) {
       console.error('Error loading financials:', error);
     }
@@ -314,37 +287,32 @@ function initializeFinancialForm() {
     const years = parseInt(yearsInput.value);
     const futureRevenue = parseFloat(revenueInput.value);
 
-    console.log('Updating calculations:', { currentVal, industryMultiple, years, futureRevenue });
-
     // Clear preview if any field is empty
     if (!currentVal || !industryMultiple || !years || !futureRevenue) {
-      const previewTable = document.getElementById('financialPreviewTable');
-      previewTable.innerHTML = `
-        <tr>
-          <td colspan="2" class="text-center py-8 text-gray-400">
-            <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-            </svg>
-            <p class="text-sm">Fill in the form to see calculations</p>
-          </td>
-        </tr>
-      `;
-      
-      // Clear chart
-      if (chartInstance) {
-        chartInstance.destroy();
-        chartInstance = null;
-      }
-      
-      return;
+        const previewTable = document.getElementById('financialPreviewTable');
+        previewTable.innerHTML = `
+          <tr>
+            <td colspan="2" class="text-center py-8 text-gray-400">
+              <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+              </svg>
+              <p class="text-sm">Fill in the form to see calculations</p>
+            </td>
+          </tr>
+        `;
+        
+        // Clear chart
+        if (chartInstance) {
+          chartInstance.destroy();
+          chartInstance = null;
+        }
+        return;
     }
 
     // Calculate future valuation and IRR
     const futureValuation = futureRevenue * industryMultiple;
     const irrDecimal = Math.pow(futureValuation / currentVal, 1 / years) - 1;
     const irrPercentage = irrDecimal * 100;
-
-    console.log('Calculated:', { futureValuation, irrPercentage });
 
     // Update preview table
     updatePreviewTable(currentVal, futureRevenue, industryMultiple, futureValuation, irrPercentage, years);
@@ -362,7 +330,7 @@ function initializeFinancialForm() {
         <td class="py-3 text-right text-white font-semibold">₱${currentVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
       </tr>
       <tr class="hover:bg-slate-700/30 transition">
-        <td class="py-3 text-gray-300 text-sm font-medium">Future Revenue</td>
+        <td class="py-3 text-gray-300 text-sm font-medium">Future Revenue (Year ${years})</td>
         <td class="py-3 text-right text-white font-semibold">₱${futureRevenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
       </tr>
       <tr class="hover:bg-slate-700/30 transition">
@@ -370,7 +338,7 @@ function initializeFinancialForm() {
         <td class="py-3 text-right text-white font-semibold">${industryMultiple.toFixed(2)}x</td>
       </tr>
       <tr class="bg-blue-500/10 hover:bg-blue-500/20 transition">
-        <td class="py-3 text-blue-300 text-sm font-bold">Future Valuation</td>
+        <td class="py-3 text-blue-300 text-sm font-bold">Future Valuation (Year ${years})</td>
         <td class="py-3 text-right text-blue-400 font-bold text-lg">₱${futureValuation.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
       </tr>
       <tr class="bg-emerald-500/10 hover:bg-emerald-500/20 transition">
@@ -453,12 +421,7 @@ function initializeFinancialForm() {
               color: '#9ca3af',
               font: { size: 10 },
               callback: function(value) {
-                if (value >= 1000000) {
-                  return '₱' + (value / 1000000).toFixed(1) + 'M';
-                } else if (value >= 1000) {
-                  return '₱' + (value / 1000).toFixed(1) + 'K';
-                }
-                return '₱' + value.toFixed(0);
+                return '₱' + (value / 1000000).toFixed(1) + 'M';
               }
             },
             grid: { color: 'rgba(148, 163, 184, 0.1)' }
@@ -495,31 +458,7 @@ function initializeFinancialForm() {
 
       console.log('Saving financials for deck:', deckId);
 
-      // Step 1: Save valuation multiple to market analysis
-      try {
-        const marketResponse = await fetch('https://fundora-be-singapore.onrender.com/api/deck/market-analysis/', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            deck_id: parseInt(deckId),
-            valuation_multiple: industryMultiple
-          })
-        });
-
-        if (!marketResponse.ok) {
-          const errorText = await marketResponse.text();
-          console.error('Market analysis save failed:', errorText);
-        } else {
-          console.log('Market analysis saved successfully');
-        }
-      } catch (error) {
-        console.error('Error saving market analysis:', error);
-      }
-
-      // Step 2: Save financial projections (year 0 and final year)
+      // Save to backend with correct field names
       const financialResponse = await fetch('https://fundora-be-singapore.onrender.com/api/deck/financial/', {
         method: 'POST',
         headers: {
@@ -528,18 +467,10 @@ function initializeFinancialForm() {
         },
         body: JSON.stringify({
           deck_id: parseInt(deckId),
-          financials: [
-            {
-              year: 0,
-              revenue: currentVal,
-              profit: currentVal * 0.2  // Assuming 20% profit margin
-            },
-            {
-              year: years,
-              revenue: futureRevenue,
-              profit: futureRevenue * 0.2  // Assuming 20% profit margin
-            }
-          ]
+          current_valuation: currentVal,
+          industry_valuation_multiple: industryMultiple,
+          years_to_projection: years,
+          projected_revenue: futureRevenue
         })
       });
 
