@@ -383,33 +383,22 @@
 
     function renderFinancialTable(financials) {
       const container = document.getElementById("financial-table-container");
-      if (!container) {
-        console.error('Financial table container not found');
-        return;
-      }
-
       if (!financials || financials.length === 0) {
         container.innerHTML = "<p class='text-gray-400 text-center text-sm'>No financial data available.</p>";
         return;
       }
 
-      // Parse and sort financials
       const parsed = financials.map(f => ({
         year: f.year,
-        revenue: parseFloat(f.revenue) || 0,
-        profit: parseFloat(f.profit) || 0
-      })).sort((a,b) => a.year - b.year);
-
-      if (parsed.length === 0) {
-        container.innerHTML = "<p class='text-gray-400 text-center text-sm'>No valid financial data.</p>";
-        return;
-      }
+        revenue: Number(f.revenue) || 0,
+        profit: Number(f.profit) || 0
+      })).sort((a,b) => (Number(a.year) || 0) - (Number(b.year) || 0));
 
       const rows = parsed.map(f => `
         <tr class="border-b border-slate-800">
-          <td class="py-2 px-3 text-gray-300 text-sm">Year ${f.year}</td>
-          <td class="py-2 px-3 text-brand-400 font-semibold text-sm">₱${f.revenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-          <td class="py-2 px-3 text-accent-400 font-semibold text-sm">₱${f.profit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+          <td class="py-2 px-3 text-gray-300 text-sm">${f.year}</td>
+          <td class="py-2 px-3 text-brand-400 font-semibold text-sm">₱${f.revenue.toLocaleString()}</td>
+          <td class="py-2 px-3 text-accent-400 font-semibold text-sm">₱${f.profit.toLocaleString()}</td>
         </tr>
       `).join('');
 
@@ -428,62 +417,35 @@
         </div>
       `;
 
-      // Render chart
-      renderFinancialChart(parsed);
-    }
-
-    function renderFinancialChart(parsed) {
       const ctxEl = document.getElementById("revenueProfitChart");
-      if (!ctxEl) {
-        console.error('Chart canvas not found');
-        return;
-      }
+      if (!ctxEl) return;
+
+      ctxEl.width = ctxEl.parentElement.offsetWidth;
+      ctxEl.height = 250;
+      ctxEl.style.width = '100%';
+      ctxEl.style.height = '250px';
 
       const ctx = ctxEl.getContext("2d");
       if (chartInstance) {
-        try { chartInstance.destroy(); } catch(e){ console.error('Chart destroy error:', e); }
+        try { chartInstance.destroy(); } catch(e){/*ignore*/ }
         chartInstance = null;
       }
 
       chartInstance = new Chart(ctx, {
-        type: "line",
+        type: "bar",
         data: {
-          labels: parsed.map(p => `Year ${p.year}`),
+          labels: parsed.map(p => p.year),
           datasets: [
-            { 
-              label: "Revenue", 
-              data: parsed.map(p => p.revenue), 
-              backgroundColor: "rgba(59, 130, 246, 0.1)",
-              borderColor: "#3b82f6",
-              borderWidth: 2,
-              fill: true,
-              tension: 0.4
-            },
-            { 
-              label: "Profit", 
-              data: parsed.map(p => p.profit), 
-              backgroundColor: "rgba(16, 185, 129, 0.1)",
-              borderColor: "#10b981",
-              borderWidth: 2,
-              fill: true,
-              tension: 0.4
-            }
+            { label: "Revenue", data: parsed.map(p => p.revenue), backgroundColor: "#3b82f6", borderRadius: 4 },
+            { label: "Profit", data: parsed.map(p => p.profit), backgroundColor: "#10b981", borderRadius: 4 }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: { duration: 0 },
           plugins: {
-            legend: { 
-              labels: { color: '#fff', font: { size: 11 }, boxHeight: 12 } 
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return context.dataset.label + ': ₱' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2});
-                }
-              }
-            }
+            legend: { labels: { color: '#fff', font: { size: 11 }, boxHeight: 12 } }
           },
           scales: {
             x: {
@@ -495,7 +457,7 @@
               ticks: {
                 color: '#9ca3af',
                 font: { size: 10 },
-                callback: v => "₱" + Number(v).toLocaleString('en-US', {notation: 'compact'})
+                callback: v => "₱" + Number(v).toLocaleString()
               },
               grid: { drawBorder: false, color: 'rgba(148, 163, 184, 0.1)' }
             }
@@ -545,10 +507,6 @@
 
       // Load startup data from the profile endpoint which includes deck data
       let startup = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/profile/`);
-
-      console.log('Startup data loaded:', startup);
-      console.log('Financials:', startup?.financials);
-      console.log('Source deck:', startup?.source_deck);
       
       if (!startup) {
         document.getElementById("deck-name").textContent = "Startup not found";
@@ -563,29 +521,7 @@
         const solution = startup.solution || null;
         const market = startup.market_analysis || null;
         const ask = startup.ask || null;
-        let financials = [];
-
-        if (startup.source_deck_id) {
-          console.log('Fetching financials for deck:', startup.source_deck_id);
-          try {
-            const deckResponse = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/deck/report/${startup.source_deck_id}`);
-            if (deckResponse && deckResponse.financials) {
-              financials = deckResponse.financials;
-              console.log('Fetched deck financials:', financials);
-            } else {
-              console.warn('Deck not found or has no financials. Deck may have been deleted.');
-            }
-          } catch (error) {
-            console.error('Error fetching deck financials:', error);
-            console.warn('This startup references a deck that no longer exists (ID: ' + startup.source_deck_id + ')');
-          }
-        } else if (startup.financials && Array.isArray(startup.financials)) {
-          financials = startup.financials;
-        }
-
-        console.log('Final financials to render:', financials);
-
-        console.log('Final financials to render:', financials);
+        const financials = startup.financials || [];
         const teamMembers = startup.team_members || [];
 
         populateHeaderFromStartup({ 
@@ -595,33 +531,7 @@
         populateProblemSolution(problem, solution);
         populateMarket(market);
         populateAsk(ask);
-        if (financials && financials.length > 0) {
-          renderFinancialTable(financials);
-        } else {
-          const container = document.getElementById("financial-table-container");
-          if (container) {
-            if (startup.source_deck_id) {
-              container.innerHTML = `
-                <div class="text-center py-8">
-                  <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  <p class='text-gray-400 text-sm'>Financial data unavailable</p>
-                  <p class='text-gray-500 text-xs mt-2'>The pitch deck for this startup may have been deleted</p>
-                </div>
-              `;
-            } else {
-              container.innerHTML = `
-                <div class="text-center py-8">
-                  <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                  </svg>
-                  <p class='text-gray-400 text-sm'>No financial projections available yet</p>
-                </div>
-              `;
-            }
-          }
-        }
+        renderFinancialTable(financials);
         populateTeam(teamMembers);
         
         const inWatchlist = startup.is_in_watchlist === true;
