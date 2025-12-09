@@ -383,22 +383,33 @@
 
     function renderFinancialTable(financials) {
       const container = document.getElementById("financial-table-container");
+      if (!container) {
+        console.error('Financial table container not found');
+        return;
+      }
+
       if (!financials || financials.length === 0) {
         container.innerHTML = "<p class='text-gray-400 text-center text-sm'>No financial data available.</p>";
         return;
       }
 
+      // Parse and sort financials
       const parsed = financials.map(f => ({
         year: f.year,
-        revenue: Number(f.revenue) || 0,
-        profit: Number(f.profit) || 0
-      })).sort((a,b) => (Number(a.year) || 0) - (Number(b.year) || 0));
+        revenue: parseFloat(f.revenue) || 0,
+        profit: parseFloat(f.profit) || 0
+      })).sort((a,b) => a.year - b.year);
+
+      if (parsed.length === 0) {
+        container.innerHTML = "<p class='text-gray-400 text-center text-sm'>No valid financial data.</p>";
+        return;
+      }
 
       const rows = parsed.map(f => `
         <tr class="border-b border-slate-800">
-          <td class="py-2 px-3 text-gray-300 text-sm">${f.year}</td>
-          <td class="py-2 px-3 text-brand-400 font-semibold text-sm">₱${f.revenue.toLocaleString()}</td>
-          <td class="py-2 px-3 text-accent-400 font-semibold text-sm">₱${f.profit.toLocaleString()}</td>
+          <td class="py-2 px-3 text-gray-300 text-sm">Year ${f.year}</td>
+          <td class="py-2 px-3 text-brand-400 font-semibold text-sm">₱${f.revenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+          <td class="py-2 px-3 text-accent-400 font-semibold text-sm">₱${f.profit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
         </tr>
       `).join('');
 
@@ -417,35 +428,62 @@
         </div>
       `;
 
-      const ctxEl = document.getElementById("revenueProfitChart");
-      if (!ctxEl) return;
+      // Render chart
+      renderFinancialChart(parsed);
+    }
 
-      ctxEl.width = ctxEl.parentElement.offsetWidth;
-      ctxEl.height = 250;
-      ctxEl.style.width = '100%';
-      ctxEl.style.height = '250px';
+    function renderFinancialChart(parsed) {
+      const ctxEl = document.getElementById("revenueProfitChart");
+      if (!ctxEl) {
+        console.error('Chart canvas not found');
+        return;
+      }
 
       const ctx = ctxEl.getContext("2d");
       if (chartInstance) {
-        try { chartInstance.destroy(); } catch(e){/*ignore*/ }
+        try { chartInstance.destroy(); } catch(e){ console.error('Chart destroy error:', e); }
         chartInstance = null;
       }
 
       chartInstance = new Chart(ctx, {
-        type: "bar",
+        type: "line",
         data: {
-          labels: parsed.map(p => p.year),
+          labels: parsed.map(p => `Year ${p.year}`),
           datasets: [
-            { label: "Revenue", data: parsed.map(p => p.revenue), backgroundColor: "#3b82f6", borderRadius: 4 },
-            { label: "Profit", data: parsed.map(p => p.profit), backgroundColor: "#10b981", borderRadius: 4 }
+            { 
+              label: "Revenue", 
+              data: parsed.map(p => p.revenue), 
+              backgroundColor: "rgba(59, 130, 246, 0.1)",
+              borderColor: "#3b82f6",
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4
+            },
+            { 
+              label: "Profit", 
+              data: parsed.map(p => p.profit), 
+              backgroundColor: "rgba(16, 185, 129, 0.1)",
+              borderColor: "#10b981",
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4
+            }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          animation: { duration: 0 },
           plugins: {
-            legend: { labels: { color: '#fff', font: { size: 11 }, boxHeight: 12 } }
+            legend: { 
+              labels: { color: '#fff', font: { size: 11 }, boxHeight: 12 } 
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ₱' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2});
+                }
+              }
+            }
           },
           scales: {
             x: {
@@ -457,7 +495,7 @@
               ticks: {
                 color: '#9ca3af',
                 font: { size: 10 },
-                callback: v => "₱" + Number(v).toLocaleString()
+                callback: v => "₱" + Number(v).toLocaleString('en-US', {notation: 'compact'})
               },
               grid: { drawBorder: false, color: 'rgba(148, 163, 184, 0.1)' }
             }
@@ -507,6 +545,10 @@
 
       // Load startup data from the profile endpoint which includes deck data
       let startup = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/profile/`);
+
+      console.log('Startup data loaded:', startup);
+      console.log('Financials:', startup?.financials);
+      console.log('Source deck:', startup?.source_deck);
       
       if (!startup) {
         document.getElementById("deck-name").textContent = "Startup not found";
@@ -521,7 +563,14 @@
         const solution = startup.solution || null;
         const market = startup.market_analysis || null;
         const ask = startup.ask || null;
-        const financials = startup.financials || [];
+        let financials = [];
+        if (startup.financials && Array.isArray(startup.financials)) {
+          financials = startup.financials;
+        } else if (startup.source_deck && startup.source_deck.financials) {
+          financials = startup.source_deck.financials;
+        }
+
+        console.log('Final financials to render:', financials);
         const teamMembers = startup.team_members || [];
 
         populateHeaderFromStartup({ 
