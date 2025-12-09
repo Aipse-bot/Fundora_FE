@@ -246,7 +246,6 @@ function initializeFinancialForm() {
     }
   });
 
-  // Form submission - FIXED
   financialForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -409,7 +408,7 @@ function initializeFinancialForm() {
     try {
       const deckId = localStorage.getItem('deck_id');
       if (!deckId) {
-        alert('Error: No deck ID found');
+        alert('Error: No deck ID found. Please start from the cover page.');
         return;
       }
 
@@ -426,27 +425,37 @@ function initializeFinancialForm() {
       const token = sessionStorage.getItem('authToken');
       if (!token) {
         alert('Authentication required. Please log in again.');
+        window.location.href = '/login.html';
         return;
       }
 
-      // Save to market analysis (for valuation multiple)
-      const marketResponse = await fetch('https://fundora-be-singapore.onrender.com/api/deck/market-analysis/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          deck_id: deckId,
-          valuation_multiple: industryMultiple
-        })
-      });
+      console.log('Saving financials for deck:', deckId);
 
-      if (!marketResponse.ok) {
-        console.error('Market analysis save failed:', await marketResponse.text());
+      // Step 1: Save valuation multiple to market analysis
+      try {
+        const marketResponse = await fetch('https://fundora-be-singapore.onrender.com/api/deck/market-analysis/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            deck_id: parseInt(deckId),
+            valuation_multiple: industryMultiple
+          })
+        });
+
+        if (!marketResponse.ok) {
+          const errorText = await marketResponse.text();
+          console.error('Market analysis save failed:', errorText);
+        } else {
+          console.log('Market analysis saved successfully');
+        }
+      } catch (error) {
+        console.error('Error saving market analysis:', error);
       }
 
-      // Save financial data with proper year calculation
+      // Step 2: Save financial projections
       const financialResponse = await fetch('https://fundora-be-singapore.onrender.com/api/deck/financial/', {
         method: 'POST',
         headers: {
@@ -454,7 +463,7 @@ function initializeFinancialForm() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          deck_id: deckId,
+          deck_id: parseInt(deckId),
           financials: [
             {
               year: 0,
@@ -478,8 +487,9 @@ function initializeFinancialForm() {
       }
 
       const result = await financialResponse.json();
-      
-      // Save to localStorage for retrieval
+      console.log('Financials saved successfully:', result);
+
+      // Save to localStorage
       localStorage.setItem(`financials_pitch_${deckId}`, JSON.stringify({
         currentValuation: currentVal,
         industryValuationMultiple: industryMultiple,
@@ -487,17 +497,19 @@ function initializeFinancialForm() {
         projectedRevenue: futureRevenue
       }));
 
-      alert('Financials saved successfully!');
-      
-      const loadSection = window.loadSection || window.parent?.loadSection;
-      if (typeof loadSection === 'function') {
+      // Navigate to next section
+      if (window.parent && typeof window.parent.loadSection === 'function') {
+        window.parent.loadSection('the-ask', deckId);
+      } else if (typeof loadSection === 'function') {
         loadSection('the-ask', deckId);
       } else {
-        console.error('Cannot access loadSection function');
+        console.error('loadSection function not found');
+        alert('Financials saved! Please manually navigate to "The Ask" section.');
       }
+
     } catch (error) {
       console.error('Error saving financials:', error);
-      alert('Failed to save financials. Please try again.');
+      alert('Failed to save financials. Please try again. Error: ' + error.message);
     }
   }
 }
