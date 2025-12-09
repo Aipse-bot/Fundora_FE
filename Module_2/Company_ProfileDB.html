@@ -564,11 +564,24 @@
         const market = startup.market_analysis || null;
         const ask = startup.ask || null;
         let financials = [];
-        if (startup.financials && Array.isArray(startup.financials)) {
+
+        if (startup.source_deck_id) {
+          // This is a pitch deck startup - fetch financials from deck endpoint
+          console.log('Fetching financials for deck:', startup.source_deck_id);
+          try {
+            const deckResponse = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/deck/report/${startup.source_deck_id}`);
+            if (deckResponse && deckResponse.financials) {
+              financials = deckResponse.financials;
+              console.log('Fetched deck financials:', financials);
+            }
+          } catch (error) {
+            console.error('Error fetching deck financials:', error);
+          }
+        } else if (startup.financials && Array.isArray(startup.financials)) {
           financials = startup.financials;
-        } else if (startup.source_deck && startup.source_deck.financials) {
-          financials = startup.source_deck.financials;
         }
+
+        console.log('Final financials to render:', financials);
 
         console.log('Final financials to render:', financials);
         const teamMembers = startup.team_members || [];
@@ -580,7 +593,15 @@
         populateProblemSolution(problem, solution);
         populateMarket(market);
         populateAsk(ask);
-        renderFinancialTable(financials);
+        // Render financials
+        if (financials && financials.length > 0) {
+          renderFinancialTable(financials);
+        } else {
+          const container = document.getElementById("financial-table-container");
+          if (container) {
+            container.innerHTML = "<p class='text-gray-400 text-center text-sm py-4'>No financial projections available yet.</p>";
+          }
+        }
         populateTeam(teamMembers);
         
         const inWatchlist = startup.is_in_watchlist === true;
