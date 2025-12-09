@@ -566,16 +566,18 @@
         let financials = [];
 
         if (startup.source_deck_id) {
-          // This is a pitch deck startup - fetch financials from deck endpoint
           console.log('Fetching financials for deck:', startup.source_deck_id);
           try {
             const deckResponse = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/deck/report/${startup.source_deck_id}`);
             if (deckResponse && deckResponse.financials) {
               financials = deckResponse.financials;
               console.log('Fetched deck financials:', financials);
+            } else {
+              console.warn('Deck not found or has no financials. Deck may have been deleted.');
             }
           } catch (error) {
             console.error('Error fetching deck financials:', error);
+            console.warn('This startup references a deck that no longer exists (ID: ' + startup.source_deck_id + ')');
           }
         } else if (startup.financials && Array.isArray(startup.financials)) {
           financials = startup.financials;
@@ -593,13 +595,31 @@
         populateProblemSolution(problem, solution);
         populateMarket(market);
         populateAsk(ask);
-        // Render financials
         if (financials && financials.length > 0) {
           renderFinancialTable(financials);
         } else {
           const container = document.getElementById("financial-table-container");
           if (container) {
-            container.innerHTML = "<p class='text-gray-400 text-center text-sm py-4'>No financial projections available yet.</p>";
+            if (startup.source_deck_id) {
+              container.innerHTML = `
+                <div class="text-center py-8">
+                  <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <p class='text-gray-400 text-sm'>Financial data unavailable</p>
+                  <p class='text-gray-500 text-xs mt-2'>The pitch deck for this startup may have been deleted</p>
+                </div>
+              `;
+            } else {
+              container.innerHTML = `
+                <div class="text-center py-8">
+                  <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                  </svg>
+                  <p class='text-gray-400 text-sm'>No financial projections available yet</p>
+                </div>
+              `;
+            }
           }
         }
         populateTeam(teamMembers);
