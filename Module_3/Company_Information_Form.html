@@ -58,11 +58,6 @@
       gap: 0.5rem;
     }
 
-    .gradient-border {
-      border-image: linear-gradient(to right, #3b82f6, #10b981) 1;
-    }
-
-    /* Tooltip */
     .tooltip-trigger {
       display: inline-flex;
       justify-content: center;
@@ -82,7 +77,6 @@
       transform: scale(1.15);
     }
 
-    /* Layout balance improvements */
     .grid-balanced {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
@@ -95,7 +89,6 @@
       gap: 1.25rem;
     }
 
-    /* Smooth animation */
     .fade-in {
       animation: fadeIn 0.6s ease-out;
     }
@@ -149,14 +142,29 @@
             </h2>
             <div class="space-y-4">
               <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Company Name <span class="tooltip-trigger" data-tooltip-text="Full legal name.">?</span></label>
+                <label class="text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                  Company Name <span class="tooltip-trigger">?</span>
+                </label>
                 <input type="text" id="company-name" name="company-name" class="w-full px-4 py-2.5 form-input-modern" placeholder="e.g., Acme Corp" required>
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2">Industry</label>
                 <select id="industry" name="industry" class="w-full px-4 py-2.5 form-input-modern appearance-none">
                   <option value="" disabled selected>Select an industry</option>
-                  <option>Technology</option><option>Finance</option><option>Healthcare</option><option>Retail</option>
+                  <option>Technology</option>
+                  <option>Finance</option>
+                  <option>Healthcare</option>
+                  <option>E-commerce</option>
+                  <option>Education</option>
+                  <option>Real Estate</option>
+                  <option>Manufacturing</option>
+                  <option>Retail</option>
+                  <option>Food & Beverage</option>
+                  <option>Transportation</option>
+                  <option>Energy</option>
+                  <option>Entertainment</option>
+                  <option>Agriculture</option>
+                  <option>Other</option>
                 </select>
               </div>
               <div>
@@ -175,18 +183,18 @@
             <h2 class="section-title">
               <span class="w-2 h-2 bg-orange-500 rounded-full"></span> Qualitative Assessment
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-4">
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2">Team Strength</label>
-                <textarea id="team-strength" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                <textarea id="team-strength" name="team-strength" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2">Market Position</label>
-                <textarea id="market-position" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                <textarea id="market-position" name="market-position" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
               </div>
-              <div class="md:col-span-2">
+              <div>
                 <label class="text-sm font-medium text-slate-300 mb-2">Brand Reputation</label>
-                <textarea id="brand-reputation" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                <textarea id="brand-reputation" name="brand-reputation" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
               </div>
             </div>
           </div>
@@ -194,48 +202,140 @@
 
         <!-- RIGHT COLUMN -->
         <div class="form-section">
-          <!-- Financial Metrics -->
+          <!-- Income Statement -->
           <div class="card p-6">
             <h2 class="section-title">
-              <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Financial Metrics
+              <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Income Statement
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-4">
               <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Current Revenue (₱)</label>
-                <input type="number" id="current-revenue" class="w-full px-4 py-2.5 form-input-modern">
+                <label class="text-sm font-medium text-slate-300 mb-2">Time Between Periods (Years)</label>
+                <input type="number" id="time-between-periods" name="time-between-periods" class="w-full px-4 py-2.5 form-input-modern" placeholder="1" step="0.1">
               </div>
               <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Net Income (₱)</label>
-                <input type="number" id="net-income" class="w-full px-4 py-2.5 form-input-modern">
+                <label class="text-sm font-medium text-slate-300 mb-2">Prior Period Revenue (₱)</label>
+                <input type="number" id="previous-revenue" name="previous-revenue" class="w-full px-4 py-2.5 form-input-modern" placeholder="800,000">
               </div>
               <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Total Assets (₱)</label>
-                <input type="number" id="total-assets" class="w-full px-4 py-2.5 form-input-modern">
+                <label class="text-sm font-medium text-slate-300 mb-2">Current Period Revenue (₱)</label>
+                <input type="number" id="current-revenue" name="current-revenue" class="w-full px-4 py-2.5 form-input-modern" placeholder="1,000,000">
               </div>
               <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Total Liabilities (₱)</label>
-                <input type="number" id="total-liabilities" class="w-full px-4 py-2.5 form-input-modern">
+                <label class="text-sm font-medium text-slate-300 mb-2">Current Period Net Income (₱)</label>
+                <input type="number" id="net-income" name="net-income" class="w-full px-4 py-2.5 form-input-modern" placeholder="150,000">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">EBIT (₱)</label>
+                <input type="number" id="ebit" name="ebit" class="w-full px-4 py-2.5 form-input-modern" placeholder="200,000">
               </div>
             </div>
           </div>
 
-          <!-- Growth Metrics -->
+          <!-- Balance Sheet -->
           <div class="card p-6">
             <h2 class="section-title">
-              <span class="w-2 h-2 bg-indigo-500 rounded-full"></span> Growth & Market
+              <span class="w-2 h-2 bg-indigo-500 rounded-full"></span> Balance Sheet
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-4">
               <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Market Share (%)</label>
-                <input type="number" id="market-share" class="w-full px-4 py-2.5 form-input-modern">
+                <label class="text-sm font-medium text-slate-300 mb-2">Total Assets (₱)</label>
+                <input type="number" id="total-assets" name="total-assets" class="w-full px-4 py-2.5 form-input-modern" placeholder="2,500,000">
               </div>
               <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Monthly Growth (%)</label>
-                <input type="number" id="monthly-growth" class="w-full px-4 py-2.5 form-input-modern">
+                <label class="text-sm font-medium text-slate-300 mb-2">Current Assets (₱)</label>
+                <input type="number" id="current-assets" name="current-assets" class="w-full px-4 py-2.5 form-input-modern" placeholder="1,200,000">
               </div>
-              <div class="md:col-span-2">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Total Liabilities (₱)</label>
+                <input type="number" id="total-liabilities" name="total-liabilities" class="w-full px-4 py-2.5 form-input-modern" placeholder="800,000">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Current Liabilities (₱)</label>
+                <input type="number" id="current-liabilities" name="current-liabilities" class="w-full px-4 py-2.5 form-input-modern" placeholder="400,000">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Retained Earnings (₱)</label>
+                <input type="number" id="retained-earnings" name="retained-earnings" class="w-full px-4 py-2.5 form-input-modern" placeholder="600,000">
+              </div>
+            </div>
+          </div>
+
+          <!-- Cash Flow -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-cyan-500 rounded-full"></span> Cash Flow
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Operations Cash Flow (₱)</label>
+                <input type="number" id="cash-flow" name="cash-flow" class="w-full px-4 py-2.5 form-input-modern" placeholder="200,000">
+              </div>
+            </div>
+          </div>
+
+          <!-- Valuation -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-purple-500 rounded-full"></span> Valuation
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Current Valuation (₱)</label>
+                <input type="number" id="current-valuation" name="current-valuation" class="w-full px-4 py-2.5 form-input-modern" placeholder="5,000,000">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Expected Future Valuation (₱)</label>
+                <input type="number" id="expected-future-valuation" name="expected-future-valuation" class="w-full px-4 py-2.5 form-input-modern" placeholder="10,000,000">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Years to Future Valuation</label>
+                <input type="number" id="years-to-future-valuation" name="years-to-future-valuation" class="w-full px-4 py-2.5 form-input-modern" placeholder="5" step="0.1">
+              </div>
+            </div>
+          </div>
+
+          <!-- Market Metrics -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-rose-500 rounded-full"></span> Market Metrics
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Total Addressable Market (₱)</label>
+                <input type="number" id="market-size" name="market-size" class="w-full px-4 py-2.5 form-input-modern" placeholder="50,000,000">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Current Market Share (%)</label>
+                <input type="number" id="market-share" name="market-share" class="w-full px-4 py-2.5 form-input-modern" placeholder="5" step="0.1">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Total Customers</label>
+                <input type="number" id="customer-count" name="customer-count" class="w-full px-4 py-2.5 form-input-modern" placeholder="1000">
+              </div>
+            </div>
+          </div>
+
+          <!-- Growth & Efficiency -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-amber-500 rounded-full"></span> Growth & Efficiency
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Monthly Growth Rate (%)</label>
+                <input type="number" id="monthly-growth-rate" name="monthly-growth-rate" class="w-full px-4 py-2.5 form-input-modern" placeholder="15" step="0.1">
+              </div>
+              <div>
                 <label class="text-sm font-medium text-slate-300 mb-2">Customer Acquisition Cost (₱)</label>
-                <input type="number" id="cac" class="w-full px-4 py-2.5 form-input-modern">
+                <input type="number" id="customer-acquisition-cost" name="customer-acquisition-cost" class="w-full px-4 py-2.5 form-input-modern" placeholder="500">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Customer Lifetime Value (₱)</label>
+                <input type="number" id="customer-lifetime-value" name="customer-lifetime-value" class="w-full px-4 py-2.5 form-input-modern" placeholder="2000">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Monthly Burn Rate (₱)</label>
+                <input type="number" id="burn-rate" name="burn-rate" class="w-full px-4 py-2.5 form-input-modern" placeholder="50,000">
               </div>
             </div>
           </div>
@@ -244,8 +344,8 @@
 
       <!-- Submit Buttons -->
       <div class="flex justify-end gap-4 border-t border-slate-700 pt-6">
-        <button type="reset" class="px-6 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50">Cancel</button>
-        <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md hover:scale-105">Save & Generate Report</button>
+        <button type="reset" class="px-6 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-all">Cancel</button>
+        <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md hover:scale-105 transition-all">Save & Generate Report</button>
       </div>
     </form>
   </main>

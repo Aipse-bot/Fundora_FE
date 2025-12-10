@@ -148,9 +148,6 @@
             <h2 class="text-lg font-semibold text-white">Financial Projections</h2>
           </div>
           <div id="financial-table-container" class="mb-6 overflow-y-auto max-h-[320px] rounded-lg"></div>
-          <div class="chart-wrapper bg-slate-800/40 border border-slate-700/50 rounded-lg p-3">
-            <canvas id="revenueProfitChart"></canvas>
-          </div>
         </div>
       </div>
 
@@ -406,7 +403,7 @@
                 </tr>
                 <tr class="border-b border-slate-800 hover:bg-slate-700/30 transition">
                   <td class="py-3 px-3 text-gray-300 text-sm font-medium">Projected Revenue (Year ${years})</td>
-                  <td class="py-3 px-3 text-right text-white font-semibold">₱${projectedRev.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                  <td class="py-3 px-3 text-right text-white font-semibold">${projectedRev.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 </tr>
                 <tr class="border-b border-slate-800 hover:bg-slate-700/30 transition">
                   <td class="py-3 px-3 text-gray-300 text-sm font-medium">Industry Multiple</td>
@@ -414,7 +411,7 @@
                 </tr>
                 <tr class="bg-blue-500/10 hover:bg-blue-500/20 transition">
                   <td class="py-3 px-3 text-blue-300 text-sm font-bold">Future Valuation</td>
-                  <td class="py-3 px-3 text-right text-blue-400 font-bold text-lg">₱${futureValuation.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                  <td class="py-3 px-3 text-right text-blue-400 font-bold text-lg">${futureValuation.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 </tr>
                 <tr class="bg-emerald-500/10 hover:bg-emerald-500/20 transition">
                   <td class="py-3 px-3 text-emerald-300 text-sm font-bold">IRR (${years} years)</td>
@@ -425,14 +422,12 @@
           </div>
         `;
         
-        const ctxEl = document.getElementById("revenueProfitChart");
         if (ctxEl) {
           ctxEl.style.display = 'none';
         }
         return;
       }
 
-      // Old year-by-year structure
       const parsed = financials.map(f => ({
         year: f.year,
         revenue: Number(f.revenue) || 0,
@@ -443,7 +438,7 @@
         <tr class="border-b border-slate-800">
           <td class="py-2 px-3 text-gray-300 text-sm">${f.year}</td>
           <td class="py-2 px-3 text-brand-400 font-semibold text-sm">₱${f.revenue.toLocaleString()}</td>
-          <td class="py-2 px-3 text-accent-400 font-semibold text-sm">₱${f.profit.toLocaleString()}</td>
+          <td class="py-2 px-3 text-accent-400 font-semibold text-sm">${f.profit.toLocaleString()}</td>
         </tr>
       `).join('');
 
@@ -462,7 +457,6 @@
         </div>
       `;
 
-      const ctxEl = document.getElementById("revenueProfitChart");
       if (!ctxEl) return;
 
       ctxEl.width = ctxEl.parentElement.offsetWidth;
