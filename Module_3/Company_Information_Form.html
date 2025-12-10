@@ -188,6 +188,7 @@
                 </div>
 
                 <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Left Column: Company Info & Qualitative Assessment -->
                     <div class="space-y-6">
                         <!-- Core Company Info -->
                         <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
@@ -277,6 +278,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                     <!-- Right Column: Financial Metrics -->
                     <div class="space-y-6">
@@ -495,8 +497,10 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Actions & Confidence Section - Full Width -->
+                <!-- Actions & Confidence Section -->
                 <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-xl mt-8">
                     <div class="mb-6">
                         <h3 class="font-semibold text-white mb-4 text-base flex items-center gap-2">
@@ -732,7 +736,6 @@
                     confidence_percentage: actualPercentage
                 };
                 
-                console.log('Company data object created with confidence level:', confidenceLevel);
                 
                 return companyData;
             }
@@ -815,7 +818,6 @@
                         submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
                         submitButton.classList.add('bg-emerald-600', 'cursor-not-allowed');
                         
-                        console.log('Startup saved with ID:', result.startup_id);
                         
                         setTimeout(() => {
                             window.location.href = 'added-startups.html';
@@ -869,7 +871,6 @@
                 e.preventDefault();
                 
                 if (isSubmitting) {
-                    console.log('Submission already in progress');
                     return;
                 }
                 

@@ -239,7 +239,6 @@
       console.warn('No existing cover data found or failed to load:', err);
     }
 
-    console.log('Binding cover form events for deck ID:', deckId);
 
     // Live preview updates
     companyInput.addEventListener('input', () => {
@@ -1227,7 +1226,6 @@
         }
 
         const result = await response.json();
-        console.log('Financials saved successfully:', result);
         localStorage.setItem('deck_id', result.deck_id);
         
         // Navigate to next section

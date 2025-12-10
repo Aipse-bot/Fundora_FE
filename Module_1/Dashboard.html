@@ -708,7 +708,7 @@
       card.setAttribute('data-startup-id', startup.id);
       card.setAttribute('data-is-deck-builder', isPitchDeck);
 
-      let hasDataPending = false;
+      const hasDataPending = startup.has_sufficient_data === false || startup.risk_level === 'Data Pending';
       let riskBadge;
 
       if (isPitchDeck) {
@@ -894,7 +894,6 @@
           addRippleEffect();
         }
       } catch (error) {
-        console.error('Error rendering startups:', error);
         document.getElementById('startup-grid').innerHTML = '<p class="text-red-400 text-center py-8">Error loading startups. Please try again.</p>';
       }
     }

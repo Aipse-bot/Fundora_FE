@@ -326,7 +326,6 @@
           return response.json();
         })
         .then(data => {
-          console.log('[v0] Fetched startup data:', data);
           startupData = data;
           initializeUI();
         })
@@ -346,12 +345,6 @@
         ? startupData.pitch_deck_projected_return  // for Pitch Deck (IRR)
         : startupData.projected_return;            // for Normal Startup (IRR)
 
-      console.log('[v0] Initializing UI:', {
-        isDeckBuilder,
-        riskLevel,
-        projectedReturn,
-        startupName: startupData.company_name
-      });
 
       // Update startup name
       domCache.startupName.textContent = startupData.company_name || 'Unknown Startup';
@@ -437,7 +430,6 @@
           return response.json();
         })
         .then(data => {
-          console.log('[v0] Simulation response from backend:', data);
           
           simulationData = {
             investmentAmount: data.investment_amount,
@@ -477,13 +469,6 @@
       const projectedReturn = isDeckBuilder 
         ? startupData.pitch_deck_projected_return
         : startupData.projected_return;
-
-      console.log('[v0] Initializing UI:', {
-        isDeckBuilder,
-        riskLevel,
-        projectedReturn,
-        startupName: startupData.company_name
-      });
 
       domCache.startupName.textContent = startupData.company_name || 'Unknown Startup';
 

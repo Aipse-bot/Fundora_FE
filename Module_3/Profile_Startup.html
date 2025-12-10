@@ -259,12 +259,6 @@
     <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 mb-6 contain-layout fade-in-up" style="animation-delay: 0.25s;">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-xl font-bold">Contact & Founder Information</h3>
-        <button id="editContactBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-          </svg>
-          <span>Edit Contact Info</span>
-        </button>
       </div>
       <div id="contactInfoContainer" class="space-y-4">
         <div class="text-center py-8 text-gray-400">Loading...</div>
@@ -418,7 +412,6 @@
       editFounderLinkedin: null,
       logoutBtn: null,
       editProfileBtn: null,
-      editContactBtn: null,
       cancelEdit: null
     };
 
@@ -773,12 +766,6 @@
           console.error('Error loading profile for edit:', error);
           alert('Failed to load profile data for editing');
         }
-      });
-
-      // Edit contact button - opens modal on contact tab
-      getCachedElement('editContactBtn').addEventListener('click', () => {
-        getCachedElement('editProfileBtn').click();
-        setTimeout(() => switchTab('contact'), 100);
       });
 
       // Cancel button
