@@ -6,100 +6,109 @@
   <title>Pitch Deck Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
             brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              200: '#bfdbfe',
-              300: '#93c5fd',
-              400: '#60a5fa',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a'
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+              800: '#1e40af', 900: '#1e3a8a'
             },
             accent: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              200: '#a7f3d0',
-              300: '#6ee7b7',
-              400: '#34d399',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-              800: '#065f46',
-              900: '#064e3b'
+              50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
+              400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
+              800: '#065f46', 900: '#064e3b'
             }
           },
-          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
         }
       }
     };
   </script>
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
 
-    .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
-    .slide-left { animation: slideInLeft 0.5s ease-out forwards; opacity: 0; }
-    .slide-right { animation: slideInRight 0.5s ease-out forwards; opacity: 0; }
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.3s; }
+    .card-base {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      transition: all 0.3s ease;
+    }
+    .card-base:hover {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-4px);
+    }
 
-    .card-base { background: #1e293b; border: 1px solid #334155; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .card-base:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); }
+    .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px);} to {opacity: 1; transform: translateY(0);} }
 
-    .metric-hover { transition: all 0.3s ease; }
-    .metric-hover:hover { transform: scale(1.03); background: rgba(59, 130, 246, 0.12); }
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      min-height: 260px;
+      overflow: hidden;
+    }
 
-    #financial-table-container { contain: layout style; }
-    .chart-wrapper { position: relative; width: 100%; height: 250px; contain: layout style paint; }
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100%;
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .chart-wrapper { height: 220px; }
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen hero-gradient">
-  <div class="max-w-7xl mx-auto p-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-8 slide-left">
-      <div class="flex items-center">
-        <button id="backBtn" class="mr-6 p-2.5 hover:bg-slate-800 rounded-lg transition-colors border border-slate-700">
+<body class="hero-gradient">
+  <div class="max-w-7xl mx-auto p-6 space-y-8">
+    <!-- HEADER -->
+    <div class="flex items-center justify-between bg-slate-800/50 border border-slate-700/60 rounded-xl p-6 shadow-lg fade-in">
+      <div class="flex items-center gap-5">
+        <button id="backBtn" class="p-2.5 hover:bg-slate-700/60 rounded-lg transition-all border border-slate-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
         <div>
-          <h1 id="deck-name" class="text-3xl font-bold mb-2">Loading...</h1>
+          <h1 id="deck-name" class="text-3xl font-bold mb-1 text-white">Loading...</h1>
           <p id="deck-tagline" class="text-lg text-gray-400">Loading...</p>
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <!-- Left Column - Main Content -->
-      <div class="lg:col-span-3 space-y-6 slide-left delay-1">
+    <!-- GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- LEFT CONTENT -->
+      <div class="lg:col-span-3 space-y-8 fade-in">
         <!-- Problem & Solution -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in delay-1">
-          <div class="card-base rounded-xl p-6">
-            <h2 class="text-lg font-semibold mb-4 text-white">Problem</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="card-base p-6">
+            <h2 class="text-lg font-semibold mb-4 text-brand-300">Problem</h2>
             <p id="problem-description" class="text-gray-300 leading-relaxed text-sm">—</p>
           </div>
-          <div class="card-base rounded-xl p-6">
-            <h2 class="text-lg font-semibold mb-4 text-white">Solution</h2>
+          <div class="card-base p-6">
+            <h2 class="text-lg font-semibold mb-4 text-accent-300">Solution</h2>
             <p id="solution-description" class="text-gray-300 leading-relaxed text-sm">—</p>
           </div>
         </div>
 
         <!-- Market Analysis -->
-        <div class="card-base rounded-xl p-6 fade-in delay-2">
+        <div class="card-base p-6">
           <div class="flex items-center mb-6">
             <div class="w-10 h-10 bg-brand-500/15 rounded-lg flex items-center justify-center mr-3">
               <svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 20 20">
@@ -109,7 +118,7 @@
             <h2 class="text-lg font-semibold text-white">Market Analysis</h2>
           </div>
           <div class="grid grid-cols-2 gap-4">
-            <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4 metric-hover">
+            <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4">
               <div class="text-xs text-gray-400 mb-2">Primary Market</div>
               <div id="primary-market" class="text-sm font-semibold text-brand-300">—</div>
             </div>
@@ -117,7 +126,7 @@
               <div class="text-xs text-gray-400 mb-2">Target Audience</div>
               <div id="target-audience" class="text-sm font-semibold text-accent-300">—</div>
             </div>
-            <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4 metric-hover">
+            <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4">
               <div class="text-xs text-gray-400 mb-2">Market Growth</div>
               <div id="market-growth" class="text-sm font-semibold text-brand-300">—</div>
             </div>
@@ -129,7 +138,7 @@
         </div>
 
         <!-- Financial Projections -->
-        <div class="card-base rounded-xl p-6 fade-in delay-2">
+        <div class="card-base p-6">
           <div class="flex items-center mb-6">
             <div class="w-10 h-10 bg-accent-500/15 rounded-lg flex items-center justify-center mr-3">
               <svg class="w-5 h-5 text-accent-400" fill="currentColor" viewBox="0 0 20 20">
@@ -138,34 +147,23 @@
             </div>
             <h2 class="text-lg font-semibold text-white">Financial Projections</h2>
           </div>
-          <!-- Fixed max-height and overflow to prevent UI breaking when financial metrics show -->
-          <div id="financial-table-container" class="mb-6 overflow-y-auto max-h-[300px]"></div>
-          <div class="chart-wrapper mt-6">
+          <div id="financial-table-container" class="mb-6 overflow-y-auto max-h-[320px] rounded-lg"></div>
+          <div class="chart-wrapper bg-slate-800/40 border border-slate-700/50 rounded-lg p-3">
             <canvas id="revenueProfitChart"></canvas>
           </div>
         </div>
       </div>
 
-      <!-- Right Column - Sidebar -->
-      <div class="space-y-6 slide-right delay-2">
-        <!-- Action Buttons -->
-        <div class="card-base rounded-xl p-6 fade-in delay-1">
+      <!-- RIGHT SIDEBAR -->
+      <div class="space-y-8 fade-in">
+        <div class="card-base p-6">
           <h2 class="text-lg font-semibold mb-4 text-white">Actions</h2>
           <div class="space-y-3">
-            <button id="watchlistBtn" class="w-full font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center text-sm" disabled>
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
-              </svg>
-              Loading...
-            </button>
-            <a id="investBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 text-center block text-sm">
-              Invest
-            </a>
+            <button id="watchlistBtn" class="w-full font-semibold py-3 px-4 rounded-lg flex items-center justify-center text-sm" disabled>Loading...</button>
+            <a id="investBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-lg block text-center text-sm">Invest</a>
           </div>
         </div>
-
-        <!-- Funding Ask -->
-        <div class="card-base rounded-xl p-6 fade-in delay-2">
+        <div class="card-base p-6">
           <h2 class="text-lg font-semibold mb-4 text-white">Funding Ask</h2>
           <div class="space-y-3">
             <div>
@@ -178,9 +176,7 @@
             </div>
           </div>
         </div>
-
-        <!-- Team -->
-        <div class="card-base rounded-xl p-6 fade-in delay-3">
+        <div class="card-base p-6">
           <h2 class="text-lg font-semibold mb-4 text-white">Team</h2>
           <div id="team-container" class="space-y-3">
             <p class="text-sm text-gray-400">—</p>

@@ -1,535 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Company Information Form</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-            min-height: 100vh;
-        }
-        .form-input-modern {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            color: #f1f5f9;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .form-input-modern:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-            outline: none;
-            transform: translateY(-1px);
-        }
-        .form-input-modern:hover {
-            border-color: #475569;
-            background-color: #1e293bee;
-        }
-        .form-input-modern::placeholder {
-            color: #64748b;
-        }
-        .dynamic-tooltip {
-            visibility: hidden;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: #fff;
-            text-align: center;
-            border-radius: 8px;
-            padding: 10px 14px;
-            position: fixed;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            max-width: 220px;
-            font-size: 0.8125rem;
-            pointer-events: none;
-            border: 1px solid #334155;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            transform: translateY(5px);
-        }
-        .dynamic-tooltip.visible {
-            visibility: visible;
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .dynamic-tooltip::after {
-            content: "";
-            position: absolute;
-            border-width: 6px;
-            border-style: solid;
-        }
-        .tooltip-top::after {
-            top: 100%;
-            left: 50%;
-            margin-left: -6px;
-            border-color: #1e293b transparent transparent transparent;
-        }
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0);
-            }
-        }
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.6;
-            }
-        }
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-        .slide-down {
-            animation: slideDown 0.4s ease-out;
-        }
-        header {
-            backdrop-filter: blur(10px);
-            background: rgba(15, 23, 42, 0.9);
-        }
-        .section-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .financial-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            height: 100%;
-        }
-        .financial-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.15);
-        }
-        .tooltip-trigger {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #334155;
-            color: #94a3b8;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            cursor: help;
-        }
-        .tooltip-trigger:hover {
-            background: #3b82f6;
-            color: white;
-            transform: scale(1.15);
-            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #475569 0%, #334155 100%);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Company Information Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(140deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-3px);
+    }
+
+    .form-input-modern {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      color: #f1f5f9;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    .form-input-modern:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+
+    header {
+      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .gradient-border {
+      border-image: linear-gradient(to right, #3b82f6, #10b981) 1;
+    }
+
+    /* Tooltip */
+    .tooltip-trigger {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 16px;
+      height: 16px;
+      background: #334155;
+      border-radius: 50%;
+      color: #94a3b8;
+      font-size: 11px;
+      cursor: help;
+      transition: all 0.3s ease;
+    }
+    .tooltip-trigger:hover {
+      background: #3b82f6;
+      color: #fff;
+      transform: scale(1.15);
+    }
+
+    /* Layout balance improvements */
+    .grid-balanced {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      gap: 2rem;
+    }
+
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Smooth animation */
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(15px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @media (max-width: 768px) {
+      .grid-balanced { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen">
 
-    <!-- Header -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 slide-down">
-        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3 group">
-                    <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-2 rounded-lg shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
-                        <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
-                        </svg>
-                    </div>
-                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent tracking-tight">Fundora</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-slate-400 text-sm">
-                        Welcome, <span class="font-semibold text-blue-400" id="user-email">Loading...</span>
-                    </span>
-                    <img class="h-9 w-9 rounded-full object-cover border-2 border-blue-500/50 shadow-lg transform transition-transform hover:scale-110" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User Avatar">
-                </div>
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-2 rounded-lg shadow-lg shadow-blue-500/30">
+          <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+          </svg>
+        </div>
+        <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Fundora</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-slate-400 text-sm">
+          Welcome, <span id="user-email" class="font-semibold text-blue-400">Loading...</span>
+        </span>
+        <img class="h-9 w-9 rounded-full border-2 border-blue-500/50 shadow-md" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User Avatar">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Form -->
+  <main class="max-w-7xl mx-auto p-8 fade-in">
+    <form id="companyForm" novalidate class="space-y-10">
+      <div class="border-b border-slate-700 pb-6">
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-400 bg-clip-text text-transparent mb-3">Company Information Form</h1>
+        <p class="text-slate-400 text-sm">Fill out your company details to generate an investment analysis report.</p>
+      </div>
+
+      <div class="grid-balanced">
+        <!-- LEFT COLUMN -->
+        <div class="form-section">
+          <!-- Company Details -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-blue-500 rounded-full"></span> Company Profile
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Company Name <span class="tooltip-trigger" data-tooltip-text="Full legal name.">?</span></label>
+                <input type="text" id="company-name" name="company-name" class="w-full px-4 py-2.5 form-input-modern" placeholder="e.g., Acme Corp" required>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Industry</label>
+                <select id="industry" name="industry" class="w-full px-4 py-2.5 form-input-modern appearance-none">
+                  <option value="" disabled selected>Select an industry</option>
+                  <option>Technology</option><option>Finance</option><option>Healthcare</option><option>Retail</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Company Description</label>
+                <textarea id="company-description" name="company-description" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Year Founded</label>
+                <input type="number" id="year-founded" name="year-founded" class="w-full px-4 py-2.5 form-input-modern" placeholder="2024">
+              </div>
             </div>
+          </div>
+
+          <!-- Qualitative Metrics -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-orange-500 rounded-full"></span> Qualitative Assessment
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Team Strength</label>
+                <textarea id="team-strength" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Market Position</label>
+                <textarea id="market-position" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+              <div class="md:col-span-2">
+                <label class="text-sm font-medium text-slate-300 mb-2">Brand Reputation</label>
+                <textarea id="brand-reputation" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+            </div>
+          </div>
         </div>
-    </header>
 
-    <main class="max-w-[1600px] mx-auto p-6 lg:p-8">
-        <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-6 lg:p-10 fade-in">
-            <form id="companyForm" novalidate class="h-full">
-                <!-- Header Section -->
-                <div class="mb-8 pb-6 border-b border-slate-700">
-                    <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-400 bg-clip-text text-transparent mb-2">
-                        Company Information Form
-                    </h1>
-                    <p class="text-slate-400 text-sm">
-                        Fill in your company details to generate a comprehensive investment analysis report
-                    </p>
-                </div>
+        <!-- RIGHT COLUMN -->
+        <div class="form-section">
+          <!-- Financial Metrics -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Financial Metrics
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Current Revenue (₱)</label>
+                <input type="number" id="current-revenue" class="w-full px-4 py-2.5 form-input-modern">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Net Income (₱)</label>
+                <input type="number" id="net-income" class="w-full px-4 py-2.5 form-input-modern">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Total Assets (₱)</label>
+                <input type="number" id="total-assets" class="w-full px-4 py-2.5 form-input-modern">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Total Liabilities (₱)</label>
+                <input type="number" id="total-liabilities" class="w-full px-4 py-2.5 form-input-modern">
+              </div>
+            </div>
+          </div>
 
-                <div class="grid lg:grid-cols-2 gap-8">
-                    <!-- Left Column: Company Info & Qualitative Assessment -->
-                    <div class="space-y-6">
-                        <!-- Core Company Info -->
-                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                    </svg>
-                                </div>
-                                <h2 class="text-xl font-bold text-white">Company Profile</h2>
-                            </div>
-                            <div class="space-y-5">
-                                <div>
-                                    <label for="company-name" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Company Name
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Enter the full legal name of the company.">?</span>
-                                    </label>
-                                    <input type="text" name="company-name" id="company-name" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="e.g., Acme Corporation" required>
-                                </div>
-                                <div>
-                                    <label for="industry" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Industry
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Select the primary industry sector.">?</span>
-                                    </label>
-                                    <select id="industry" name="industry" class="w-full px-4 py-2.5 rounded-lg appearance-none form-input-modern text-sm" required>
-                                        <option value="" disabled selected>Select an industry</option>
-                                        <option value="Technology">Technology</option>
-                                        <option value="Finance">Finance</option>
-                                        <option value="Healthcare">Healthcare</option>
-                                        <option value="E-commerce">E-commerce</option>
-                                        <option value="Education">Education</option>
-                                        <option value="Real Estate">Real Estate</option>
-                                        <option value="Manufacturing">Manufacturing</option>
-                                        <option value="Retail">Retail</option>
-                                        <option value="Food & Beverage">Food & Beverage</option>
-                                        <option value="Transportation">Transportation</option>
-                                        <option value="Energy">Energy</option>
-                                        <option value="Entertainment">Entertainment</option>
-                                        <option value="Agriculture">Agriculture</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="company-description" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Company Description
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the company's core business and target market.">?</span>
-                                    </label>
-                                    <textarea id="company-description" name="company-description" rows="4" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Provide a brief overview of the company's mission..."></textarea>
-                                </div>
-                                <div>
-                                    <label for="year-founded" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Year Founded
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Year the company was established.">?</span>
-                                    </label>
-                                    <input type="number" id="year-founded" name="year-founded" min="1900" max="2025" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="2024">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Qualitative Assessment -->
-                        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg">
-                            <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                <span class="inline-block w-2 h-2 bg-orange-500 rounded-full shadow-lg shadow-orange-500/50"></span>
-                                Qualitative Assessment
-                            </h3>
-                            <div class="space-y-5">
-                                <div>
-                                    <label for="team-strength" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Team Strength
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the leadership team's experience and skills.">?</span>
-                                    </label>
-                                    <textarea id="team-strength" name="team-strength" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Describe the team's expertise and key strengths..."></textarea>
-                                </div>
-                                <div>
-                                    <label for="market-position" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Market Position
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Describe the company's competitive position.">?</span>
-                                    </label>
-                                    <textarea id="market-position" name="market-position" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Explain the company's market standing..."></textarea>
-                                </div>
-                                <div>
-                                    <label for="brand-reputation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                        Brand Reputation
-                                        <span class="tooltip-trigger ml-2" data-tooltip-text="Assess the company's brand value and perception.">?</span>
-                                    </label>
-                                    <textarea id="brand-reputation" name="brand-reputation" rows="3" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm resize-none" placeholder="Describe brand recognition and reputation..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Financial Metrics -->
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-emerald-500/30">
-                                $
-                            </div>
-                            <h2 class="text-xl font-bold text-white">Financial Metrics</h2>
-                        </div>
-
-                        <div class="space-y-6">
-                            <!-- Income Statement -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2 h-2 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50"></span>
-                                    Income Statement
-                                </h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label for="time-between-periods" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Time Between Periods (Years)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Time span between reporting periods (e.g., 1 for annual).">?</span>
-                                        </label>
-                                        <input type="number" name="time-between-periods" id="time-between-periods" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="1" step="0.1" min="0">
-                                    </div>
-                                    <div>
-                                        <label for="previous-revenue" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Prior Period Revenue (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Total revenue from prior fiscal period.">?</span>
-                                        </label>
-                                        <input type="number" name="previous-revenue" id="previous-revenue" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="800,000">
-                                    </div>
-                                    <div>
-                                        <label for="current-revenue" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Current Period Revenue (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Total revenue from most recent fiscal period.">?</span>
-                                        </label>
-                                        <input type="number" name="current-revenue" id="current-revenue" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="1,000,000">
-                                    </div>
-                                    <div>
-                                        <label for="net-income" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Current Period Net Income (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Profit after all expenses and taxes.">?</span>
-                                        </label>
-                                        <input type="number" name="net-income" id="net-income" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="150,000">
-                                    </div>
-                                    <div>
-                                        <label for="ebit" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            EBIT (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Earnings Before Interest and Tax.">?</span>
-                                        </label>
-                                        <input type="number" name="ebit" id="ebit" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="200,000">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Balance Sheet -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/50"></span>
-                                    Balance Sheet
-                                </h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label for="total-assets" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Total Assets (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Total value of all company assets.">?</span>
-                                        </label>
-                                        <input type="number" name="total-assets" id="total-assets" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="2,500,000">
-                                    </div>
-                                    <div>
-                                        <label for="current-assets" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Current Assets (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Assets convertible to cash within one year.">?</span>
-                                        </label>
-                                        <input type="number" name="current-assets" id="current-assets" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="1,200,000">
-                                    </div>
-                                    <div>
-                                        <label for="total-liabilities" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Total Liabilities (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Total debt and obligations.">?</span>
-                                        </label>
-                                        <input type="number" name="total-liabilities" id="total-liabilities" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="800,000">
-                                    </div>
-                                    <div>
-                                        <label for="current-liabilities" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Current Liabilities (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Obligations due within one year.">?</span>
-                                        </label>
-                                        <input type="number" name="current-liabilities" id="current-liabilities" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="400,000">
-                                    </div>
-                                    <div>
-                                        <label for="retained-earnings" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Retained Earnings (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Cumulative profits retained in company.">?</span>
-                                        </label>
-                                        <input type="number" name="retained-earnings" id="retained-earnings" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="600,000">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Cash Flow -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2 h-2 bg-cyan-500 rounded-full shadow-lg shadow-cyan-500/50"></span>
-                                    Cash Flow
-                                </h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label for="cash-flow" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Operations Cash Flow (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Cash from business operations.">?</span>
-                                        </label>
-                                        <input type="number" name="cash-flow" id="cash-flow" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="200,000">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Valuation -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2 h-2 bg-purple-500 rounded-full shadow-lg shadow-purple-500/50"></span>
-                                    Valuation
-                                </h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label for="current-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Current Valuation (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Current market valuation of the company.">?</span>
-                                        </label>
-                                        <input type="number" name="current-valuation" id="current-valuation" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="5,000,000">
-                                    </div>
-                                    <div>
-                                        <label for="expected-future-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Expected Future Valuation (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Projected valuation at a future date.">?</span>
-                                        </label>
-                                        <input type="number" name="expected-future-valuation" id="expected-future-valuation" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="10,000,000">
-                                    </div>
-                                    <div>
-                                        <label for="years-to-future-valuation" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Years to Future Valuation
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Number of years until expected future valuation is reached.">?</span>
-                                        </label>
-                                        <input type="number" name="years-to-future-valuation" id="years-to-future-valuation" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="5" step="0.1" min="0">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Market Metrics -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2 h-2 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50"></span>
-                                    Market Metrics
-                                </h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label for="market-size" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Total Addressable Market (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Total market demand for the product or service.">?</span>
-                                        </label>
-                                        <input type="number" name="market-size" id="market-size" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="50,000,000">
-                                    </div>
-                                    <div>
-                                        <label for="market-share" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Current Market Share (%)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Percentage of market currently captured.">?</span>
-                                        </label>
-                                        <input type="number" name="market-share" id="market-share" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="5" step="0.1" min="0" max="100">
-                                    </div>
-                                    <div>
-                                        <label for="customer-count" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Total Customers
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Current number of active customers.">?</span>
-                                        </label>
-                                        <input type="number" name="customer-count" id="customer-count" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="1000">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Growth Metrics -->
-                            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 shadow-lg financial-card">
-                                <h3 class="font-semibold text-white mb-5 text-base flex items-center gap-2">
-                                    <span class="inline-block w-2 h-2 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50"></span>
-                                    Growth & Efficiency
-                                </h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label for="monthly-growth-rate" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Monthly Growth Rate (%)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Average month-over-month revenue growth.">?</span>
-                                        </label>
-                                        <input type="number" name="monthly-growth-rate" id="monthly-growth-rate" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="15" step="0.1">
-                                    </div>
-                                    <div>
-                                        <label for="customer-acquisition-cost" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Customer Acquisition Cost (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Average cost to acquire one customer.">?</span>
-                                        </label>
-                                        <input type="number" name="customer-acquisition-cost" id="customer-acquisition-cost" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="500">
-                                    </div>
-                                    <div>
-                                        <label for="customer-lifetime-value" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Customer Lifetime Value (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Total revenue expected from one customer.">?</span>
-                                        </label>
-                                        <input type="number" name="customer-lifetime-value" id="customer-lifetime-value" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="2000">
-                                    </div>
-                                    <div>
-                                        <label for="burn-rate" class="flex items-center text-sm font-medium text-slate-300 mb-2">
-                                            Monthly Burn Rate (₱)
-                                            <span class="tooltip-trigger ml-2" data-tooltip-text="Monthly cash spending rate.">?</span>
-                                        </label>
-                                        <input type="number" name="burn-rate" id="burn-rate" class="w-full px-4 py-2.5 rounded-lg form-input-modern text-sm" placeholder="50,000">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions & Confidence Section -->
-                <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-xl mt-8">
-                    <div class="mb-6">
-                        <h3 class="font-semibold text-white mb-4 text-base flex items-center gap-2">
-                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Data Confidence
-                        </h3>
-                        <div class="w-full bg-slate-700 rounded-full h-3 mb-3 shadow-inner">
-                            <div id="completeness-bar" class="bg-gradient-to-r from-blue-500 to-blue-400 h-3 rounded-full transition-all duration-500 shadow-lg" style="width: 0%"></div>
-                        </div>
-                        <p id="completeness-text" class="text-sm text-slate-300 text-center font-medium">Please fill the form</p>
-                        <input type="hidden" id="data-completeness-level" name="data-completeness-level" value="Low">
-                    </div>
-                    <div class="space-y-3">
-                        <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-3.5 px-4 rounded-lg shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-slate-900 transition-all duration-300 hover:-translate-y-0.5">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Save & Generate Report
-                        </button>
-                        <button type="button" onclick="window.history.back()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 focus:ring-offset-slate-900 transition-all duration-300 border border-slate-600 hover:border-slate-500">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </form>
+          <!-- Growth Metrics -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-indigo-500 rounded-full"></span> Growth & Market
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Market Share (%)</label>
+                <input type="number" id="market-share" class="w-full px-4 py-2.5 form-input-modern">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Monthly Growth (%)</label>
+                <input type="number" id="monthly-growth" class="w-full px-4 py-2.5 form-input-modern">
+              </div>
+              <div class="md:col-span-2">
+                <label class="text-sm font-medium text-slate-300 mb-2">Customer Acquisition Cost (₱)</label>
+                <input type="number" id="cac" class="w-full px-4 py-2.5 form-input-modern">
+              </div>
+            </div>
+          </div>
         </div>
-    </main>
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="flex justify-end gap-4 border-t border-slate-700 pt-6">
+        <button type="reset" class="px-6 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50">Cancel</button>
+        <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md hover:scale-105">Save & Generate Report</button>
+      </div>
+    </form>
+  </main>
 
     <script>
         let tooltipElement;
