@@ -879,6 +879,10 @@
         const data = await fetchJSON(url);
         const startups = data.results || data || [];
 
+        console.log('API Response:', data);
+        console.log('Startups count:', startups.length);
+        console.log('First startup:', startups[0]);
+
         grid.innerHTML = '';
         
         document.getElementById('startup-count').textContent = startups.length;
