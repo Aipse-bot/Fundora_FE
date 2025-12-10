@@ -708,7 +708,7 @@
       card.setAttribute('data-startup-id', startup.id);
       card.setAttribute('data-is-deck-builder', isPitchDeck);
 
-      const hasDataPending = startup.has_sufficient_data === false || startup.risk_level === 'Data Pending';
+      let hasDataPending = startup.has_sufficient_data === false || startup.risk_level === 'Data Pending';
       let riskBadge;
 
       if (isPitchDeck) {
