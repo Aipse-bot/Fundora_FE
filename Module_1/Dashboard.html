@@ -894,6 +894,7 @@
           addRippleEffect();
         }
       } catch (error) {
+        console.error('Error rendering startups:', error);
         document.getElementById('startup-grid').innerHTML = '<p class="text-red-400 text-center py-8">Error loading startups. Please try again.</p>';
       }
     }

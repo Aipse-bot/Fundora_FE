@@ -189,16 +189,17 @@
 
     <!-- Compare Button -->
     <div class="flex justify-center fade-in delay-3">
-  <button id="compare-btn" class="bg-slate-700 text-gray-400 font-semibold py-3.5 px-8 rounded-lg transition-all duration-200 cursor-not-allowed transform hover:scale-105 active:scale-95" disabled>
+      <button id="compare-btn" class="bg-slate-700 text-gray-400 font-semibold py-3.5 px-8 rounded-lg transition-all duration-200 cursor-not-allowed transform hover:scale-105 active:scale-95" disabled>
         Select at least 2-3 startups to compare
       </button>
     </div>
   </div>
 
   <script>
-    // const apiBase = "http://127.0.0.1:8000/api";
     const apiBase = "https://fundora-be-singapore.onrender.com/api";
     const RECORD_COMPARISON_ENDPOINT = `${apiBase}/analytics/comparison/`;
+    const COMPARE_STARTUPS_ENDPOINT = `${apiBase}/investor/comparison/`;
+    
     let startups = [];
     let selectedStartups = new Set();
     const maxSelections = 3;
@@ -283,19 +284,25 @@
           window.location.href = '/login';
           return;
         }
-        const response = await fetch(`${apiBase}/investor/startups/?limit=1000`, {
+        
+        // USE THE FILTERED ENDPOINT THAT EXCLUDES PITCH DECKS
+        const response = await fetch(COMPARE_STARTUPS_ENDPOINT, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
         });
+        
         if (!response.ok) throw new Error("Failed to fetch startups");
         const data = await response.json();
-        let allStartups = data.results || data.startups || data;
+        
+        // Backend returns { "startups": [...] }
+        let allStartups = data.startups || [];
         if (!Array.isArray(allStartups)) {
           allStartups = [];
         }
         
         startups = allStartups;
+        console.log(`Loaded ${startups.length} startups (pitch decks excluded)`);
         
         renderStartups(startups);
       } catch (error) {
@@ -303,7 +310,6 @@
         domCache.emptyState.classList.remove("hidden");
       }
     }
-
 
     function renderStartups(data) {
       domCache.startupsGrid.innerHTML = "";
@@ -322,12 +328,8 @@
         card.dataset.startupName = startup.company_name;
         card.dataset.industry = startup.industry;
         
-        const isDeck = !!(startup.is_deck_builder || startup.source_deck_id || startup.source_deck);
-        
         let riskBadge;
-        if (isDeck) {
-          riskBadge = '<span class="bg-yellow-500/20 text-yellow-300 text-xs font-medium px-3 py-1 rounded-full border border-yellow-500/30">Pitch Deck</span>';
-        } else if (startup.risk_level) {
+        if (startup.risk_level) {
           const riskLevel = startup.risk_level.toLowerCase();
           if (riskLevel === 'low') {
             riskBadge = '<span class="bg-accent-500/20 text-accent-300 text-xs font-medium px-3 py-1 rounded-full border border-accent-500/30">Low Risk</span>';
@@ -341,20 +343,20 @@
         }
 
         const industry = startup.industry || '—';
-          let reward = 'N/A';
-          if (startup.reward_potential != null) {
-            if (typeof startup.reward_potential === 'string') {
-              reward = startup.reward_potential.split(',')[0].trim();
-            } else if (Array.isArray(startup.reward_potential)) {
-              reward = startup.reward_potential[0];
-            } else {
-              reward = String(startup.reward_potential);
-            }
+        let reward = 'N/A';
+        if (startup.reward_potential != null) {
+          if (typeof startup.reward_potential === 'string') {
+            reward = startup.reward_potential.split(',')[0].trim();
+          } else if (Array.isArray(startup.reward_potential)) {
+            reward = startup.reward_potential[0];
+          } else {
+            reward = String(startup.reward_potential);
           }
-          const rewardDisplay = reward === 'N/A' ? 'N/A' : `${reward}/5`;
-          const estimatedGrowth = (startup.estimated_growth_rate != null && startup.estimated_growth_rate !== '') 
-            ? `${startup.estimated_growth_rate >= 0 ? '+' : ''}${startup.estimated_growth_rate}%` 
-            : 'N/A';
+        }
+        const rewardDisplay = reward === 'N/A' ? 'N/A' : `${reward}/5`;
+        const estimatedGrowth = (startup.estimated_growth_rate != null && startup.estimated_growth_rate !== '') 
+          ? `${startup.estimated_growth_rate >= 0 ? '+' : ''}${startup.estimated_growth_rate}%` 
+          : 'N/A';
 
         card.innerHTML = `
           <div class="flex justify-between items-start mb-4">
@@ -372,15 +374,15 @@
             </div>
           </div>
           <div class="space-y-3">
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-400">Reward Potential</span>
-            <span class="text-sm font-semibold text-white">${escapeHtml(rewardDisplay)}</span>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-400">Reward Potential</span>
+              <span class="text-sm font-semibold text-white">${escapeHtml(rewardDisplay)}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-400">Estimated Growth Rate</span>
+              <span class="text-sm font-semibold ${startup.estimated_growth_rate != null && startup.estimated_growth_rate >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(estimatedGrowth)}</span>
+            </div>
           </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-400">Estimated Growth Rate</span>
-            <span class="text-sm font-semibold ${startup.estimated_growth_rate != null && startup.estimated_growth_rate >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(estimatedGrowth)}</span>
-          </div>
-        </div>
         `;
         card.addEventListener("click", () => toggleStartupSelection(card), { passive: true });
         domCache.startupsGrid.appendChild(card);
@@ -471,9 +473,7 @@
 
     async function recordComparisonAndNavigate() {
       const ids = Array.from(selectedStartups).map(id => parseInt(id));
-    
       
-      // Show loading state
       domCache.compareBtn.disabled = true;
       const originalText = domCache.compareBtn.textContent;
       domCache.compareBtn.innerHTML = `
@@ -508,26 +508,17 @@
         }
 
         if (response.ok || response.status === 201) {
-          
-          // Mark that a comparison was made (to trigger refresh on added-startups)
           localStorage.setItem('comparisonMade', Date.now().toString());
-          
-          // Add a small delay to ensure database transaction completes
           await new Promise(resolve => setTimeout(resolve, 500));
-          
-          // Navigate to comparison page
           window.location.href = `Startup_Comparison.html?startups=${ids.join(",")}`;
         } else {
-          console.error('❌ Failed to record comparison:', result);
-          // Still mark comparison attempt and navigate
+          console.error('Failed to record comparison:', result);
           localStorage.setItem('comparisonMade', Date.now().toString());
           window.location.href = `Startup_Comparison.html?startups=${ids.join(",")}`;
         }
       } catch (error) {
-        console.error('❌ Error recording comparison:', error);
-        // Mark comparison attempt even on error
+        console.error('Error recording comparison:', error);
         localStorage.setItem('comparisonMade', Date.now().toString());
-        // Navigate anyway even if recording fails
         window.location.href = `Startup_Comparison.html?startups=${ids.join(",")}`;
       }
     }
@@ -538,11 +529,6 @@
       const risk = domCache.riskFilter.value;
       
       const filtered = startups.filter(s => {
-        const isDeck = !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
-        if (isDeck) {
-          return false;
-        }
-        
         const matchesSearch = !searchTerm || s.company_name.toLowerCase().includes(searchTerm);
         const matchesIndustry = !industry || s.industry === industry;
         
