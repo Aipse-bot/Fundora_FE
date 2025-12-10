@@ -471,8 +471,7 @@
 
     async function recordComparisonAndNavigate() {
       const ids = Array.from(selectedStartups).map(id => parseInt(id));
-      
-      console.log('📊 Recording comparison for startups:', ids);
+    
       
       // Show loading state
       domCache.compareBtn.disabled = true;
@@ -509,11 +508,6 @@
         }
 
         if (response.ok || response.status === 201) {
-          console.log('✅ Comparison recorded successfully:', result);
-          console.log('📊 Analytics:', {
-            total_comparisons: result.total_comparisons,
-            unique_comparers: result.unique_comparers
-          });
           
           // Mark that a comparison was made (to trigger refresh on added-startups)
           localStorage.setItem('comparisonMade', Date.now().toString());
@@ -544,20 +538,20 @@
       const risk = domCache.riskFilter.value;
       
       const filtered = startups.filter(s => {
+        const isDeck = !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
+        if (isDeck) {
+          return false;
+        }
+        
         const matchesSearch = !searchTerm || s.company_name.toLowerCase().includes(searchTerm);
         const matchesIndustry = !industry || s.industry === industry;
         
         let matchesRisk = true;
         if (risk) {
-          const isDeck = !!(s.is_deck_builder || s.source_deck_id || s.source_deck);
-          if (isDeck) {
-            matchesRisk = risk === 'Medium';
-          } else {
-            const riskLevel = s.risk_level;
-            if (risk === 'Low' && riskLevel !== 'Low') matchesRisk = false;
-            if (risk === 'Medium' && riskLevel !== 'Medium') matchesRisk = false;
-            if (risk === 'High' && riskLevel !== 'High') matchesRisk = false;
-          }
+          const riskLevel = s.risk_level;
+          if (risk === 'Low' && riskLevel !== 'Low') matchesRisk = false;
+          if (risk === 'Medium' && riskLevel !== 'Medium') matchesRisk = false;
+          if (risk === 'High' && riskLevel !== 'High') matchesRisk = false;
         }
         
         return matchesSearch && matchesIndustry && matchesRisk;

@@ -45,11 +45,13 @@
     body { font-family: 'Inter', sans-serif; }
     .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
     .glass-card { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(148, 163, 184, 0.15); }
+    
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
     @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+    @keyframes textGlow { 0%, 100% { text-shadow: 0 0 10px rgba(59, 130, 246, 0.3); } 50% { text-shadow: 0 0 20px rgba(59, 130, 246, 0.5); } }
 
     .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
     .slide-left { animation: slideInLeft 0.6s ease-out forwards; opacity: 0; }
@@ -62,115 +64,180 @@
     .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
     .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); }
 
-    .metric-card { transition: all 0.3s ease; }
-    .metric-card:hover { transform: scale(1.05); background: rgba(59, 130, 246, 0.15); }
+    .metric-card { 
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .metric-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+    }
+    .metric-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-base {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(226, 232, 240, 0.1);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .card-base:hover {
+      border-color: rgba(226, 232, 240, 0.2);
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .heading-primary {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+    .heading-secondary {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+    .text-body {
+      font-size: 0.95rem;
+      font-weight: 400;
+      line-height: 1.6;
+      color: #d1d5db;
+      letter-spacing: 0.2px;
+    }
+    .text-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-spacing {
+      padding: 1.5rem;
+      border-radius: 1rem;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
   <div class="max-w-7xl mx-auto p-6">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8 slide-left">
-      <div class="flex items-center">
-        <button id="backBtn" class="mr-6 p-2.5 hover:bg-slate-800/50 rounded-lg transition-all border border-slate-700">
+    <div class="flex items-center justify-between mb-12 slide-left">
+      <div class="flex items-center gap-6">
+        <button id="backBtn" class="p-2.5 hover:bg-slate-800/50 rounded-lg transition-all border border-slate-700 hover:border-slate-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
-        <div class="flex items-center">
-          <div>
-            <h1 id="companyName" class="text-3xl font-bold mb-2"></h1>
-            <span id="industry" class="inline-block bg-brand-500/20 text-brand-300 text-sm font-medium px-4 py-1.5 rounded-full border border-brand-500/30"></span>
-          </div>
+        <div>
+          <h1 id="companyName" class="heading-primary fade-in delay-1"></h1>
+          <span id="industry" class="inline-block bg-brand-500/20 text-brand-300 text-xs font-semibold px-4 py-2 rounded-full border border-brand-500/30 mt-3 fade-in delay-2"></span>
         </div>
       </div>
-      <span id="riskBadge" class="text-sm font-medium px-4 py-1.5 rounded-full"></span>
+      <span id="riskBadge" class="text-sm font-semibold px-5 py-2 rounded-full fade-in delay-2"></span>
     </div>
 
-    <!-- Changed grid layout from lg:col-span-2 and lg:col-span-1 to lg:grid-cols-3 for better balance -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left Column -->
-      <div class="space-y-6 slide-left delay-1">
+      <div class="space-y-8 slide-left delay-1">
         <!-- Company Summary -->
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 fade-in delay-1">
-          <h2 class="text-2xl font-semibold mb-4">Company Summary</h2>
-          <p id="companyDescription" class="text-gray-300 leading-relaxed"></p>
+        <div class="card-base section-spacing fade-in delay-1">
+          <h2 class="heading-secondary mb-6 text-brand-300">Company Summary</h2>
+          <p id="companyDescription" class="text-body"></p>
         </div>
 
-        <!-- Contact & Founder Info - Moved to Left Column -->
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 fade-in delay-2">
-          <div class="flex items-center mb-6">
-            <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center mr-3">
+        <!-- Contact & Founder Info -->
+        <div class="card-base section-spacing fade-in delay-2">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
               <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
                 <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
               </svg>
             </div>
-            <h2 class="text-xl font-semibold">Contact Founder</h2>
+            <h2 class="heading-secondary text-base">Contact Founder</h2>
           </div>
           <div id="contact-info" class="space-y-4"></div>
         </div>
       </div>
 
       <!-- Center Column -->
-      <div class="space-y-6 slide-left delay-2">
+      <div class="space-y-8 slide-left delay-2">
         <!-- Financial Metrics -->
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 fade-in delay-2">
-          <div class="flex items-center mb-6">
-            <div class="w-10 h-10 bg-accent-500/20 rounded-lg flex items-center justify-center mr-3">
+        <div class="card-base section-spacing fade-in delay-2">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-accent-500/20 rounded-lg flex items-center justify-center">
               <svg class="w-5 h-5 text-accent-400" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
               </svg>
             </div>
-            <h2 class="text-2xl font-semibold">Financial Metrics</h2>
+            <h2 class="heading-secondary text-base">Financial Metrics</h2>
           </div>
           <div id="financials" class="grid grid-cols-2 gap-4"></div>
         </div>
 
         <!-- Risk & Reward -->
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 fade-in delay-3">
-          <div class="flex items-center mb-6">
-            <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center mr-3">
+        <div class="card-base section-spacing fade-in delay-3">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
               <svg class="w-5 h-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
               </svg>
             </div>
-            <h2 class="text-xl font-semibold">Risk & Reward</h2>
+            <h2 class="heading-secondary text-base">Risk & Reward</h2>
           </div>
-          <div id="riskReward" class="space-y-5"></div>
+          <div id="riskReward" class="space-y-6"></div>
         </div>
       </div>
 
       <!-- Right Column -->
-      <div class="space-y-6 slide-right delay-3">
+      <div class="space-y-8 slide-right delay-3">
         <!-- Qualitative Insights -->
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 fade-in delay-3">
-          <h2 class="text-2xl font-semibold mb-6">Qualitative Insights</h2>
+        <div class="card-base section-spacing fade-in delay-3">
+          <h2 class="heading-secondary mb-6 text-accent-300">Qualitative Insights</h2>
           <div id="qualitative"></div>
         </div>
 
         <!-- Data Confidence -->
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 fade-in delay-4">
-          <div class="flex items-center mb-6">
-            <div class="w-10 h-10 bg-brand-500/20 rounded-lg flex items-center justify-center mr-3">
+        <div class="card-base section-spacing fade-in delay-4">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-brand-500/20 rounded-lg flex items-center justify-center">
               <svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
               </svg>
             </div>
-            <h2 class="text-xl font-semibold">Data Confidence</h2>
+            <h2 class="heading-secondary text-base">Data Confidence</h2>
           </div>
           <div id="dataConfidence" class="text-center"></div>
         </div>
 
         <!-- View Analytics -->
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 fade-in delay-4" id="viewAnalyticsCard" style="display: none;">
-          <div class="flex items-center mb-6">
-            <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center mr-3">
+        <div class="card-base section-spacing fade-in delay-4" id="viewAnalyticsCard" style="display: none;">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
               <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
                 <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
               </svg>
             </div>
-            <h2 class="text-xl font-semibold">Profile Views</h2>
+            <h2 class="heading-secondary text-base">Profile Views</h2>
           </div>
           <div id="viewAnalytics" class="grid grid-cols-2 gap-4"></div>
         </div>
@@ -227,9 +294,6 @@
             
             if (response.ok) {
                 const result = await response.json();
-                console.log('View recorded successfully:', result);
-                console.log('Total views:', result.total_views);
-                console.log('Unique viewers:', result.unique_viewers);
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 console.warn('Failed to record view:', response.status, errorData);
@@ -247,8 +311,6 @@
             return;
         }
 
-        console.log('Loading company with ID:', startupId);
-
         // Record the view
         await recordView();
 
@@ -262,12 +324,9 @@
             }
             
             const responseData = await res.json();
-            console.log('Startup API response:', responseData);
             
             // Handle DRF response format - extract startup data
             const data = responseData.startup || responseData;
-            console.log('Startup data loaded:', data);
-            console.log('Is in watchlist:', data.is_in_watchlist);
 
             document.title = `${data.company_name} - Company Profile`;
             document.getElementById("companyName").textContent = data.company_name;
@@ -303,9 +362,6 @@
             const rr = document.getElementById("riskReward");
             const reward = data.reward_potential;
             const riskScore = data.risk_score ?? 3; 
-            
-            console.log('Risk Score from backend:', riskScore);
-            console.log('Reward Potential from backend:', reward);
             
             rr.innerHTML = barWithNull("Risk Score", riskScore, "red") + 
                           barWithNull("Reward Potential", reward, "brand");
@@ -498,7 +554,6 @@
 
             const isInWatchlist = data.is_in_watchlist === true;
             currentWatchlistState = isInWatchlist;
-            console.log('Setting watchlist state to:', isInWatchlist);
             updateWatchlistButton(isInWatchlist);
 
             const investBtn = document.getElementById("investBtn");
@@ -568,14 +623,12 @@
         try {
             const action = shouldAdd ? 'add' : 'remove';
             
-            console.log(`Attempting to ${action} startup ${startupId} to watchlist...`);
             
             const res = await fetch(`https://fundora-be-singapore.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
                 method: 'POST',
                 headers: authHeaders()
             });
             
-            console.log('Response status:', res.status);
             
             if (!res.ok) {
                 const errorText = await res.text();
@@ -584,7 +637,6 @@
             }
 
             const result = await res.json();
-            console.log('Watchlist response:', result);
             
             currentWatchlistState = result.added !== false && action === 'add' ? true : 
                                   result.success !== false && action === 'remove' ? false :
