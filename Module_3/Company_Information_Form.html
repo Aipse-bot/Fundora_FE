@@ -178,30 +178,6 @@
             </div>
           </div>
 
-          <!-- Qualitative Metrics -->
-          <div class="card p-6">
-            <h2 class="section-title">
-              <span class="w-2 h-2 bg-orange-500 rounded-full"></span> Qualitative Assessment
-            </h2>
-            <div class="space-y-4">
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Team Strength</label>
-                <textarea id="team-strength" name="team-strength" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
-              </div>
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Market Position</label>
-                <textarea id="market-position" name="market-position" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
-              </div>
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Brand Reputation</label>
-                <textarea id="brand-reputation" name="brand-reputation" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT COLUMN -->
-        <div class="form-section">
           <!-- Income Statement -->
           <div class="card p-6">
             <h2 class="section-title">
@@ -227,6 +203,64 @@
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2">EBIT (₱)</label>
                 <input type="number" id="ebit" name="ebit" class="w-full px-4 py-2.5 form-input-modern" placeholder="200,000">
+              </div>
+            </div>
+          </div>
+
+          <!-- Cash Flow -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-cyan-500 rounded-full"></span> Cash Flow
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Operations Cash Flow (₱)</label>
+                <input type="number" id="cash-flow" name="cash-flow" class="w-full px-4 py-2.5 form-input-modern" placeholder="200,000">
+              </div>
+            </div>
+          </div>
+
+          <!-- Market Metrics -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-rose-500 rounded-full"></span> Market Metrics
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Total Addressable Market (₱)</label>
+                <input type="number" id="market-size" name="market-size" class="w-full px-4 py-2.5 form-input-modern" placeholder="50,000,000">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Current Market Share (%)</label>
+                <input type="number" id="market-share" name="market-share" class="w-full px-4 py-2.5 form-input-modern" placeholder="5" step="0.1">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Total Customers</label>
+                <input type="number" id="customer-count" name="customer-count" class="w-full px-4 py-2.5 form-input-modern" placeholder="1000">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="form-section">
+          <!-- Qualitative Metrics -->
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="w-2 h-2 bg-orange-500 rounded-full"></span> Qualitative Assessment
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Team Strength</label>
+                <textarea id="team-strength" name="team-strength" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Market Position</label>
+                <textarea id="market-position" name="market-position" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2">Brand Reputation</label>
+                <textarea id="brand-reputation" name="brand-reputation" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
               </div>
             </div>
           </div>
@@ -260,19 +294,6 @@
             </div>
           </div>
 
-          <!-- Cash Flow -->
-          <div class="card p-6">
-            <h2 class="section-title">
-              <span class="w-2 h-2 bg-cyan-500 rounded-full"></span> Cash Flow
-            </h2>
-            <div class="space-y-4">
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Operations Cash Flow (₱)</label>
-                <input type="number" id="cash-flow" name="cash-flow" class="w-full px-4 py-2.5 form-input-modern" placeholder="200,000">
-              </div>
-            </div>
-          </div>
-
           <!-- Valuation -->
           <div class="card p-6">
             <h2 class="section-title">
@@ -290,27 +311,6 @@
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2">Years to Future Valuation</label>
                 <input type="number" id="years-to-future-valuation" name="years-to-future-valuation" class="w-full px-4 py-2.5 form-input-modern" placeholder="5" step="0.1">
-              </div>
-            </div>
-          </div>
-
-          <!-- Market Metrics -->
-          <div class="card p-6">
-            <h2 class="section-title">
-              <span class="w-2 h-2 bg-rose-500 rounded-full"></span> Market Metrics
-            </h2>
-            <div class="space-y-4">
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Total Addressable Market (₱)</label>
-                <input type="number" id="market-size" name="market-size" class="w-full px-4 py-2.5 form-input-modern" placeholder="50,000,000">
-              </div>
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Current Market Share (%)</label>
-                <input type="number" id="market-share" name="market-share" class="w-full px-4 py-2.5 form-input-modern" placeholder="5" step="0.1">
-              </div>
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2">Total Customers</label>
-                <input type="number" id="customer-count" name="customer-count" class="w-full px-4 py-2.5 form-input-modern" placeholder="1000">
               </div>
             </div>
           </div>
