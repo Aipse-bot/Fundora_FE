@@ -461,7 +461,7 @@
           : '<span class="text-gray-400">Target audience</span>';
 
         previewGrowth.innerHTML = data.market_growth_rate
-          ? String(data.market_growth_rate).replace(/\n/g, '<br>')
+          ? `${String(data.market_growth_rate).replace(/\n/g, '<br>')} %`
           : '<span class="text-gray-400">Growth rate</span>';
 
         previewAdvantage.innerHTML = data.competitive_advantage
@@ -490,7 +490,8 @@
     marketGrowthRate.addEventListener('input', () => {
       const value = marketGrowthRate.value.trim();
       previewGrowth.innerHTML = value
-        ? value.replace(/\n/g, '<br>')
+        // ? value.replace(/\n/g, '<br>')
+        ? `${value.replace(/\n/g, '<br>')} %`
         : '<span class="text-gray-400">Growth rate</span>';
     }, { passive: true });
 
