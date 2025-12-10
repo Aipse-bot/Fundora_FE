@@ -534,17 +534,23 @@
       domCache.finalValue.textContent = `₱${Math.round(finalValue).toLocaleString()}`;
       domCache.totalGain.textContent = `₱${Math.round(totalGain).toLocaleString()}`;
 
-      domCache.breakdownTable.innerHTML = yearlyBreakdown.map(({ year, start, growth, end }) => `
-        <tr class="table-row-hover border-b border-slate-800/50">
-          <td class="px-6 py-4 text-sm font-semibold text-white">Year ${year}</td>
-          <td class="px-6 py-4 text-sm text-gray-300">₱${Math.round(start).toLocaleString()}</td>
-          <td class="px-6 py-4 text-sm text-accent-400 font-medium">₱${Math.round(growth).toLocaleString()}</td>
-          <td class="px-6 py-4 text-sm font-semibold text-white">₱${Math.round(end).toLocaleString()}</td>
-        </tr>
-      `).join('');
+      domCache.breakdownTable.innerHTML = yearlyBreakdown.map((item) => {
+        const year = item.year;
+        const start = item.starting_value || item.start || 0;
+        const growth = item.growth_amount || item.growth || 0;
+        const end = item.ending_value || item.end || 0;
+        
+        return `
+          <tr class="table-row-hover border-b border-slate-800/50">
+            <td class="px-6 py-4 text-sm font-semibold text-white">Year ${year}</td>
+            <td class="px-6 py-4 text-sm text-gray-300">₱${Math.round(start).toLocaleString()}</td>
+            <td class="px-6 py-4 text-sm text-accent-400 font-medium">₱${Math.round(growth).toLocaleString()}</td>
+            <td class="px-6 py-4 text-sm font-semibold text-white">₱${Math.round(end).toLocaleString()}</td>
+          </tr>
+        `;
+      }).join('');
 
       renderGrowthChart(yearlyBreakdown);
-      
       renderAnnualChart(yearlyBreakdown);
 
       domCache.resultsSection.classList.remove('hidden');
@@ -558,7 +564,8 @@
       }
 
       const labels = yearlyBreakdown.map(d => `Year ${d.year}`);
-      const data = yearlyBreakdown.map(d => Math.round(d.end));
+      // FIX: Use correct field names from backend
+      const data = yearlyBreakdown.map(d => Math.round(d.ending_value || d.end || 0));
 
       growthChartInstance = new Chart(ctx, {
         type: 'line',
@@ -639,7 +646,8 @@
       }
 
       const labels = yearlyBreakdown.map(d => `Year ${d.year}`);
-      const data = yearlyBreakdown.map(d => Math.round(d.growth));
+      // FIX: Use correct field names from backend
+      const data = yearlyBreakdown.map(d => Math.round(d.growth_amount || d.growth || 0));
 
       annualChartInstance = new Chart(ctx, {
         type: 'bar',
