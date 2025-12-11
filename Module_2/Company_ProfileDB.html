@@ -427,87 +427,82 @@
           </div>
         `;
         
-        if (ctxEl) {
-          ctxEl.style.display = 'none';
+        const chartContainer = document.getElementById('financial-table-container');
+        chartContainer.innerHTML = `
+          <div class="overflow-x-auto mb-4">
+            <table class="min-w-full text-sm">
+              <tbody>
+                <tr class="border-b border-slate-800 hover:bg-slate-700/30 transition">
+                  <td class="py-3 px-3 text-gray-300 text-sm font-medium">Current Valuation</td>
+                  <td class="py-3 px-3 text-right text-white font-semibold">₱${currentVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                </tr>
+                <tr class="border-b border-slate-800 hover:bg-slate-700/30 transition">
+                  <td class="py-3 px-3 text-gray-300 text-sm font-medium">Projected Revenue (Year ${years})</td>
+                  <td class="py-3 px-3 text-right text-white font-semibold">₱${projectedRev.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                </tr>
+                <tr class="border-b border-slate-800 hover:bg-slate-700/30 transition">
+                  <td class="py-3 px-3 text-gray-300 text-sm font-medium">Industry Multiple</td>
+                  <td class="py-3 px-3 text-right text-white font-semibold">${multiple.toFixed(2)}x</td>
+                </tr>
+                <tr class="bg-blue-500/10 hover:bg-blue-500/20 transition">
+                  <td class="py-3 px-3 text-blue-300 text-sm font-bold">Future Valuation</td>
+                  <td class="py-3 px-3 text-right text-blue-400 font-bold text-lg">₱${futureValuation.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                </tr>
+                <tr class="bg-emerald-500/10 hover:bg-emerald-500/20 transition">
+                  <td class="py-3 px-3 text-emerald-300 text-sm font-bold">IRR (${years} years)</td>
+                  <td class="py-3 px-3 text-right text-emerald-400 font-bold text-lg">${irr.toFixed(2)}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <canvas id="financialChart" width="400" height="250"></canvas>
+        `;
+        
+        // chart
+        const canvas = document.getElementById('financialChart');
+        const ctx = canvas.getContext('2d');
+        
+        if (chartInstance) {
+          chartInstance.destroy();
         }
-        return;
-      }
-
-      const parsed = financials.map(f => ({
-        year: f.year,
-        revenue: Number(f.revenue) || 0,
-        profit: Number(f.profit) || 0
-      })).sort((a,b) => (Number(a.year) || 0) - (Number(b.year) || 0));
-
-      const rows = parsed.map(f => `
-        <tr class="border-b border-slate-800">
-          <td class="py-2 px-3 text-gray-300 text-sm">${f.year}</td>
-          <td class="py-2 px-3 text-brand-400 font-semibold text-sm">₱${f.revenue.toLocaleString()}</td>
-          <td class="py-2 px-3 text-accent-400 font-semibold text-sm">${f.profit.toLocaleString()}</td>
-        </tr>
-      `).join('');
-
-      container.innerHTML = `
-        <div class="overflow-x-auto">
-          <table class="min-w-full text-sm">
-            <thead class="bg-slate-800/40 font-semibold text-gray-300 sticky top-0">
-              <tr>
-                <th class="py-2 px-3 text-left rounded-tl-lg text-xs">Year</th>
-                <th class="py-2 px-3 text-left text-xs">Revenue</th>
-                <th class="py-2 px-3 text-left rounded-tr-lg text-xs">Profit</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-      `;
-
-      if (!ctxEl) return;
-
-      ctxEl.width = ctxEl.parentElement.offsetWidth;
-      ctxEl.height = 250;
-      ctxEl.style.width = '100%';
-      ctxEl.style.height = '250px';
-
-      const ctx = ctxEl.getContext("2d");
-      if (chartInstance) {
-        try { chartInstance.destroy(); } catch(e){/*ignore*/ }
-        chartInstance = null;
-      }
-
-      chartInstance = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: parsed.map(p => p.year),
-          datasets: [
-            { label: "Revenue", data: parsed.map(p => p.revenue), backgroundColor: "#3b82f6", borderRadius: 4 },
-            { label: "Profit", data: parsed.map(p => p.profit), backgroundColor: "#10b981", borderRadius: 4 }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: { duration: 0 },
-          plugins: {
-            legend: { labels: { color: '#fff', font: { size: 11 }, boxHeight: 12 } }
+        
+        chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Current Valuation', 'Future Valuation'],
+            datasets: [{
+              label: 'Valuation (₱)',
+              data: [currentVal, futureValuation],
+              backgroundColor: ['#3b82f6', '#10b981'],
+              borderRadius: 8,
+            }]
           },
-          scales: {
-            x: {
-              ticks: { color: '#9ca3af', font: { size: 10 } },
-              grid: { drawBorder: false, color: 'rgba(148, 163, 184, 0.1)' }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { 
+                labels: { color: '#fff', font: { size: 12 } } 
+              }
             },
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: '#9ca3af',
-                font: { size: 10 },
-                callback: v => "₱" + Number(v).toLocaleString()
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { 
+                  color: '#9ca3af',
+                  callback: v => '₱' + Number(v).toLocaleString()
+                },
+                grid: { color: 'rgba(148, 163, 184, 0.1)' }
               },
-              grid: { drawBorder: false, color: 'rgba(148, 163, 184, 0.1)' }
+              x: {
+                ticks: { color: '#9ca3af' },
+                grid: { color: 'rgba(148, 163, 184, 0.1)' }
+              }
             }
           }
-        }
-      });
+        });
+        return;
+      }
     }
 
     async function loadDeckReport(startupIdParam) {
