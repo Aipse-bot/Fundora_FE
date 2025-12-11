@@ -53,28 +53,32 @@
     .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(15px);} to {opacity: 1; transform: translateY(0);} }
 
-    .chart-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-      min-height: 260px;
-      overflow: hidden;
+    .scrollable-content {
+      overflow-y: auto;
+      max-height: 400px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
-    canvas {
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100%;
-      display: block;
+    .scrollable-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .scrollable-content::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.5);
+      border-radius: 3px;
+    }
+
+    .scrollable-content::-webkit-scrollbar-track {
+      background: rgba(30, 41, 59, 0.3);
     }
 
     @media (max-width: 768px) {
-      .chart-wrapper { height: 220px; }
+      .scrollable-content { max-height: 300px; }
     }
   </style>
 </head>
-<body class="hero-gradient">
+<body>
   <div class="max-w-7xl mx-auto p-6 space-y-8">
     <!-- HEADER -->
     <div class="flex items-center justify-between bg-slate-800/50 border border-slate-700/60 rounded-xl p-6 shadow-lg fade-in">
@@ -92,18 +96,22 @@
     </div>
 
     <!-- GRID -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-      <!-- LEFT CONTENT -->
-      <div class="lg:col-span-3 space-y-8 fade-in">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- LEFT COLUMN -->
+      <div class="space-y-8 fade-in">
         <!-- Problem & Solution -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 gap-6">
           <div class="card-base p-6">
             <h2 class="text-lg font-semibold mb-4 text-brand-300">Problem</h2>
-            <p id="problem-description" class="text-gray-300 leading-relaxed text-sm">—</p>
+            <div class="scrollable-content">
+              <p id="problem-description" class="text-gray-300 leading-relaxed text-sm">—</p>
+            </div>
           </div>
           <div class="card-base p-6">
             <h2 class="text-lg font-semibold mb-4 text-accent-300">Solution</h2>
-            <p id="solution-description" class="text-gray-300 leading-relaxed text-sm">—</p>
+            <div class="scrollable-content">
+              <p id="solution-description" class="text-gray-300 leading-relaxed text-sm">—</p>
+            </div>
           </div>
         </div>
 
@@ -120,23 +128,34 @@
           <div class="grid grid-cols-2 gap-4">
             <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4">
               <div class="text-xs text-gray-400 mb-2">Primary Market</div>
-              <div id="primary-market" class="text-sm font-semibold text-brand-300">—</div>
+              <div id="primary-market" class="text-sm font-semibold text-brand-300 break-words">—</div>
             </div>
             <div class="bg-accent-500/10 border border-accent-500/25 rounded-lg p-4">
               <div class="text-xs text-gray-400 mb-2">Target Audience</div>
-              <div id="target-audience" class="text-sm font-semibold text-accent-300">—</div>
+              <div id="target-audience" class="text-sm font-semibold text-accent-300 break-words">—</div>
             </div>
             <div class="bg-brand-500/10 border border-brand-500/25 rounded-lg p-4">
               <div class="text-xs text-gray-400 mb-2">Market Growth</div>
-              <div id="market-growth" class="text-sm font-semibold text-brand-300">—</div>
+              <div id="market-growth" class="text-sm font-semibold text-brand-300 break-words">—</div>
             </div>
             <div class="bg-accent-500/10 border border-accent-500/25 rounded-lg p-4">
               <div class="text-xs text-gray-400 mb-2">Competitive Advantage</div>
-              <div id="competitive-advantage" class="text-sm font-semibold text-accent-300 line-clamp-2">—</div>
+              <div id="competitive-advantage" class="text-sm font-semibold text-accent-300 break-words line-clamp-3">—</div>
             </div>
           </div>
         </div>
 
+        <!-- Team -->
+        <div class="card-base p-6">
+          <h2 class="text-lg font-semibold mb-4 text-white">Team</h2>
+          <div id="team-container" class="scrollable-content space-y-3">
+            <p class="text-sm text-gray-400">—</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="space-y-8 fade-in">
         <!-- Financial Projections -->
         <div class="card-base p-6">
           <div class="flex items-center mb-6">
@@ -147,36 +166,32 @@
             </div>
             <h2 class="text-lg font-semibold text-white">Financial Projections</h2>
           </div>
-          <div id="financial-table-container" class="mb-6 overflow-y-auto max-h-[320px] rounded-lg"></div>
+          <div id="financial-table-container" class="scrollable-content rounded-lg"></div>
         </div>
-      </div>
 
-      <!-- RIGHT SIDEBAR -->
-      <div class="space-y-8 fade-in">
-        <div class="card-base p-6">
-          <h2 class="text-lg font-semibold mb-4 text-white">Actions</h2>
-          <div class="space-y-3">
-            <button id="watchlistBtn" class="w-full font-semibold py-3 px-4 rounded-lg flex items-center justify-center text-sm" disabled>Loading...</button>
-            <a id="investBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-lg block text-center text-sm">Invest</a>
-          </div>
-        </div>
+        <!-- Funding Ask -->
         <div class="card-base p-6">
           <h2 class="text-lg font-semibold mb-4 text-white">Funding Ask</h2>
           <div class="space-y-3">
             <div>
               <div class="text-xs text-gray-400 mb-1">Amount</div>
-              <div id="funding-ask" class="text-2xl font-bold text-brand-400">—</div>
+              <div id="funding-ask" class="text-2xl font-bold text-brand-400 break-words">—</div>
             </div>
             <div class="pt-3 border-t border-slate-700/30">
               <div class="text-xs text-gray-400 mb-2">Use of Funds</div>
-              <p id="use-of-funds" class="text-sm text-gray-300">—</p>
+              <div class="scrollable-content max-h-32">
+                <p id="use-of-funds" class="text-sm text-gray-300">—</p>
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- Actions -->
         <div class="card-base p-6">
-          <h2 class="text-lg font-semibold mb-4 text-white">Team</h2>
-          <div id="team-container" class="space-y-3">
-            <p class="text-sm text-gray-400">—</p>
+          <h2 class="text-lg font-semibold mb-4 text-white">Actions</h2>
+          <div class="space-y-3">
+            <button id="watchlistBtn" class="w-full font-semibold py-3 px-4 rounded-lg flex items-center justify-center text-sm transition-all" disabled>Loading...</button>
+            <a id="investBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-4 rounded-lg block text-center text-sm transition-all">Invest</a>
           </div>
         </div>
       </div>
@@ -185,7 +200,6 @@
 
   <script>
     const API_BASE = 'https://fundora-be-singapore.onrender.com';
-    let chartInstance = null;
     let startupId = null;
     let watchlistIdsSet = new Set();
     let currentWatchlistState = false;
@@ -273,10 +287,10 @@
     function updateWatchlistButton(inWatchlist) {
       const btn = document.getElementById('watchlistBtn');
       if (inWatchlist) {
-        btn.className = 'w-full bg-red-600/20 hover:bg-red-600/30 text-red-400 font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center text-sm border border-red-600/50';
+        btn.className = 'w-full bg-red-600/20 hover:bg-red-600/30 text-red-400 font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center text-sm border border-red-600/50';
         btn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.682-7.682 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>Saved to Watchlist';
       } else {
-        btn.className = 'w-full bg-slate-800/30 hover:bg-slate-700/30 text-gray-300 font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center text-sm border border-slate-700/50';
+        btn.className = 'w-full bg-slate-800/30 hover:bg-slate-700/30 text-gray-300 font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center text-sm border border-slate-700/50';
         btn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>Add to Watchlist';
       }
       btn.disabled = false;
@@ -381,10 +395,8 @@
         return;
       }
 
-      // Check if this is the new IRR-based financial structure
       const firstFinancial = financials[0];
       if (firstFinancial.current_valuation !== undefined && firstFinancial.projected_revenue_final_year !== undefined) {
-        // New IRR-based structure
         const currentVal = Number(firstFinancial.current_valuation) || 0;
         const projectedRev = Number(firstFinancial.projected_revenue_final_year) || 0;
         const multiple = Number(firstFinancial.valuation_multiple) || 0;
@@ -421,11 +433,6 @@
             </table>
           </div>
         `;
-        
-        if (ctxEl) {
-          ctxEl.style.display = 'none';
-        }
-        return;
       }
 
       const parsed = financials.map(f => ({
@@ -435,7 +442,7 @@
       })).sort((a,b) => (Number(a.year) || 0) - (Number(b.year) || 0));
 
       const rows = parsed.map(f => `
-        <tr class="border-b border-slate-800">
+        <tr class="border-b border-slate-800 hover:bg-slate-700/20 transition">
           <td class="py-2 px-3 text-gray-300 text-sm">${f.year}</td>
           <td class="py-2 px-3 text-brand-400 font-semibold text-sm">₱${f.revenue.toLocaleString()}</td>
           <td class="py-2 px-3 text-accent-400 font-semibold text-sm">${f.profit.toLocaleString()}</td>
@@ -456,53 +463,6 @@
           </table>
         </div>
       `;
-
-      if (!ctxEl) return;
-
-      ctxEl.width = ctxEl.parentElement.offsetWidth;
-      ctxEl.height = 250;
-      ctxEl.style.width = '100%';
-      ctxEl.style.height = '250px';
-
-      const ctx = ctxEl.getContext("2d");
-      if (chartInstance) {
-        try { chartInstance.destroy(); } catch(e){/*ignore*/ }
-        chartInstance = null;
-      }
-
-      chartInstance = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: parsed.map(p => p.year),
-          datasets: [
-            { label: "Revenue", data: parsed.map(p => p.revenue), backgroundColor: "#3b82f6", borderRadius: 4 },
-            { label: "Profit", data: parsed.map(p => p.profit), backgroundColor: "#10b981", borderRadius: 4 }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: { duration: 0 },
-          plugins: {
-            legend: { labels: { color: '#fff', font: { size: 11 }, boxHeight: 12 } }
-          },
-          scales: {
-            x: {
-              ticks: { color: '#9ca3af', font: { size: 10 } },
-              grid: { drawBorder: false, color: 'rgba(148, 163, 184, 0.1)' }
-            },
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: '#9ca3af',
-                font: { size: 10 },
-                callback: v => "₱" + Number(v).toLocaleString()
-              },
-              grid: { drawBorder: false, color: 'rgba(148, 163, 184, 0.1)' }
-            }
-          }
-        }
-      });
     }
 
     async function loadDeckReport(startupIdParam) {
@@ -524,7 +484,7 @@
       container.innerHTML = teamMembers.map(member => `
         <div class="bg-slate-800/30 border border-slate-700 rounded-lg p-4 hover:border-blue-500/50 transition-all">
           <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
               ${escapeHtml(member.name).charAt(0).toUpperCase()}
             </div>
             <div class="flex-1 min-w-0">
@@ -544,7 +504,6 @@
 
       await refreshWatchlist();
 
-      // Load startup data from the profile endpoint which includes deck data
       let startup = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/profile/`);
       
       if (!startup) {
@@ -552,9 +511,7 @@
         return;
       }
 
-      // Check if this is a deck-builder startup
       if (startup.report_type === 'deck') {
-        // Use deck data
         const deckInfo = startup.deck_info || {};
         const problem = startup.problem || null;
         const solution = startup.solution || null;
@@ -583,7 +540,6 @@
         return;
       }
 
-      // Regular startup (non-deck)
       populateHeaderFromStartup(startup);
       const inWatchlist = startup.is_in_watchlist === true;
       currentWatchlistState = inWatchlist;
