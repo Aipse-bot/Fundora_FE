@@ -386,10 +386,8 @@
         return;
       }
 
-      // Check if this is the new IRR-based financial structure
       const firstFinancial = financials[0];
       if (firstFinancial.current_valuation !== undefined && firstFinancial.projected_revenue_final_year !== undefined) {
-        // New IRR-based structure
         const currentVal = Number(firstFinancial.current_valuation) || 0;
         const projectedRev = Number(firstFinancial.projected_revenue_final_year) || 0;
         const multiple = Number(firstFinancial.valuation_multiple) || 0;
