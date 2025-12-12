@@ -443,6 +443,11 @@
 
             // --- Data Completeness Calculation ---
             function updateCompleteness() {
+
+              if (!domCache.completenessBar || !domCache.completenessText || !domCache.completenessHiddenInput) {
+                  return;
+              }
+
                 let filledFields = 0;
                 formInputs.forEach(input => {
                     if ((input.type === 'select-one' && input.value !== "") || (input.type !== 'select-one' && input.value && input.value.trim() !== '')) {
