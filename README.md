@@ -15,8 +15,8 @@ Fundora is a web-based discovery platform that bridges the funding visibility ga
 ## Table of Contents
 
 - [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
 - [Deployment](#deployment)
 - [Test Accounts](#test-accounts)
 
