@@ -199,7 +199,7 @@
       'the-team': () => bindTeamFormEvents(deckId),
       'the-solution': () => bindSolutionFormEvents(deckId),
       'market-analysis': () => bindMarketFormEvents(deckId),
-      'financials': () => bindFinancialFormEvents(deckId),
+      'financials': () => bindFinancialProjectionsEvents(deckId),
       'the-ask': () => bindAskFormEvents(deckId),
     };
 
@@ -214,7 +214,14 @@
 
   async function bindCoverFormEvents(deckId) {
     const form = document.getElementById('coverForm');
+    const companyInput = document.getElementById('company_name');
+    const taglineInput = document.getElementById('tagline');
+    const previewCompany = document.getElementById('preview-company-name');
+    const previewTagline = document.getElementById('preview-tagline');
+    const previewInitial = document.getElementById('preview-initial');
     const token = sessionStorage.getItem('authToken');
+
+    if (!form) return;
 
     // Load existing data if available
     try {
@@ -223,14 +230,24 @@
       });
       if (res.ok) {
         const data = await res.json();
-        document.getElementById('company_name').value = data.company_name || '';
-        document.getElementById('tagline').value = data.tagline || '';
+        companyInput.value = data.company_name || '';
+        taglineInput.value = data.tagline || '';
+        previewCompany.textContent = data.company_name || 'Your company name...';
+        previewTagline.textContent = data.tagline || 'Your tagline...';
       }
     } catch (err) {
       console.warn('No existing cover data found or failed to load:', err);
     }
 
-    console.log('Binding cover form events for deck ID:', deckId);
+
+    // Live preview updates
+    companyInput.addEventListener('input', () => {
+      previewCompany.textContent = companyInput.value.trim() || 'Your company name...';
+    }, { passive: true });
+
+    taglineInput.addEventListener('input', () => {
+      previewTagline.textContent = taglineInput.value.trim() || 'Your tagline...';
+    }, { passive: true });
 
     // Bind form submission
     form.addEventListener('submit', async function (e) {
@@ -250,7 +267,7 @@
 
         if (response.ok) {
           localStorage.setItem('deck_id', data.deck_id);
-          loadSection('the-problem', deckId);
+          loadSection('the-problem', data.deck_id); // ✅ use fresh ID
         } else {
           document.getElementById('errorCompanyName').textContent = data.errors?.company_name || '';
           document.getElementById('errorCompanyName').classList.toggle('hidden', !data.errors?.company_name);
@@ -443,7 +460,7 @@
           : '<span class="text-gray-400">Target audience</span>';
 
         previewGrowth.innerHTML = data.market_growth_rate
-          ? String(data.market_growth_rate).replace(/\n/g, '<br>')
+          ? `${String(data.market_growth_rate).replace(/\n/g, '<br>')} %`
           : '<span class="text-gray-400">Growth rate</span>';
 
         previewAdvantage.innerHTML = data.competitive_advantage
@@ -472,7 +489,8 @@
     marketGrowthRate.addEventListener('input', () => {
       const value = marketGrowthRate.value.trim();
       previewGrowth.innerHTML = value
-        ? value.replace(/\n/g, '<br>')
+        // ? value.replace(/\n/g, '<br>')
+        ? `${value.replace(/\n/g, '<br>')} %`
         : '<span class="text-gray-400">Growth rate</span>';
     }, { passive: true });
 
@@ -996,6 +1014,229 @@
         }
       }
     });
+  }
+
+  async function bindFinancialProjectionsEvents(deckId) {
+    const form = document.getElementById('financialForm');
+    const currentValuationInput = document.getElementById('currentValuation');
+    const industryMultipleInput = document.getElementById('industryValuationMultiple');
+    const yearsInput = document.getElementById('yearsToProjection');
+    const revenueInput = document.getElementById('futureProjectedRevenue');
+    const previewTable = document.getElementById('financialPreviewTable');
+    const token = sessionStorage.getItem('authToken');
+
+    if (!form) return;
+
+    // Load existing data
+    try {
+      const res = await fetch(`https://fundora-be-singapore.onrender.com/api/deck/financial/?deck_id=${deckId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        currentValuationInput.value = data.current_valuation || '';
+        industryMultipleInput.value = data.valuation_multiple || '';
+        yearsInput.value = data.years_to_projection || '';
+        revenueInput.value = data.projected_revenue_final_year || '';
+        updateCalculations();
+      }
+    } catch (err) {
+      console.warn('No existing financial data found:', err);
+    }
+
+    // Live update on input
+    [currentValuationInput, industryMultipleInput, yearsInput, revenueInput].forEach(input => {
+      if (input) {
+        input.addEventListener('input', updateCalculations, { passive: true });
+      }
+    });
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await saveFinancials();
+    });
+
+    function updateCalculations() {
+      const currentVal = parseFloat(currentValuationInput.value);
+      const industryMultiple = parseFloat(industryMultipleInput.value);
+      const years = parseInt(yearsInput.value);
+      const futureRevenue = parseFloat(revenueInput.value);
+
+      if (!currentVal || !industryMultiple || !years || !futureRevenue) {
+        previewTable.innerHTML = `
+          <tr>
+            <td colspan="2" class="text-center py-8 text-gray-400">
+              <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+              </svg>
+              <p class="text-sm">Fill in the form to see calculations</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const futureValuation = futureRevenue * industryMultiple;
+      const irrDecimal = Math.pow(futureValuation / currentVal, 1 / years) - 1;
+      const irrPercentage = irrDecimal * 100;
+
+      previewTable.innerHTML = `
+        <tr class="hover:bg-slate-700/30 transition">
+          <td class="py-3 text-gray-300 text-sm font-medium">Current Valuation</td>
+          <td class="py-3 text-right text-white font-semibold">₱${currentVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+        </tr>
+        <tr class="hover:bg-slate-700/30 transition">
+          <td class="py-3 text-gray-300 text-sm font-medium">Future Revenue (Year ${years})</td>
+          <td class="py-3 text-right text-white font-semibold">₱${futureRevenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+        </tr>
+        <tr class="hover:bg-slate-700/30 transition">
+          <td class="py-3 text-gray-300 text-sm font-medium">Valuation Multiple</td>
+          <td class="py-3 text-right text-white font-semibold">${industryMultiple.toFixed(2)}x</td>
+        </tr>
+        <tr class="bg-blue-500/10 hover:bg-blue-500/20 transition">
+          <td class="py-3 text-blue-300 text-sm font-bold">Future Valuation (Year ${years})</td>
+          <td class="py-3 text-right text-blue-400 font-bold text-lg">₱${futureValuation.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+        </tr>
+        <tr class="bg-emerald-500/10 hover:bg-emerald-500/20 transition">
+          <td class="py-3 text-emerald-300 text-sm font-bold">IRR (${years} years)</td>
+          <td class="py-3 text-right text-emerald-400 font-bold text-lg">${irrPercentage.toFixed(2)}%</td>
+        </tr>
+      `;
+
+      updateIRRChart(irrPercentage, years, currentVal, futureValuation);
+    }
+
+    let chartInstance = null;
+
+    function updateIRRChart(irrPercentage, years, currentVal, futureValuation) {
+      const canvas = document.getElementById('irrChart');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      const yearLabels = ['Year 0'];
+      const valuationData = [currentVal];
+      
+      const irrDecimal = irrPercentage / 100;
+      for (let i = 1; i <= years; i++) {
+        yearLabels.push(`Year ${i}`);
+        valuationData.push(currentVal * Math.pow(1 + irrDecimal, i));
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: yearLabels,
+          datasets: [{
+            label: 'Projected Valuation',
+            data: valuationData,
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 6,
+            pointBackgroundColor: 'rgb(59, 130, 246)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: '#e5e7eb',
+                font: { size: 11, weight: '600' }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              titleColor: '#fff',
+              bodyColor: '#cbd5e1',
+              borderColor: 'rgba(59, 130, 246, 0.5)',
+              borderWidth: 1,
+              padding: 12,
+              callbacks: {
+                label: function(context) {
+                  return 'Valuation: ₱' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#9ca3af', font: { size: 10 } },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#9ca3af',
+                font: { size: 10 },
+                callback: function(value) {
+                  return '₱' + (value / 1000000).toFixed(1) + 'M';
+                }
+              },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+            }
+          }
+        }
+      });
+    }
+
+    async function saveFinancials() {
+      try {
+        const currentVal = parseFloat(currentValuationInput.value);
+        const industryMultiple = parseFloat(industryMultipleInput.value);
+        const years = parseInt(yearsInput.value);
+        const futureRevenue = parseFloat(revenueInput.value);
+
+        if (!currentVal || !industryMultiple || !years || !futureRevenue) {
+          alert('Please fill in all required fields');
+          return;
+        }
+
+        const response = await fetch('https://fundora-be-singapore.onrender.com/api/deck/financial/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            deck_id: parseInt(deckId),
+            current_valuation: currentVal,
+            industry_valuation_multiple: industryMultiple,
+            years_to_projection: years,
+            projected_revenue: futureRevenue
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Financial save failed:', errorText);
+          alert('Failed to save financials: ' + errorText);
+          return;
+        }
+
+        const result = await response.json();
+        localStorage.setItem('deck_id', result.deck_id);
+        
+        // Navigate to next section
+        loadSection('the-ask', result.deck_id);
+
+      } catch (error) {
+        console.error('Error saving financials:', error);
+        alert('Failed to save financials. Please try again. Error: ' + error.message);
+      }
+    }
   }
 
   function prettify(text) {

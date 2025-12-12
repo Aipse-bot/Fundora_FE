@@ -326,7 +326,6 @@
           return response.json();
         })
         .then(data => {
-          console.log('[v0] Fetched startup data:', data);
           startupData = data;
           initializeUI();
         })
@@ -341,23 +340,20 @@
 
       const isDeckBuilder = startupData.is_deck_builder === true || startupData.source_deck_id != null;
       const riskLevel = startupData.risk_level;
-      const projectedReturn = isDeckBuilder ? startupData.estimated_growth_rate : startupData.projected_return;
+      
+      const projectedReturn = isDeckBuilder 
+        ? startupData.pitch_deck_projected_return  // for Pitch Deck (IRR)
+        : startupData.projected_return;            // for Normal Startup (IRR)
 
-      console.log('[v0] Initializing UI:', {
-        isDeckBuilder,
-        riskLevel,
-        projectedReturn,
-        startupName: startupData.company_name
-      });
 
       // Update startup name
       domCache.startupName.textContent = startupData.company_name || 'Unknown Startup';
 
-      // Check if we have a valid growth rate from backend
+      // Check if we have a valid IRR from backend
       if (projectedReturn === null || projectedReturn === undefined) {
           const errorMsg = isDeckBuilder 
-            ? 'This pitch deck does not have sufficient financial projections for investment simulation.\n\nRequired: At least 2 years of revenue projections'
-            : 'This startup does not have sufficient financial data for investment simulation.\n\nRequired: Revenue history (current and previous period revenue)';
+            ? 'This pitch deck does not have sufficient financial projections for investment simulation.\n\nRequired: projected_revenue_final_year, valuation_multiple, current_valuation, years_to_projection'
+            : 'This startup does not have sufficient financial data for investment simulation.\n\nRequired: current_valuation, expected_future_valuation, years_to_future_valuation';
           
           alert(errorMsg);
           
@@ -395,24 +391,6 @@
     function runSimulation() {
       const investmentAmount = parseFloat(domCache.investmentInput.value);
       const durationYears = parseInt(domCache.durationInput.value);
-      
-      // Use correct field based on startup type
-      const isDeckBuilder = startupData.is_deck_builder === true || startupData.source_deck_id != null;
-      const projectedReturn = isDeckBuilder ? startupData.estimated_growth_rate : startupData.projected_return;
-      const riskLevel = startupData.risk_level;
-      
-      console.log('[v0] Running simulation with:', {
-        isDeckBuilder,
-        projectedReturn,
-        riskLevel,
-        investmentAmount,
-        durationYears
-      });
-      
-      if (projectedReturn === null || projectedReturn === undefined) {
-        alert('Cannot run simulation: No growth rate available');
-        return;
-      }
 
       if (isNaN(investmentAmount) || investmentAmount <= 0) {
         alert('Please enter a valid investment amount');
@@ -428,77 +406,109 @@
       domCache.btnText.classList.add('hidden');
       domCache.btnSpinner.classList.remove('hidden');
 
-      // Simulate async computation with smooth delay
-      setTimeout(() => {
-        console.log('[v0] === RUNNING SIMULATION ===');
-        console.log('[v0] Startup Type:', isDeckBuilder ? 'Pitch Deck' : 'Regular Startup');
-        console.log('[v0] Investment Amount:', investmentAmount);
-        console.log('[v0] Duration:', durationYears, 'years');
-        console.log('[v0] Base Growth Rate:', projectedReturn.toFixed(2) + '%');
-
-        // Apply risk adjustment ONLY for regular startups, NOT for pitch decks
-        let adjustedGrowthRate = projectedReturn;
-        
-        if (!isDeckBuilder && riskLevel) {
-          const riskMultipliers = {
-            'Low': 1.00,
-            'Medium': 0.75,
-            'High': 0.50
-          };
-          const multiplier = riskMultipliers[riskLevel] || 0.75;
-          adjustedGrowthRate = projectedReturn * multiplier;
+      const apiUrl = 'https://fundora-be-singapore.onrender.com/api/investor/simulation/';
+      const token = sessionStorage.getItem('authToken');
+      
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          startup_id: new URLSearchParams(window.location.search).get('startup_id'),
+          investment_amount: investmentAmount,
+          duration_years: durationYears
+        })
+      })
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(err => {
+              throw new Error(err.detail || err.error || 'Simulation failed');
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
           
-          console.log('[v0] Risk Level:', riskLevel);
-          console.log('[v0] Risk Multiplier:', multiplier);
-          console.log('[v0] Risk-Adjusted Growth Rate:', adjustedGrowthRate.toFixed(2) + '%');
-        } else if (isDeckBuilder) {
-          console.log('[v0] Pitch Deck - No risk adjustment applied');
-        }
+          simulationData = {
+            investmentAmount: data.investment_amount,
+            durationYears: data.duration_years,
+            finalValue: data.final_value,
+            totalGain: data.total_gain,
+            roiPercentage: data.roi_percentage,
+            yearlyBreakdown: data.yearly_breakdown,
+            growthRate: data.risk_adjusted_return,
+            baseGrowthRate: data.base_projected_return,
+            riskAdjusted: data.risk_adjustment_applied
+          };
 
-        console.log('[v0] Formula: FV = amount × (1 + adjustedGrowthRate)^years');
+          displayResults();
 
-        // Calculate using risk-adjusted rate
-        const growthRate = adjustedGrowthRate / 100;
-        const finalValue = investmentAmount * Math.pow(1 + growthRate, durationYears);
-        const totalGain = finalValue - investmentAmount;
-        const roiPercentage = (totalGain / investmentAmount) * 100;
-
-        const yearlyBreakdown = [];
-        let currentValue = investmentAmount;
-        for (let year = 1; year <= durationYears; year++) {
-          const start = currentValue;
-          const growth = start * growthRate;
-          const end = start + growth;
-          yearlyBreakdown.push({ year, start, growth, end });
-          currentValue = end;
-        }
-
-        simulationData = { 
-          investmentAmount, 
-          durationYears, 
-          finalValue, 
-          totalGain, 
-          roiPercentage, 
-          yearlyBreakdown,
-          growthRate: adjustedGrowthRate,
-          baseGrowthRate: projectedReturn,
-          riskAdjusted: !isDeckBuilder && riskLevel != null
-        };
-
-        console.log('[v0] Simulation Results:', {
-          finalValue: finalValue.toFixed(2),
-          totalGain: totalGain.toFixed(2),
-          roi: roiPercentage.toFixed(2) + '%',
-          riskAdjusted: simulationData.riskAdjusted
+          // Reset button state
+          domCache.simulateBtn.disabled = false;
+          domCache.btnText.classList.remove('hidden');
+          domCache.btnSpinner.classList.add('hidden');
+        })
+        .catch(error => {
+          console.error('[v0] Simulation error:', error);
+          alert('Error running simulation: ' + error.message);
+          
+          domCache.simulateBtn.disabled = false;
+          domCache.btnText.classList.remove('hidden');
+          domCache.btnSpinner.classList.add('hidden');
         });
+    }
 
-        displayResults();
+    function initializeUI() {
+      if (!startupData) return;
 
-        // Reset button state
-        domCache.simulateBtn.disabled = false;
-        domCache.btnText.classList.remove('hidden');
-        domCache.btnSpinner.classList.add('hidden');
-      }, 600);
+      const isDeckBuilder = startupData.is_deck_builder === true || startupData.source_deck_id != null;
+      const riskLevel = startupData.risk_level;
+      
+      const projectedReturn = isDeckBuilder 
+        ? startupData.pitch_deck_projected_return
+        : startupData.projected_return;
+
+      domCache.startupName.textContent = startupData.company_name || 'Unknown Startup';
+
+      // Check if we have a valid IRR from backend
+      if (projectedReturn === null || projectedReturn === undefined) {
+          const errorMsg = isDeckBuilder 
+            ? 'This pitch deck does not have sufficient financial projections for investment simulation.\n\nRequired: projected_revenue_final_year, valuation_multiple, current_valuation, years_to_projection'
+            : 'This startup does not have sufficient financial data for investment simulation.\n\nRequired: current_valuation, expected_future_valuation, years_to_future_valuation';
+          
+          alert(errorMsg);
+          
+          domCache.simulateBtn.disabled = true;
+          domCache.simulateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          domCache.btnText.textContent = 'Insufficient Data';
+          
+          domCache.riskBadge.textContent = 'No Financial Data';
+          domCache.riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
+          
+          return;
+      }
+
+      // Update risk badge
+      if (isDeckBuilder) {
+        domCache.riskBadge.textContent = 'Pitch Deck';
+        domCache.riskBadge.className = 'bg-brand-500/20 text-brand-300 text-sm font-medium px-4 py-2 rounded-full border border-brand-500/30';
+      } else if (riskLevel === null || riskLevel === undefined || riskLevel === 'Data Pending') {
+        domCache.riskBadge.textContent = 'Risk Pending';
+        domCache.riskBadge.className = 'bg-gray-500/20 text-gray-300 text-sm font-medium px-4 py-2 rounded-full border border-gray-500/30';
+      } else {
+        domCache.riskBadge.textContent = `${riskLevel} Risk`;
+        
+        const riskColors = {
+          'Low': 'bg-accent-500/20 text-accent-300 border-accent-500/30',
+          'Medium': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+          'High': 'bg-red-500/20 text-red-300 border-red-500/30'
+        };
+        
+        const colorClass = riskColors[riskLevel] || 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+        domCache.riskBadge.className = `${colorClass} text-sm font-medium px-4 py-2 rounded-full border`;
+      }
     }
 
     function displayResults() {
@@ -509,17 +519,23 @@
       domCache.finalValue.textContent = `₱${Math.round(finalValue).toLocaleString()}`;
       domCache.totalGain.textContent = `₱${Math.round(totalGain).toLocaleString()}`;
 
-      domCache.breakdownTable.innerHTML = yearlyBreakdown.map(({ year, start, growth, end }) => `
-        <tr class="table-row-hover border-b border-slate-800/50">
-          <td class="px-6 py-4 text-sm font-semibold text-white">Year ${year}</td>
-          <td class="px-6 py-4 text-sm text-gray-300">₱${Math.round(start).toLocaleString()}</td>
-          <td class="px-6 py-4 text-sm text-accent-400 font-medium">₱${Math.round(growth).toLocaleString()}</td>
-          <td class="px-6 py-4 text-sm font-semibold text-white">₱${Math.round(end).toLocaleString()}</td>
-        </tr>
-      `).join('');
+      domCache.breakdownTable.innerHTML = yearlyBreakdown.map((item) => {
+        const year = item.year;
+        const start = item.starting_value || item.start || 0;
+        const growth = item.growth_amount || item.growth || 0;
+        const end = item.ending_value || item.end || 0;
+        
+        return `
+          <tr class="table-row-hover border-b border-slate-800/50">
+            <td class="px-6 py-4 text-sm font-semibold text-white">Year ${year}</td>
+            <td class="px-6 py-4 text-sm text-gray-300">₱${Math.round(start).toLocaleString()}</td>
+            <td class="px-6 py-4 text-sm text-accent-400 font-medium">₱${Math.round(growth).toLocaleString()}</td>
+            <td class="px-6 py-4 text-sm font-semibold text-white">₱${Math.round(end).toLocaleString()}</td>
+          </tr>
+        `;
+      }).join('');
 
       renderGrowthChart(yearlyBreakdown);
-      
       renderAnnualChart(yearlyBreakdown);
 
       domCache.resultsSection.classList.remove('hidden');
@@ -533,7 +549,8 @@
       }
 
       const labels = yearlyBreakdown.map(d => `Year ${d.year}`);
-      const data = yearlyBreakdown.map(d => Math.round(d.end));
+      // FIX: Use correct field names from backend
+      const data = yearlyBreakdown.map(d => Math.round(d.ending_value || d.end || 0));
 
       growthChartInstance = new Chart(ctx, {
         type: 'line',
@@ -614,7 +631,8 @@
       }
 
       const labels = yearlyBreakdown.map(d => `Year ${d.year}`);
-      const data = yearlyBreakdown.map(d => Math.round(d.growth));
+      // FIX: Use correct field names from backend
+      const data = yearlyBreakdown.map(d => Math.round(d.growth_amount || d.growth || 0));
 
       annualChartInstance = new Chart(ctx, {
         type: 'bar',

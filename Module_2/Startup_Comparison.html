@@ -493,10 +493,6 @@
           throw new Error(`Failed to fetch startup ${id}`);
         }
         const data = await response.json();
-        console.log(`Fetched startup ${id}${bustCache ? ' (fresh)' : ''}:`, {
-          name: data.company_name,
-          analytics: data.analytics
-        });
         return data;
       } catch (error) {
         console.error(`Error fetching startup ${id}:`, error);
@@ -526,7 +522,6 @@
 
       try {
         // Fetch startup data with cache-busting to get fresh analytics
-        console.log('🔄 Fetching startup data with fresh analytics...');
         const promises = startupIds.map(id => fetchStartupById(id, true));
         const results = await Promise.all(promises);
         startupsData = results.filter(s => s !== null);
@@ -535,11 +530,6 @@
           showError('Failed to load startup data');
           return;
         }
-
-        console.log('✅ Startup data loaded with analytics:', startupsData.map(s => ({
-          name: s.company_name,
-          analytics: s.analytics
-        })));
 
         domCache.loadingState.classList.add('hidden');
         
@@ -589,18 +579,12 @@
       container.className = `grid grid-cols-1 md:grid-cols-${startupsData.length} gap-6`;
       container.innerHTML = '';
 
-      console.log('\n🎨 Rendering Comparison Analytics:');
       
       startupsData.forEach((startup, idx) => {
         const analytics = startup.analytics || {};
         const totalComparisons = analytics.total_comparisons || 0;
         const uniqueComparers = analytics.unique_comparers || 0;
         const recentComparisons = analytics.recent_comparisons || 0;
-        
-        console.log(`\n${startup.company_name}:`);
-        console.log(`  📊 Total Comparisons: ${totalComparisons}`);
-        console.log(`  👥 Unique Comparers: ${uniqueComparers}`);
-        console.log(`  📅 Recent Comparisons (30d): ${recentComparisons}`);
 
         const card = document.createElement('div');
         card.className = 'bg-slate-800/50 border border-slate-700 rounded-xl p-5';

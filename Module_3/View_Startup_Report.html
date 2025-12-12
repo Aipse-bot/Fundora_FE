@@ -477,7 +477,6 @@
                     }
                 }
                 
-                console.log('Delete response:', { status: response.status, result });
                 
                 if (response.ok && result.success) {
                     alert(result.message || 'Startup deleted successfully!');
@@ -549,15 +548,10 @@
 
             const response = await res.json();
             
-            console.log('📊 Full API Response:', response);
-            console.log('📊 Response keys:', Object.keys(response));
             
             const startup = response.startup || response;
             const data = startup;
             
-            console.log('🏢 Startup object:', startup);
-            console.log('💰 Data object:', data);
-            console.log('💰 All available fields:', Object.keys(data));
 
             // Populate Company Profile
             const companyName = startup.company_name || data.company_name || 'N/A';
@@ -595,22 +589,6 @@
             
             const revenueGrowth = priorRevenue > 0 ? ((currentRevenue - priorRevenue) / priorRevenue * 100) : 0;
             
-            console.log('💵 Financial Data:', {
-                currentRevenue,
-                priorRevenue,
-                netIncome,
-                ebit,
-                revenueGrowth,
-                rawData: {
-                    revenue: data.revenue,
-                    current_revenue: data.current_revenue,
-                    previous_revenue: data.previous_revenue,
-                    prior_revenue: data.prior_revenue,
-                    net_income: data.net_income,
-                    current_net_income: data.current_net_income,
-                    ebit: data.ebit
-                }
-            });
 
             getCachedElement('prior-revenue').textContent = `₱${priorRevenue.toLocaleString()}`;
             getCachedElement('current-revenue').textContent = `₱${currentRevenue.toLocaleString()}`;
@@ -630,22 +608,6 @@
             const shareholderEquity = totalAssets - totalLiabilities;
             const liabilityPercentage = totalAssets > 0 ? (totalLiabilities / totalAssets * 100) : 0;
             
-            console.log('📊 Balance Sheet:', {
-                totalAssets,
-                totalLiabilities,
-                currentAssets,
-                currentLiabilities,
-                retainedEarnings,
-                shareholderEquity,
-                liabilityPercentage,
-                rawData: {
-                    total_assets: data.total_assets,
-                    total_liabilities: data.total_liabilities,
-                    current_assets: data.current_assets,
-                    current_liabilities: data.current_liabilities,
-                    retained_earnings: data.retained_earnings
-                }
-            });
 
             getCachedElement('total-assets').textContent = `₱${totalAssets.toLocaleString()}`;
             getCachedElement('current-assets').textContent = `₱${currentAssets.toLocaleString()}`;
@@ -662,14 +624,6 @@
                 data.cash_flow
             ) || 0;
             
-            console.log('💸 Cash Flow:', {
-                operationsCashFlow,
-                rawData: {
-                    cash_flow: data.cash_flow,
-                    operations_cash_flow: data.operations_cash_flow,
-                    operating_cash_flow: data.operating_cash_flow
-                }
-            });
 
             const formatCashFlow = (value) => {
                 const sign = value >= 0 ? '' : '-';
@@ -683,11 +637,6 @@
             const expectedFutureValuation = parseFloat(data.expected_future_valuation) || 0;
             const yearsToFutureValuation = parseFloat(data.years_to_future_valuation) || 0;
             
-            console.log('📈 Valuation Data:', {
-                currentValuation,
-                expectedFutureValuation,
-                yearsToFutureValuation
-            });
 
             getCachedElement('current-valuation').textContent = `₱${currentValuation.toLocaleString()}`;
             getCachedElement('expected-future-valuation').textContent = `₱${expectedFutureValuation.toLocaleString()}`;
