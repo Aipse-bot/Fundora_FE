@@ -140,6 +140,28 @@
       box-shadow: 0 20px 40px rgba(59, 130, 246, 0.25), 0 0 20px rgba(59, 130, 246, 0.1);
     }
 
+    .startup-card.ai-recommended {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .startup-card.ai-recommended::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #10b981, #3b82f6);
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite linear;
+    }
+
+    .ai-badge {
+      background: linear-gradient(135deg, #3b82f6, #10b981);
+      animation: pulse-glow 2s infinite;
+    }
+
     /* Stagger animation for cards */
     .startup-card:nth-child(1) { animation-delay: 0.05s; }
     .startup-card:nth-child(2) { animation-delay: 0.1s; }
@@ -343,6 +365,12 @@
           <h1 class="text-2xl font-bold bg-gradient-to-r from-brand-400 to-accent-400 bg-clip-text text-transparent">Fundora</h1>
         </div>
         <div class="flex items-center space-x-2 sm:space-x-3">
+          <button id="show-ai-btn" class="hidden sm:flex bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-700 hover:to-accent-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium transition-all items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 text-sm">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+            <span>AI Picks</span>
+          </button>
           <a href="/Module_2/Compare_Startups.html?return=/Module_1/Dashboard.html" class="hidden sm:flex bg-accent-600 hover:bg-accent-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium transition-all items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 text-sm">
             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
@@ -598,6 +626,7 @@
     const API_BASE = 'https://fundora-be-singapore.onrender.com';
     const STARTUPS_ENDPOINT = `${API_BASE}/api/investor/startups/`;
     const WATCHLIST_ENDPOINT = `${API_BASE}/api/investor/watchlist/`;
+    const AI_RECOMMENDATIONS_ENDPOINT = `${API_BASE}/api/ai-recommendations/`;
     const ADD_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/add/${id}/`;
     const REMOVE_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/remove/${id}/`;
     const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
@@ -606,6 +635,7 @@
     const INVEST_PAGE = '../Module_2/Investment_Simulation.html';
 
     let watchlistIdsSet = new Set();
+    let aiRecommendedIds = new Set();
 
     function getAuthToken() {
       return sessionStorage.getItem('authToken');
@@ -647,6 +677,21 @@
       const ct = res.headers.get('content-type') || '';
       if (ct.includes('application/json')) return await res.json();
       return await res.text();
+    }
+
+    async function fetchAIRecommendations() {
+      try {
+        const data = await fetchJSON(`${AI_RECOMMENDATIONS_ENDPOINT}?n=10`, { method: 'GET' });
+        if (data.recommendations && data.ai_powered) {
+          aiRecommendedIds = new Set(data.recommendations.map(s => s.id));
+          console.log(`✨ Loaded ${aiRecommendedIds.size} AI recommendations`);
+          return true;
+        }
+        return false;
+      } catch (err) {
+        console.warn('Could not fetch AI recommendations:', err);
+        return false;
+      }
     }
 
     async function refreshWatchlist() {
@@ -743,13 +788,19 @@
     function renderStartup(startup) {
       const isPitchDeck = startup.source_deck_id != null || startup.is_deck_builder === true || startup.is_deck_builder === 'true' || startup.startup_type === 'pitch_deck';
       
+      const isAIRecommended = aiRecommendedIds.has(Number(startup.id));
       const card = document.createElement('div');
-      card.className = 'startup-card bg-slate-900/40 border border-slate-800/50 rounded-lg p-6 flex flex-col';
+      card.className = `startup-card ${isAIRecommended ? 'ai-recommended' : ''} bg-slate-900/40 border border-slate-800/50 rounded-lg p-6 flex flex-col`;
       card.setAttribute('data-startup-id', startup.id);
       card.setAttribute('data-is-deck-builder', isPitchDeck);
 
       let hasDataPending = startup.has_sufficient_data === false || startup.risk_level === 'Data Pending';
       let riskBadge;
+      let aiBadge = '';
+
+      if (isAIRecommended) {
+          aiBadge = '<span class="ai-badge text-white text-xs font-bold px-3 py-1 rounded-full">✨ AI Pick</span>';
+      }
 
       if (isPitchDeck) {
           riskBadge = '<span class="bg-brand-600/20 text-brand-300 text-xs font-medium px-3 py-1 rounded-full border border-brand-600/30">Pitch Deck</span>';
@@ -815,13 +866,14 @@
       }
 
       card.innerHTML = `
-          <div class="flex justify-between items-start mb-4">
-              <div class="flex-1">
-                  <h3 class="text-lg font-semibold text-white mb-1">${escapeHtml(startup.company_name)}</h3>
-                  <p class="text-sm text-gray-400">${escapeHtml(industry)}</p>
-              </div>
-              <div class="flex flex-col items-end space-y-2">
-                  ${riskBadge}
+        <div class="flex justify-between items-start mb-4">
+            <div class="flex-1">
+                <h3 class="text-lg font-semibold text-white mb-1">${escapeHtml(startup.company_name)}</h3>
+                <p class="text-sm text-gray-400">${escapeHtml(industry)}</p>
+            </div>
+            <div class="flex flex-col items-end space-y-2">
+                ${aiBadge}
+                ${riskBadge}
                   <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
                       ${inWatchlist ? watchIcon(true) : watchIcon(false)}
                   </button>
@@ -878,13 +930,17 @@
       return card;
     }
 
-    async function renderStartups(shouldRefreshWatchlist = true) {
+    async function renderStartups(shouldRefreshWatchlist = true, shouldFetchAI = true) {
       try {
         const grid = document.getElementById('startup-grid');
-          showLoadingSkeletons(6);
+        showLoadingSkeletons(6);
 
         if (shouldRefreshWatchlist) {
           await refreshWatchlist();
+        }
+
+        if (shouldFetchAI) {
+          await fetchAIRecommendations();
         }
 
         const form = document.getElementById('filterForm');
@@ -1020,6 +1076,29 @@
     document.getElementById('filterForm').addEventListener('submit', (e) => {
       e.preventDefault();
       renderStartups(false);
+    });
+
+    // AI Recommendations button handler
+    document.getElementById('show-ai-btn').addEventListener('click', async () => {
+      clearAllFilters();
+      await fetchAIRecommendations();
+      
+      const grid = document.getElementById('startup-grid');
+      const allCards = Array.from(grid.children);
+      
+      // Filter and show only AI recommended startups
+      allCards.forEach(card => {
+        const startupId = Number(card.getAttribute('data-startup-id'));
+        if (aiRecommendedIds.has(startupId)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      
+      const visibleCount = allCards.filter(c => c.style.display !== 'none').length;
+      document.getElementById('startup-count').textContent = visibleCount;
+      document.getElementById('startup-plural').textContent = visibleCount === 1 ? '' : 's';
     });
 
     // Initial render
