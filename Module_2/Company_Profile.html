@@ -262,7 +262,7 @@
 
     async function recordView() {
         try {
-            const response = await fetch(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/view/`, {
+            const response = await fetch(`http://127.0.0.1:8000/api/startups/${startupId}/view/`, {
                 method: 'POST',
                 headers: authHeaders()
             });
@@ -288,7 +288,7 @@
         await recordView();
 
         try {
-            const res = await fetch(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`, {
+            const res = await fetch(`http://127.0.0.1:8000/api/startups/${startupId}/`, {
                 headers: authHeaders(),
             });
             
@@ -560,7 +560,7 @@
         try {
             const action = shouldAdd ? 'add' : 'remove';
             
-            const res = await fetch(`https://fundora-be-singapore.onrender.com/api/investor/watchlist/${action}/${startupId}/`, {
+            const res = await fetch(`http://127.0.0.1:8000/api/investor/watchlist/${action}/${startupId}/`, {
                 method: 'POST',
                 headers: authHeaders()
             });

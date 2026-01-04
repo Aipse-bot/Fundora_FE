@@ -189,7 +189,7 @@
   </div>
 
   <script>
-    const API_BASE = 'https://fundora-be-singapore.onrender.com';
+    const API_BASE = 'http://127.0.0.1:8000';
     let chartInstance = null;
     let startupId = null;
     let watchlistIdsSet = new Set();
@@ -241,7 +241,7 @@
 
     async function refreshWatchlist() {
       try {
-        const data = await tryFetchJSON('https://fundora-be-singapore.onrender.com/api/investor/watchlist/');
+        const data = await tryFetchJSON('http://127.0.0.1:8000/api/investor/watchlist/');
         if (data) {
           const items = data.results || data.watchlist || [];
           watchlistIdsSet = new Set(items.map(it => it.id));
@@ -376,7 +376,7 @@
     }
 
     async function loadStartupData(startupIdParam) {
-      return tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupIdParam}/profile/`);
+      return tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupIdParam}/profile/`);
     }
 
     function renderFinancialTable(financials) {
@@ -504,11 +504,11 @@
     }
 
     async function loadDeckReport(startupIdParam) {
-      return tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupIdParam}/profile/`);
+      return tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupIdParam}/profile/`);
     }
 
     async function loadStartupProfile(startupIdParam) {
-      return tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupIdParam}/profile/`);
+      return tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupIdParam}/profile/`);
     }
 
     function populateTeam(teamMembers) {
@@ -543,7 +543,7 @@
       await refreshWatchlist();
 
       // Load startup data from the profile endpoint which includes deck data
-      let startup = await tryFetchJSON(`https://fundora-be-singapore.onrender.com/api/startups/${startupId}/profile/`);
+      let startup = await tryFetchJSON(`http://127.0.0.1:8000/api/startups/${startupId}/profile/`);
       
       if (!startup) {
         document.getElementById("deck-name").textContent = "Startup not found";

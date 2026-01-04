@@ -167,7 +167,7 @@
           </svg>
         </button>
         <div>
-          <h1 class="text-2xl font-bold">Investment Simulation</h1>
+          <h1 class="text-2xl font-bold">Investment Calculator</h1>
           <p id="startupName" class="text-lg text-gray-400 mt-1">Loading...</p>
         </div>
       </div>
@@ -312,7 +312,7 @@
     });
 
     function fetchStartupData(startupId) {
-      const apiUrl = `https://fundora-be-singapore.onrender.com/api/startups/${startupId}/`;
+      const apiUrl = `http://127.0.0.1:8000/api/startups/${startupId}/`;
       const token = sessionStorage.getItem('authToken');
       
       fetch(apiUrl, {
@@ -406,7 +406,7 @@
       domCache.btnText.classList.add('hidden');
       domCache.btnSpinner.classList.remove('hidden');
 
-      const apiUrl = 'https://fundora-be-singapore.onrender.com/api/investor/simulation/';
+      const apiUrl = 'http://127.0.0.1:8000/api/investor/simulation/';
       const token = sessionStorage.getItem('authToken');
       
       fetch(apiUrl, {

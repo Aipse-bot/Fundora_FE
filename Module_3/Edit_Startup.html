@@ -701,7 +701,7 @@
         }
 
         try {
-          const response = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/`, {
+          const response = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -960,7 +960,7 @@
             throw new Error('No authentication token found');
           }
 
-          const response = await fetch(`https://fundora-be-singapore.onrender.com/api/startup/${startupId}/`, {
+          const response = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/`, {
             method: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
