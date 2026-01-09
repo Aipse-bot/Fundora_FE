@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Company Profile - Fundora</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(140deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-3px);
+    }
+
+    .form-input-modern {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      color: #f1f5f9;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    .form-input-modern:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+
+    header {
+      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-indicator {
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+    }
+
+    .grid-balanced {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      gap: 2rem;
+    }
+
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(15px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .tab-button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .tab-button.active {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+    }
+    .tab-button:not(.active) {
+      background: rgba(51, 65, 85, 0.5);
+      color: #94a3b8;
+    }
+    .tab-button:not(.active):hover {
+      background: rgba(51, 65, 85, 0.8);
+      color: #cbd5e1;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @media (max-width: 768px) {
+      .grid-balanced { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-2 rounded-lg shadow-lg shadow-blue-500/30">
+          <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+          </svg>
+        </div>
+        <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Fundora</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-slate-400 text-sm">
+          Welcome, <span id="user-email" class="font-semibold text-blue-400">Loading...</span>
+        </span>
+        <img class="h-9 w-9 rounded-full border-2 border-blue-500/50 shadow-md" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User Avatar">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Form -->
+  <main class="max-w-7xl mx-auto p-8 fade-in">
+    <form id="companyForm" novalidate class="space-y-10">
+      <div class="border-b border-slate-700 pb-6">
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-400 bg-clip-text text-transparent mb-3">
+          Complete Company Profile
+        </h1>
+        <p class="text-slate-400 text-sm">Fill out your comprehensive company profile for investors</p>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="flex gap-3 flex-wrap">
+        <button type="button" class="tab-button active" data-tab="basics">Basics</button>
+        <button type="button" class="tab-button" data-tab="problem-solution">Problem & Solution</button>
+        <button type="button" class="tab-button" data-tab="market">Market</button>
+        <button type="button" class="tab-button" data-tab="traction">Traction</button>
+        <button type="button" class="tab-button" data-tab="team">Team</button>
+        <button type="button" class="tab-button" data-tab="business">Business Model</button>
+        <button type="button" class="tab-button" data-tab="financials">Financials</button>
+        <button type="button" class="tab-button" data-tab="projections">Projections</button>
+        <button type="button" class="tab-button" data-tab="funding">Funding</button>
+        <button type="button" class="tab-button" data-tab="impact">Impact & IP</button>
+        <button type="button" class="tab-button" data-tab="media">Media</button>
+        <button type="button" class="tab-button" data-tab="contact">Contact</button>
+      </div>
+
+      <!-- Tab 1: Basics -->
+      <div class="tab-content active" data-tab-content="basics">
+        <div class="grid-balanced">
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-blue-500"></span> Company Identity
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Company Name <span class="text-red-400">*</span></label>
+                  <input type="text" id="company-name" name="company_name" class="w-full px-4 py-2.5 form-input-modern" required>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Tagline</label>
+                  <input type="text" id="tagline" name="tagline" class="w-full px-4 py-2.5 form-input-modern" placeholder="One-line summary of what you do">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Industry <span class="text-red-400">*</span></label>
+                  <select id="industry" name="industry" class="w-full px-4 py-2.5 form-input-modern" required>
+                    <option value="">Select industry</option>
+                    <option>Technology</option>
+                    <option>Finance</option>
+                    <option>Healthcare</option>
+                    <option>E-commerce</option>
+                    <option>Education</option>
+                    <option>Fintech</option>
+                    <option>SaaS</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Company Description</label>
+                  <textarea id="company-description" name="company_description" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-emerald-500"></span> Company Details
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Headquarters</label>
+                  <input type="text" id="headquarters" name="headquarters" class="w-full px-4 py-2.5 form-input-modern" placeholder="City, Country">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Year Founded</label>
+                  <input type="number" id="year-founded" name="year_founded" class="w-full px-4 py-2.5 form-input-modern" min="1900" max="2026">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Company Stage</label>
+                  <select id="company-stage" name="company_stage" class="w-full px-4 py-2.5 form-input-modern">
+                    <option value="">Select stage</option>
+                    <option value="idea">Idea</option>
+                    <option value="mvp">MVP</option>
+                    <option value="early_revenue">Early Revenue</option>
+                    <option value="growth">Growth</option>
+                    <option value="scale">Scale</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Website URL</label>
+                  <input type="url" id="website-url" name="website_url" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://yourcompany.com">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">LinkedIn URL</label>
+                  <input type="url" id="linkedin-url" name="linkedin_url" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://linkedin.com/company/...">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Problem & Solution -->
+      <div class="tab-content" data-tab-content="problem-solution">
+        <div class="grid-balanced">
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="section-indicator bg-red-500"></span> Problem Statement
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Problem Description</label>
+                <textarea id="problem-statement" name="problem_statement" rows="5" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="What problem are you solving?"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="section-indicator bg-emerald-500"></span> Solution
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Solution Description</label>
+                <textarea id="solution-description" name="solution_description" rows="5" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="How does your product/service solve the problem?"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">How It Works</label>
+                <textarea id="how-it-works" name="how_it_works" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Brief explanation"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Key Features</label>
+                <textarea id="key-features" name="key_features" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="List 3-5 key features"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Market -->
+      <div class="tab-content" data-tab-content="market">
+        <div class="grid-balanced">
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="section-indicator bg-purple-500"></span> Market Analysis
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Primary Market</label>
+                <input type="text" id="primary-market" name="primary_market" class="w-full px-4 py-2.5 form-input-modern" placeholder="e.g., B2B SaaS">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Target Customer Segments</label>
+                <textarea id="target-segments" name="target_customer_segments" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Target Geography</label>
+                <input type="text" id="target-geography" name="target_geography" class="w-full px-4 py-2.5 form-input-modern" placeholder="e.g., PH, SEA, Global">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">TAM (₱)</label>
+                  <input type="number" id="market-tam" name="market_size_tam" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">SAM (₱)</label>
+                  <input type="number" id="market-sam" name="market_size_sam" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Market Growth Rate (%)</label>
+                <input type="number" id="market-growth" name="market_growth_rate" class="w-full px-4 py-2.5 form-input-modern" step="0.01">
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="section-indicator bg-yellow-500"></span> Competition
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Competitors</label>
+                <textarea id="competitors" name="competitors" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="List main competitors"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Competitive Advantage</label>
+                <textarea id="competitive-advantage" name="competitive_advantage" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Go-to-Market Strategy</label>
+                <textarea id="gtm-strategy" name="go_to_market_strategy" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Traction -->
+      <div class="tab-content" data-tab-content="traction">
+        <div class="grid-balanced">
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-yellow-500"></span> Growth Metrics
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Current MRR/ARR (₱)</label>
+                  <input type="number" id="current-mrr-arr" name="current_mrr_arr" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Total Users</label>
+                  <input type="number" id="total-users" name="total_users" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Paid Users</label>
+                  <input type="number" id="paid-users" name="paid_users" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Key Traction Metrics</label>
+                  <textarea id="key-traction-metrics" name="key_traction_metrics" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="GMV, MAU, retention, churn, NPS, etc."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-yellow-500"></span> Milestones & Customers
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Major Milestones</label>
+                  <textarea id="major-milestones" name="major_milestones" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Notable Customers</label>
+                  <textarea id="notable-customers" name="notable_customers" rows="2" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: Team -->
+      <div class="tab-content" data-tab-content="team">
+        <div class="form-section">
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="section-indicator bg-blue-500"></span> Founders & Team
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Additional Founders (JSON)</label>
+                <textarea id="additional-founders" name="additional_founders" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Enter as JSON array: [{'name': 'Jane Doe', 'title': 'Co-Founder & CTO', 'linkedin': '...'}]"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Key Team Members (JSON)</label>
+                <textarea id="key-team-members" name="key_team_members" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Enter as JSON array: [{'name': 'John Smith', 'title': 'Head of Engineering', 'linkedin': '...'}]"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Advisors (JSON)</label>
+                <textarea id="advisors" name="advisors" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Enter as JSON array: [{'name': 'Sarah Lee', 'expertise': 'Tech & Product', 'linkedin': '...'}]"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Team Size</label>
+                <input type="number" id="team-size" name="team_size" class="w-full px-4 py-2.5 form-input-modern" placeholder="Number of full-time/part-time staff">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 6: Business Model -->
+      <div class="tab-content" data-tab-content="business">
+        <div class="grid-balanced">
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-green-500"></span> Revenue Model
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Business Model Type</label>
+                  <input type="text" id="business-model-type" name="business_model_type" class="w-full px-4 py-2.5 form-input-modern" placeholder="e.g., SaaS, Marketplace, Transaction Fee, Hardware">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Revenue Streams</label>
+                  <textarea id="revenue-streams" name="revenue_streams" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Pricing Example</label>
+                  <input type="text" id="pricing-example" name="pricing_example" class="w-full px-4 py-2.5 form-input-modern" placeholder="e.g., ₱1,000 per month per user">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-green-500"></span> Operations
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Key Partnerships</label>
+                  <textarea id="key-partnerships" name="key_partnerships" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Operational Status</label>
+                  <textarea id="operational-status" name="operational_status" rows="2" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 7: Financials -->
+      <div class="tab-content" data-tab-content="financials">
+        <div class="grid-balanced">
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-indigo-500"></span> Income Statement
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Time Between Periods (Years)</label>
+                  <input type="number" id="time-between-periods" name="time_between_periods" class="w-full px-4 py-2.5 form-input-modern" step="0.1">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Prior Period Revenue (₱)</label>
+                  <input type="number" id="previous-revenue" name="previous_revenue" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Current Period Revenue (₱)</label>
+                  <input type="number" id="current-revenue" name="current_revenue" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Net Income (₱)</label>
+                  <input type="number" id="net-income" name="net_income" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">EBIT (₱)</label>
+                  <input type="number" id="ebit" name="ebit" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-indigo-500"></span> Cash Flow
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Operations Cash Flow (₱)</label>
+                  <input type="number" id="cash-flow" name="cash_flow" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Investment Flow (₱)</label>
+                  <input type="number" id="investment-flow" name="investment_flow" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Financing Flow (₱)</label>
+                  <input type="number" id="financing-flow" name="financing_flow" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-indigo-500"></span> Balance Sheet
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Total Assets (₱)</label>
+                  <input type="number" id="total-assets" name="total_assets" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Current Assets (₱)</label>
+                  <input type="number" id="current-assets" name="current_assets" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Total Liabilities (₱)</label>
+                  <input type="number" id="total-liabilities" name="total_liabilities" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Current Liabilities (₱)</label>
+                  <input type="number" id="current-liabilities" name="current_liabilities" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Retained Earnings (₱)</label>
+                  <input type="number" id="retained-earnings" name="retained_earnings" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-indigo-500"></span> Unit Economics
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Customer Acquisition Cost (₱)</label>
+                  <input type="number" id="cac" name="cac" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Lifetime Value (₱)</label>
+                  <input type="number" id="ltv" name="ltv" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Gross Margin (%)</label>
+                  <input type="number" id="gross-margin" name="gross_margin" class="w-full px-4 py-2.5 form-input-modern" step="0.01">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 8: Projections -->
+      <div class="tab-content" data-tab-content="projections">
+        <div class="form-section">
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="section-indicator bg-purple-500"></span> Valuation & Projections
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Current Valuation (₱)</label>
+                <input type="number" id="current-valuation" name="current_valuation" class="w-full px-4 py-2.5 form-input-modern">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Expected Future Valuation (₱)</label>
+                <input type="number" id="expected-future-valuation" name="expected_future_valuation" class="w-full px-4 py-2.5 form-input-modern">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Years to Future Valuation</label>
+                <input type="number" id="years-to-future-valuation" name="years_to_future_valuation" class="w-full px-4 py-2.5 form-input-modern" step="0.1">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Financial Projections (JSON)</label>
+                <textarea id="financial-projections" name="financial_projections" rows="5" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="[{'year': 2025, 'revenue': 1000000, 'profit': -200000}, ...]"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Key Assumptions</label>
+                <textarea id="key-assumptions" name="key_assumptions" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 9: Funding -->
+      <div class="tab-content" data-tab-content="funding">
+        <div class="grid-balanced">
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-orange-500"></span> Funding History
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Capital Raised to Date (₱)</label>
+                  <input type="number" id="capital-raised-to-date" name="capital_raised_to_date" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Funding History (JSON)</label>
+                  <textarea id="funding-history" name="funding_history" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="[{'round': 'Pre-Seed', 'date': '2023-06', 'amount': 500000, 'investors': [...]}]"></textarea>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Current Round Type</label>
+                  <select id="current-round-type" name="current_round_type" class="w-full px-4 py-2.5 form-input-modern">
+                    <option value="">Select round type</option>
+                    <option value="pre_seed">Pre-Seed</option>
+                    <option value="seed">Seed</option>
+                    <option value="series_a">Series A</option>
+                    <option value="series_b">Series B</option>
+                    <option value="series_c">Series C</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-orange-500"></span> Current Funding Round
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Funding Ask (₱)</label>
+                  <input type="number" id="funding-ask" name="funding_ask" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Funding Usage</label>
+                  <textarea id="funding-usage" name="funding_usage" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Target Valuation (₱)</label>
+                  <input type="number" id="target-valuation" name="target_valuation" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Expected Runway (Months)</label>
+                  <input type="number" id="expected-runway-months" name="expected_runway_months" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 10: Impact & IP -->
+      <div class="tab-content" data-tab-content="impact">
+        <div class="form-section">
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="section-indicator bg-teal-500"></span> Impact & Sustainability
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Impact Statement</label>
+                <textarea id="impact-statement" name="impact_statement" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">SDG Alignment</label>
+                <textarea id="sdg-alignment" name="sdg_alignment" rows="2" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Sustainable Development Goals alignment"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="section-indicator bg-teal-500"></span> Intellectual Property & Compliance
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Intellectual Property</label>
+                <textarea id="intellectual-property" name="intellectual_property" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Patents, proprietary tech"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Regulatory Status</label>
+                <textarea id="regulatory-status" name="regulatory_status" rows="2" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Licenses, compliance status"></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Awards & Recognition</label>
+                <textarea id="awards-and-recognition" name="awards_and_recognition" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 11: Media -->
+      <div class="tab-content" data-tab-content="media">
+        <div class="form-section">
+          <div class="card p-6">
+            <h2 class="section-title">
+              <span class="section-indicator bg-pink-500"></span> Media & Documents
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Demo Video URL</label>
+                <input type="url" id="demo-video-url" name="demo_video_url" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://youtube.com/watch?v=...">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Pitch Video URL</label>
+                <input type="url" id="pitch-video-url" name="pitch_video_url" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://youtube.com/watch?v=...">
+              </div>
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Data Room URL</label>
+                <input type="url" id="data-room-url" name="data_room_url" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://drive.google.com/...">
+              </div>
+              <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mt-6">
+                <p class="text-sm text-slate-400 mb-3">
+                  <strong class="text-slate-300">Note on File Uploads:</strong> PDF uploads for Pitch Deck and One Pager require a separate file upload endpoint and cannot be submitted through this JSON-based form. Please use the dedicated file upload feature or contact support.
+                </p>
+                <div class="space-y-3">
+                  <div>
+                    <label class="text-sm font-medium text-slate-400 mb-1 block">Pitch Deck PDF (Not functional)</label>
+                    <input type="file" id="pitch-deck-pdf" name="pitch_deck_pdf" class="w-full px-4 py-2.5 form-input-modern opacity-50 cursor-not-allowed" accept=".pdf" disabled>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-slate-400 mb-1 block">One Pager PDF (Not functional)</label>
+                    <input type="file" id="one-pager-pdf" name="one_pager_pdf" class="w-full px-4 py-2.5 form-input-modern opacity-50 cursor-not-allowed" accept=".pdf" disabled>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 12: Contact -->
+      <div class="tab-content" data-tab-content="contact">
+        <div class="grid-balanced">
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-rose-500"></span> Primary Contact
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Primary Contact Name</label>
+                  <input type="text" id="primary-contact-name" name="primary_contact_name" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Contact Email</label>
+                  <input type="email" id="contact-email" name="contact_email" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Contact Phone</label>
+                  <input type="tel" id="contact-phone" name="contact_phone" class="w-full px-4 py-2.5 form-input-modern" placeholder="+63 XXX XXX XXXX">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">WhatsApp</label>
+                  <input type="tel" id="contact-whatsapp" name="contact_whatsapp" class="w-full px-4 py-2.5 form-input-modern" placeholder="+63 XXX XXX XXXX">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Telegram</label>
+                  <input type="text" id="contact-telegram" name="contact_telegram" class="w-full px-4 py-2.5 form-input-modern" placeholder="@username">
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-rose-500"></span> Investment Preferences
+              </h2>
+              <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-sm font-medium text-slate-300 mb-2 block">Min Check Size (₱)</label>
+                    <input type="number" id="preferred-check-size-min" name="preferred_check_size_min" class="w-full px-4 py-2.5 form-input-modern">
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-slate-300 mb-2 block">Max Check Size (₱)</label>
+                    <input type="number" id="preferred-check-size-max" name="preferred_check_size_max" class="w-full px-4 py-2.5 form-input-modern">
+                  </div>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Investor Preferences</label>
+                  <textarea id="investor-preferences" name="investor_preferences" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="e.g., strategic investors, angels vs VCs, location preference"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="card p-6">
+              <h2 class="section-title">
+                <span class="section-indicator bg-rose-500"></span> Founder Information
+              </h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Founder Name</label>
+                  <input type="text" id="founder-name" name="founder_name" class="w-full px-4 py-2.5 form-input-modern">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Founder Title</label>
+                  <input type="text" id="founder-title" name="founder_title" class="w-full px-4 py-2.5 form-input-modern" placeholder="e.g., Founder & CEO">
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-slate-300 mb-2 block">Founder LinkedIn</label>
+                  <input type="url" id="founder-linkedin" name="founder_linkedin" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://linkedin.com/in/...">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Submit Buttons -->
+      <div class="flex justify-between gap-4 border-t border-slate-700 pt-6">
+        <button type="button" id="prev-tab" class="px-6 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-all">
+          ← Previous
+        </button>
+        <button type="button" id="next-tab" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
+          Next →
+        </button>
+        <button type="submit" id="submit-btn" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md hover:scale-105 transition-all hidden">
+          Save Profile
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    // Tab navigation
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const prevBtn = document.getElementById('prev-tab');
+    const nextBtn = document.getElementById('next-tab');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    let currentTab = 0;
+    const tabs = ['basics', 'problem-solution', 'market', 'traction', 'team', 'business', 'financials', 'projections', 'funding', 'impact', 'media', 'contact'];
+
+    tabButtons.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        currentTab = index;
+        showTab(currentTab);
+      });
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentTab > 0) {
+        currentTab--;
+        showTab(currentTab);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentTab < tabs.length - 1) {
+        currentTab++;
+        showTab(currentTab);
+      }
+    });
+
+    function showTab(index) {
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+      
+      tabButtons[index].classList.add('active');
+      tabContents[index].classList.add('active');
+      
+      // Show/hide navigation buttons
+      prevBtn.style.display = index === 0 ? 'none' : 'block';
+      nextBtn.style.display = index === tabs.length - 1 ? 'none' : 'block';
+      submitBtn.style.display = index === tabs.length - 1 ? 'block' : 'none';
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Form submission
+    document.getElementById('companyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await submitForm();
+    });
+
+    async function submitForm() {
+      const formData = new FormData(document.getElementById('companyForm'));
+      const data = Object.fromEntries(formData.entries());
+      
+      // Convert empty strings to null
+      Object.keys(data).forEach(key => {
+        if (data[key] === '') data[key] = null;
+      });
+
+      const token = sessionStorage.getItem('authToken');
+      
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/startup/add/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert('Company profile saved successfully!');
+          window.location.href = 'added-startups.html';
+        } else {
+          alert('Error: ' + (result.error || 'Failed to save'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to save profile');
+      }
+    }
+
+    // Load user info
+    async function loadUserInfo() {
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        const user = JSON.parse(userData);
+        document.getElementById('user-email').textContent = user.email || 'Unknown';
+      }
+    }
+
+    loadUserInfo();
+    showTab(0);
+  </script>
+</body>
+</html>
