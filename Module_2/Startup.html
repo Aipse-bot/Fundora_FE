@@ -5,62 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Company Profile - Fundora</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="/styles.css" rel="stylesheet">
   <style>
     body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(140deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #060a12;
       min-height: 100vh;
-      color: #fff;
+      color: #e8f0fe;
+    }
+
+    /* Ambient mesh */
+    body::before {
+      content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse 60% 40% at 80% 8%, rgba(59,130,246,.06) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 50% at 5% 85%, rgba(16,185,129,.05) 0%, transparent 55%);
     }
 
     .card {
-      background: rgba(30, 41, 59, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(13,20,36,.9);
+      border: 1px solid rgba(56,115,195,.18);
       border-radius: 1rem;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(10px);
+      box-shadow: 0 6px 24px rgba(0,0,0,.4);
+      backdrop-filter: blur(12px);
       transition: all 0.3s ease;
+      position: relative; z-index:1;
     }
     .card:hover {
-      background: rgba(30, 41, 59, 0.8);
-      border-color: rgba(255, 255, 255, 0.15);
-      transform: translateY(-3px);
+      border-color: rgba(56,115,195,.35);
+      transform: translateY(-2px);
     }
 
     .form-input-modern {
-      background-color: #1e293b;
-      border: 1px solid #334155;
-      color: #f1f5f9;
+      background-color: rgba(13,20,36,.8);
+      border: 1px solid rgba(56,115,195,.25);
+      color: #e8f0fe;
       border-radius: 0.5rem;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
     .form-input-modern:focus {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.15);
       outline: none;
     }
+    .form-input-modern::placeholder { color: #4b6070; }
+    .form-input-modern option { background: #0c1220; }
 
     header {
-      backdrop-filter: blur(8px);
-      background: rgba(15, 23, 42, 0.9);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      background: rgba(6,10,18,.92);
+      border-bottom: 1px solid rgba(56,115,195,.2);
+      position: sticky; top: 0; z-index: 50;
     }
 
     .section-title {
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      color: #e2e8f0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .section-indicator {
-      width: 2px;
-      height: 2px;
-      border-radius: 50%;
+      font-weight: 700; font-size: 1rem; margin-bottom: 1rem;
+      color: #e8f0fe; display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'Syne', system-ui, sans-serif;
     }
 
     .grid-balanced {
@@ -69,51 +71,39 @@
       gap: 2rem;
     }
 
-    .form-section {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
+    .form-section { display: flex; flex-direction: column; gap: 1.25rem; }
 
-    .fade-in {
-      animation: fadeIn 0.6s ease-out;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(15px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
 
     .tab-button {
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600; font-size: 13px;
+      transition: all 0.2s ease;
       cursor: pointer;
+      border: 1px solid transparent;
     }
     .tab-button.active {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      color: white;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff; border-color: #3b82f6;
+      box-shadow: 0 2px 8px rgba(37,99,235,.3);
     }
     .tab-button:not(.active) {
-      background: rgba(51, 65, 85, 0.5);
-      color: #94a3b8;
+      background: rgba(13,20,36,.7);
+      color: #627a99; border-color: rgba(56,115,195,.18);
     }
     .tab-button:not(.active):hover {
-      background: rgba(51, 65, 85, 0.8);
-      color: #cbd5e1;
+      background: rgba(37,99,235,.1); color: #93c5fd; border-color: rgba(59,130,246,.3);
     }
 
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-      animation: fadeIn 0.4s ease-out;
-    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.35s ease-out; }
 
-    @media (max-width: 768px) {
-      .grid-balanced { grid-template-columns: 1fr; }
-    }
+    label { color: #94a3b8 !important; }
+
+    @media (max-width: 768px) { .grid-balanced { grid-template-columns: 1fr; } }
+
   </style>
 </head>
 
@@ -139,13 +129,13 @@
   </header>
 
   <!-- Main Form -->
-  <main class="max-w-7xl mx-auto p-8 fade-in">
+  <main class="max-w-7xl mx-auto p-8 fade-in" style="position:relative;z-index:1">
     <form id="companyForm" novalidate class="space-y-10">
-      <div class="border-b border-slate-700 pb-6">
-        <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-400 bg-clip-text text-transparent mb-3">
+      <div class="border-b pb-6" style="border-color:rgba(56,115,195,.2)">
+        <h1 class="text-3xl font-bold mb-3" style="font-family:'Syne',system-ui,sans-serif;background:linear-gradient(135deg,#60a5fa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent">
           Complete Company Profile
         </h1>
-        <p class="text-slate-400 text-sm">Fill out your comprehensive company profile for investors</p>
+        <p class="text-sm" style="color:#627a99">Fill out your comprehensive company profile for investors</p>
       </div>
 
       <!-- Tab Navigation -->
@@ -197,7 +187,7 @@
                 </div>
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Company Description</label>
-                  <textarea id="company-description" name="company_description" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                  <textarea id="company-description" name="company_description" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Brief overview of what your company does and who you serve"></textarea>
                 </div>
               </div>
             </div>
@@ -252,7 +242,7 @@
             <div class="space-y-4">
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Problem Description</label>
-                <textarea id="problem-statement" name="problem_statement" rows="5" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="What problem are you solving?"></textarea>
+                <textarea id="problem-statement" name="problem_statement" rows="5" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Describe the main problem your target customers face"></textarea>
               </div>
             </div>
           </div>
@@ -264,11 +254,11 @@
             <div class="space-y-4">
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Solution Description</label>
-                <textarea id="solution-description" name="solution_description" rows="5" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="How does your product/service solve the problem?"></textarea>
+                <textarea id="solution-description" name="solution_description" rows="5" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Explain how your product or service solves this problem"></textarea>
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">How It Works</label>
-                <textarea id="how-it-works" name="how_it_works" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Brief explanation"></textarea>
+                <textarea id="how-it-works" name="how_it_works" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Brief step-by-step explanation of your solution"></textarea>
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Key Features</label>
@@ -293,7 +283,7 @@
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Target Customer Segments</label>
-                <textarea id="target-segments" name="target_customer_segments" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                <textarea id="target-segments" name="target_customer_segments" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Describe your ideal customer profiles"></textarea>
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Target Geography</label>
@@ -327,11 +317,11 @@
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Competitive Advantage</label>
-                <textarea id="competitive-advantage" name="competitive_advantage" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                <textarea id="competitive-advantage" name="competitive_advantage" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="What makes you different from competitors?"></textarea>
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Go-to-Market Strategy</label>
-                <textarea id="gtm-strategy" name="go_to_market_strategy" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                <textarea id="gtm-strategy" name="go_to_market_strategy" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="How do you plan to acquire customers?"></textarea>
               </div>
             </div>
           </div>
@@ -375,11 +365,11 @@
               <div class="space-y-4">
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Major Milestones</label>
-                  <textarea id="major-milestones" name="major_milestones" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                  <textarea id="major-milestones" name="major_milestones" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="List key achievements and dates"></textarea>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Notable Customers</label>
-                  <textarea id="notable-customers" name="notable_customers" rows="2" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                  <textarea id="notable-customers" name="notable_customers" rows="2" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Any recognizable customers or clients"></textarea>
                 </div>
               </div>
             </div>
@@ -394,23 +384,62 @@
             <h2 class="section-title">
               <span class="section-indicator bg-blue-500"></span> Founders & Team
             </h2>
-            <div class="space-y-4">
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2 block">Additional Founders (JSON)</label>
-                <textarea id="additional-founders" name="additional_founders" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Enter as JSON array: [{'name': 'Jane Doe', 'title': 'Co-Founder & CTO', 'linkedin': '...'}]"></textarea>
+            <!-- Hidden fields that will hold JSON before submit -->
+            <input type="hidden" id="additional-founders-json" name="additional_founders">
+            <input type="hidden" id="key-team-members-json" name="key_team_members">
+            <input type="hidden" id="advisors-json" name="advisors">
+            
+            <!-- Additional Founders -->
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-slate-300">Additional Founders</label>
+                <button type="button" id="add-founder"
+                        class="px-3 py-1 text-xs rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                  + Add founder
+                </button>
               </div>
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2 block">Key Team Members (JSON)</label>
-                <textarea id="key-team-members" name="key_team_members" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Enter as JSON array: [{'name': 'John Smith', 'title': 'Head of Engineering', 'linkedin': '...'}]"></textarea>
+              <p class="text-xs text-slate-400">
+                Add co‑founders beyond the main founder (name, title, LinkedIn).
+              </p>
+              <div id="founders-list" class="space-y-3"></div>
+            </div>
+            
+            <!-- Key Team Members -->
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-slate-300">Key Team Members</label>
+                <button type="button" id="add-team-member"
+                        class="px-3 py-1 text-xs rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">
+                  + Add team member
+                </button>
               </div>
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2 block">Advisors (JSON)</label>
-                <textarea id="advisors" name="advisors" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Enter as JSON array: [{'name': 'Sarah Lee', 'expertise': 'Tech & Product', 'linkedin': '...'}]"></textarea>
+              <p class="text-xs text-slate-400">
+                Add core team (e.g., Head of Engineering, Product Lead).
+              </p>
+              <div id="team-members-list" class="space-y-3"></div>
+            </div>
+            
+            <!-- Advisors -->
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-slate-300">Advisors</label>
+                <button type="button" id="add-advisor"
+                        class="px-3 py-1 text-xs rounded-lg bg-purple-600 text-white hover:bg-purple-700">
+                  + Add advisor
+                </button>
               </div>
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2 block">Team Size</label>
-                <input type="number" id="team-size" name="team_size" class="w-full px-4 py-2.5 form-input-modern" placeholder="Number of full-time/part-time staff">
-              </div>
+              <p class="text-xs text-slate-400">
+                Add advisors with their expertise and LinkedIn.
+              </p>
+              <div id="advisors-list" class="space-y-3"></div>
+            </div>
+            
+            <!-- Team Size -->
+            <div class="mt-6">
+              <label class="text-sm font-medium text-slate-300 mb-2 block">Team Size</label>
+              <input type="number" id="team-size" name="team_size"
+                    class="w-full px-4 py-2.5 form-input-modern"
+                    placeholder="Number of full-time/part-time staff">
             </div>
           </div>
         </div>
@@ -431,7 +460,7 @@
                 </div>
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Revenue Streams</label>
-                  <textarea id="revenue-streams" name="revenue_streams" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                  <textarea id="revenue-streams" name="revenue_streams" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="How does your company make money?"></textarea>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Pricing Example</label>
@@ -449,11 +478,11 @@
               <div class="space-y-4">
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Key Partnerships</label>
-                  <textarea id="key-partnerships" name="key_partnerships" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                  <textarea id="key-partnerships" name="key_partnerships" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Important partners, suppliers, or collaborators"></textarea>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Operational Status</label>
-                  <textarea id="operational-status" name="operational_status" rows="2" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                  <textarea id="operational-status" name="operational_status" rows="2" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Current operational state and capabilities"></textarea>
                 </div>
               </div>
             </div>
@@ -568,12 +597,13 @@
 
       <!-- Tab 8: Projections -->
       <div class="tab-content" data-tab-content="projections">
-        <div class="form-section">
+        <div class="space-y-6">
+          <!-- Valuation -->
           <div class="card p-6">
-            <h2 class="section-title">
-              <span class="section-indicator bg-purple-500"></span> Valuation & Projections
+            <h2 class="section-title mb-4">
+              <span class="section-indicator bg-purple-500"></span> Valuation
             </h2>
-            <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Current Valuation (₱)</label>
                 <input type="number" id="current-valuation" name="current_valuation" class="w-full px-4 py-2.5 form-input-modern">
@@ -586,15 +616,43 @@
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Years to Future Valuation</label>
                 <input type="number" id="years-to-future-valuation" name="years_to_future_valuation" class="w-full px-4 py-2.5 form-input-modern" step="0.1">
               </div>
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2 block">Financial Projections (JSON)</label>
-                <textarea id="financial-projections" name="financial_projections" rows="5" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="[{'year': 2025, 'revenue': 1000000, 'profit': -200000}, ...]"></textarea>
-              </div>
-              <div>
-                <label class="text-sm font-medium text-slate-300 mb-2 block">Key Assumptions</label>
-                <textarea id="key-assumptions" name="key_assumptions" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
-              </div>
             </div>
+          </div>
+
+          <!-- Financial Projections Table -->
+          <div class="card p-6">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="section-title">
+                <span class="section-indicator bg-indigo-500"></span> Financial Projections
+              </h2>
+              <button type="button" onclick="addProjectionRow()" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition-all flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Add Year
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-slate-700">
+                    <th class="text-left text-sm font-medium text-slate-300 pb-3 pt-2 pr-4">Year</th>
+                    <th class="text-left text-sm font-medium text-slate-300 pb-3 pt-2 pr-4">Revenue (₱)</th>
+                    <th class="text-left text-sm font-medium text-slate-300 pb-3 pt-2 pr-4">Profit (₱)</th>
+                    <th class="w-16 pb-3 pt-2"></th>
+                  </tr>
+                </thead>
+                <tbody id="projections-table" class="divide-y divide-slate-700/50"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Key Assumptions -->
+          <div class="card p-6">
+            <h2 class="section-title mb-4">
+              <span class="section-indicator bg-purple-500"></span> Key Assumptions
+            </h2>
+            <textarea id="key-assumptions" name="key_assumptions" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Main assumptions behind your financial projections"></textarea>
           </div>
         </div>
       </div>
@@ -604,17 +662,10 @@
         <div class="grid-balanced">
           <div class="form-section">
             <div class="card p-6">
-              <h2 class="section-title">
-                <span class="section-indicator bg-orange-500"></span> Funding History
-              </h2>
-              <div class="space-y-4">
+              <div class="space-y-4 mb-6">
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Capital Raised to Date (₱)</label>
                   <input type="number" id="capital-raised-to-date" name="capital_raised_to_date" class="w-full px-4 py-2.5 form-input-modern">
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-slate-300 mb-2 block">Funding History (JSON)</label>
-                  <textarea id="funding-history" name="funding_history" rows="4" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="[{'round': 'Pre-Seed', 'date': '2023-06', 'amount': 500000, 'investors': [...]}]"></textarea>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Current Round Type</label>
@@ -627,6 +678,19 @@
                     <option value="series_c">Series C</option>
                   </select>
                 </div>
+              </div>
+
+              <div class="border-t border-slate-700 pt-4">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-base font-semibold text-slate-200">Funding History</h3>
+                  <button type="button" onclick="addFundingRound()" class="px-4 py-2 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Round
+                  </button>
+                </div>
+                <div id="funding-rounds-list" class="space-y-3"></div>
               </div>
             </div>
           </div>
@@ -643,7 +707,7 @@
                 </div>
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Funding Usage</label>
-                  <textarea id="funding-usage" name="funding_usage" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                  <textarea id="funding-usage" name="funding_usage" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="How will you use the funding? (e.g., product development, marketing, hiring)"></textarea>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Target Valuation (₱)</label>
@@ -669,7 +733,7 @@
             <div class="space-y-4">
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Impact Statement</label>
-                <textarea id="impact-statement" name="impact_statement" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                <textarea id="impact-statement" name="impact_statement" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Social or environmental impact of your business"></textarea>
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">SDG Alignment</label>
@@ -693,7 +757,7 @@
               </div>
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Awards & Recognition</label>
-                <textarea id="awards-and-recognition" name="awards_and_recognition" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none"></textarea>
+                <textarea id="awards-and-recognition" name="awards_and_recognition" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Any awards, press features, or recognition received"></textarea>
               </div>
             </div>
           </div>
@@ -702,38 +766,104 @@
 
       <!-- Tab 11: Media -->
       <div class="tab-content" data-tab-content="media">
-        <div class="form-section">
+        <div class="space-y-6">
+
+          <!-- LOGO UPLOAD -->
           <div class="card p-6">
-            <h2 class="section-title">
-              <span class="section-indicator bg-pink-500"></span> Media & Documents
+            <h2 class="section-title mb-4">
+              <span class="section-indicator bg-pink-500"></span> Company Logo
             </h2>
             <div class="space-y-4">
               <div>
-                <label class="text-sm font-medium text-slate-300 mb-2 block">Demo Video URL</label>
-                <input type="url" id="demo-video-url" name="demo_video_url" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://youtube.com/watch?v=...">
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Upload Logo (PNG, JPG, SVG)</label>
+                <div class="relative">
+                  <input type="file" id="company-logo" name="logo" accept=".png,.jpg,.jpeg,.svg" class="hidden" onchange="handleLogoUpload(this)">
+                  <button type="button" onclick="document.getElementById('company-logo').click()" class="w-full px-4 py-3 border-2 border-dashed border-slate-600 rounded-lg hover:border-blue-500 transition-all text-slate-400 hover:text-blue-400 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span id="logo-label">Click to upload logo</span>
+                  </button>
+                  <button type="button" id="logo-remove" onclick="removeLogo()" class="hidden absolute top-2 right-2 p-1.5 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-400 hover:text-red-300 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+                <!-- Logo Preview -->
+                <div id="logo-preview" class="hidden mt-4 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                  <p class="text-xs text-slate-400 mb-2">Preview:</p>
+                  <div class="flex items-center justify-center h-32 bg-white/5 rounded-lg">
+                    <img id="logo-preview-img" src="" alt="Logo preview" class="max-h-full max-w-full object-contain">
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Video URLs with Preview -->
+          <div class="card p-6">
+            <h2 class="section-title mb-4">
+              <span class="section-indicator bg-pink-500"></span> Videos
+            </h2>
+            <div class="space-y-4">
               <div>
-                <label class="text-sm font-medium text-slate-300 mb-2 block">Pitch Video URL</label>
-                <input type="url" id="pitch-video-url" name="pitch_video_url" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://youtube.com/watch?v=...">
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Demo / Pitch Video URL</label>
+                <input type="url" id="demo-video-url" name="demo_video_url" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://youtube.com/watch?v=..." onchange="updateVideoPreview(this.value)">
+                <p class="text-xs text-slate-400 mt-1">YouTube, Vimeo, or Loom links supported</p>
               </div>
+              <div id="video-preview" class="hidden mt-4 rounded-lg overflow-hidden" style="aspect-ratio: 16/9;">
+                <iframe id="video-iframe" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Uploads -->
+          <div class="card p-6">
+            <h2 class="section-title mb-4">
+              <span class="section-indicator bg-pink-500"></span> Documents
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Upload Pitch Deck (PDF)</label>
+                <div class="relative">
+                  <input type="file" id="pitch-deck-pdf" name="pitch_deck_pdf" accept=".pdf" class="hidden" onchange="handleFileUpload(this, 'pitch-deck')">
+                  <button type="button" onclick="document.getElementById('pitch-deck-pdf').click()" class="w-full px-4 py-3 border-2 border-dashed border-slate-600 rounded-lg hover:border-blue-500 transition-all text-slate-400 hover:text-blue-400 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <span id="pitch-deck-label">Click to upload PDF</span>
+                  </button>
+                  <button type="button" id="pitch-deck-remove" onclick="removeFile('pitch-deck')" class="hidden absolute top-2 right-2 p-1.5 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-400 hover:text-red-300 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <div>
+                <label class="text-sm font-medium text-slate-300 mb-2 block">Upload One-Pager (PDF)</label>
+                <div class="relative">
+                  <input type="file" id="one-pager-pdf" name="one_pager_pdf" accept=".pdf" class="hidden" onchange="handleFileUpload(this, 'one-pager')">
+                  <button type="button" onclick="document.getElementById('one-pager-pdf').click()" class="w-full px-4 py-3 border-2 border-dashed border-slate-600 rounded-lg hover:border-blue-500 transition-all text-slate-400 hover:text-blue-400 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <span id="one-pager-label">Click to upload PDF</span>
+                  </button>
+                  <button type="button" id="one-pager-remove" onclick="removeFile('one-pager')" class="hidden absolute top-2 right-2 p-1.5 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-400 hover:text-red-300 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
               <div>
                 <label class="text-sm font-medium text-slate-300 mb-2 block">Data Room URL</label>
                 <input type="url" id="data-room-url" name="data_room_url" class="w-full px-4 py-2.5 form-input-modern" placeholder="https://drive.google.com/...">
-              </div>
-              <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mt-6">
-                <p class="text-sm text-slate-400 mb-3">
-                  <strong class="text-slate-300">Note on File Uploads:</strong> PDF uploads for Pitch Deck and One Pager require a separate file upload endpoint and cannot be submitted through this JSON-based form. Please use the dedicated file upload feature or contact support.
-                </p>
-                <div class="space-y-3">
-                  <div>
-                    <label class="text-sm font-medium text-slate-400 mb-1 block">Pitch Deck PDF (Not functional)</label>
-                    <input type="file" id="pitch-deck-pdf" name="pitch_deck_pdf" class="w-full px-4 py-2.5 form-input-modern opacity-50 cursor-not-allowed" accept=".pdf" disabled>
-                  </div>
-                  <div>
-                    <label class="text-sm font-medium text-slate-400 mb-1 block">One Pager PDF (Not functional)</label>
-                    <input type="file" id="one-pager-pdf" name="one_pager_pdf" class="w-full px-4 py-2.5 form-input-modern opacity-50 cursor-not-allowed" accept=".pdf" disabled>
-                  </div>
-                </div>
+                <p class="text-xs text-slate-400 mt-1">Link to Google Drive, Dropbox, or similar</p>
               </div>
             </div>
           </div>
@@ -789,7 +919,7 @@
                 </div>
                 <div>
                   <label class="text-sm font-medium text-slate-300 mb-2 block">Investor Preferences</label>
-                  <textarea id="investor-preferences" name="investor_preferences" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="e.g., strategic investors, angels vs VCs, location preference"></textarea>
+                  <textarea id="investor-preferences" name="investor_preferences" rows="3" class="w-full px-4 py-2.5 form-input-modern resize-none" placeholder="Type of investors you're looking for (e.g., strategic, angel, VC)"></textarea>
                 </div>
               </div>
             </div>
@@ -820,18 +950,38 @@
       </div>
 
 
-      <!-- Submit Buttons -->
-      <div class="flex justify-between gap-4 border-t border-slate-700 pt-6">
-        <button type="button" id="prev-tab" class="px-6 py-2.5 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-all">
-          ← Previous
-        </button>
-        <button type="button" id="next-tab" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
-          Next →
-        </button>
-        <button type="submit" id="submit-btn" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md hover:scale-105 transition-all hidden">
-          Save Profile
-        </button>
+      <div class="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-700 shadow-2xl z-40">
+        <div class="max-w-7xl mx-auto px-8 py-4">
+          <div class="flex justify-between items-center gap-4">
+            <!-- Left side: Back and Previous buttons -->
+            <div class="flex gap-3">
+              <button type="button" onclick="window.location.href='../Module_3/added-startups.html'" 
+                      class="px-5 py-2.5 text-sm font-medium border border-slate-600 text-slate-400 rounded-lg hover:bg-slate-800 hover:text-slate-300 hover:border-slate-500 transition-all">
+                ← Back to Startups
+              </button>
+              <button type="button" id="prev-tab" 
+                      class="px-5 py-2.5 text-sm font-medium border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-all" 
+                      style="display: none;">
+                ← Previous
+              </button>
+            </div>
+            
+            <!-- Right side: Next and Submit buttons -->
+            <div class="flex gap-3">
+              <button type="button" id="next-tab" 
+                      class="px-6 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 transition-all">
+                Next →
+              </button>
+              <button type="submit" id="submit-btn" 
+                      class="px-6 py-2.5 text-sm font-semibold rounded-lg bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-lg hover:shadow-xl hover:shadow-emerald-500/30 hover:scale-105 transition-all">
+                Save Startup
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div class="h-24"></div>
     </form>
   </main>
 
@@ -868,20 +1018,18 @@
     });
 
     function showTab(index) {
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      tabContents.forEach(content => content.classList.remove('active'));
-      
-      tabButtons[index].classList.add('active');
-      tabContents[index].classList.add('active');
-      
-      // Show/hide navigation buttons
-      prevBtn.style.display = index === 0 ? 'none' : 'block';
-      nextBtn.style.display = index === tabs.length - 1 ? 'none' : 'block';
-      submitBtn.style.display = index === tabs.length - 1 ? 'block' : 'none';
-      
-      // Scroll to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    tabButtons[index].classList.add('active');
+    tabContents[index].classList.add('active');
+    
+    prevBtn.style.display = index === 0 ? 'none' : 'block';
+    
+    nextBtn.style.display = index === tabs.length - 1 ? 'none' : 'block';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
     // Form submission
     document.getElementById('companyForm').addEventListener('submit', async (e) => {
@@ -890,18 +1038,108 @@
     });
 
     async function submitForm() {
-      const formData = new FormData(document.getElementById('companyForm'));
-      const data = Object.fromEntries(formData.entries());
+    console.log('Starting form submission...');
+    
+    const form = document.getElementById('companyForm');
+    const formData = new FormData(form);
+    
+    // Collect dynamic data
+    const dynamicData = collectDynamicData();
+    
+    // Add dynamic data to FormData
+    Object.entries(dynamicData).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        formData.append(key, value);
+      }
+    });
+    
+    // Check for file uploads
+    const hasLogo = document.getElementById('company-logo').files.length > 0;
+    const hasPitchDeck = document.getElementById('pitch-deck-pdf').files.length > 0;
+    const hasOnePager = document.getElementById('one-pager-pdf').files.length > 0;
+    const hasFiles = hasLogo || hasPitchDeck || hasOnePager;
+    
+    console.log('File Upload Status:');
+    console.log('  - Logo:', hasLogo);
+    console.log('  - Pitch Deck:', hasPitchDeck);
+    console.log('  - One Pager:', hasOnePager);
+    
+    const token = sessionStorage.getItem('authToken');
+    
+    if (!token) {
+      alert('No authentication token found. Please log in again.');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    try {
+      let response;
       
-      // Convert empty strings to null
-      Object.keys(data).forEach(key => {
-        if (data[key] === '') data[key] = null;
-      });
-
-      const token = sessionStorage.getItem('authToken');
-      
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/startup/add/', {
+      if (hasFiles) {
+        // ===== SEND AS MULTIPART/FORM-DATA (WITH FILES) =====
+        console.log('Sending with files (multipart/form-data)');
+        
+        // CRITICAL: Remove empty file fields from FormData
+        if (!hasLogo) {
+          formData.delete('logo');
+          console.log('Removed empty logo field');
+        }
+        if (!hasPitchDeck) {
+          formData.delete('pitch_deck_pdf');
+          console.log('Removed empty pitch_deck_pdf field');
+        }
+        if (!hasOnePager) {
+          formData.delete('one_pager_pdf');
+          console.log('Removed empty one_pager_pdf field');
+        }
+        
+        response = await fetch('http://127.0.0.1:8000/api/startup/add/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            // DON'T set Content-Type - browser will set it with boundary
+          },
+          body: formData
+        });
+        
+      } else {
+        // ===== SEND AS JSON (NO FILES) =====
+        console.log('Sending without files (JSON)');
+        
+        const data = Object.fromEntries(formData.entries());
+        
+        // Define numeric fields
+        const numericFields = [
+          'year_founded', 'market_size_tam', 'market_size_sam', 'market_growth_rate',
+          'current_mrr_arr', 'total_users', 'paid_users', 'team_size',
+          'time_between_periods', 'previous_revenue', 'current_revenue', 'revenue',
+          'net_income', 'ebit', 'total_assets', 'current_assets', 'total_liabilities',
+          'current_liabilities', 'retained_earnings', 'shareholder_equity',
+          'cash_flow', 'investment_flow', 'financing_flow',
+          'cac', 'ltv', 'gross_margin',
+          'current_valuation', 'expected_future_valuation', 'years_to_future_valuation',
+          'capital_raised_to_date', 'funding_ask', 'target_valuation', 'expected_runway_months',
+          'preferred_check_size_min', 'preferred_check_size_max'
+        ];
+        
+        // Clean and convert data
+        Object.keys(data).forEach(key => {
+          if (data[key] === '' || data[key] === null || data[key] === undefined) {
+            data[key] = null;
+          } else if (numericFields.includes(key) && data[key] !== null) {
+            const parsed = parseFloat(data[key]);
+            data[key] = isNaN(parsed) ? null : parsed;
+          }
+        });
+        
+        // Remove file field keys when sending JSON
+        delete data.logo;
+        delete data.pitch_deck_pdf;
+        delete data.one_pager_pdf;
+        
+        console.log('Request body:', JSON.stringify(data, null, 2));
+        
+        response = await fetch('http://127.0.0.1:8000/api/startup/add/', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -909,20 +1147,46 @@
           },
           body: JSON.stringify(data)
         });
-
-        const result = await response.json();
-        
-        if (response.ok) {
-          alert('Company profile saved successfully!');
-          window.location.href = 'added-startups.html';
-        } else {
-          alert('Error: ' + (result.error || 'Failed to save'));
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to save profile');
       }
+
+      console.log('Response status:', response.status);
+      
+      const result = await response.json();
+      console.log('Response body:', result);
+      
+      if (response.ok) {
+        alert('Company profile saved successfully!\n\nStartup ID: ' + result.startup_id);
+        
+        window.location.href = '../Module_3/added-startups.html';
+        
+        // Clear file upload labels
+        removeLogo();
+        removeFile('pitch-deck');
+        removeFile('one-pager');
+        
+        console.log('Form reset, ready for another entry');
+      } else {
+        console.error('Server returned error');
+        console.error('Full error response:', JSON.stringify(result, null, 2));
+        
+        if (result.errors) {
+          const errorMessages = Object.entries(result.errors)
+            .map(([field, messages]) => {
+              const msgs = Array.isArray(messages) ? messages : [messages];
+              return `• ${field}: ${msgs.join(', ')}`;
+            })
+            .join('\n');
+          alert(`Validation errors:\n\n${errorMessages}`);
+        } else {
+          alert('Error: ' + (result.error || result.detail || JSON.stringify(result)));
+        }
+      }
+    } catch (error) {
+      console.error('Network/parsing error:', error);
+      console.error('Error stack:', error.stack);
+      alert('Failed to save profile. Error: ' + error.message);
     }
+  }
 
     // Load user info
     async function loadUserInfo() {
@@ -932,6 +1196,354 @@
         document.getElementById('user-email').textContent = user.email || 'Unknown';
       }
     }
+
+    //DYNAMIC FORM FUNCTIONS
+
+    function makeCard(fields, removeLabel) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'border border-slate-700 rounded-lg p-4 bg-slate-900/50 fade-in';
+      
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-1 md:grid-cols-3 gap-3';
+      
+      fields.forEach(f => {
+        const fieldDiv = document.createElement('div');
+        const label = document.createElement('label');
+        label.className = 'text-xs font-medium text-slate-300 mb-1 block';
+        label.textContent = f.label;
+        
+        const input = document.createElement('input');
+        input.type = f.type || 'text';
+        input.placeholder = f.placeholder || '';
+        input.className = 'w-full px-3 py-2 form-input-modern text-sm';
+        input.dataset.role = f.role;
+        
+        fieldDiv.appendChild(label);
+        fieldDiv.appendChild(input);
+        grid.appendChild(fieldDiv);
+      });
+      
+      const actions = document.createElement('div');
+      actions.className = 'mt-3 flex justify-end';
+      
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'text-xs px-2 py-1 rounded-md border border-slate-600 text-slate-300 hover:bg-slate-700/60';
+      removeBtn.textContent = removeLabel || 'Remove';
+      removeBtn.onclick = () => wrapper.remove();
+      
+      actions.appendChild(removeBtn);
+      wrapper.appendChild(grid);
+      wrapper.appendChild(actions);
+      
+      return wrapper;
+    }
+
+    //Founders
+    document.getElementById('add-founder')?.addEventListener('click', () => {
+      const list = document.getElementById('founders-list');
+      const card = makeCard(
+        [
+          { label: 'Name', role: 'name', placeholder: 'Jane Doe' },
+          { label: 'Title', role: 'title', placeholder: 'Co‑Founder & CTO' },
+          { label: 'LinkedIn URL', role: 'linkedin', placeholder: 'https://linkedin.com/in/...' }
+        ],
+        'Remove founder'
+      );
+      list.appendChild(card);
+    });
+
+    //Key Team Members
+    document.getElementById('add-team-member')?.addEventListener('click', () => {
+      const list = document.getElementById('team-members-list');
+      const card = makeCard(
+        [
+          { label: 'Name', role: 'name', placeholder: 'John Smith' },
+          { label: 'Title / Role', role: 'title', placeholder: 'Head of Engineering' },
+          { label: 'LinkedIn URL', role: 'linkedin', placeholder: 'https://linkedin.com/in/...' }
+        ],
+        'Remove member'
+      );
+      list.appendChild(card);
+    });
+
+    //Advisors
+    document.getElementById('add-advisor')?.addEventListener('click', () => {
+      const list = document.getElementById('advisors-list');
+      const card = makeCard(
+        [
+          { label: 'Name', role: 'name', placeholder: 'Sarah Lee' },
+          { label: 'Expertise', role: 'expertise', placeholder: 'Tech & Product' },
+          { label: 'LinkedIn URL', role: 'linkedin', placeholder: 'https://linkedin.com/in/...' }
+        ],
+        'Remove advisor'
+      );
+      list.appendChild(card);
+    });
+
+    // Financial Projections Management
+    let projectionCount = 0;
+
+    function addProjectionRow() {
+      projectionCount++;
+      const table = document.getElementById('projections-table');
+      const row = document.createElement('tr');
+
+      row.className = 'fade-in';
+      row.innerHTML = `
+        <td class="py-3 pr-4">
+          <input type="number" class="projection-year w-full px-3 py-2 form-input-modern text-sm"
+            placeholder="${new Date().getFullYear() + projectionCount}">
+        </td>
+        <td class="py-3 pr-4">
+          <input type="number" class="projection-revenue w-full px-3 py-2 form-input-modern text-sm"
+            placeholder="0">
+        </td>
+        <td class="py-3 pr-4">
+          <input type="number" class="projection-profit w-full px-3 py-2 form-input-modern text-sm"
+            placeholder="0">
+        </td>
+        <td class="py-3">
+          <button type="button"
+            onclick="this.closest('tr').remove()"
+            class="text-slate-400 hover:text-red-400 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </td>
+      `;
+
+      table.appendChild(row);
+    }
+
+    // Video Preview
+    function updateVideoPreview(url) {
+      const preview = document.getElementById('video-preview');
+      const iframe = document.getElementById('video-iframe');
+      
+      if (!url) {
+        preview.classList.add('hidden');
+        return;
+      }
+
+      let embedUrl = '';
+      
+      // YouTube
+      if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        const videoId = url.includes('youtu.be') 
+          ? url.split('/').pop().split('?')[0]
+          : new URLSearchParams(new URL(url).search).get('v');
+        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      }
+      // Vimeo
+      else if (url.includes('vimeo.com')) {
+        const videoId = url.split('/').pop();
+        embedUrl = `https://player.vimeo.com/video/${videoId}`;
+      }
+      // Loom
+      else if (url.includes('loom.com')) {
+        const videoId = url.split('/share/').pop();
+        embedUrl = `https://www.loom.com/embed/${videoId}`;
+      }
+
+      if (embedUrl) {
+        iframe.src = embedUrl;
+        preview.classList.remove('hidden');
+      } else {
+        preview.classList.add('hidden');
+      }
+    }
+
+    // File Upload Handler
+    function handleFileUpload(input, type) {
+      const file = input.files[0];
+      if (file) {
+        const label = document.getElementById(`${type}-label`);
+        const removeBtn = document.getElementById(`${type}-remove`);
+        label.textContent = file.name;
+        label.classList.add('text-green-400');
+        removeBtn.classList.remove('hidden');
+      }
+    }
+
+    // File Remove Handler
+    function removeFile(type) {
+      const input = document.getElementById(`${type}-pdf`);
+      const label = document.getElementById(`${type}-label`);
+      const removeBtn = document.getElementById(`${type}-remove`);
+      
+      input.value = '';
+      label.textContent = 'Click to upload PDF';
+      label.classList.remove('text-green-400');
+      removeBtn.classList.add('hidden');
+    }
+
+    // Logo Upload Handler
+    function handleLogoUpload(input) {
+      const file = input.files[0];
+      if (file) {
+        const label = document.getElementById('logo-label');
+        const removeBtn = document.getElementById('logo-remove');
+        const preview = document.getElementById('logo-preview');
+        const previewImg = document.getElementById('logo-preview-img');
+        
+        // Validate file type
+        const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
+        if (!validTypes.includes(file.type)) {
+          alert('Please upload a valid image file (PNG, JPG, or SVG)');
+          input.value = '';
+          return;
+        }
+        
+        // Validate file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+          alert('Logo file size must be less than 2MB');
+          input.value = '';
+          return;
+        }
+        
+        label.textContent = file.name;
+        label.classList.add('text-green-400');
+        removeBtn.classList.remove('hidden');
+        
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Logo Remove Handler
+    function removeLogo() {
+      const input = document.getElementById('company-logo');
+      const label = document.getElementById('logo-label');
+      const removeBtn = document.getElementById('logo-remove');
+      const preview = document.getElementById('logo-preview');
+      
+      input.value = '';
+      label.textContent = 'Click to upload logo';
+      label.classList.remove('text-green-400');
+      removeBtn.classList.add('hidden');
+      preview.classList.add('hidden');
+    }
+
+    //Funding Rounds Management
+    let fundingRoundCount = 0;
+
+    function addFundingRound() {
+      fundingRoundCount++;
+      const fundingList = document.getElementById('funding-rounds-list');
+      const roundCard = document.createElement('div');
+
+      roundCard.className = 'bg-slate-800/50 border border-slate-700 rounded-lg p-4 fade-in';
+      roundCard.innerHTML = `
+        <div class="flex justify-between items-start mb-3">
+          <h4 class="text-sm font-semibold text-slate-300">
+            Round ${fundingRoundCount}
+          </h4>
+          <button type="button"
+            onclick="this.closest('.bg-slate-800\\/50').remove()"
+            class="text-slate-400 hover:text-red-400 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <select class="round-type px-3 py-2 form-input-modern text-sm">
+            <option value="">Round Type</option>
+            <option value="pre_seed">Pre-Seed</option>
+            <option value="seed">Seed</option>
+            <option value="series_a">Series A</option>
+            <option value="series_b">Series B</option>
+            <option value="series_c">Series C+</option>
+          </select>
+          <input type="month" class="round-date px-3 py-2 form-input-modern text-sm">
+          <input type="number" class="round-amount px-3 py-2 form-input-modern text-sm"
+            placeholder="Amount (₱)">
+          <input type="text" class="round-investors px-3 py-2 form-input-modern text-sm"
+            placeholder="Investor/s">
+        </div>
+      `;
+
+      fundingList.appendChild(roundCard);
+    }
+
+    //Dynamic Data Collection
+    //Dynamic Data Collection
+    function collectCards(containerId, roles) {
+      const items = [];
+      const container = document.getElementById(containerId);
+      if (!container) return items;
+      
+      container.querySelectorAll('div.border').forEach(card => {
+        const obj = {};
+        roles.forEach(r => {
+          const input = card.querySelector(`input[data-role="${r}"]`);
+          if (input && input.value.trim() !== '') {
+            obj[r] = input.value.trim();
+          }
+        });
+        if (Object.keys(obj).length) items.push(obj);
+      });
+      return items;
+    }
+
+    function collectDynamicData() {
+    const founders = collectCards('founders-list', ['name', 'title', 'linkedin']);
+    const teamMembers = collectCards('team-members-list', ['name', 'title', 'linkedin']);
+    const advisors = collectCards('advisors-list', ['name', 'expertise', 'linkedin']);
+    
+    const projections = [];
+    document.querySelectorAll('#projections-table tr').forEach(row => {
+      const yearInput = row.querySelector('.projection-year');
+      const revenueInput = row.querySelector('.projection-revenue');
+      const profitInput = row.querySelector('.projection-profit');
+      
+      if (yearInput && yearInput.value) {
+        projections.push({
+          year: parseInt(yearInput.value) || 0,
+          revenue: parseFloat(revenueInput?.value) || 0,
+          profit: parseFloat(profitInput?.value) || 0
+        });
+      }
+    });
+
+    const fundingHistory = [];
+    document.querySelectorAll('#funding-rounds-list > div').forEach(card => {
+      const typeInput = card.querySelector('.round-type');
+      const dateInput = card.querySelector('.round-date');
+      const amountInput = card.querySelector('.round-amount');
+      const investorsInput = card.querySelector('.round-investors');
+      
+      if (typeInput && dateInput && typeInput.value && dateInput.value) {
+        fundingHistory.push({
+          round: typeInput.value,
+          date: dateInput.value,
+          amount: parseFloat(amountInput?.value) || 0,
+          investors: investorsInput?.value
+            .split(',')
+            .map(i => i.trim())
+            .filter(Boolean) || []
+        });
+      }
+    });
+
+    return {
+      additional_founders: founders.length ? JSON.stringify(founders) : null,
+      key_team_members: teamMembers.length ? JSON.stringify(teamMembers) : null,
+      advisors: advisors.length ? JSON.stringify(advisors) : null,
+      financial_projections: projections.length ? JSON.stringify(projections) : null,
+      funding_history: fundingHistory.length ? JSON.stringify(fundingHistory) : null
+    };
+  }
 
     loadUserInfo();
     showTab(0);

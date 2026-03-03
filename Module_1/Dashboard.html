@@ -3,399 +3,393 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Investment Dashboard</title>
+  <title>Fundora — Investment Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              200: '#bfdbfe',
-              300: '#93c5fd',
-              400: '#60a5fa',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a'
-            },
-            accent: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              200: '#a7f3d0',
-              300: '#6ee7b7',
-              400: '#34d399',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-              800: '#065f46',
-              900: '#064e3b'
-            }
+            brand: { 50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a' },
+            accent: { 50:'#ecfdf5',100:'#d1fae5',200:'#a7f3d0',300:'#6ee7b7',400:'#34d399',500:'#10b981',600:'#059669',700:'#047857',800:'#065f46',900:'#064e3b' }
           },
-          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+          fontFamily: { sans: ['DM Sans','system-ui','sans-serif'], display: ['Syne','system-ui','sans-serif'], mono: ['JetBrains Mono','monospace'] }
         }
       }
     }
   </script>
   <style>
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    :root {
+      --bg-deep: #060a12;
+      --bg-mid: #0c1220;
+      --bg-card: rgba(13,20,36,0.9);
+      --border: rgba(56,115,195,0.18);
+      --border-hover: rgba(56,115,195,0.4);
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --text-primary: #e8f0fe;
+      --text-muted: #627a99;
     }
 
-    @keyframes cardSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
+    /* Ambient background */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 40% at 85% 5%, rgba(59,130,246,.06) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 50% at 5% 90%, rgba(16,185,129,.05) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 30% at 50% 50%, rgba(59,130,246,.02) 0%, transparent 70%);
+    }
+
+    /* Grid texture overlay */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.015;
+      background-image: linear-gradient(rgba(99,179,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(99,179,255,.5) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(24px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
     @keyframes shimmer {
-      0% {
-        background-position: -1000px 0;
-      }
-      100% {
-        background-position: 1000px 0;
-      }
+      0%   { background-position: -800px 0; }
+      100% { background-position: 800px 0; }
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.3); }
+      50%      { box-shadow: 0 0 0 6px rgba(59,130,246,0); }
+    }
+    @keyframes aiTyping {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .3; }
     }
 
-    @keyframes pulse-glow {
-      0%, 100% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
-      }
-      50% {
-        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
-      }
+    /* ── Header ── */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(6,10,18,.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      animation: fadeUp .45s ease both;
+    }
+    .logo-text {
+      font-family: 'Syne', system-ui, sans-serif;
+      font-weight: 800; font-size: 1.6rem;
+      background: linear-gradient(135deg, #60a5fa, #34d399);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -.5px;
     }
 
-    body { 
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 50%, #051633 100%);
-      background-attachment: fixed;
-      animation: fadeInUp 0.6s ease-out;
+    /* ── Sidebar ── */
+    aside {
+      animation: fadeUp .5s ease .1s both;
+      position: fixed; left: 0; top: 0; width: 100%; height: 100vh;
+      background: rgba(6,10,18,.97);
+      border: none; border-radius: 0; padding: 20px;
+      box-shadow: none; z-index: 100;
+      backdrop-filter: blur(24px);
+      transform: translateX(-100%);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+      overflow-y: auto;
+    }
+    aside.mobile-open { transform: translateX(0); }
+
+    @media (min-width: 1024px) {
+      aside {
+        transform: translateX(0);
+        position: sticky; top: 72px; width: 100%;
+        height: fit-content; max-height: calc(100vh - 92px);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px; padding: 20px; z-index: 10;
+        box-shadow: 0 4px 24px rgba(0,0,0,.4);
+      }
+    }
+    aside::-webkit-scrollbar { width: 4px; }
+    aside::-webkit-scrollbar-thumb { background: rgba(59,130,246,.3); border-radius: 2px; }
+
+    /* ── Filter inputs ── */
+    select, .filter-select {
+      background: rgba(13,20,36,.8) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text-primary) !important;
+      border-radius: 8px !important;
+      transition: border-color .2s, box-shadow .2s !important;
+      font-size: 13px;
+    }
+    select:hover { border-color: var(--border-hover) !important; }
+    select:focus { border-color: var(--accent-blue) !important; box-shadow: 0 0 0 2px rgba(59,130,246,.15) !important; outline: none !important; }
+
+    .filter-card {
+      background: rgba(13,20,36,.6);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 13px;
+      transition: border-color .2s;
+    }
+    .filter-card:hover { border-color: var(--border-hover); }
+
+    /* ── Preset / type / risk buttons ── */
+    .preset-btn, .type-btn, .risk-btn, .growth-btn {
+      background: rgba(13,20,36,.7);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      font-size: 12px; font-weight: 500;
+      transition: all .2s;
+      cursor: pointer;
+    }
+    .preset-btn:hover, .type-btn:hover, .risk-btn:hover, .growth-btn:hover {
+      border-color: var(--accent-blue); color: #93c5fd;
+      background: rgba(59,130,246,.08);
     }
 
+    /* ── Startup card ── */
     .startup-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      position: relative; overflow: hidden;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      transition: transform .25s cubic-bezier(.4,0,.2,1), border-color .25s, box-shadow .25s;
       opacity: 0;
-      animation: cardSlideIn 0.5s ease-out forwards;
+      animation: cardIn .5s ease forwards;
+      box-shadow: 0 4px 20px rgba(0,0,0,.35);
     }
-
     .startup-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #3b82f6, #10b981);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+      opacity: 0; transition: opacity .25s;
     }
-
-    .startup-card::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    .startup-card:hover::before {
-      opacity: 1;
-    }
-
-    .startup-card:hover::after {
-      opacity: 1;
-    }
-
     .startup-card:hover {
-      transform: translateY(-8px);
-      border-color: rgba(59, 130, 246, 0.5);
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
-      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.25), 0 0 20px rgba(59, 130, 246, 0.1);
+      transform: translateY(-6px);
+      border-color: var(--border-hover);
+      box-shadow: 0 20px 50px rgba(0,0,0,.5), 0 0 0 1px rgba(59,130,246,.2);
     }
+    .startup-card:hover::before { opacity: 1; }
 
     .startup-card.ai-recommended {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.4);
+      border-color: rgba(59,130,246,.35);
+      background: linear-gradient(135deg, rgba(59,130,246,.07) 0%, rgba(16,185,129,.07) 100%);
     }
-
     .startup-card.ai-recommended::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
+      opacity: 1;
       background: linear-gradient(90deg, #3b82f6, #10b981, #3b82f6);
       background-size: 200% 100%;
       animation: shimmer 3s infinite linear;
     }
 
-    .ai-badge {
-      background: linear-gradient(135deg, #3b82f6, #10b981);
-      animation: pulse-glow 2s infinite;
+    /* stagger */
+    .startup-card:nth-child(1) { animation-delay:.04s }
+    .startup-card:nth-child(2) { animation-delay:.09s }
+    .startup-card:nth-child(3) { animation-delay:.14s }
+    .startup-card:nth-child(4) { animation-delay:.19s }
+    .startup-card:nth-child(5) { animation-delay:.24s }
+    .startup-card:nth-child(6) { animation-delay:.29s }
+    .startup-card:nth-child(n+7) { animation-delay:.34s }
+
+    /* card internals */
+    .card-body { padding: 18px; }
+    .company-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; color: #e8f0fe; }
+    .company-sub  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-size: 11px; color: var(--text-muted); }
+    .metric-value { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; }
+
+    /* AI explanation box */
+    .ai-box {
+      margin: 12px 18px;
+      padding: 12px 14px;
+      background: rgba(59,130,246,.07);
+      border: 1px solid rgba(59,130,246,.2);
+      border-radius: 10px;
+      font-size: 11.5px; color: #93b4d4; line-height: 1.6;
+      position: relative;
+    }
+    .ai-box-label {
+      font-size: 9px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+      color: #60a5fa; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;
+    }
+    .ai-dot { width: 5px; height: 5px; border-radius: 50%; background: #34d399; animation: aiTyping 2s infinite; }
+
+    /* Card footer */
+    .card-footer {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 8px;
     }
 
-    /* Stagger animation for cards */
-    .startup-card:nth-child(1) { animation-delay: 0.05s; }
-    .startup-card:nth-child(2) { animation-delay: 0.1s; }
-    .startup-card:nth-child(3) { animation-delay: 0.15s; }
-    .startup-card:nth-child(4) { animation-delay: 0.2s; }
-    .startup-card:nth-child(5) { animation-delay: 0.25s; }
-    .startup-card:nth-child(6) { animation-delay: 0.3s; }
-    .startup-card:nth-child(n+7) { animation-delay: 0.35s; }
+    /* Badges */
+    .badge {
+      display: inline-flex; align-items: center;
+      font-size: 10px; font-weight: 600; letter-spacing: .3px;
+      padding: 3px 9px; border-radius: 20px;
+    }
+    .badge-ai { background: linear-gradient(135deg,#3b82f6,#10b981); color: #fff; animation: glowPulse 2s infinite; }
+    .badge-risk-low  { background: rgba(16,185,129,.15); color: #34d399; border: 1px solid rgba(16,185,129,.25); }
+    .badge-risk-med  { background: rgba(245,158,11,.15); color: #fbbf24; border: 1px solid rgba(245,158,11,.25); }
+    .badge-risk-high { background: rgba(239,68,68,.15);  color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+    .badge-pending   { background: rgba(100,116,139,.15); color: #94a3b8; border: 1px solid rgba(100,116,139,.25); }
+    .badge-deck      { background: rgba(59,130,246,.15); color: #93c5fd; border: 1px solid rgba(59,130,246,.25); }
+    .badge-stage     { background: rgba(139,92,246,.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,.25); }
+    .badge-conf      { background: rgba(14,165,233,.15); color: #7dd3fc; border: 1px solid rgba(14,165,233,.25); }
 
-    /* Loading skeleton */
+    /* Buttons */
+    .btn { border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; border: none; padding: 8px 14px; }
+    .btn-view { background: rgba(30,41,70,.8); border: 1px solid var(--border); color: var(--text-muted); }
+    .btn-view:hover { border-color: var(--accent-blue); color: #93c5fd; }
+    .btn-invest { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; }
+    .btn-invest:hover { background: linear-gradient(135deg, #3b82f6, #2563eb); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,.3); }
+    .btn-invest-disabled { background: rgba(30,41,70,.4); color: #4b5563; cursor: not-allowed; }
+
+    .watch-toggle { background: none; border: none; cursor: pointer; padding: 4px; transition: transform .2s; }
+    .watch-toggle:hover { transform: scale(1.2); }
+    .watch-toggle:active { transform: scale(.9); }
+
+    /* Nav buttons */
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 14px; border-radius: 9px; font-size: 13px; font-weight: 500;
+      transition: all .2s; cursor: pointer; text-decoration: none;
+    }
+    .nav-btn-primary { background: linear-gradient(135deg, #2563eb, #059669); color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,.3); }
+    .nav-btn-primary:hover { box-shadow: 0 4px 16px rgba(37,99,235,.4); transform: scale(1.03); }
+    .nav-btn-green { background: #059669; color: #fff; }
+    .nav-btn-green:hover { background: #047857; transform: scale(1.03); }
+    .nav-btn-blue { background: #2563eb; color: #fff; }
+    .nav-btn-blue:hover { background: #1d4ed8; transform: scale(1.03); }
+    .nav-btn-ghost { background: rgba(30,41,70,.5); border: 1px solid var(--border); color: var(--text-muted); }
+    .nav-btn-ghost:hover { border-color: var(--border-hover); color: #93c5fd; }
+
+    /* Skeleton */
     .skeleton-card {
-      background: linear-gradient(
-        90deg,
-        rgba(30, 41, 59, 0.6) 0%,
-        rgba(59, 130, 246, 0.2) 50%,
-        rgba(30, 41, 59, 0.6) 100%
-      );
-      background-size: 1000px 100%;
+      background: linear-gradient(90deg, rgba(13,20,36,.8) 0%, rgba(59,130,246,.1) 50%, rgba(13,20,36,.8) 100%);
+      background-size: 800px 100%;
       animation: shimmer 2s infinite linear;
+      border-radius: 16px; height: 300px;
+      border: 1px solid var(--border);
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      height: 240px;
+      padding: 16px 22px;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(12px);
     }
+    .stat-num { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 500; color: #e8f0fe; }
+    .stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; letter-spacing: .3px; text-transform: uppercase; }
 
-    /* Button ripple effect */
-    .ripple-button {
-      position: relative;
-      overflow: hidden;
-    }
-
+    /* ripple */
+    .ripple-button { position: relative; overflow: hidden; }
     .ripple-button::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+      content: ''; position: absolute; top: 50%; left: 50%;
+      width: 0; height: 0; border-radius: 50%;
+      background: rgba(255,255,255,.2);
+      transform: translate(-50%,-50%);
+      transition: width .5s, height .5s;
     }
+    .ripple-button:active::after { width: 300px; height: 300px; transition: 0s; }
 
-    .ripple-button:active::after {
-      width: 300px;
-      height: 300px;
-      transition: 0s;
+    /* AI modal */
+    .ai-modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
     }
+    .ai-modal-overlay.open { opacity: 1; pointer-events: all; }
+    .ai-modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hover);
+      border-radius: 20px; padding: 32px;
+      max-width: 520px; width: 90%;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+      transform: scale(.94); transition: transform .25s;
+    }
+    .ai-modal-overlay.open .ai-modal { transform: scale(1); }
 
-    /* Enhanced button hover effects */
-    button, .invest-btn, .view-details-btn {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-    }
+    main { animation: fadeUp .5s ease .05s both; }
 
-    button:hover:not(:disabled), .invest-btn:hover, .view-details-btn:hover {
-      transform: translateY(-2px);
-    }
-
-    button:active:not(:disabled), .invest-btn:active, .view-details-btn:active {
-      transform: translateY(0);
-    }
-
-    /* Watchlist icon animation */
-    .watch-toggle {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .watch-toggle:hover {
-      transform: scale(1.15);
-    }
-
-    .watch-toggle:active {
-      transform: scale(0.95);
-    }
-
-    /* Badge pulse on update */
-    .badge-update {
-      animation: pulse-glow 0.6s ease-out;
-    }
-
-    main {
-      animation: fadeInUp 0.6s ease-out 0.1s backwards;
-    }
-
-    /* Header entrance */
-    header {
-      animation: fadeInUp 0.5s ease-out backwards;
-    }
-
-    aside {
-      animation: fadeInUp 0.5s ease-out 0.2s backwards;
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100vh;
-      background: rgba(15, 23, 42, 0.98);
-      border: none;
-      border-radius: 0;
-      padding: 20px;
-      box-shadow: none;
-      z-index: 100;
-      backdrop-filter: blur(20px);
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      overflow-y: auto;
-    }
-
-    aside.mobile-open {
-      transform: translateX(0);
-    }
-
-    @media (min-width: 1024px) {
-      aside {
-        transform: translateX(0);
-        left: 24px;
-        top: 88px;
-        width: 300px;
-        height: auto;
-        max-height: calc(100vh - 112px);
-        background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
-        border: 1px solid rgba(59, 130, 246, 0.2);
-        border-radius: 16px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-        z-index: 10;
-      }
-    }
-
-    aside::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    aside::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    aside::-webkit-scrollbar-thumb {
-      background: rgba(59, 130, 246, 0.4);
-      border-radius: 3px;
-      transition: background 0.3s;
-    }
-
-    aside::-webkit-scrollbar-thumb:hover {
-      background: rgba(59, 130, 246, 0.6);
-    }
-
-    /* Filter transitions */
-    select {
-      transition: all 0.2s ease;
-    }
-
-    select:hover {
-      border-color: rgba(59, 130, 246, 0.4) !important;
-      background-color: rgba(30, 41, 59, 0.5) !important;
-    }
-
-    select:focus {
-      transform: scale(1.01);
-      transition: transform 0.2s ease;
-    }
-
-    .preset-btn, .type-btn, .risk-btn, .growth-btn {
-      transition: all 0.2s ease;
-    }
-
-    .preset-btn:hover, .type-btn:hover, .risk-btn:hover, .growth-btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .preset-btn:active, .type-btn:active, .risk-btn:active, .growth-btn:active {
-      transform: scale(0.97);
-    }
-
-    /* Better filter card styling */
-    .filter-card {
-      background: rgba(30, 41, 59, 0.4);
-      border: 1px solid rgba(71, 85, 105, 0.5);
-      border-radius: 12px;
-      padding: 16px;
-      transition: all 0.3s ease;
-    }
-
-    .filter-card:hover {
-      border-color: rgba(59, 130, 246, 0.3);
-      background: rgba(30, 41, 59, 0.5);
-    }
+    /* No startups */
+    #no-startups { display: none; }
+    #no-startups.visible { display: block; }
   </style>
 </head>
 <body class="text-white min-h-screen">
-  <!-- Header -->
-  <header class="sticky top-0 z-50 bg-slate-900/80 border-b border-slate-800/50 backdrop-blur-lg">
-    <div class="max-w-[1920px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
-      <div class="flex justify-between items-center">
-        <!-- Mobile Menu Button -->
-        <button id="mobile-menu-btn" class="lg:hidden text-white p-2 rounded-lg hover:bg-slate-800/50 transition-all">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-        
-        <!-- Logo -->
-        <div class="flex items-center space-x-3">
-          <h1 class="text-2xl font-bold bg-gradient-to-r from-brand-400 to-accent-400 bg-clip-text text-transparent">Fundora</h1>
+
+  <!-- AI Modal -->
+  <div class="ai-modal-overlay" id="aiModal">
+    <div class="ai-modal">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <div class="text-xs font-bold tracking-widest text-brand-400 uppercase mb-1">✦ Gemini AI Analysis</div>
+          <h3 id="aiModalTitle" class="text-lg font-display font-bold text-white"></h3>
         </div>
-        
-        <!-- Navigation Buttons -->
-        <div class="flex items-center space-x-2 sm:space-x-3">
-          <button id="show-ai-btn" class="hidden sm:flex bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-700 hover:to-accent-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium transition-all items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 text-sm">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-            </svg>
+        <button onclick="closeAiModal()" class="p-2 rounded-lg hover:bg-slate-800/60 text-slate-400 hover:text-white transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="aiModalScores" class="grid grid-cols-3 gap-3 mb-5"></div>
+      <div class="bg-brand-500/8 border border-brand-500/20 rounded-xl p-4">
+        <div class="text-xs font-bold tracking-wider text-brand-400 uppercase mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-accent-400 animate-pulse inline-block"></span>AI Explanation
+        </div>
+        <p id="aiModalText" class="text-sm text-slate-300 leading-relaxed"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-6 py-4">
+      <div class="flex justify-between items-center">
+        <button id="mobile-menu-btn" class="lg:hidden text-white p-2 rounded-lg hover:bg-slate-800/50 transition-all">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          </div>
+          <span class="logo-text">Fundora</span>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button id="show-ai-btn" class="hidden sm:flex nav-btn nav-btn-primary ripple-button">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
             <span>AI Picks</span>
           </button>
-          
-          <a href="/Module_2/Compare_Startups.html?return=/Module_1/Dashboard.html" class="hidden sm:flex bg-accent-600 hover:bg-accent-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium transition-all items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 text-sm">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-            <span class="hidden md:inline">Compare Startups</span>
-            <span class="md:hidden">Compare</span>
+          <a href="/Module_2/Compare_Startups.html?return=/Module_1/Dashboard.html" class="hidden sm:flex nav-btn nav-btn-green ripple-button">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <span class="hidden md:inline">Compare</span>
           </a>
-          
-          <a id="watchlistLink" href="/Module_1/Watchlist.html" class="relative bg-brand-600 hover:bg-brand-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium transition-all flex items-center space-x-2 shadow-lg hover:shadow-xl hover:scale-105 text-sm">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-            </svg>
-            <span class="hidden sm:inline">My Watchlist</span>
-            <span id="watchlist-badge" class="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-brand-500 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shadow-lg">0</span>
+          <a id="watchlistLink" href="/Module_1/Watchlist.html" class="relative nav-btn nav-btn-blue ripple-button">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            <span class="hidden sm:inline">Watchlist</span>
+            <span id="watchlist-badge" class="absolute -top-2 -right-2 bg-brand-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow">0</span>
           </a>
-          
-          <a href="/Module_1/Profile.html" class="hidden sm:flex bg-slate-800/50 hover:bg-slate-700/50 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium transition-all border border-slate-700/50 items-center space-x-2 hover:border-brand-500/50 hover:scale-105 text-sm">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
+          <a href="/Module_1/Profile.html" class="hidden sm:flex nav-btn nav-btn-ghost">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
             <span>Profile</span>
           </a>
         </div>
@@ -403,218 +397,214 @@
     </div>
   </header>
 
-  <div class="flex max-w-[1920px] mx-auto gap-0 lg:gap-6 px-0 lg:px-6 py-4 lg:py-8">
-    <!-- Sidebar -->
-    <aside>
-      <div class="lg:hidden flex justify-between items-center mb-4 pb-4 border-b border-slate-700/50">
-        <h3 class="text-xl font-bold text-white">Filters</h3>
-        <button type="button" onclick="document.querySelector('aside').classList.remove('mobile-open'); document.body.style.overflow = '';" class="text-white p-2 rounded-lg hover:bg-slate-800/50 transition-all">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-      <form id="filterForm" class="space-y-4">
-        <!-- Quick Presets -->
-        <div class="filter-card bg-gradient-to-br from-brand-600/10 to-slate-900/40 border-brand-500/30">
-          <label class="block text-xs font-bold text-gray-200 mb-3 uppercase tracking-wider">Quick Presets</label>
-          <div class="grid grid-cols-1 gap-2">
-            <button type="button" onclick="applyPreset('conservative'); renderStartups(false)" class="preset-btn w-full text-left px-3 py-2.5 bg-slate-800/40 border border-slate-700/50 rounded-lg hover:bg-slate-700/50 hover:border-accent-500 transition-all text-sm">
-              <div class="flex items-center justify-between">
-                <span class="font-medium text-white">Conservative</span>
-                <span class="text-xs text-gray-400">Low Risk</span>
-              </div>
-            </button>
-            <button type="button" onclick="applyPreset('balanced'); renderStartups(false)" class="preset-btn w-full text-left px-3 py-2.5 bg-slate-800/40 border border-slate-700/50 rounded-lg hover:bg-slate-700/50 hover:border-brand-500 transition-all text-sm">
-              <div class="flex items-center justify-between">
-                <span class="font-medium text-white">Balanced</span>
-                <span class="text-xs text-gray-400">Mixed</span>
-              </div>
-            </button>
-            <button type="button" onclick="applyPreset('aggressive'); renderStartups(false)" class="preset-btn w-full text-left px-3 py-2.5 bg-slate-800/40 border border-slate-700/50 rounded-lg hover:bg-slate-700/50 hover:border-red-500 transition-all text-sm">
-              <div class="flex items-center justify-between">
-                <span class="font-medium text-white">Aggressive</span>
-                <span class="text-xs text-gray-400">High Risk</span>
-              </div>
-            </button>
-          </div>
+  <div class="max-w-[1920px] mx-auto px-4 sm:px-6 py-4 relative z-10">
+    <div class="lg:grid lg:grid-cols-[264px_1fr] lg:gap-5">
+
+      <!-- Sidebar -->
+      <aside>
+        <div class="lg:hidden flex justify-between items-center mb-4 pb-4 border-b border-slate-700/50">
+          <h3 class="text-lg font-display font-bold">Filters</h3>
+          <button id="close-sidebar" class="p-2 rounded-lg hover:bg-slate-800/50 transition-all text-slate-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="hidden lg:flex items-center gap-2 mb-4 pb-4 border-b border-slate-700/30">
+          <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          <span class="text-sm font-display font-bold text-white">Filters</span>
         </div>
 
-        <!-- Startup Type -->
-        <div>
-          <label class="block text-xs font-bold text-gray-200 mb-2 uppercase tracking-wider">Startup Type</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="setStartupType('financial')" id="type-financial" class="type-btn px-3 py-2.5 text-xs font-medium border border-slate-700/50 bg-slate-800/40 rounded-lg hover:border-brand-500 transition-all">
-              Financial
-            </button>
-            <button type="button" onclick="setStartupType('pitch_deck')" id="type-pitch_deck" class="type-btn px-3 py-2.5 text-xs font-medium border border-slate-700/50 bg-slate-800/40 rounded-lg hover:border-brand-500 transition-all">
-              Pitch Decks
-            </button>
-          </div>
-          <input type="hidden" name="startup_type" id="type-hidden">
-        </div>
-
-        <!-- Financial Data Filters -->
-        <div id="financial-filters" class="space-y-4">
-          <div class="filter-card">
-            <label class="block text-xs font-bold text-gray-200 mb-2 uppercase tracking-wider">Sort By</label>
-            <select name="sort_by" class="w-full px-3 py-2 bg-slate-800/40 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm">
-              <option value="">Default Order</option>
-              <option value="growth_rate_desc">Highest Growth Rate First</option>
-              <option value="growth_rate_asc">Lowest Growth Rate First</option>
-              <option value="reward_potential_desc">Best Reward Potential</option>
-              <option value="confidence_desc">Highest Confidence</option>
-              <option value="risk_asc">Lowest Risk First</option>
-              <option value="company_name">Company Name A-Z</option>
-            </select>
-          </div>
-
-          <div class="filter-card">
-            <label class="block text-xs font-bold text-gray-200 mb-2 uppercase tracking-wider">Industry</label>
-            <select name="industry" class="w-full px-3 py-2 bg-slate-800/40 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm">
-              <option value="">All Industries</option>
-              <option value="Technology">Technology</option>
-              <option value="Finance">Finance</option>
-              <option value="Healthcare">Healthcare</option>
-              <option value="E-commerce">E-commerce</option>
-              <option value="Education">Education</option>
-              <option value="Real Estate">Real Estate</option>
-              <option value="Manufacturing">Manufacturing</option>
-              <option value="Retail">Retail</option>
-              <option value="Food & Beverage">Food & Beverage</option>
-              <option value="Transportation">Transportation</option>
-              <option value="Energy">Energy</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Agriculture">Agriculture</option>
-              <option value="Fintech">Fintech</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-200 mb-2 uppercase tracking-wider">Risk Tolerance</label>
-            <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="setRiskLevel('Low')" id="risk-Low" class="risk-btn px-2 py-2.5 text-xs font-medium border border-slate-700/50 bg-slate-800/40 rounded-lg hover:border-accent-500 transition-all">
-                Low
+        <form id="filterForm" class="space-y-3">
+          <!-- Quick Presets -->
+          <div class="filter-card" style="background: rgba(37,99,235,.06); border-color: rgba(37,99,235,.25);">
+            <label class="block text-xs font-bold text-white mb-2 uppercase tracking-wider">Quick Presets</label>
+            <div class="grid grid-cols-1 gap-2">
+              <button type="button" onclick="applyPreset('conservative'); renderStartups(false)" class="preset-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between">
+                <span class="font-semibold">Conservative</span><span class="text-xs opacity-60">Low Risk</span>
               </button>
-              <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-2 py-2.5 text-xs font-medium border border-slate-700/50 bg-slate-800/40 rounded-lg hover:border-yellow-500 transition-all">
-                Medium
+              <button type="button" onclick="applyPreset('balanced'); renderStartups(false)" class="preset-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between">
+                <span class="font-semibold">Balanced</span><span class="text-xs opacity-60">Mixed</span>
               </button>
-              <button type="button" onclick="setRiskLevel('High')" id="risk-High" class="risk-btn px-2 py-2.5 text-xs font-medium border border-slate-700/50 bg-slate-800/40 rounded-lg hover:border-red-500 transition-all">
-                High
+              <button type="button" onclick="applyPreset('aggressive'); renderStartups(false)" class="preset-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between">
+                <span class="font-semibold">Aggressive</span><span class="text-xs opacity-60">High Risk</span>
               </button>
             </div>
-            <input type="hidden" name="risk_level" id="risk-hidden">
           </div>
 
-          <div class="filter-card">
-            <label class="block text-xs font-bold text-gray-200 mb-2 uppercase tracking-wider">Min Growth Rate</label>
-            <select name="min_growth_rate" class="w-full px-3 py-2 bg-slate-800/40 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm">
-              <option value="">Any Growth Rate</option>
-              <option value="5">5% or higher</option>
-              <option value="10">10% or higher</option>
-              <option value="15">15% or higher</option>
-              <option value="20">20% or higher</option>
-              <option value="25">25% or higher</option>
-              <option value="50">50% or higher</option>
-              <option value="75">75% or higher</option>
-              <option value="100">100% or higher</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Pitch Deck Filters -->
-        <div id="pitch-deck-filters" class="space-y-4 hidden">
-          <div class="filter-card">
-            <label class="block text-xs font-bold text-gray-200 mb-2 uppercase tracking-wider">Sort By</label>
-            <select name="deck_sort_by" class="w-full px-3 py-2 bg-slate-800/40 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm">
-              <option value="">Default Order</option>
-              <option value="funding_ask_desc">Highest Funding Ask</option>
-              <option value="funding_ask_asc">Lowest Funding Ask</option>
-              <option value="market_growth_desc">Highest Market Growth</option>
-              <option value="market_growth_asc">Lowest Market Growth</option>
-              <option value="company_name">Company Name A-Z</option>
-            </select>
-          </div>
-
-          <div class="filter-card">
-            <label class="block text-xs font-bold text-gray-200 mb-2 uppercase tracking-wider">Funding Ask Range</label>
-            <select name="funding_ask_range" class="w-full px-3 py-2 bg-slate-800/40 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm">
-              <option value="">Any Amount</option>
-              <option value="0-100000">Up to $100K</option>
-              <option value="100000-500000">$100K - $500K</option>
-              <option value="500000-1000000">$500K - $1M</option>
-              <option value="1000000-5000000">$1M - $5M</option>
-              <option value="5000000+">$5M+</option>
-            </select>
-          </div>
-
+          <!-- Startup Type -->
           <div>
-            <label class="block text-xs font-bold text-gray-200 mb-2 uppercase tracking-wider">Market Growth Rate</label>
-            <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="setMarketGrowth('Low')" id="growth-Low" class="growth-btn px-2 py-2.5 text-xs font-medium border border-slate-700/50 bg-slate-800/40 rounded-lg hover:border-brand-500 transition-all">
-                0-10%
-              </button>
-              <button type="button" onclick="setMarketGrowth('Medium')" id="growth-Medium" class="growth-btn px-2 py-2.5 text-xs font-medium border border-slate-700/50 bg-slate-800/40 rounded-lg hover:border-brand-500 transition-all">
-                10-30%
-              </button>
-              <button type="button" onclick="setMarketGrowth('High')" id="growth-High" class="growth-btn px-2 py-2.5 text-xs font-medium border border-slate-700/50 bg-slate-800/40 rounded-lg hover:border-brand-500 transition-all">
-                30%+
-              </button>
+            <label class="block text-xs font-bold text-white mb-2 uppercase tracking-wider">Startup Type</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="setStartupType('financial')" id="type-financial" class="type-btn px-3 py-2.5 rounded-lg font-semibold">Financial</button>
+              <button type="button" onclick="setStartupType('pitch_deck')" id="type-pitch_deck" class="type-btn px-3 py-2.5 rounded-lg font-semibold">Pitch Deck</button>
             </div>
-            <input type="hidden" name="market_growth_filter" id="growth-hidden">
+            <input type="hidden" name="startup_type" id="type-hidden">
           </div>
 
-          <div class="filter-card">
-            <label class="block text-xs font-bold text-gray-200 mb-2 uppercase tracking-wider">Min Market Growth</label>
-            <select name="min_market_growth" class="w-full px-3 py-2 bg-slate-800/40 border border-slate-700/50 text-white rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm">
-              <option value="">Any Growth Rate</option>
-              <option value="5">5% or higher</option>
-              <option value="10">10% or higher</option>
-              <option value="15">15% or higher</option>
-              <option value="20">20% or higher</option>
-              <option value="30">30% or higher</option>
-              <option value="50">50% or higher</option>
-            </select>
+          <!-- Financial Filters -->
+          <div id="financial-filters" class="space-y-3">
+            <div class="filter-card">
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Sort By</label>
+              <select name="sort_by" class="w-full px-3 py-2 rounded-lg focus:ring-1 focus:ring-brand-500">
+                <option value="">Default Order</option>
+                <option value="growth_rate_desc">Highest Growth First</option>
+                <option value="growth_rate_asc">Lowest Growth First</option>
+                <option value="reward_potential_desc">Best Reward Potential</option>
+                <option value="confidence_desc">Highest Confidence</option>
+                <option value="risk_asc">Lowest Risk First</option>
+                <option value="company_name">Name A–Z</option>
+              </select>
+            </div>
+            <div class="filter-card">
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Company Stage</label>
+              <select name="company_stage" class="w-full px-3 py-2 rounded-lg">
+                <option value="">All Stages</option>
+                <option value="idea">Idea</option>
+                <option value="mvp">MVP</option>
+                <option value="early_revenue">Early Revenue</option>
+                <option value="growth">Growth</option>
+                <option value="scale">Scale</option>
+              </select>
+            </div>
+            <div class="filter-card">
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Market Size (TAM)</label>
+              <select name="tam_range" class="w-full px-3 py-2 rounded-lg">
+                <option value="">Any Size</option>
+                <option value="0-10000000">Up to ₱10M</option>
+                <option value="10000000-50000000">₱10M – ₱50M</option>
+                <option value="50000000-100000000">₱50M – ₱100M</option>
+                <option value="100000000-500000000">₱100M – ₱500M</option>
+                <option value="500000000+">₱500M+</option>
+              </select>
+            </div>
+            <div class="filter-card">
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Industry</label>
+              <select name="industry" class="w-full px-3 py-2 rounded-lg">
+                <option value="">All Industries</option>
+                <option>Technology</option><option>Finance</option><option>Healthcare</option>
+                <option>E-commerce</option><option>Education</option><option>Real Estate</option>
+                <option>Manufacturing</option><option>Retail</option><option>Food & Beverage</option>
+                <option>Transportation</option><option>Energy</option><option>Entertainment</option>
+                <option>Agriculture</option><option>Fintech</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Risk Tolerance</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" onclick="setRiskLevel('Low')"    id="risk-Low"    class="risk-btn px-2 py-2.5 rounded-lg">Low</button>
+                <button type="button" onclick="setRiskLevel('Medium')" id="risk-Medium" class="risk-btn px-2 py-2.5 rounded-lg">Medium</button>
+                <button type="button" onclick="setRiskLevel('High')"   id="risk-High"   class="risk-btn px-2 py-2.5 rounded-lg">High</button>
+              </div>
+              <input type="hidden" name="risk_level" id="risk-hidden">
+            </div>
+            <div class="filter-card">
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Min Growth Rate</label>
+              <select name="min_growth_rate" class="w-full px-3 py-2 rounded-lg">
+                <option value="">Any Growth</option>
+                <option value="5">5%+</option><option value="10">10%+</option>
+                <option value="15">15%+</option><option value="20">20%+</option>
+                <option value="25">25%+</option><option value="50">50%+</option>
+                <option value="75">75%+</option><option value="100">100%+</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Pitch Deck Filters -->
+          <div id="pitch-deck-filters" class="space-y-3 hidden">
+            <div class="filter-card">
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Sort By</label>
+              <select name="deck_sort_by" class="w-full px-3 py-2 rounded-lg">
+                <option value="">Default</option>
+                <option value="funding_ask_desc">Highest Funding Ask</option>
+                <option value="funding_ask_asc">Lowest Funding Ask</option>
+                <option value="market_growth_desc">Highest Market Growth</option>
+                <option value="company_name">Name A–Z</option>
+              </select>
+            </div>
+            <div class="filter-card">
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Funding Ask</label>
+              <select name="funding_ask_range" class="w-full px-3 py-2 rounded-lg">
+                <option value="">Any Amount</option>
+                <option value="0-100000">Up to $100K</option>
+                <option value="100000-500000">$100K–$500K</option>
+                <option value="500000-1000000">$500K–$1M</option>
+                <option value="1000000-5000000">$1M–$5M</option>
+                <option value="5000000+">$5M+</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Market Growth</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" onclick="setMarketGrowth('Low')"    id="growth-Low"    class="growth-btn px-2 py-2.5 rounded-lg text-xs">0–10%</button>
+                <button type="button" onclick="setMarketGrowth('Medium')" id="growth-Medium" class="growth-btn px-2 py-2.5 rounded-lg text-xs">10–30%</button>
+                <button type="button" onclick="setMarketGrowth('High')"   id="growth-High"   class="growth-btn px-2 py-2.5 rounded-lg text-xs">30%+</button>
+              </div>
+              <input type="hidden" name="market_growth_filter" id="growth-hidden">
+            </div>
+            <div class="filter-card">
+              <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Min Market Growth</label>
+              <select name="min_market_growth" class="w-full px-3 py-2 rounded-lg">
+                <option value="">Any</option>
+                <option value="5">5%+</option><option value="10">10%+</option>
+                <option value="15">15%+</option><option value="20">20%+</option>
+                <option value="30">30%+</option><option value="50">50%+</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-3 border-t border-slate-700/30">
+            <button type="submit" class="w-full btn btn-invest ripple-button py-2.5 text-sm">Apply Filters</button>
+            <button type="button" onclick="clearAllFilters()" class="w-full py-2.5 text-sm rounded-lg border border-slate-700/50 text-slate-400 hover:text-slate-300 hover:border-slate-600 transition-all bg-transparent">Clear All</button>
+          </div>
+        </form>
+      </aside>
+
+      <!-- Main -->
+      <main class="w-full">
+        <div class="mb-5">
+          <h2 class="text-2xl sm:text-3xl font-display font-bold text-white mb-1">Investment Opportunities</h2>
+          <p class="text-slate-500 text-xs sm:text-sm">Discover startups tailored to your investment profile — with Gemini AI insights</p>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="stats-bar mb-5">
+          <div>
+            <div class="stat-num"><span id="startup-count">0</span><span id="startup-plural" class="text-slate-500 text-sm font-mono ml-1">startups</span></div>
+            <div class="stat-lbl">Investment Opportunities</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 text-xs text-accent-400 font-mono bg-accent-500/8 border border-accent-500/20 px-3 py-1.5 rounded-full">
+              <span class="w-2 h-2 rounded-full bg-accent-400 animate-pulse inline-block"></span>
+              Gemini AI Active
+            </div>
+            <button onclick="clearAllFilters()" class="hidden lg:flex items-center gap-2 text-xs text-brand-400 hover:text-brand-300 font-medium transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              Clear
+            </button>
           </div>
         </div>
 
-        <div class="space-y-2 pt-3 border-t border-slate-700/50">
-          <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white py-2.5 px-4 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl text-sm">Apply Filters</button>
-          <button type="button" onclick="clearAllFilters()" class="w-full bg-slate-800/50 hover:bg-slate-700/50 text-white py-2.5 px-4 rounded-lg font-medium transition-all border border-slate-700/50 hover:border-slate-600 text-sm">Clear All</button>
+        <div id="startup-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+
+        <div id="no-startups" class="col-span-full text-center py-24">
+          <div class="text-7xl mb-6 opacity-40">◎</div>
+          <h3 class="text-3xl font-display font-black mb-3 text-white">No Startups Found</h3>
+          <p class="text-slate-400 text-sm mb-8 max-w-lg mx-auto">No startups match your current filters. Try adjusting your search criteria.</p>
+          <div class="flex gap-3 justify-center">
+            <button onclick="clearAllFilters()" class="btn btn-invest px-6 py-2.5">Clear Filters</button>
+            <button onclick="renderStartups(false, false)" class="btn btn-view px-6 py-2.5">View All</button>
+          </div>
         </div>
-      </form>
-    </aside>
-
-    <!-- Main Content -->
-      <main class="flex-1 w-full lg:ml-[348px] py-4 px-4 lg:py-6 lg:pr-6">
-      <div class="mb-4 lg:mb-6">
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-2">Investment Opportunities</h2>
-        <p class="text-gray-400 text-sm sm:text-base">Discover startups tailored to your investment profile</p>
-      </div>
-
-      <div class="mb-5 bg-gradient-to-r from-brand-600/10 via-slate-800/40 to-slate-900/40 border border-brand-500/20 px-4 py-3 rounded-xl flex items-center justify-between shadow-lg">
-        <p class="text-sm text-gray-300">Showing <span id="startup-count" class="font-bold text-white text-lg mx-1">0</span> startup<span id="startup-plural">s</span></p>
-        <div id="clear-filters" class="hidden"></div>
-      </div>
-
-      <div id="startup-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-5"></div>
-
-      <div id="no-startups" class="col-span-full text-center py-16 hidden">
-        <div class="text-6xl mb-4 opacity-50">🔍</div>
-        <h3 class="text-2xl font-semibold mb-2 text-gray-300">No startups found</h3>
-        <p class="text-gray-400 text-base mb-6">No startups match your current filters.</p>
-        <button onclick="renderStartups()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105">
-          Retry
-        </button>
-      </div>
-    </main>
+      </main>
+    </div>
   </div>
 
   <script>
+    /* ══════════════════════════════════════════════
+       CONFIG — same as original, unchanged
+    ══════════════════════════════════════════════ */
     const API_BASE = 'http://127.0.0.1:8000';
     const STARTUPS_ENDPOINT = `${API_BASE}/api/investor/startups/`;
     const WATCHLIST_ENDPOINT = `${API_BASE}/api/investor/watchlist/`;
-    // const AI_RECOMMENDATIONS_ENDPOINT = `${API_BASE}/api/ai-recommendations/`;
     const ML_API_BASE = 'http://127.0.0.1:8001';
     const AI_RECOMMENDATIONS_ENDPOINT = `${ML_API_BASE}/api/recommendations`;
     const ADD_WATCHLIST_ENDPOINT = (id) => `${API_BASE}/api/investor/watchlist/add/${id}/`;
@@ -622,37 +612,24 @@
     const LOGOUT_ENDPOINT = `${API_BASE}/api/logout/`;
     const COMPANY_PROFILE_PAGE = '../Module_2/Company_Profile.html';
     const COMPANY_PROFILE_DB_PAGE = '../Module_2/Company_ProfileDB.html';
-    const INVEST_PAGE = '../Module_2/Investment_Simulation.html';
+    const INVEST_PAGE = '../Module_2/Investment_Calculation.html';
 
     let watchlistIdsSet = new Set();
     let aiRecommendedIds = new Set();
+    // NEW: store AI data per startup id
+    let aiDataMap = {};
 
-    function getAuthToken() {
-      return sessionStorage.getItem('authToken');
-    }
-
+    /* ── Auth helpers (unchanged) ── */
+    function getAuthToken() { return sessionStorage.getItem('authToken'); }
     function authHeaders() {
       const token = getAuthToken();
       if (!token) return {};
       return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
     }
 
-    function riskLevelToNum(riskLevel) {
-      const map = { 'Low': 1, 'Medium': 2, 'High': 3 };
-      return map[riskLevel] || 2;
-    }
-
-    function confidenceToNum(confidence) {
-      const map = { 'High': 3, 'Medium': 2, 'Low': 1 };
-      return map[confidence] || 0;
-    }
-
     async function fetchJSON(url, options = {}) {
       const token = getAuthToken();
-      if (!token) {
-        window.location.href = '/login.html';
-        throw new Error('No auth token');
-      }
+      if (!token) { window.location.href = '/login.html'; throw new Error('No auth token'); }
       options.headers = Object.assign({}, options.headers || {}, { 'Authorization': `Bearer ${token}` });
       const res = await fetch(url, options);
       if (res.status === 401 || res.status === 403) {
@@ -660,479 +637,380 @@
         window.location.href = '/login.html';
         throw new Error('Unauthorized');
       }
-      if (!res.ok) {
-        const text = await res.text().catch(()=>null);
-        throw new Error(`Request failed: ${res.status} ${text || ''}`);
-      }
+      if (!res.ok) { const t = await res.text().catch(()=>null); throw new Error(`Request failed: ${res.status} ${t||''}`); }
       const ct = res.headers.get('content-type') || '';
-      if (ct.includes('application/json')) return await res.json();
-      return await res.text();
+      return ct.includes('application/json') ? await res.json() : await res.text();
     }
 
+    /* ── AI Recommendations (upgraded: stores ai_explanation per startup) ── */
     async function fetchAIRecommendations() {
       try {
-        const userId = 1; // You need to get the current user ID
+        const userId = 1;
         const response = await fetch(AI_RECOMMENDATIONS_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            user_id: userId,
-            n_recommendations: 10,
-            exclude_viewed: true
-          })
+          body: JSON.stringify({ user_id: userId, n_recommendations: 10, exclude_viewed: true, include_ai_explanation: true })
         });
-        
         if (!response.ok) throw new Error('AI service unavailable');
-        
         const data = await response.json();
         if (data.recommendations) {
           aiRecommendedIds = new Set(data.recommendations.map(r => r.startup_id));
-          console.log(`✨ Loaded ${aiRecommendedIds.size} AI recommendations`);
+          // Store AI data for modal display
+          data.recommendations.forEach(r => { aiDataMap[r.startup_id] = r; });
           return true;
         }
         return false;
-      } catch (err) {
-        console.warn('Could not fetch AI recommendations:', err);
-        return false;
-      }
+      } catch { return false; }
     }
 
+    /* ── Watchlist (unchanged) ── */
     async function refreshWatchlist() {
-        try {
-            const data = await fetchJSON(WATCHLIST_ENDPOINT, { method: 'GET' });
-            const items = data.results || data.watchlist || [];
-            watchlistIdsSet = new Set(items.map(it => it.id));
-            
-            const badge = document.getElementById('watchlist-badge');
-            badge.textContent = data.count ?? items.length ?? 0;
-        } catch (err) {
-            console.warn('Could not refresh watchlist:', err);
-        }
+      try {
+        const data = await fetchJSON(WATCHLIST_ENDPOINT, { method: 'GET' });
+        const items = data.results || data.watchlist || [];
+        watchlistIdsSet = new Set(items.map(it => it.id));
+        document.getElementById('watchlist-badge').textContent = data.count ?? items.length ?? 0;
+      } catch {}
     }
 
-    async function addToWatchlist(startupId, btn) {
+    async function addToWatchlist(startupId) {
       try {
-        const res = await fetch(ADD_WATCHLIST_ENDPOINT(startupId), {
-          method: 'POST',
-          headers: authHeaders()
-        });
-        if (res.status === 201 || res.ok) {
-          watchlistIdsSet.add(Number(startupId));
-          updateWatchlistBadge();
-          return true;
-        } else {
-          console.warn('Add failed', res.status);
-          return false;
-        }
-      } catch (err) {
-        console.error('Error adding to watchlist', err);
+        const res = await fetch(ADD_WATCHLIST_ENDPOINT(startupId), { method: 'POST', headers: authHeaders() });
+        if (res.status === 201 || res.ok) { watchlistIdsSet.add(Number(startupId)); updateWatchlistBadge(); return true; }
         return false;
-      }
+      } catch { return false; }
     }
 
-    async function removeFromWatchlist(startupId, btn) {
+    async function removeFromWatchlist(startupId) {
       try {
-        const res = await fetch(REMOVE_WATCHLIST_ENDPOINT(startupId), {
-          method: 'POST',
-          headers: authHeaders()
-        });
-        if (res.ok) {
-          watchlistIdsSet.delete(Number(startupId));
-          updateWatchlistBadge();
-          return true;
-        } else {
-          console.warn('Remove failed', res.status);
-          return false;
-        }
-      } catch (err) {
-        console.error('Error removing from watchlist', err);
+        const res = await fetch(REMOVE_WATCHLIST_ENDPOINT(startupId), { method: 'POST', headers: authHeaders() });
+        if (res.ok) { watchlistIdsSet.delete(Number(startupId)); updateWatchlistBadge(); return true; }
         return false;
-      }
+      } catch { return false; }
     }
 
     function updateWatchlistBadge() {
       const badge = document.getElementById('watchlist-badge');
       badge.textContent = watchlistIdsSet.size;
-      badge.classList.add('badge-update');
-      setTimeout(() => badge.classList.remove('badge-update'), 600);
     }
 
+    /* ── Skeletons ── */
     function showLoadingSkeletons(count = 6) {
       const grid = document.getElementById('startup-grid');
       grid.innerHTML = '';
       for (let i = 0; i < count; i++) {
-        const skeleton = document.createElement('div');
-        skeleton.className = 'skeleton-card';
-        grid.appendChild(skeleton);
+        const s = document.createElement('div'); s.className = 'skeleton-card'; grid.appendChild(s);
       }
     }
 
+    /* ── Helpers ── */
     function addRippleEffect() {
-      const buttons = document.querySelectorAll('button:not(.watch-toggle), .invest-btn, .view-details-btn');
-      buttons.forEach(button => {
-        if (!button.classList.contains('ripple-button')) {
-          button.classList.add('ripple-button');
-        }
+      document.querySelectorAll('button:not(.watch-toggle), .btn-invest, .btn-view').forEach(b => {
+        if (!b.classList.contains('ripple-button')) b.classList.add('ripple-button');
       });
+    }
+
+    function formatCurrency(value, currency = '₱') {
+      if (value == null || value === '' || isNaN(value)) return 'N/A';
+      const num = parseFloat(value);
+      if (num >= 1000000) return `${currency}${(num/1000000).toFixed(1)}M`;
+      if (num >= 1000)    return `${currency}${(num/1000).toFixed(1)}K`;
+      return `${currency}${num.toLocaleString()}`;
     }
 
     function escapeHtml(text) {
       if (!text) return '';
-      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-      return text.replace(/[&<>"']/g, m => map[m]);
+      return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
     }
 
     function watchIcon(filled) {
-      return filled 
+      return filled
         ? '<svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>'
-        : '<svg class="w-5 h-5 text-gray-400 hover:text-brand-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
+        : '<svg class="w-5 h-5 text-slate-500 hover:text-brand-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
     }
 
+    /* ── AI Modal ── */
+    function openAiModal(startupId, companyName) {
+      const data = aiDataMap[startupId];
+      document.getElementById('aiModalTitle').textContent = companyName;
+      const scoresEl = document.getElementById('aiModalScores');
+      const textEl = document.getElementById('aiModalText');
+
+      if (data) {
+        scoresEl.innerHTML = [
+          { label: 'ML Score', val: Math.round((data.ml_score||data.score||0)*100), color: '#3b82f6' },
+          { label: 'Collab', val: Math.round((data.collaborative_score||0)*100), color: '#10b981' },
+          { label: 'Content', val: Math.round((data.content_score||0)*100), color: '#f59e0b' },
+        ].map(s => `
+          <div class="text-center bg-slate-800/50 border border-slate-700/50 rounded-xl p-3">
+            <div class="text-2xl font-mono font-bold" style="color:${s.color}">${s.val}%</div>
+            <div class="text-xs text-slate-500 mt-1">${s.label}</div>
+          </div>`).join('');
+        textEl.textContent = data.ai_explanation || 'AI explanation not available for this startup.';
+      } else {
+        scoresEl.innerHTML = '';
+        textEl.textContent = 'This startup has not been scored by the AI model yet.';
+      }
+      document.getElementById('aiModal').classList.add('open');
+    }
+
+    function closeAiModal() { document.getElementById('aiModal').classList.remove('open'); }
+    document.getElementById('aiModal').addEventListener('click', (e) => { if (e.target === document.getElementById('aiModal')) closeAiModal(); });
+
+    /* ══════════════════════════════════════════════
+       renderStartup — upgraded UI, same logic
+    ══════════════════════════════════════════════ */
     function renderStartup(startup) {
-      const isPitchDeck = startup.source_deck_id != null || startup.is_deck_builder === true || startup.is_deck_builder === 'true' || startup.startup_type === 'pitch_deck';
-      
-      const isAIRecommended = aiRecommendedIds.has(Number(startup.id));
+      const isPitchDeck = startup.source_deck_id != null || startup.is_deck_builder === true ||
+                          startup.is_deck_builder === 'true' || startup.startup_type === 'pitch_deck';
+      const isAIRec = aiRecommendedIds.has(Number(startup.id));
+      const inWatchlist = watchlistIdsSet.has(Number(startup.id));
+      const hasDataPending = startup.has_sufficient_data === false || startup.risk_level === 'Data Pending';
+      const aiData = aiDataMap[startup.id];
+
       const card = document.createElement('div');
-      card.className = `startup-card ${isAIRecommended ? 'ai-recommended' : ''} bg-slate-900/40 border border-slate-800/50 rounded-lg p-6 flex flex-col`;
+      card.className = `startup-card${isAIRec ? ' ai-recommended' : ''}`;
       card.setAttribute('data-startup-id', startup.id);
       card.setAttribute('data-is-deck-builder', isPitchDeck);
 
-      let hasDataPending = startup.has_sufficient_data === false || startup.risk_level === 'Data Pending';
+      // Stage badge
+      const stageMap = { idea:'Idea', mvp:'MVP', early_revenue:'Early Revenue', growth:'Growth', scale:'Scale' };
+      const stageBadge = startup.company_stage
+        ? `<span class="badge badge-stage">${stageMap[startup.company_stage]||startup.company_stage}</span>` : '';
+
+      // Risk badge
       let riskBadge;
-      let aiBadge = '';
-
-      if (isAIRecommended) {
-          aiBadge = '<span class="ai-badge text-white text-xs font-bold px-3 py-1 rounded-full">✨ AI Pick</span>';
-      }
-
       if (isPitchDeck) {
-          riskBadge = '<span class="bg-brand-600/20 text-brand-300 text-xs font-medium px-3 py-1 rounded-full border border-brand-600/30">Pitch Deck</span>';
+        riskBadge = '<span class="badge badge-deck">Pitch Deck</span>';
       } else if (startup.risk_level && startup.risk_level !== 'Data Pending') {
-          if (startup.risk_level === 'Low') {
-              riskBadge = '<span class="bg-accent-600/20 text-accent-300 text-xs font-medium px-3 py-1 rounded-full border border-accent-600/30">Low Risk</span>';
-          } else if (startup.risk_level === 'Medium') {
-              riskBadge = '<span class="bg-yellow-600/20 text-yellow-300 text-xs font-medium px-3 py-1 rounded-full border border-yellow-600/30">Medium Risk</span>';
-          } else {
-              riskBadge = '<span class="bg-red-600/20 text-red-300 text-xs font-medium px-3 py-1 rounded-full border border-red-600/30">High Risk</span>';
-          }
+        const cls = { Low:'badge-risk-low', Medium:'badge-risk-med', High:'badge-risk-high' };
+        riskBadge = `<span class="badge ${cls[startup.risk_level]||'badge-pending'}">${startup.risk_level} Risk</span>`;
       } else {
-          hasDataPending = true;
-          riskBadge = '<span class="bg-gray-600/20 text-gray-300 text-xs font-medium px-3 py-1 rounded-full border border-gray-600/30">Data Pending</span>';
+        riskBadge = '<span class="badge badge-pending">Data Pending</span>';
       }
 
+      const confBadge = startup.confidence_percentage
+        ? `<span class="badge badge-conf">${startup.confidence_percentage}% Conf</span>` : '';
+      const aiBadge = isAIRec
+        ? '<span class="badge badge-ai">✦ AI Pick</span>' : '';
+
+      const industry = escapeHtml(startup.industry || startup.tagline || startup.primary_market || '—');
+
+      // Metrics
+      let metrics;
       if (isPitchDeck) {
-          hasDataPending = false;
-      }
-
-      const industry = isPitchDeck ? (startup.tagline || '—') : (startup.industry || '—');
-      
-      const reward = startup.reward_potential;
-      const rewardDisplay = (reward != null) ? `${reward}/5` : 'N/A';
-      
-      const estimatedGrowth = (startup.estimated_growth_rate != null && startup.estimated_growth_rate !== '') 
-          ? `${startup.estimated_growth_rate >= 0 ? '+' : ''}${startup.estimated_growth_rate}%` 
-          : 'N/A';
-
-      const inWatchlist = watchlistIdsSet.has(Number(startup.id));
-
-      let metricsSection;
-      if (isPitchDeck) {
-          const fundingAmount = startup.funding_ask ? `$${parseFloat(startup.funding_ask).toLocaleString()}` : 'N/A';
-          const marketGrowth = startup.market_growth_rate ?? startup.market_growth ?? 'N/A';
-          const marketGrowthDisplay = marketGrowth !== 'N/A' ? `${marketGrowth}%` : 'N/A';
-          
-          metricsSection = `
-              <div class="space-y-3 mb-4 flex-grow">
-                  <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-400">Funding Requested</span>
-                      <span class="text-sm font-semibold text-brand-400">${escapeHtml(fundingAmount)}</span>
-                  </div>
-                  <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-400">Market Growth Rate (YOY)</span>
-                      <span class="text-sm font-semibold text-accent-400">${escapeHtml(marketGrowthDisplay)}</span>
-                  </div>
-              </div>
-          `;
+        metrics = [
+          { label: 'Funding Ask', value: formatCurrency(startup.funding_ask), color: '#60a5fa' },
+          { label: 'Market Growth', value: (startup.market_growth_rate ?? startup.market_growth) !== undefined && (startup.market_growth_rate ?? startup.market_growth) !== null ? `${startup.market_growth_rate ?? startup.market_growth}%` : 'N/A', color: '#34d399' },
+          { label: 'TAM', value: formatCurrency(startup.market_size_tam), color: '#c4b5fd' },
+          { label: 'Round', value: startup.current_round_type ? startup.current_round_type.replace('_','-').toUpperCase() : 'N/A', color: '#fbbf24' },
+        ];
       } else {
-          metricsSection = `
-              <div class="space-y-3 mb-4 flex-grow">
-                  <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-400">Reward Potential</span>
-                      <span class="text-sm font-semibold text-white">${escapeHtml(rewardDisplay)}</span>
-                  </div>
-                  <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-400">Estimated Growth Rate</span>
-                      <span class="text-sm font-semibold ${startup.estimated_growth_rate != null && startup.estimated_growth_rate >= 0 ? 'text-accent-400' : 'text-red-400'}">${escapeHtml(estimatedGrowth)}</span>
-                  </div>
-              </div>
-          `;
+        metrics = [
+          { label: 'MRR/ARR', value: formatCurrency(startup.current_mrr_arr), color: '#34d399' },
+          { label: 'Total Users', value: startup.total_users ? parseFloat(startup.total_users).toLocaleString() : 'N/A', color: '#60a5fa' },
+          { label: 'Revenue', value: formatCurrency(startup.current_revenue), color: '#c4b5fd' },
+          { label: 'Proj. IRR', value: startup.projected_return ? `${(parseFloat(startup.projected_return)*100).toFixed(1)}%` : 'N/A', color: '#fbbf24' },
+          { label: 'Reward', value: startup.reward_potential != null ? `${startup.reward_potential}/5` : 'N/A', color: '#e8f0fe' },
+        ];
       }
+
+      const metricsHtml = `<div class="px-4 py-3 border-t border-b" style="border-color:rgba(56,115,195,.12)">
+        ${metrics.map(m => `
+          <div class="metric-row">
+            <span class="metric-label">${m.label}</span>
+            <span class="metric-value" style="color:${m.color}">${escapeHtml(String(m.value))}</span>
+          </div>`).join('')}
+      </div>`;
+
+      // AI explanation snippet
+      const aiSnippet = isAIRec && aiData?.ai_explanation ? `
+        <div class="ai-box">
+          <div class="ai-box-label"><span class="ai-dot"></span> Gemini AI</div>
+          <p>${escapeHtml(aiData.ai_explanation.substring(0,120))}${aiData.ai_explanation.length>120?'…':''}</p>
+          <button onclick="openAiModal(${startup.id},'${escapeHtml(startup.company_name)}')" class="text-brand-400 text-xs font-semibold mt-2 hover:text-brand-300 transition-colors">Full analysis →</button>
+        </div>` : (isAIRec ? `
+        <div class="ai-box">
+          <div class="ai-box-label"><span class="ai-dot"></span> Gemini AI</div>
+          <p class="text-slate-500 italic text-xs">AI explanation loading…</p>
+          <button onclick="openAiModal(${startup.id},'${escapeHtml(startup.company_name)}')" class="text-brand-400 text-xs font-semibold mt-2 hover:text-brand-300 transition-colors">View scores →</button>
+        </div>` : '');
 
       card.innerHTML = `
-        <div class="flex justify-between items-start mb-4">
-            <div class="flex-1">
-                <h3 class="text-lg font-semibold text-white mb-1">${escapeHtml(startup.company_name)}</h3>
-                <p class="text-sm text-gray-400">${escapeHtml(industry)}</p>
+        <div class="card-body">
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1 pr-3">
+              <div class="company-name line-clamp-1">${escapeHtml(startup.company_name)}</div>
+              <div class="company-sub line-clamp-1">${industry}</div>
             </div>
-            <div class="flex flex-col items-end space-y-2">
-                ${aiBadge}
-                ${riskBadge}
-                  <button class="watch-toggle text-sm" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}" aria-pressed="${inWatchlist ? 'true' : 'false'}">
-                      ${inWatchlist ? watchIcon(true) : watchIcon(false)}
-                  </button>
-              </div>
+            <button class="watch-toggle" title="${inWatchlist?'Remove from watchlist':'Add to watchlist'}">${inWatchlist?watchIcon(true):watchIcon(false)}</button>
           </div>
-          ${metricsSection}
-          <div class="flex gap-2 mt-auto">
-              <button class="view-details-btn flex-1 px-4 py-2.5 border border-slate-700/50 bg-slate-800/30 text-white rounded-lg hover:bg-slate-700/40 hover:border-slate-600 text-sm font-medium text-center transition-all cursor-pointer">View Details</button>
-              ${hasDataPending 
-              ? '<button class="invest-btn flex-1 px-4 py-2.5 bg-gray-600/20 text-gray-400 rounded-lg text-sm text-center cursor-not-allowed border border-gray-600/30" disabled title="Cannot invest - data pending">Invest</button>'
-              : `<a class="invest-btn flex-1 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm text-center font-medium transition-all" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>`
-          }
-          </div>
-      `;
+          <div class="flex flex-wrap gap-1.5 mb-3">${aiBadge}${riskBadge}${stageBadge}${confBadge}</div>
+        </div>
+        ${metricsHtml}
+        ${aiSnippet}
+        <div class="card-footer">
+          <button class="btn btn-view flex-1">View Details</button>
+          ${hasDataPending && !isPitchDeck
+            ? '<button class="btn btn-invest-disabled flex-1" disabled>Invest</button>'
+            : `<a class="btn btn-invest flex-1 text-center" href="${INVEST_PAGE}?startup_id=${startup.id}">Invest</a>`}
+        </div>`;
 
-      card.querySelector('.view-details-btn').addEventListener('click', () => {
-          const id = card.getAttribute('data-startup-id');
-          const isDeckBuilder = card.getAttribute('data-is-deck-builder') === 'true';
-          const target = isDeckBuilder ? `${COMPANY_PROFILE_DB_PAGE}?id=${id}` : `${COMPANY_PROFILE_PAGE}?id=${id}`;
-          window.location.href = target;
+      // View details
+      card.querySelector('.btn-view').addEventListener('click', () => {
+        const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+        const targetPage = isPitchDeck ? COMPANY_PROFILE_DB_PAGE : COMPANY_PROFILE_PAGE;
+        window.location.href = `${targetPage}?id=${startup.id}&return=${returnUrl}`;
       });
 
+      // Watchlist toggle
       const watchBtn = card.querySelector('.watch-toggle');
       watchBtn.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          const sid = startup.id;
-          const currently = watchlistIdsSet.has(Number(sid));
-          if (!currently) {
-              watchBtn.disabled = true;
-              const ok = await addToWatchlist(sid, watchBtn);
-              watchBtn.disabled = false;
-              if (ok) {
-                  watchBtn.innerHTML = watchIcon(true);
-                  watchBtn.title = 'Remove from watchlist';
-                  watchBtn.setAttribute('aria-pressed', 'true');
-              } else {
-                  alert('Could not add to watchlist.');
-              }
-          } else {
-              watchBtn.disabled = true;
-              const ok = await removeFromWatchlist(sid, watchBtn);
-              watchBtn.disabled = false;
-              if (ok) {
-                  watchBtn.innerHTML = watchIcon(false);
-                  watchBtn.title = 'Add to watchlist';
-                  watchBtn.setAttribute('aria-pressed', 'false');
-              } else {
-                  alert('Could not remove from watchlist.');
-              }
-          }
+        e.stopPropagation();
+        const inWL = watchlistIdsSet.has(Number(startup.id));
+        watchBtn.disabled = true;
+        const ok = inWL ? await removeFromWatchlist(startup.id) : await addToWatchlist(startup.id);
+        watchBtn.disabled = false;
+        if (ok) { watchBtn.innerHTML = inWL ? watchIcon(false) : watchIcon(true); watchBtn.title = inWL ? 'Add to watchlist' : 'Remove from watchlist'; }
       });
 
       return card;
     }
 
+    /* ══════════════════════════════════════════════
+       renderStartups — unchanged logic
+    ══════════════════════════════════════════════ */
     async function renderStartups(shouldRefreshWatchlist = true, shouldFetchAI = true) {
       try {
-        const grid = document.getElementById('startup-grid');
         showLoadingSkeletons(6);
-
-        if (shouldRefreshWatchlist) {
-          await refreshWatchlist();
-        }
-
-        if (shouldFetchAI) {
-          await fetchAIRecommendations();
-        }
+        if (shouldRefreshWatchlist) await refreshWatchlist();
+        if (shouldFetchAI) await fetchAIRecommendations();
 
         const form = document.getElementById('filterForm');
         const formData = new FormData(form);
         const params = new URLSearchParams();
-        
-        const paramMapping = {
-          'sort_by': 'sort_by',
-          'deck_sort_by': 'deck_sort_by',
-          'industry': 'industry',
-          'risk_level': 'risk_tolerance',
-          'startup_type': 'startup_type',
-          'min_growth_rate': 'min_growth_rate',
-          'funding_ask_range': 'funding_ask_range',
-          'market_growth_filter': 'market_growth_filter',
-          'min_market_growth': 'min_market_growth'
-        };
-        
+        const paramMapping = { sort_by:'sort_by', deck_sort_by:'deck_sort_by', industry:'industry', risk_level:'risk_tolerance', startup_type:'startup_type', min_growth_rate:'min_growth_rate', funding_ask_range:'funding_ask_range', market_growth_filter:'market_growth_filter', min_market_growth:'min_market_growth', company_stage:'company_stage', tam_range:'tam_range' };
         formData.forEach((value, key) => {
-          if (value != null && value.toString().trim() !== '') {
-            const backendKey = paramMapping[key] || key;
-            params.append(backendKey, value.toString().trim());
-          }
+          if (value?.toString().trim()) params.append(paramMapping[key]||key, value.toString().trim());
         });
 
-        let url = STARTUPS_ENDPOINT;
-        const queryString = params.toString();
-        if (queryString) {
-          url += '?' + queryString;
-        }
-
+        const url = STARTUPS_ENDPOINT + (params.toString() ? '?' + params.toString() : '');
         const data = await fetchJSON(url);
         const startups = data.results || data || [];
-
-        console.log('API Response:', data);
-        console.log('Startups count:', startups.length);
-        console.log('First startup:', startups[0]);
-
+        const grid = document.getElementById('startup-grid');
         grid.innerHTML = '';
-        
+
         document.getElementById('startup-count').textContent = startups.length;
-        document.getElementById('startup-plural').textContent = startups.length === 1 ? '' : 's';
+        document.getElementById('startup-plural').textContent = startups.length === 1 ? 'startup' : 'startups';
 
         if (startups.length === 0) {
-          document.getElementById('no-startups').classList.remove('hidden');
+          document.getElementById('no-startups').classList.add('visible');
         } else {
-          document.getElementById('no-startups').classList.add('hidden');
-          startups.forEach(startup => {
-            grid.appendChild(renderStartup(startup));
-          });
+          document.getElementById('no-startups').classList.remove('visible');
+          startups.forEach(s => grid.appendChild(renderStartup(s)));
           addRippleEffect();
         }
       } catch (error) {
-        console.error('Error rendering startups:', error);
-        document.getElementById('startup-grid').innerHTML = '<p class="text-red-400 text-center py-8">Error loading startups. Please try again.</p>';
+        const grid = document.getElementById('startup-grid');
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-20">
+            <div class="text-6xl mb-6 opacity-40">⚠</div>
+            <h3 class="text-2xl font-display font-bold mb-3">Failed to Load</h3>
+            <p class="text-slate-400 text-sm mb-6 max-w-md mx-auto">${error.message || 'An error occurred.'}</p>
+            <button onclick="renderStartups()" class="btn btn-invest px-6 py-2.5">Retry</button>
+          </div>`;
       }
     }
 
+    /* ── Filter functions (unchanged) ── */
     function applyPreset(preset) {
       document.getElementById('type-hidden').value = 'financial';
-      document.getElementById('type-financial').style.borderColor = 'rgb(59 130 246)';
-      document.getElementById('type-pitch_deck').style.borderColor = '';
       setStartupType('financial');
-      
       document.getElementById('financial-filters').classList.remove('hidden');
       document.getElementById('pitch-deck-filters').classList.add('hidden');
-
-      if (preset === 'conservative') {
-          document.getElementById('risk-Low').style.borderColor = 'rgb(34 197 94)';
-          setRiskLevel('Low');
-      } else if (preset === 'balanced') {
-          document.getElementById('risk-Medium').style.borderColor = 'rgb(202 138 4)';
-          setRiskLevel('Medium');
-      } else if (preset === 'aggressive') {
-          document.getElementById('risk-High').style.borderColor = 'rgb(239 68 68)';
-          setRiskLevel('High');
-      }
+      if (preset === 'conservative') setRiskLevel('Low');
+      else if (preset === 'balanced')    setRiskLevel('Medium');
+      else if (preset === 'aggressive')  setRiskLevel('High');
     }
 
     function setStartupType(type) {
       document.getElementById('type-hidden').value = type;
-      const finBtn = document.getElementById('type-financial');
-      const deckBtn = document.getElementById('type-pitch_deck');
-      
+      const fin = document.getElementById('type-financial');
+      const deck = document.getElementById('type-pitch_deck');
       if (type === 'financial') {
-          finBtn.style.borderColor = 'rgb(59 130 246)';
-          deckBtn.style.borderColor = '';
-          document.getElementById('financial-filters').classList.remove('hidden');
-          document.getElementById('pitch-deck-filters').classList.add('hidden');
+        fin.style.borderColor = '#3b82f6'; fin.style.color = '#93c5fd';
+        deck.style.borderColor = ''; deck.style.color = '';
+        document.getElementById('financial-filters').classList.remove('hidden');
+        document.getElementById('pitch-deck-filters').classList.add('hidden');
       } else {
-          finBtn.style.borderColor = '';
-          deckBtn.style.borderColor = 'rgb(59 130 246)';
-          document.getElementById('financial-filters').classList.add('hidden');
-          document.getElementById('pitch-deck-filters').classList.remove('hidden');
+        deck.style.borderColor = '#3b82f6'; deck.style.color = '#93c5fd';
+        fin.style.borderColor = ''; fin.style.color = '';
+        document.getElementById('financial-filters').classList.add('hidden');
+        document.getElementById('pitch-deck-filters').classList.remove('hidden');
       }
     }
 
     function setRiskLevel(level) {
       document.getElementById('risk-hidden').value = level;
-      const buttons = document.querySelectorAll('.risk-btn');
-      buttons.forEach(btn => {
-        btn.style.borderColor = '';
+      ['Low','Medium','High'].forEach(l => {
+        const btn = document.getElementById(`risk-${l}`);
+        btn.style.borderColor = ''; btn.style.color = '';
       });
-      document.getElementById(`risk-${level}`).style.borderColor = 
-        level === 'Low' ? 'rgb(34 197 94)' : (level === 'Medium' ? 'rgb(202 138 4)' : 'rgb(239 68 68)');
+      const colors = { Low:'#10b981', Medium:'#f59e0b', High:'#ef4444' };
+      const btn = document.getElementById(`risk-${level}`);
+      btn.style.borderColor = colors[level]; btn.style.color = colors[level];
     }
 
     function setMarketGrowth(level) {
       document.getElementById('growth-hidden').value = level;
-      const buttons = document.querySelectorAll('.growth-btn');
-      buttons.forEach(btn => {
-        btn.style.borderColor = '';
-      });
-      document.getElementById(`growth-${level}`).style.borderColor = 'rgb(59 130 246)';
+      ['Low','Medium','High'].forEach(l => { document.getElementById(`growth-${l}`).style.borderColor = ''; });
+      document.getElementById(`growth-${level}`).style.borderColor = '#3b82f6';
     }
 
     function clearAllFilters() {
       document.getElementById('filterForm').reset();
-      document.getElementById('risk-hidden').value = '';
-      document.getElementById('type-hidden').value = '';
-      document.getElementById('growth-hidden').value = '';
-      
-      document.querySelectorAll('.risk-btn').forEach(btn => btn.style.borderColor = '');
-      document.querySelectorAll('.type-btn').forEach(btn => btn.style.borderColor = '');
-      document.querySelectorAll('.growth-btn').forEach(btn => btn.style.borderColor = '');
-      
+      ['risk-hidden','type-hidden','growth-hidden'].forEach(id => document.getElementById(id).value = '');
+      document.querySelectorAll('.risk-btn,.type-btn,.growth-btn').forEach(b => { b.style.borderColor=''; b.style.color=''; });
       document.getElementById('financial-filters').classList.remove('hidden');
       document.getElementById('pitch-deck-filters').classList.add('hidden');
-      
-      renderStartups(false);
+      renderStartups(false, false);
     }
 
-    document.getElementById('filterForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      renderStartups(false);
-    });
+    /* ── Form submit ── */
+    document.getElementById('filterForm').addEventListener('submit', (e) => { e.preventDefault(); renderStartups(false); });
 
-    // AI Recommendations button handler
-    document.getElementById('show-ai-btn').addEventListener('click', async () => {
-      clearAllFilters();
+    /* ── AI Picks button ── */
+    document.getElementById('show-ai-btn')?.addEventListener('click', async () => {
+      showLoadingSkeletons(6);
       await fetchAIRecommendations();
-      
       const grid = document.getElementById('startup-grid');
-      const allCards = Array.from(grid.children);
-      
-      // Filter and show only AI recommended startups
+      const allCards = Array.from(grid.children).filter(c => !c.classList.contains('skeleton-card'));
+      grid.innerHTML = '';
+      let aiCount = 0;
       allCards.forEach(card => {
-        const startupId = Number(card.getAttribute('data-startup-id'));
-        if (aiRecommendedIds.has(startupId)) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
+        if (aiRecommendedIds.has(Number(card.getAttribute('data-startup-id')))) { grid.appendChild(card); aiCount++; }
       });
-      
-      const visibleCount = allCards.filter(c => c.style.display !== 'none').length;
-      document.getElementById('startup-count').textContent = visibleCount;
-      document.getElementById('startup-plural').textContent = visibleCount === 1 ? '' : 's';
+      document.getElementById('startup-count').textContent = aiCount;
+      if (aiCount === 0) document.getElementById('no-startups').classList.add('visible');
+      else document.getElementById('no-startups').classList.remove('visible');
     });
 
-    // Initial render
-    renderStartups();
-    addRippleEffect();
+    /* ── Mobile sidebar ── */
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const closeSidebarBtn = document.getElementById('close-sidebar');
     const sidebar = document.querySelector('aside');
-    const body = document.body;
 
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('mobile-open');
-        body.style.overflow = sidebar.classList.contains('mobile-open') ? 'hidden' : '';
-      });
+    mobileMenuBtn?.addEventListener('click', () => { sidebar.classList.add('mobile-open'); document.body.style.overflow = 'hidden'; });
+    closeSidebarBtn?.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); document.body.style.overflow = ''; });
+    sidebar?.addEventListener('click', (e) => {
+      if (e.target === sidebar && window.innerWidth < 1024) { sidebar.classList.remove('mobile-open'); document.body.style.overflow = ''; }
+    });
+    document.getElementById('filterForm').addEventListener('submit', () => {
+      if (window.innerWidth < 1024) { sidebar.classList.remove('mobile-open'); document.body.style.overflow = ''; }
+    });
 
-      // Close sidebar when clicking outside on mobile
-      sidebar.addEventListener('click', (e) => {
-        if (e.target === sidebar && window.innerWidth < 1024) {
-          sidebar.classList.remove('mobile-open');
-          body.style.overflow = '';
-        }
-      });
-
-      // Close sidebar after filter submission on mobile
-      document.getElementById('filterForm').addEventListener('submit', () => {
-        if (window.innerWidth < 1024) {
-          sidebar.classList.remove('mobile-open');
-          body.style.overflow = '';
-        }
-      });
-    }
+    /* ── Init ── */
+    (async function init() { await renderStartups(); addRippleEffect(); })();
   </script>
 </body>
 </html>

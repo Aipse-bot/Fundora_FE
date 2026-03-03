@@ -1,0 +1,158 @@
+.form-input-modern::-webkit-outer-spin-button,
+.form-input-modern::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form-input-modern[type="number"] {
+  appearance: textfield;        /* Standard */
+  -moz-appearance: textfield;   /* Firefox */
+}
+
+/* Responsive sticky footer for mobile */
+@media (max-width: 768px) {
+  /* Stack buttons vertically on mobile */
+  .sticky-footer-mobile {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  /* Make buttons full width on mobile */
+  .sticky-footer-mobile > div {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .sticky-footer-mobile button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Reduce padding on mobile */
+  .sticky-footer-mobile-container {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Enhanced focus states for accessibility */
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Smooth button interactions */
+button {
+  cursor: pointer;
+  user-select: none;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Progress Bar Colors */
+.progress-red { background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); }
+.progress-yellow { background: linear-gradient(90deg, #eab308 0%, #ca8a04 100%); }
+.progress-green { background: linear-gradient(90deg, #10b981 0%, #059669 100%); }
+
+/* LTV:CAC Ratio Colors */
+.ratio-excellent { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: 2px solid #10b981; }
+.ratio-good { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); border: 2px solid #eab308; }
+.ratio-poor { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: 2px solid #ef4444; }
+
+/* Sticky FAB Button */
+.fab-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.fab-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.6);
+}
+
+.fab-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  border: 2px solid #1e293b;
+}
+
+/* Trend Indicators */
+.trend-up { color: #10b981; }
+.trend-down { color: #ef4444; }
+.trend-neutral { color: #94a3b8; }
+
+/* Investment Thesis Bullets */
+#investmentThesisList li {
+  position: relative;
+  padding-left: 24px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+#investmentThesisList li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #3b82f6;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Testimonial Cards */
+.testimonial-card {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  position: relative;
+}
+
+.testimonial-card::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  font-size: 3rem;
+  color: rgba(59, 130, 246, 0.3);
+  font-family: Georgia, serif;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .fab-button {
+    bottom: 16px;
+    right: 16px;
+    width: 56px;
+    height: 56px;
+  }
+  
+  #investmentThesisList li {
+    font-size: 0.85rem;
+  }
+}

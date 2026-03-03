@@ -110,18 +110,12 @@
                 <p class="text-gray-400">Manage your registered companies and pitch decks</p>
             </div>
             <div class="flex gap-3">
-                <a href="/deck-builder.html" class="inline-flex items-center space-x-2 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <span>My Pitch Decks</span>
-                </a>
-                <button onclick="toggleModal()" class="py-2.5 px-4 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-semibold transition-all duration-300 flex items-center space-x-2 hover:shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                <a href="../Module_2/Startup.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                     </svg>
                     <span>Add New Startup</span>
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -166,45 +160,6 @@
       </div>
     </div>
   </div>
-
-    <div id="startupModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 hidden">
-        <div class="modal-content bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 w-full max-w-3xl mx-4 shadow-2xl flex flex-col gap-6 border border-slate-700">
-            
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-2xl font-bold text-white mb-1">Create New Startup</h2>
-                    <p class="text-slate-400 text-sm">Choose how you want to add your startup</p>
-                </div>
-                <button onclick="toggleModal()" class="text-slate-400 hover:text-white transition-colors duration-300 text-3xl font-light hover:rotate-90 transform transition-transform">
-                    ×
-                </button>
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-6">
-                
-                <div onclick="goToDeckBuilder()" class="choice-card flex-1 flex flex-col items-center justify-center border-2 border-slate-600 p-10 text-center rounded-xl transition-all duration-300 hover:border-blue-500 cursor-pointer bg-slate-800/50">
-                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <p class="font-semibold text-white text-xl mb-2">Pitch Deck Builder</p>
-                    <p class="text-slate-400 text-sm">Build and customize your pitch deck with our interactive builder</p>
-                </div>
-
-                <div onclick="goToCompanyForm()" class="choice-card flex-1 flex flex-col items-center justify-center border-2 border-slate-600 p-10 text-center rounded-xl transition-all duration-300 hover:border-emerald-500 cursor-pointer bg-slate-800/50">
-                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg shadow-emerald-500/30 transform transition-transform group-hover:scale-110">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
-                    </div>
-                    <p class="font-semibold text-white text-xl mb-2">Company Form</p>
-                    <p class="text-slate-400 text-sm">Add your business information through our detailed form</p>
-                </div>
-
-            </div>
-        </div>
-    </div>
 
 
     <script>
@@ -310,20 +265,11 @@
 
       const createDeckBtn = document.getElementById('createDeckBtn');
         if (createDeckBtn) {
-        createDeckBtn.addEventListener('click', function() {
-            // Navigate to Company Information Form
-            window.location.href = 'Company_Information_Form.html';
-        }, { passive: true });
+            createDeckBtn.addEventListener('click', function() {
+                // Navigate to Company Information Form
+                window.location.href = '../Module_2/Startup.html';
+            }, { passive: true });
         }
-
-    function toggleModal() {
-      const modal = document.getElementById('startupModal');
-      if (!modal) {
-        console.error('Modal element not found');
-        return;
-      }
-      modal.classList.toggle('hidden');
-    }
 
     async function goToDeckBuilder() {
       const token = sessionStorage.getItem('authToken');
@@ -364,7 +310,7 @@
         return;
       }
       // Use the correct path for the Company Information Form
-      window.location.href = 'Company_Information_Form.html';
+      window.location.href = '../Module_2/Startup.html';
     }
 
     // Add loading flag to prevent duplicate calls
