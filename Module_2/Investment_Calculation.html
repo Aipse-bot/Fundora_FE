@@ -771,6 +771,7 @@ userInput.addEventListener("keypress", (e) => {
 });
 
 async function sendMessage() {
+  const startupId = new URLSearchParams(window.location.search).get('startup_id');
   const input = userInput.value.trim();
   if (!input) return;
 
@@ -798,7 +799,8 @@ async function sendMessage() {
       },
       body: JSON.stringify({
         session_id: sessionStorage.getItem('userId') || "123",
-        query: input
+        query: input,
+        startup_id: startupId
       })
     });
 
