@@ -701,7 +701,7 @@
         }
 
         try {
-          const response = await fetch(`https://fundorabe-production.up.railway.app/api/investor/register//api/startup/${startupId}/`, {
+          const response = await fetch(`https://fundorabe-production.up.railway.app/api/startup/${startupId}/`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -960,7 +960,7 @@
             throw new Error('No authentication token found');
           }
 
-          const response = await fetch(`https://fundorabe-production.up.railway.app/api/investor/register//api/startup/${startupId}/`, {
+          const response = await fetch(`https://fundorabe-production.up.railway.app/api/startup/${startupId}/`, {
             method: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
