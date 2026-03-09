@@ -6,6 +6,7 @@
   <title>Investment Calculator</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
@@ -273,6 +274,43 @@
         </div>
       </div>
     </section>
+
+
+<!-- Parent container full width -->
+<div class="relative w-full">
+
+  <!-- Chat Toggle Button -->
+<button id="chatToggleBtn"
+        class="sticky bottom-5 ml-auto w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg z-50 text-2xl">
+  💬
+</button>
+  <!-- Chat Container -->
+  <div id="chatContainer"
+       class="sticky bottom-5 ml-auto w-80 max-h-[500px] bg-slate-900 text-white rounded-lg shadow-xl z-40 flex flex-col hidden">
+
+    <!-- Chat Header -->
+    <div class="flex items-center justify-between px-4 py-2 border-b border-slate-700 bg-slate-800">
+      <span class="font-semibold">Investment Chatbot</span>
+      <button id="chatExitBtn" class="text-white font-bold px-2 py-1 hover:bg-slate-700 rounded">✖</button>
+    </div>
+
+    <!-- Messages -->
+    <div id="chatbox" class="flex-1 flex flex-col p-2 overflow-y-auto space-y-2">
+      <div class="bg-slate-800 text-slate-100 rounded-xl px-3 py-2 max-w-[75%]">
+        What can I help you with today?
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div id="chatInputContainer" class="flex border-t border-slate-700">
+      <input id="userInput" type="text" placeholder="Ask about your simulation results..."
+             class="flex-1 px-3 py-2 bg-slate-800 text-white outline-none border-none text-sm">
+      <button id="sendBtn" class="bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 transition-colors">
+        Send
+      </button>
+    </div>
+  </div>
+</div>
   </main>
 
   <script>
@@ -700,6 +738,96 @@
         }
       });
     }
+  
+const CHATBOT_API_BASE = "https://fundora-chatbot.onrender.com";
+
+const chatToggleBtn = document.getElementById("chatToggleBtn");
+const chatContainer = document.getElementById("chatContainer");
+const chatExitBtn = document.getElementById("chatExitBtn");
+const sendBtn = document.getElementById("sendBtn");
+const userInput = document.getElementById("userInput");
+const chatbox = document.getElementById("chatbox");
+
+// Conversation history
+let conversation = [{ role: "system", content: "You are a helpful assistant for investment advice." }];
+
+// Open chat
+chatToggleBtn.addEventListener("click", () => {
+  chatContainer.classList.remove("hidden");
+  chatToggleBtn.classList.add("hidden");
+  userInput.focus();
+});
+
+// Close chat
+chatExitBtn.addEventListener("click", () => {
+  chatContainer.classList.add("hidden");
+  chatToggleBtn.classList.remove("hidden");
+});
+
+// Send message
+sendBtn.addEventListener("click", sendMessage);
+userInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+
+async function sendMessage() {
+  const input = userInput.value.trim();
+  if (!input) return;
+
+  // User message
+  const userDiv = document.createElement("div");
+  userDiv.className = "bg-blue-600 text-white rounded-xl px-3 py-2 max-w-[75%] self-end";
+  userDiv.textContent = input;
+  chatbox.appendChild(userDiv);
+  chatbox.scrollTop = chatbox.scrollHeight;
+
+  // Loading animation
+  const loadingDiv = document.createElement("div");
+  loadingDiv.className = "bg-slate-800 text-gray-400 italic rounded-xl px-3 py-2 max-w-[75%] self-start";
+  loadingDiv.textContent = "Bot is thinking...";
+  chatbox.appendChild(loadingDiv);
+  chatbox.scrollTop = chatbox.scrollHeight;
+
+  try {
+    const token = sessionStorage.getItem('authToken'); // optional
+    const res = await fetch(`${CHATBOT_API_BASE}/chat/`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        session_id: sessionStorage.getItem('userId') || "123",
+        query: input
+      })
+    });
+
+    const data = await res.json();
+
+    // Remove loading
+    if (loadingDiv.parentNode) loadingDiv.parentNode.removeChild(loadingDiv);
+
+    const botDiv = document.createElement("div");
+    botDiv.className = "bg-slate-800 text-slate-100 rounded-xl px-3 py-2 max-w-[75%] self-start";
+    botDiv.innerHTML = marked.parse(data.reply);
+    chatbox.appendChild(botDiv);
+
+    conversation.push({ role: "user", content: input });
+    conversation.push({ role: "assistant", content: data.reply });
+
+  } catch (err) {
+    if (loadingDiv.parentNode) loadingDiv.parentNode.removeChild(loadingDiv);
+    console.error("Chat error:", err);
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "bg-slate-800 text-red-500 rounded-xl px-3 py-2 max-w-[75%] self-start";
+    errorDiv.textContent = "Error: " + err.message;
+    chatbox.appendChild(errorDiv);
+  }
+
+  userInput.value = "";
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
+
   </script>
 </body>
 </html>
