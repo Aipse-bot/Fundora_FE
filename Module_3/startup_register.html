@@ -352,7 +352,7 @@
         submitBtn.textContent = 'Creating Account...';
         
         try {
-            const res = await fetch('http://127.0.0.1:8000/api/startup/register/', {
+            const res = await fetch('fundorabe-production.up.railway.app/api/startup/register/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

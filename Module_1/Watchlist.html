@@ -225,7 +225,7 @@
 
         async function loadTabCounts() {
             try {
-                const watchlistRes = await fetch('http://127.0.0.1:8000/api/investor/watchlist/', {
+                const watchlistRes = await fetch('fundorabe-production.up.railway.app/api/investor/watchlist/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -239,7 +239,7 @@
             }
 
             try {
-                const comparisonsRes = await fetch('http://127.0.0.1:8000/api/investor/comparisons/', {
+                const comparisonsRes = await fetch('fundorabe-production.up.railway.app/api/investor/comparisons/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -261,7 +261,7 @@
             }
 
             try {
-                const watchlistRes = await fetch('http://127.0.0.1:8000/api/investor/watchlist/', {
+                const watchlistRes = await fetch('fundorabe-production.up.railway.app/api/investor/watchlist/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -282,7 +282,7 @@
                     return;
                 }
                 
-                const startupsRes = await fetch('http://127.0.0.1:8000/api/investor/startups/', {
+                const startupsRes = await fetch('fundorabe-production.up.railway.app/api/investor/startups/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -440,7 +440,7 @@
             }
 
             try {
-                const res = await fetch('http://127.0.0.1:8000/api/investor/comparisons/', {
+                const res = await fetch('fundorabe-production.up.railway.app/api/investor/comparisons/', {
                     method: 'GET',
                     headers: authHeaders()
                 });
@@ -528,7 +528,7 @@
             }
 
             try {
-                const res = await fetch(`http://127.0.0.1:8000/api/investor/watchlist/remove/${startupId}/`, {
+                const res = await fetch(`fundorabe-production.up.railway.app/api/investor/watchlist/remove/${startupId}/`, {
                     method: 'POST',
                     headers: authHeaders()
                 });
@@ -561,7 +561,7 @@
             }
 
             try {
-                const res = await fetch(`http://127.0.0.1:8000/api/investor/comparisons/delete/${comparisonId}/`, {
+                const res = await fetch(`fundorabe-production.up.railway.app/api/investor/comparisons/delete/${comparisonId}/`, {
                     method: 'DELETE',
                     headers: authHeaders()
                 });

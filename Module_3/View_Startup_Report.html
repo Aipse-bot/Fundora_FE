@@ -440,7 +440,7 @@
             this.textContent = 'Deleting...';
             
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/`, {
+                const response = await fetch(`fundorabe-production.up.railway.app/api/startup/${startupId}/`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -515,7 +515,7 @@
         }
         
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/`, {
+            const res = await fetch(`fundorabe-production.up.railway.app/api/startup/${startupId}/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

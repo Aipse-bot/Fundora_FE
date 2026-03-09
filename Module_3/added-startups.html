@@ -191,7 +191,7 @@
           try {
               
               // Try the profile endpoint first
-              let response = await fetch('http://127.0.0.1:8000/api/auth/profile/', {
+              let response = await fetch('fundorabe-production.up.railway.app/api/auth/profile/', {
                   method: 'GET',
                   headers: {
                       'Authorization': `Bearer ${token}`,
@@ -202,7 +202,7 @@
 
               // If profile endpoint fails, try alternative endpoints
               if (!response.ok) {
-                  response = await fetch('http://127.0.0.1:8000/api/auth/user/', {
+                  response = await fetch('fundorabe-production.up.railway.app/api/auth/user/', {
                       method: 'GET',
                       headers: {
                           'Authorization': `Bearer ${token}`,
@@ -214,7 +214,7 @@
 
               // If user endpoint also fails, try me endpoint
               if (!response.ok) {
-                  response = await fetch('http://127.0.0.1:8000/api/auth/me/', {
+                  response = await fetch('fundorabe-production.up.railway.app/api/auth/me/', {
                       method: 'GET',
                       headers: {
                           'Authorization': `Bearer ${token}`,
@@ -280,7 +280,7 @@
       }
 
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/deck/create/', {
+        const res = await fetch('fundorabe-production.up.railway.app/api/deck/create/', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -379,7 +379,7 @@
 
         try {
             
-            const response = await fetch(`http://127.0.0.1:8000/api/startups/?_=${Date.now()}`, {
+            const response = await fetch(`fundorabe-production.up.railway.app/api/startups/?_=${Date.now()}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -890,7 +890,7 @@
       try {
         // First, record the view with proper DRF format
         try {
-          const viewResponse = await fetch(`http://127.0.0.1:8000/api/startups/${startupId}/view/`, {
+          const viewResponse = await fetch(`fundorabe-production.up.railway.app/api/startups/${startupId}/view/`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -911,7 +911,7 @@
         }
 
         // Then fetch the startup data
-        const response = await fetch(`http://127.0.0.1:8000/api/startup/${startupId}/`, {
+        const response = await fetch(`fundorabe-production.up.railway.app/api/startup/${startupId}/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',

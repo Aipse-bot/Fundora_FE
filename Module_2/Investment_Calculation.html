@@ -312,7 +312,7 @@
     });
 
     function fetchStartupData(startupId) {
-      const apiUrl = `http://127.0.0.1:8000/api/startups/${startupId}/`;
+      const apiUrl = `fundorabe-production.up.railway.app/api/startups/${startupId}/`;
       const token = sessionStorage.getItem('authToken');
       
       fetch(apiUrl, {
@@ -406,7 +406,7 @@
       domCache.btnText.classList.add('hidden');
       domCache.btnSpinner.classList.remove('hidden');
 
-      const apiUrl = 'http://127.0.0.1:8000/api/investor/simulation/';
+      const apiUrl = 'fundorabe-production.up.railway.app/api/investor/simulation/';
       const token = sessionStorage.getItem('authToken');
       
       fetch(apiUrl, {
