@@ -771,8 +771,9 @@ userInput.addEventListener("keypress", (e) => {
 });
 
 async function sendMessage() {
-  const startupId = new URLSearchParams(window.location.search).get('startup_id');
   const input = userInput.value.trim();
+  const startupIdStr = new URLSearchParams(window.location.search).get('startup_id');
+  const startupId = startupIdStr ? parseInt(startupIdStr, 10) : null;
   if (!input) return;
 
   // User message
