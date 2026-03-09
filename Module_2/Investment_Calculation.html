@@ -312,7 +312,7 @@
     });
 
     function fetchStartupData(startupId) {
-      const apiUrl = `fundorabe-production.up.railway.app/api/startups/${startupId}/`;
+      const apiUrl = `https://fundorabe-production.up.railway.app/api/investor/register//api/investor/register//api/startups/${startupId}/`;
       const token = sessionStorage.getItem('authToken');
       
       fetch(apiUrl, {
@@ -406,7 +406,7 @@
       domCache.btnText.classList.add('hidden');
       domCache.btnSpinner.classList.remove('hidden');
 
-      const apiUrl = 'fundorabe-production.up.railway.app/api/investor/simulation/';
+      const apiUrl = 'https://fundorabe-production.up.railway.app/api/investor/register//api/investor/simulation/';
       const token = sessionStorage.getItem('authToken');
       
       fetch(apiUrl, {
