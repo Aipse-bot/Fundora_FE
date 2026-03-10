@@ -481,7 +481,8 @@
             riskAdjusted: data.risk_adjustment_applied
           };
 
-          displayResults();
+            sessionStorage.setItem("latestSimulation", JSON.stringify(data));
+            displayResults();
 
           // Reset button state
           domCache.simulateBtn.disabled = false;
@@ -774,6 +775,7 @@ async function sendMessage() {
   const input = userInput.value.trim();
   const startupIdStr = new URLSearchParams(window.location.search).get('startup_id');
   const startupId = startupIdStr ? parseInt(startupIdStr, 10) : null;
+  const baseline = JSON.parse(sessionStorage.getItem("latestSimulation") || "{}");
   if (!input) return;
 
   // User message
@@ -799,9 +801,10 @@ async function sendMessage() {
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
-        session_id: sessionStorage.getItem('userId') || "123",
+        session_id: sessionStorage.getItem('userId'),
         query: input,
-        startup_id: startupId
+        startup_id: simulationData?.startup?.id || null,
+        baseline: baseline 
       })
     });
 
