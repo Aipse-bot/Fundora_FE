@@ -800,9 +800,7 @@ async function sendMessage() {
     session_id: sessionStorage.getItem('userId'),
     query: input,
     startup_id: baseline?.result?.startup?.id || startupId,
-    baseline: baseline
   };
-
 
   try {
     const token = sessionStorage.getItem('authToken'); // optional
@@ -815,9 +813,6 @@ async function sendMessage() {
       body: JSON.stringify(payload)
     });
     const data = await res.json();
-    console.log("Chatbot baseline payload", baseline);
-    console.log("Data reply", data.reply);
-    
 
     // Remove loading
     if (loadingDiv.parentNode) loadingDiv.parentNode.removeChild(loadingDiv);
