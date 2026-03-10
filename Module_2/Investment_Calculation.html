@@ -480,9 +480,13 @@
             baseGrowthRate: data.base_projected_return,
             riskAdjusted: data.risk_adjustment_applied
           };
+          const wrappedBaseline = {
+            simulation_run: true,
+            result: data   // <-- wrap the raw response
+          };
 
-            sessionStorage.setItem("latestSimulation", JSON.stringify(data));
-            displayResults();
+          sessionStorage.setItem("latestSimulation", JSON.stringify(wrappedBaseline));
+          displayResults();
 
           // Reset button state
           domCache.simulateBtn.disabled = false;
@@ -792,6 +796,14 @@ async function sendMessage() {
   chatbox.appendChild(loadingDiv);
   chatbox.scrollTop = chatbox.scrollHeight;
 
+  const payload = {
+    session_id: sessionStorage.getItem('userId'),
+    query: input,
+    startup_id: baseline?.result?.startup?.id || startupId,
+    baseline: baseline
+  };
+
+
   try {
     const token = sessionStorage.getItem('authToken'); // optional
     const res = await fetch(`${CHATBOT_API_BASE}/chat/`, {
@@ -800,16 +812,12 @@ async function sendMessage() {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({
-        session_id: sessionStorage.getItem('userId'),
-        query: input,
-        startup_id: baseline?.startup?.id || startupId,
-        baseline: baseline 
-      })
+      body: JSON.stringify(payload)
     });
+    const data = await res.json();
     console.log("Chatbot baseline payload", baseline);
     console.log("Data reply", data.reply);
-    const data = await res.json();
+    
 
     // Remove loading
     if (loadingDiv.parentNode) loadingDiv.parentNode.removeChild(loadingDiv);
