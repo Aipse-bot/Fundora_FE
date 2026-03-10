@@ -803,7 +803,7 @@ async function sendMessage() {
       body: JSON.stringify({
         session_id: sessionStorage.getItem('userId'),
         query: input,
-        startup_id: simulationData?.startup?.id || null,
+        startup_id: baseline?.startup?.id || startupId,
         baseline: baseline 
       })
     });
@@ -815,12 +815,18 @@ async function sendMessage() {
 
     const botDiv = document.createElement("div");
     botDiv.className = "bg-slate-800 text-slate-100 rounded-xl px-3 py-2 max-w-[75%] self-start";
-    botDiv.innerHTML = marked.parse(data.reply);
+    if (data.reply) {
+      botDiv.innerHTML = marked.parse(data.reply);
+    } else if (data.roi_percentage) {
+      botDiv.textContent = `ROI: ${data.roi_percentage}% | Final Value: ${data.final_value}`;
+    } else {
+      botDiv.textContent = "No reply or simulation data available.";
+    }
     chatbox.appendChild(botDiv);
 
     conversation.push({ role: "user", content: input });
-    conversation.push({ role: "assistant", content: data.reply });
-
+    conversation.push({ role: "assistant", content: data.reply || JSON.stringify(data) });
+    
   } catch (err) {
     if (loadingDiv.parentNode) loadingDiv.parentNode.removeChild(loadingDiv);
     console.error("Chat error:", err);
