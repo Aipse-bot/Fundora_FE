@@ -116,6 +116,132 @@
     .btn-pulse {
       animation: pulse-glow 2.5s infinite;
     }
+
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+      40% { transform: translateY(-5px); opacity: 1; }
+    }
+    .typing-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #94a3b8;
+      animation: typingBounce 1.2s infinite ease-in-out;
+    }
+
+    /* Chat Widget */
+    #chat-widget {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    #chat-panel {
+      width: 320px;
+      max-height: 420px;
+      background: #0f172a;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin-bottom: 12px;
+      transform-origin: bottom right;
+      animation: scaleIn 0.25s ease-out forwards;
+    }
+
+    #chat-panel.hidden {
+      display: none;
+    }
+
+    #chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 280px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(59, 130, 246, 0.3) transparent;
+    }
+
+    #chat-messages::-webkit-scrollbar { width: 4px; }
+    #chat-messages::-webkit-scrollbar-track { background: transparent; }
+    #chat-messages::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.3); border-radius: 2px; }
+
+    .chat-msg {
+      max-width: 85%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .chat-msg.incoming {
+      align-self: flex-start;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      color: #e2e8f0;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-msg.outgoing {
+      align-self: flex-end;
+      background: rgba(37, 99, 235, 0.85);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-msg .msg-time {
+      font-size: 10px;
+      opacity: 0.5;
+      margin-top: 4px;
+      display: block;
+    }
+
+    #chat-toggle-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.45);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+
+    #chat-toggle-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 26px rgba(37, 99, 235, 0.6);
+    }
+
+    #chat-unread-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 16px;
+      height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 9px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen hero-gradient">
@@ -232,6 +358,69 @@
       </div>
     </div>
   </main>
+
+  <!-- Chat Widget -->
+  <div id="chat-widget">
+    <div id="chat-panel" class="hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-white leading-none">Fundora Chat</p>
+            <p id="chat-status" class="text-xs text-yellow-400 mt-0.5">● Connecting…</p>
+          </div>
+        </div>
+        <button onclick="toggleChat()" class="text-gray-500 hover:text-gray-300 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Messages -->
+      <div id="chat-messages">
+        <div class="chat-msg incoming">
+          👋 Hi there! Have questions about this comparison? I'm here to help.
+          <span class="msg-time">Just now</span>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="px-3 py-3 bg-slate-900 border-t border-slate-800 flex gap-2">
+        <input
+          id="chat-input"
+          type="text"
+          placeholder="Type a message..."
+          class="flex-1 bg-slate-800 border border-slate-700 text-white text-sm rounded-lg px-3 py-2 outline-none focus:border-brand-500 placeholder-gray-500 transition-colors"
+          onkeydown="if(event.key==='Enter') sendChatMessage()"
+        />
+        <button
+          onclick="sendChatMessage()"
+          class="bg-brand-600 hover:bg-brand-700 text-white rounded-lg px-3 py-2 transition-colors flex-shrink-0"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toggle Button -->
+    <button id="chat-toggle-btn" onclick="toggleChat()" title="Open chat">
+      <svg id="chat-icon-open" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+      </svg>
+      <svg id="chat-icon-close" class="w-6 h-6 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+      <span id="chat-unread-badge" class="hidden">1</span>
+    </button>
+  </div>
 
   <script>
     const domCache = {
@@ -986,6 +1175,160 @@
       
       loadComparison();
     });
+
+    // ── Chat Widget ──────────────────────────────────────────────
+    const GRADIO_BASE = 'https://aipse-bot-test-api.hf.space';
+    const GRADIO_ENDPOINT = '/gradio_api/call/generate_text';
+
+    let chatOpen = false;
+    let isChatBusy = false;
+
+    function setChatStatus(state) {
+      const el = document.getElementById('chat-status');
+      if (!el) return;
+      const states = {
+        online:     { text: '● Online',      cls: 'text-xs text-accent-400 mt-0.5' },
+        typing:     { text: '● Typing…',     cls: 'text-xs text-brand-400 mt-0.5' },
+        error:      { text: '● Unavailable', cls: 'text-xs text-red-400 mt-0.5' },
+        connecting: { text: '● Connecting…', cls: 'text-xs text-yellow-400 mt-0.5' }
+      };
+      const s = states[state] || states.online;
+      el.textContent = s.text;
+      el.className = s.cls;
+    }
+
+    function showTypingIndicator() {
+      const messages = document.getElementById('chat-messages');
+      if (document.getElementById('chat-typing')) return;
+      const div = document.createElement('div');
+      div.id = 'chat-typing';
+      div.className = 'chat-msg incoming';
+      div.innerHTML = `
+        <span style="display:inline-flex;gap:4px;align-items:center;">
+          <span class="typing-dot"></span>
+          <span class="typing-dot" style="animation-delay:.2s"></span>
+          <span class="typing-dot" style="animation-delay:.4s"></span>
+        </span>`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById('chat-typing');
+      if (el) el.remove();
+    }
+
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      const panel = document.getElementById('chat-panel');
+      const iconOpen = document.getElementById('chat-icon-open');
+      const iconClose = document.getElementById('chat-icon-close');
+      const badge = document.getElementById('chat-unread-badge');
+
+      if (chatOpen) {
+        panel.classList.remove('hidden');
+        iconOpen.classList.add('hidden');
+        iconClose.classList.remove('hidden');
+        badge.classList.add('hidden');
+        setTimeout(() => document.getElementById('chat-input')?.focus(), 50);
+      } else {
+        panel.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+      }
+    }
+
+    // Direct REST call to Gradio API — no SDK needed
+    async function callGradio(prompt) {
+      // Step 1: Submit job and get event_id
+      const submitRes = await fetch(`${GRADIO_BASE}${GRADIO_ENDPOINT}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: [prompt] })
+      });
+
+      if (!submitRes.ok) throw new Error(`Submit failed: ${submitRes.status}`);
+      const { event_id } = await submitRes.json();
+      if (!event_id) throw new Error('No event_id returned');
+
+      // Step 2: Listen to the SSE stream for the result
+      return new Promise((resolve, reject) => {
+        const url = `${GRADIO_BASE}${GRADIO_ENDPOINT}/${event_id}`;
+        const evtSource = new EventSource(url);
+        const timeout = setTimeout(() => {
+          evtSource.close();
+          reject(new Error('Response timed out'));
+        }, 60000);
+
+        evtSource.addEventListener('complete', (e) => {
+          clearTimeout(timeout);
+          evtSource.close();
+          try {
+            const parsed = JSON.parse(e.data);
+            resolve(Array.isArray(parsed) ? parsed[0] : parsed);
+          } catch {
+            resolve(e.data);
+          }
+        });
+
+        evtSource.addEventListener('error', (e) => {
+          clearTimeout(timeout);
+          evtSource.close();
+          reject(new Error('Stream error'));
+        });
+      });
+    }
+
+    async function sendChatMessage() {
+      if (isChatBusy) return;
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      isChatBusy = true;
+      appendChatMessage(text, 'outgoing');
+      input.value = '';
+      input.disabled = true;
+      showTypingIndicator();
+      setChatStatus('typing');
+
+      try {
+        const reply = await callGradio(text);
+        removeTypingIndicator();
+        appendChatMessage(reply || '(No response)', 'incoming');
+        setChatStatus('online');
+      } catch (err) {
+        removeTypingIndicator();
+        console.error('Gradio error:', err);
+        const msg = err.message?.includes('timed out')
+          ? 'The AI took too long to respond. Please try again.'
+          : 'Something went wrong. Please try again.';
+        appendChatMessage(msg, 'incoming');
+        setChatStatus('error');
+        setTimeout(() => setChatStatus('online'), 3000);
+      } finally {
+        isChatBusy = false;
+        input.disabled = false;
+        input.focus();
+      }
+    }
+
+    function appendChatMessage(text, type) {
+      const messages = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `chat-msg ${type}`;
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      div.innerHTML = `${escapeHtml(text)}<span class="msg-time">${time}</span>`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+
+      if (type === 'incoming' && !chatOpen) {
+        document.getElementById('chat-unread-badge')?.classList.remove('hidden');
+      }
+    }
+
+    // Set status to online immediately — no pre-connection needed
+    setChatStatus('online');
   </script>
 </body>
 </html>
