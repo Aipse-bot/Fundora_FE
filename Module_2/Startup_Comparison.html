@@ -1180,6 +1180,74 @@
     const GRADIO_BASE = 'https://aipse-bot-test-api.hf.space';
     const GRADIO_ENDPOINT = '/gradio_api/call/generate_text';
 
+    function buildComparisonContext() {
+      if (!startupsData || startupsData.length === 0) return '';
+
+      const lines = [
+        'You are an investment analysis assistant on the Fundora platform.',
+        'The user is currently viewing a side-by-side comparison of the following startups.',
+        'Use this data exclusively when answering questions about these startups.',
+        ''
+      ];
+
+      startupsData.forEach((s, idx) => {
+        lines.push(`--- STARTUP ${idx + 1}: ${s.company_name || 'Unknown'} ---`);
+
+        const fields = [
+          ['Industry',               s.industry],
+          ['Tagline',                s.tagline],
+          ['Description',            s.description],
+          ['Risk Level',             s.risk_level],
+          ['Estimated Growth Rate',  s.estimated_growth_rate != null ? `${s.estimated_growth_rate}%` : null],
+          ['Reward Potential',       s.reward_potential != null ? `${getRewardValue(s.reward_potential)}/5` : null],
+          ['Revenue',                s.revenue != null ? `${Number(s.revenue).toLocaleString()}` : null],
+          ['Valuation',              s.valuation != null ? `${Number(s.valuation).toLocaleString()}` : null],
+          ['Funding Amount',         s.funding_amount != null ? `${Number(s.funding_amount).toLocaleString()}` : null],
+          ['Funding Stage',          s.funding_stage],
+          ['Number of Employees',    s.number_of_employees],
+          ['Founded Year',           s.founded_year],
+          ['Location',               s.location],
+          ['Business Model',         s.business_model],
+          ['Target Market',          s.target_market],
+          ['Product Stage',          s.product_stage],
+          ['Total Addressable Market', s.total_addressable_market],
+          ['Competitive Advantage',  s.competitive_advantage],
+          ['Use of Funds',           s.use_of_funds],
+          ['Exit Strategy',          s.exit_strategy],
+          ['Team Size',              s.team_size],
+          ['Monthly Burn Rate',      s.monthly_burn_rate != null ? `${Number(s.monthly_burn_rate).toLocaleString()}` : null],
+          ['Runway (months)',        s.runway_months],
+          ['Annual Recurring Revenue', s.annual_recurring_revenue != null ? `${Number(s.annual_recurring_revenue).toLocaleString()}` : null],
+          ['Customer Count',         s.customer_count],
+          ['Website',                s.website],
+          ['Type',                   s.is_deck_builder ? 'Pitch Deck Startup' : 'Registered Startup'],
+        ];
+
+        fields.forEach(([label, value]) => {
+          if (value !== null && value !== undefined && value !== '' && value !== 'null') {
+            lines.push(`  ${label}: ${value}`);
+          }
+        });
+
+        // Analytics
+        const analytics = s.analytics || {};
+        if (analytics.total_comparisons != null) {
+          lines.push(`  Times Compared by Investors: ${analytics.total_comparisons}`);
+        }
+        if (analytics.unique_comparers != null) {
+          lines.push(`  Unique Investors Who Compared: ${analytics.unique_comparers}`);
+        }
+        if (analytics.recent_comparisons > 0) {
+          lines.push(`  Comparisons in Last 30 Days: ${analytics.recent_comparisons}`);
+        }
+
+        lines.push('');
+      });
+
+      lines.push('---');
+      return lines.join('\n');
+    }
+
     let chatOpen = false;
     let isChatBusy = false;
 
@@ -1293,7 +1361,11 @@
       setChatStatus('typing');
 
       try {
-        const reply = await callGradio(text);
+        const context = buildComparisonContext();
+        const prompt = context
+          ? `${context}\n[USER QUESTION]\n${text}`
+          : text;
+        const reply = await callGradio(prompt);
         removeTypingIndicator();
         appendChatMessage(reply || '(No response)', 'incoming');
         setChatStatus('online');
