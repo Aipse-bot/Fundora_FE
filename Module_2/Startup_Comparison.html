@@ -2368,13 +2368,11 @@
         return isNaN(n) ? null : 'PHP ' + n.toLocaleString();
       };
       var fmtP  = function(v) { return isVal(v) ? (v + '%') : null; };
-      var trunc = function(v, max) {
-        if (v == null) return v;
-        var s = String(v);
-        return s.length > max ? s.substring(0, max) + '...' : s;
-      };
-      var tryParse = function(v) {
-        try { return (typeof v === 'string') ? JSON.parse(v) : v; } catch(e) { return null; }
+      var fmtRatio = function(ltv, cac) {
+        var l = Number(ltv);
+        var c = Number(cac);
+        if (!isVal(ltv) || !isVal(cac) || isNaN(l) || isNaN(c) || c <= 0) return null;
+        return (Math.round((l / c) * 10) / 10) + 'x';
       };
       var pushSection = function(lines, title, pairs) {
         var valid = [];
@@ -2400,185 +2398,64 @@
 
         lines.push('--- STARTUP ' + (idx + 1) + ': ' + (s.company_name || 'Unknown') + ' ---');
 
-        // Basics
+        // Overview card and table (displayed)
         pushSection(lines, 'Company Identity', [
           ['Company Name',  fmt(s.company_name)],
           ['Tagline',       fmt(s.tagline)],
-          ['Industry',      fmt(s.industry)],
-          ['Description',   trunc(fmt(s.company_description || s.description), 200)],
-          ['Type',          s.is_deck_builder ? 'Pitch Deck Startup' : 'Registered Startup']
+          ['Industry',      fmt(s.industry)]
         ]);
 
         pushSection(lines, 'Company Details', [
           ['Headquarters',  fmt(s.headquarters || s.location)],
           ['Year Founded',  fmt(s.year_founded || s.founded_year)],
-          ['Stage',         fmt(s.company_stage || s.product_stage)],
-          ['Website',       fmt(s.website_url || s.website)],
-          ['LinkedIn',      fmt(s.linkedin_url)]
+          ['Stage',         fmt(s.company_stage || s.product_stage)]
         ]);
 
-        // Problem & Solution
-        pushSection(lines, 'Problem & Solution', [
-          ['Problem',      trunc(fmt(s.problem_statement), 200)],
-          ['Solution',     trunc(fmt(s.solution_description), 200)],
-          ['How It Works', trunc(fmt(s.how_it_works), 150)],
-          ['Key Features', trunc(fmt(s.key_features), 150)]
+        // Performance (displayed)
+        pushSection(lines, 'Performance', [
+          ['Estimated Growth Rate', s.estimated_growth_rate != null ? (s.estimated_growth_rate + '%') : null],
+          ['Reward Potential',      s.reward_potential != null ? (getRewardValue(s.reward_potential) + '/5') : null],
+          ['Risk Level',            fmt(s.risk_level)]
         ]);
 
-        // Market
+        // Market (displayed)
         pushSection(lines, 'Market', [
           ['Primary Market',        fmt(s.primary_market || s.target_market)],
-          ['Target Segments',       trunc(fmt(s.target_customer_segments), 150)],
           ['Target Geography',      fmt(s.target_geography)],
           ['TAM',                   fmtN(s.market_size_tam || s.total_addressable_market)],
-          ['SAM',                   fmtN(s.market_size_sam)],
-          ['Market Growth Rate',    fmtP(s.market_growth_rate)],
-          ['Competitors',           trunc(fmt(s.competitors), 150)],
-          ['Competitive Advantage', trunc(fmt(s.competitive_advantage), 150)],
-          ['GTM Strategy',          trunc(fmt(s.go_to_market_strategy), 150)]
+          ['SAM',                   fmtN(s.market_size_sam)]
         ]);
 
-        // Traction
+        // Traction (displayed)
         pushSection(lines, 'Traction', [
           ['MRR/ARR',           fmtN(s.current_mrr_arr || s.annual_recurring_revenue)],
           ['Total Users',       fmt(s.total_users)],
-          ['Paid Users',        fmt(s.paid_users)],
-          ['Customer Count',    fmt(s.customer_count)],
-          ['Traction Metrics',  trunc(fmt(s.key_traction_metrics), 150)],
-          ['Major Milestones',  trunc(fmt(s.major_milestones), 150)],
-          ['Notable Customers', trunc(fmt(s.notable_customers), 100)]
+          ['Paid Users',        fmt(s.paid_users)]
         ]);
 
-        // Team
+        // Unit economics (displayed)
+        pushSection(lines, 'Unit Economics', [
+          ['CAC',          fmtN(s.cac)],
+          ['LTV',          fmtN(s.ltv)],
+          ['LTV:CAC Ratio',fmtRatio(s.ltv, s.cac)],
+          ['Gross Margin', fmtP(s.gross_margin)]
+        ]);
+
+        // Financials & Funding (displayed)
+        pushSection(lines, 'Financials & Funding', [
+          ['Current Revenue', fmtN(s.current_revenue || s.revenue)],
+          ['Current Valuation', fmtN(s.current_valuation || s.valuation)],
+          ['Capital Raised', fmtN(s.capital_raised_to_date)],
+          ['Funding Ask', fmtN(s.funding_ask || s.funding_amount)],
+          ['Runway (months)', fmt(s.expected_runway_months || s.runway_months)],
+          ['Funding Stage', fmt(s.current_round_type || s.funding_stage)]
+        ]);
+
+        // Team (displayed)
         pushSection(lines, 'Team', [
           ['Founder',          fmt(s.founder_name)],
           ['Founder Title',    fmt(s.founder_title)],
           ['Team Size',        fmt(s.team_size)]
-        ]);
-
-        var founders = tryParse(s.additional_founders);
-        if (Array.isArray(founders) && founders.length) {
-          lines.push('  [Additional Founders]');
-          for (var fi = 0; fi < founders.length; fi++) {
-            var f = founders[fi];
-            lines.push('    - ' + (f.name || '') + (f.title ? ' (' + f.title + ')' : ''));
-          }
-        }
-        var teamMembers = tryParse(s.key_team_members);
-        if (Array.isArray(teamMembers) && teamMembers.length) {
-          lines.push('  [Key Team Members]');
-          for (var ti = 0; ti < teamMembers.length; ti++) {
-            var m = teamMembers[ti];
-            lines.push('    - ' + (m.name || '') + (m.title ? ' (' + m.title + ')' : ''));
-          }
-        }
-        var advisors = tryParse(s.advisors);
-        if (Array.isArray(advisors) && advisors.length) {
-          lines.push('  [Advisors]');
-          for (var ai = 0; ai < advisors.length; ai++) {
-            var adv = advisors[ai];
-            lines.push('    - ' + (adv.name || '') + (adv.expertise ? ' - ' + adv.expertise : ''));
-          }
-        }
-
-        // Business Model
-        pushSection(lines, 'Business Model', [
-          ['Model Type',        fmt(s.business_model_type || s.business_model)],
-          ['Revenue Streams',   trunc(fmt(s.revenue_streams), 150)],
-          ['Pricing',           fmt(s.pricing_example)],
-          ['Key Partnerships',  trunc(fmt(s.key_partnerships), 100)],
-          ['Operational Status',trunc(fmt(s.operational_status), 100)]
-        ]);
-
-        // Financials
-        pushSection(lines, 'Income Statement', [
-          ['Prior Revenue',  fmtN(s.previous_revenue)],
-          ['Current Revenue',fmtN(s.current_revenue || s.revenue)],
-          ['Net Income',     fmtN(s.net_income)],
-          ['EBIT',           fmtN(s.ebit)]
-        ]);
-
-        pushSection(lines, 'Cash Flow', [
-          ['Operations CF', fmtN(s.cash_flow)],
-          ['Investment CF',  fmtN(s.investment_flow)],
-          ['Financing CF',   fmtN(s.financing_flow)]
-        ]);
-
-        pushSection(lines, 'Balance Sheet', [
-          ['Total Assets',        fmtN(s.total_assets)],
-          ['Current Assets',      fmtN(s.current_assets)],
-          ['Total Liabilities',   fmtN(s.total_liabilities)],
-          ['Current Liabilities', fmtN(s.current_liabilities)],
-          ['Retained Earnings',   fmtN(s.retained_earnings)],
-          ['Shareholder Equity',  fmtN(s.shareholder_equity)]
-        ]);
-
-        pushSection(lines, 'Unit Economics', [
-          ['CAC',          fmtN(s.cac)],
-          ['LTV',          fmtN(s.ltv)],
-          ['Gross Margin', fmtP(s.gross_margin)],
-          ['Monthly Burn', fmtN(s.monthly_burn_rate)]
-        ]);
-
-        // Valuation & Projections
-        pushSection(lines, 'Valuation & Growth', [
-          ['Current Valuation',         fmtN(s.current_valuation || s.valuation)],
-          ['Expected Future Valuation', fmtN(s.expected_future_valuation)],
-          ['Years to Future Valuation', fmt(s.years_to_future_valuation)],
-          ['Estimated Growth Rate',     s.estimated_growth_rate != null ? (s.estimated_growth_rate + '%') : null],
-          ['Reward Potential',          s.reward_potential != null ? (getRewardValue(s.reward_potential) + '/5') : null],
-          ['Risk Level',                fmt(s.risk_level)]
-        ]);
-
-        var projections = tryParse(s.financial_projections);
-        if (Array.isArray(projections) && projections.length) {
-          lines.push('  [Financial Projections]');
-          for (var pi = 0; pi < projections.length; pi++) {
-            var p = projections[pi];
-            lines.push('    Year ' + p.year + ': Revenue ' + (fmtN(p.revenue) || 'N/A') + ', Profit ' + (fmtN(p.profit) || 'N/A'));
-          }
-        }
-
-        pushSection(lines, 'Key Assumptions', [
-          ['Assumptions', trunc(fmt(s.key_assumptions), 200)]
-        ]);
-
-        // Funding
-        pushSection(lines, 'Funding', [
-          ['Capital Raised',       fmtN(s.capital_raised_to_date)],
-          ['Current Round',        fmt(s.current_round_type || s.funding_stage)],
-          ['Funding Ask',          fmtN(s.funding_ask || s.funding_amount)],
-          ['Funding Usage',        trunc(fmt(s.funding_usage || s.use_of_funds), 150)],
-          ['Target Valuation',     fmtN(s.target_valuation)],
-          ['Runway (months)',      fmt(s.expected_runway_months || s.runway_months)]
-        ]);
-
-        var fundingHistory = tryParse(s.funding_history);
-        if (Array.isArray(fundingHistory) && fundingHistory.length) {
-          lines.push('  [Funding History]');
-          for (var ri = 0; ri < fundingHistory.length; ri++) {
-            var r = fundingHistory[ri];
-            var inv = (Array.isArray(r.investors) && r.investors.length) ? ' - Investors: ' + r.investors.join(', ') : '';
-            lines.push('    ' + (r.round || '') + (r.date ? ' (' + r.date + ')' : '') + ': ' + (fmtN(r.amount) || 'N/A') + inv);
-          }
-        }
-
-        // Impact & IP
-        pushSection(lines, 'Impact & IP', [
-          ['Impact',        trunc(fmt(s.impact_statement), 150)],
-          ['SDG Alignment', trunc(fmt(s.sdg_alignment), 100)],
-          ['IP / Patents',  trunc(fmt(s.intellectual_property), 150)],
-          ['Regulatory',    trunc(fmt(s.regulatory_status), 100)],
-          ['Awards',        trunc(fmt(s.awards_and_recognition), 150)]
-        ]);
-
-        // Contact & Investment
-        pushSection(lines, 'Contact & Investment', [
-          ['Primary Contact',      fmt(s.primary_contact_name)],
-          ['Email',                fmt(s.contact_email)],
-          ['Min Check Size',       fmtN(s.preferred_check_size_min)],
-          ['Max Check Size',       fmtN(s.preferred_check_size_max)],
-          ['Investor Preferences', trunc(fmt(s.investor_preferences), 150)]
         ]);
 
         // Platform Analytics
