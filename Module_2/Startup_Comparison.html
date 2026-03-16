@@ -733,7 +733,8 @@
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <!-- Context Toggle -->
+          <!--
+          Context Toggle disabled for debugging
           <button 
             id="context-toggle-btn" 
             onclick="toggleContextMode()" 
@@ -746,6 +747,7 @@
               <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/>
             </svg>
           </button>
+          -->
           <button onclick="toggleChat()" class="text-gray-500 hover:text-gray-300 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -2354,8 +2356,16 @@
     });
 
     // ── Chat Widget ──────────────────────────────────────────────
-    const GRADIO_BASE = 'https://aipse-bot-finance-chatbot-api-cpu-ver.hf.space';
+    const GRADIO_BASES = {
+      gpu: 'https://aipse-bot-finance-chatbot-api-gpu-ver.hf.space',
+      cpu: 'https://aipse-bot-finance-chatbot-api-cpu-ver.hf.space'
+    };
+    let GRADIO_MODE = 'cpu';
     const GRADIO_ENDPOINT = '/gradio_api/call/generate_text';
+
+    function getGradioBase() {
+      return GRADIO_BASES[GRADIO_MODE] || GRADIO_BASES.gpu;
+    }
 
     function buildComparisonContext() {
       if (!startupsData || startupsData.length === 0) return '';
@@ -2475,7 +2485,8 @@
 
     let chatOpen = false;
     let isChatBusy = false;
-    let useContextMode = true; // Toggle for sending full context to AI
+    // Context mode disabled: always use direct prompt mode.
+    let useContextMode = false;
 
     function setChatStatus(state) {
       const el = document.getElementById('chat-status');
@@ -2533,28 +2544,13 @@
     }
 
     function toggleContextMode() {
-      useContextMode = !useContextMode;
-      const btn = document.getElementById('context-toggle-btn');
-      
-      if (useContextMode) {
-        btn.style.background = 'rgba(16, 185, 129, 0.15)';
-        btn.style.color = '#10b981';
-        btn.style.border = '1px solid rgba(16, 185, 129, 0.3)';
-        btn.title = 'Context ON — AI receives full startup data';
-        appendChatMessage('Context mode enabled — AI will receive full startup comparison data.', 'incoming');
-      } else {
-        btn.style.background = 'rgba(239, 68, 68, 0.15)';
-        btn.style.color = '#ef4444';
-        btn.style.border = '1px solid rgba(239, 68, 68, 0.3)';
-        btn.title = 'Context OFF — AI answers without startup data (faster)';
-        appendChatMessage('Context mode disabled — AI will only receive your question (faster).', 'incoming');
-      }
+      appendChatMessage('Context mode is currently disabled for debugging.', 'incoming');
     }
 
     // Direct REST call to Gradio API — no SDK needed
     async function callGradio(prompt) {
       // Step 1: Submit job and get event_id
-      const submitRes = await fetch(`${GRADIO_BASE}${GRADIO_ENDPOINT}`, {
+      const submitRes = await fetch(`${getGradioBase()}${GRADIO_ENDPOINT}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data: [prompt] })
@@ -2566,7 +2562,7 @@
 
       // Step 2: Listen to the SSE stream for the result
       return new Promise((resolve, reject) => {
-        const url = `${GRADIO_BASE}${GRADIO_ENDPOINT}/${event_id}`;
+        const url = `${getGradioBase()}${GRADIO_ENDPOINT}/${event_id}`;
         const evtSource = new EventSource(url);
         const timeout = setTimeout(() => {
           evtSource.close();
@@ -2606,29 +2602,18 @@
       setChatStatus('typing');
 
       try {
-        // Build prompt with or without context based on toggle
-        let prompt;
-        let mode;
+        // Context mode disabled: send only the user's prompt.
+        const prompt = text;
         
-        if (useContextMode) {
-          const context = buildComparisonContext();
-          prompt = context ? `${context}\n[USER QUESTION]\n${text}` : text;
-          mode = 'Context Mode';
-        } else {
-          prompt = text;
-          mode = 'Direct Mode (no context)';
-        }
-        
-        // ────────────────────────────────────────────────────────────────
-        // DEBUG: Token/Character Count (comment out this block to disable)
-        // ────────────────────────────────────────────────────────────────
+        /*
+        // DEBUG: Token/Character Count
         const charCount = prompt.length;
         const approxTokens = Math.ceil(charCount / 4); // rough estimate: 4 chars ≈ 1 token
         const debugMsg = `[DEBUG] ${mode} | ${charCount} chars (~${approxTokens} tokens)`;
         console.log(debugMsg);
-        console.log('Full prompt:', prompt); // Remove this line if prompt is too long for console
-        appendChatMessage(debugMsg, 'incoming'); // Shows in chat for visibility
-        // ────────────────────────────────────────────────────────────────
+        console.log('Full prompt:', prompt);
+        appendChatMessage(debugMsg, 'incoming');
+        */
         
         const reply = await callGradio(prompt);
         removeTypingIndicator();
