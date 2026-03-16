@@ -176,7 +176,7 @@
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-6 py-8">
+  <main class="max-w-7xl mx-auto px-6 py-8 min-h-screen">
     <!-- Parameters Section -->
     <section class="card-base border border-slate-800 rounded-2xl p-8 mb-8 scale-in delay-1">
       <h2 class="text-2xl font-semibold mb-6">Simulation Parameters</h2>
@@ -274,20 +274,19 @@
         </div>
       </div>
     </section>
+  </main>
 
-
-<!-- Parent container full width -->
-<div class="relative w-full">
-
+<div class="sticky bottom-5 right-10 w-full max-h-[500px] flex items-end justify-end">
   <!-- Chat Toggle Button -->
 <button id="chatToggleBtn"
-        class="sticky bottom-5 ml-auto w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg z-50 text-2xl">
+        class="sticky bottom-5 right-5 w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg text-2xl">
   💬
 </button>
+
   <!-- Chat Container -->
   <div id="chatContainer"
-       class="sticky bottom-5 ml-auto w-80 max-h-[500px] bg-slate-900 text-white rounded-lg shadow-xl z-40 flex flex-col hidden">
-
+      class="sticky bottom-5 right-5 w-80 max-h-[500px] bg-slate-900 text-white rounded-lg shadow-xl  flex flex-col hidden">
+    
     <!-- Chat Header -->
     <div class="flex items-center justify-between px-4 py-2 border-b border-slate-700 bg-slate-800">
       <span class="font-semibold">Investment Chatbot</span>
@@ -304,14 +303,14 @@
     <!-- Input -->
     <div id="chatInputContainer" class="flex border-t border-slate-700">
       <input id="userInput" type="text" placeholder="Ask about your simulation results..."
-             class="flex-1 px-3 py-2 bg-slate-800 text-white outline-none border-none text-sm">
+            class="flex-1 px-3 py-2 bg-slate-800 text-white outline-none border-none text-sm">
       <button id="sendBtn" class="bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 transition-colors">
         Send
       </button>
     </div>
   </div>
 </div>
-  </main>
+
 
   <script>
     let growthChartInstance = null;
