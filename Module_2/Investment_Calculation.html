@@ -275,41 +275,39 @@
       </div>
     </section>
   </main>
-  <!-- Parent container full width -->
-  <div class="fixed bottom-0 w-full px-6 py-6">
+<!-- Chat Toggle Button -->
+<button id="chatToggleBtn"
+        class="fixed bottom-5 right-5 w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg z-50 text-2xl">
+  💬
+</button>
 
-    <!-- Chat Toggle Button -->
-  <button id="chatToggleBtn"
-          class="sticky bottom-5 ml-auto w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg z-50 text-2xl">
-    💬
-  </button>
-    <!-- Chat Container -->
-    <div id="chatContainer"
-        class="sticky bottom-5 ml-auto w-80 max-h-[500px] bg-slate-900 text-white rounded-lg shadow-xl z-40 flex flex-col hidden">
+<!-- Chat Container -->
+<div id="chatContainer"
+     class="fixed bottom-20 right-5 w-80 max-h-[500px] bg-slate-900 text-white rounded-lg shadow-xl z-40 flex flex-col hidden">
+  
+  <!-- Chat Header -->
+  <div class="flex items-center justify-between px-4 py-2 border-b border-slate-700 bg-slate-800">
+    <span class="font-semibold">Investment Chatbot</span>
+    <button id="chatExitBtn" class="text-white font-bold px-2 py-1 hover:bg-slate-700 rounded">✖</button>
+  </div>
 
-      <!-- Chat Header -->
-      <div class="flex items-center justify-between px-4 py-2 border-b border-slate-700 bg-slate-800">
-        <span class="font-semibold">Investment Chatbot</span>
-        <button id="chatExitBtn" class="text-white font-bold px-2 py-1 hover:bg-slate-700 rounded">✖</button>
-      </div>
-
-      <!-- Messages -->
-      <div id="chatbox" class="flex-1 flex flex-col p-2 overflow-y-auto space-y-2">
-        <div class="bg-slate-800 text-slate-100 rounded-xl px-3 py-2 max-w-[75%]">
-          What can I help you with today?
-        </div>
-      </div>
-
-      <!-- Input -->
-      <div id="chatInputContainer" class="flex border-t border-slate-700">
-        <input id="userInput" type="text" placeholder="Ask about your simulation results..."
-              class="flex-1 px-3 py-2 bg-slate-800 text-white outline-none border-none text-sm">
-        <button id="sendBtn" class="bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 transition-colors">
-          Send
-        </button>
-      </div>
+  <!-- Messages -->
+  <div id="chatbox" class="flex-1 flex flex-col p-2 overflow-y-auto space-y-2">
+    <div class="bg-slate-800 text-slate-100 rounded-xl px-3 py-2 max-w-[75%]">
+      What can I help you with today?
     </div>
   </div>
+
+  <!-- Input -->
+  <div id="chatInputContainer" class="flex border-t border-slate-700">
+    <input id="userInput" type="text" placeholder="Ask about your simulation results..."
+           class="flex-1 px-3 py-2 bg-slate-800 text-white outline-none border-none text-sm">
+    <button id="sendBtn" class="bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 transition-colors">
+      Send
+    </button>
+  </div>
+</div>
+
   <script>
     let growthChartInstance = null;
     let annualChartInstance = null;
