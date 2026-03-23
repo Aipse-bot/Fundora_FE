@@ -1350,11 +1350,11 @@
 
     // Hook into existing loadCompany — call AI after startup data loads
     const _origLoadCompany = loadCompany;
-    async function loadCompany() {
+    loadCompany = async function() {
       await _origLoadCompany();
       const idNum = parseInt(startupId);
       if (!isNaN(idNum)) loadAIAnalysis(idNum);
-    }
+    };
 
 
     /**
