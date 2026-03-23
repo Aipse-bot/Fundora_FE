@@ -355,7 +355,7 @@
     <div id="socialProofSection" class="fade-in-up" style="display: none;">
       <div class="card-base section-spacing">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="heading-secondary text-blue-300">ðŸ† Recognition & Validation</h2>
+          <h2 class="heading-secondary text-blue-300">Recognition & Validation</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div id="awardsSection" class="space-y-2"></div>
@@ -1095,12 +1095,12 @@
 
         const contactMethods = [];
         if (data.contact_email) {
-          contactMethods.push(`<a href="mailto:${escapeHtml(data.contact_email)}" class="flex items-center text-brand-300 hover:text-brand-200 text-xs">
+          contactMethods.push(`<a href="mailto:${escapeHtml(data.contact_email)}"class="flex items-center text-brand-300 hover:text-brand-200 text-xs">
                                 <span class="ml-1">${escapeHtml(data.contact_email)}</span>
                               </a>`);
         }
         if (data.contact_phone) {
-          contactMethods.push(`<a href="tel:${escapeHtml(data.contact_phone)}" class="flex items-center text-brand-300 hover:text-brand-200 text-xs">
+          contactMethods.push(`<a href="tel:${escapeHtml(data.contact_phone)}"class="flex items-center text-brand-300 hover:text-brand-200 text-xs">
                                 <span class="ml-1">${escapeHtml(data.contact_phone)}</span>
                               </a>`);
         }
