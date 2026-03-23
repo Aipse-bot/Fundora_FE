@@ -1011,7 +1011,8 @@
       `;
 
       try {
-        const deleteUrl = `${API_BASE}/investor/comparisons/delete/${savedComparisonId}/`;
+        // const deleteUrl = `${API_BASE}/investor/comparisons/delete/${savedComparisonId}/`;
+        const deleteUrl = `${API_BASE}/api/investor/comparisons/delete/${savedComparisonId}/`;
         
         const response = await fetch(deleteUrl, {
           method: 'DELETE',
