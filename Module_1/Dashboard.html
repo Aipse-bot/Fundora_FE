@@ -646,7 +646,11 @@
     /* ── AI Recommendations (upgraded: stores ai_explanation per startup) ── */
     async function fetchAIRecommendations() {
       try {
-        const userData = JSON.parse(sessionStorage.getItem('userData') || localStorage.getItem('userData') || '{}');
+        let userData = {};
+        try {
+          const raw = sessionStorage.getItem('userData') || localStorage.getItem('userData');
+          if (raw && raw !== 'null') userData = JSON.parse(raw);
+        } catch(e) {}
         const userId = userData.id || 1;
         const response = await fetch(AI_RECOMMENDATIONS_ENDPOINT, {
           method: 'POST',
