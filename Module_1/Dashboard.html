@@ -655,7 +655,7 @@
         const response = await fetch(AI_RECOMMENDATIONS_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: userId, n_recommendations: 10, exclude_viewed: false, include_ai_explanation: true })
+          body: JSON.stringify({ user_id: userId, n_recommendations: 5, exclude_viewed: false, include_ai_explanation: true })
         });
         if (!response.ok) throw new Error('AI service unavailable');
         const data = await response.json();
