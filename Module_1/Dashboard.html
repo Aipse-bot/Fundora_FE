@@ -989,6 +989,7 @@
     document.getElementById('show-ai-btn')?.addEventListener('click', async () => {
       showLoadingSkeletons(6);
       await fetchAIRecommendations();
+      await renderStartups(false);
       const grid = document.getElementById('startup-grid');
       const allCards = Array.from(grid.children).filter(c => !c.classList.contains('skeleton-card'));
       grid.innerHTML = '';
