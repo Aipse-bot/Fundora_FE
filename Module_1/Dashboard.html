@@ -735,34 +735,6 @@
         : '<svg class="w-5 h-5 text-slate-500 hover:text-brand-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
     }
 
-    /* ── AI Modal ── */
-    function openAiModal(startupId, companyName) {
-      const data = aiDataMap[startupId];
-      document.getElementById('aiModalTitle').textContent = companyName;
-      const scoresEl = document.getElementById('aiModalScores');
-      const textEl = document.getElementById('aiModalText');
-
-      if (data) {
-        scoresEl.innerHTML = [
-          { label: 'ML Score', val: Math.round((data.ml_score||data.score||0)*100), color: '#3b82f6' },
-          { label: 'Collab', val: Math.round((data.collaborative_score||0)*100), color: '#10b981' },
-          { label: 'Content', val: Math.round((data.content_score||0)*100), color: '#f59e0b' },
-        ].map(s => `
-          <div class="text-center bg-slate-800/50 border border-slate-700/50 rounded-xl p-3">
-            <div class="text-2xl font-mono font-bold" style="color:${s.color}">${s.val}%</div>
-            <div class="text-xs text-slate-500 mt-1">${s.label}</div>
-          </div>`).join('');
-        textEl.textContent = data.ai_explanation || 'AI explanation not available for this startup.';
-      } else {
-        scoresEl.innerHTML = '';
-        textEl.textContent = 'This startup has not been scored by the AI model yet.';
-      }
-      document.getElementById('aiModal').classList.add('open');
-    }
-
-    function closeAiModal() { document.getElementById('aiModal').classList.remove('open'); }
-    document.getElementById('aiModal').addEventListener('click', (e) => { if (e.target === document.getElementById('aiModal')) closeAiModal(); });
-
     /* ══════════════════════════════════════════════
        renderStartup — upgraded UI, same logic
     ══════════════════════════════════════════════ */
@@ -828,19 +800,6 @@
             <span class="metric-value" style="color:${m.color}">${escapeHtml(String(m.value))}</span>
           </div>`).join('')}
       </div>`;
-
-      // AI explanation snippet
-      const aiSnippet = isAIRec && aiData?.ai_explanation ? `
-        <div class="ai-box">
-          <div class="ai-box-label"><span class="ai-dot"></span> Gemini AI</div>
-          <p>${escapeHtml(aiData.ai_explanation.substring(0,120))}${aiData.ai_explanation.length>120?'…':''}</p>
-          <button onclick="openAiModal(${startup.id},'${escapeHtml(startup.company_name)}')" class="text-brand-400 text-xs font-semibold mt-2 hover:text-brand-300 transition-colors">Full analysis →</button>
-        </div>` : (isAIRec ? `
-        <div class="ai-box">
-          <div class="ai-box-label"><span class="ai-dot"></span> Gemini AI</div>
-          <p class="text-slate-500 italic text-xs">AI explanation loading…</p>
-          <button onclick="openAiModal(${startup.id},'${escapeHtml(startup.company_name)}')" class="text-brand-400 text-xs font-semibold mt-2 hover:text-brand-300 transition-colors">View scores →</button>
-        </div>` : '');
 
       card.innerHTML = `
         <div class="card-body">

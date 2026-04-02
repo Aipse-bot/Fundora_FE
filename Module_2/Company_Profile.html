@@ -285,17 +285,6 @@
       <span id="riskBadge" class="text-sm font-semibold px-5 py-2 rounded-full border"></span>
     </div>
 
-
-    <!-- GEMINI AI PANEL -->
-    <div id="aiPanelWrapper" class="fade-in-up" style="display:none">
-      <div class="ai-panel">
-        <div class="ai-panel-label"><span class="ai-pulse"></span> ✦ Gemini AI Investment Analysis</div>
-        <div id="aiPanelContent">
-          <div class="ai-loading"><span class="ai-spinner"></span> Generating AI analysis for this startup&hellip;</div>
-        </div>
-      </div>
-    </div>
-
     <!-- TOP ROW: TRACTION + UNIT ECONOMICS + RETURN -->
     <div class="grid grid-cols-1 lg:grid-cols-10 gap-6 fade-in-up">
       
@@ -1292,70 +1281,6 @@
        your FastAPI ML service (/api/explain)
     ══════════════════════════════════════════ */
     const ML_API_BASE = 'https://fundora-ml-service-yo0l.onrender.com';
-
-    async function loadAIAnalysis(startupIdNum) {
-      const wrapper = document.getElementById('aiPanelWrapper');
-      const content = document.getElementById('aiPanelContent');
-      if (!wrapper || !content) return;
-
-      // Get user id from session (fallback 1)
-      let userId = 1;
-      try {
-        const ud = localStorage.getItem('userData');
-        if (ud) userId = JSON.parse(ud).id || 1;
-      } catch (_) {}
-
-      wrapper.style.display = 'block';
-
-      try {
-        const res = await fetch(`${ML_API_BASE}/api/explain`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: userId, startup_id: startupIdNum })
-        });
-
-        if (!res.ok) throw new Error('AI service unavailable');
-        const json = await res.json();
-        const d = json.data || {};
-
-        const mlPct    = Math.round((d.score_breakdown?.ml           || 0) * 100);
-        const colPct   = Math.round((d.score_breakdown?.collaborative || 0) * 100);
-        const conPct   = Math.round((d.score_breakdown?.content       || 0) * 100);
-        const totalPct = Math.round((d.overall_score || 0) * 100);
-
-        content.innerHTML = `
-          <p class="ai-explanation-text">${escapeHtml(d.ai_explanation || 'No AI explanation available for this startup yet.')}</p>
-          <div class="ai-score-grid">
-            <div class="ai-score-item">
-              <div class="ai-score-num" style="color:#3b82f6">${mlPct}%</div>
-              <div class="ai-score-lbl">ML Model</div>
-            </div>
-            <div class="ai-score-item">
-              <div class="ai-score-num" style="color:#10b981">${colPct}%</div>
-              <div class="ai-score-lbl">Similar Investors</div>
-            </div>
-            <div class="ai-score-item">
-              <div class="ai-score-num" style="color:#f59e0b">${conPct}%</div>
-              <div class="ai-score-lbl">Content Match</div>
-            </div>
-          </div>
-          <div style="margin-top:12px;font-size:11px;color:#627a99;text-align:right;">
-            Overall AI Score: <span style="color:#60a5fa;font-family:monospace;font-weight:600">${totalPct}%</span>
-          </div>`;
-      } catch (err) {
-        // Silently hide if ML service not running
-        content.innerHTML = `<p style="font-size:12px;color:#627a99;font-style:italic;">AI analysis unavailable — ML service may not be running.</p>`;
-      }
-    }
-
-    // Hook into existing loadCompany — call AI after startup data loads
-    const _origLoadCompany = loadCompany;
-    loadCompany = async function() {
-      await _origLoadCompany();
-      const idNum = parseInt(startupId);
-      if (!isNaN(idNum)) loadAIAnalysis(idNum);
-    };
-
 
     /**
      * Render profile completeness bar
