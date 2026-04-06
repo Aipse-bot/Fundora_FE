@@ -215,22 +215,6 @@
     .metric-label { font-size: 11px; color: var(--text-muted); }
     .metric-value { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; }
 
-    /* AI explanation box */
-    .ai-box {
-      margin: 12px 18px;
-      padding: 12px 14px;
-      background: rgba(59,130,246,.07);
-      border: 1px solid rgba(59,130,246,.2);
-      border-radius: 10px;
-      font-size: 11.5px; color: #93b4d4; line-height: 1.6;
-      position: relative;
-    }
-    .ai-box-label {
-      font-size: 9px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
-      color: #60a5fa; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;
-    }
-    .ai-dot { width: 5px; height: 5px; border-radius: 50%; background: #34d399; animation: aiTyping 2s infinite; }
-
     /* Card footer */
     .card-footer {
       padding: 12px 18px;
@@ -312,24 +296,6 @@
     }
     .ripple-button:active::after { width: 300px; height: 300px; transition: 0s; }
 
-    /* AI modal */
-    .ai-modal-overlay {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none; transition: opacity .25s;
-    }
-    .ai-modal-overlay.open { opacity: 1; pointer-events: all; }
-    .ai-modal {
-      background: var(--bg-card);
-      border: 1px solid var(--border-hover);
-      border-radius: 20px; padding: 32px;
-      max-width: 520px; width: 90%;
-      box-shadow: 0 24px 80px rgba(0,0,0,.6);
-      transform: scale(.94); transition: transform .25s;
-    }
-    .ai-modal-overlay.open .ai-modal { transform: scale(1); }
-
     main { animation: fadeUp .5s ease .05s both; }
 
     /* No startups */
@@ -338,28 +304,6 @@
   </style>
 </head>
 <body class="text-white min-h-screen">
-
-  <!-- AI Modal -->
-  <div class="ai-modal-overlay" id="aiModal">
-    <div class="ai-modal">
-      <div class="flex items-center justify-between mb-5">
-        <div>
-          <div class="text-xs font-bold tracking-widest text-brand-400 uppercase mb-1">✦ Gemini AI Analysis</div>
-          <h3 id="aiModalTitle" class="text-lg font-display font-bold text-white"></h3>
-        </div>
-        <button onclick="closeAiModal()" class="p-2 rounded-lg hover:bg-slate-800/60 text-slate-400 hover:text-white transition-all">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div id="aiModalScores" class="grid grid-cols-3 gap-3 mb-5"></div>
-      <div class="bg-brand-500/8 border border-brand-500/20 rounded-xl p-4">
-        <div class="text-xs font-bold tracking-wider text-brand-400 uppercase mb-3 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-accent-400 animate-pulse inline-block"></span>AI Explanation
-        </div>
-        <p id="aiModalText" class="text-sm text-slate-300 leading-relaxed"></p>
-      </div>
-    </div>
-  </div>
 
   <!-- Header -->
   <header>
@@ -830,7 +774,6 @@
           <div class="flex flex-wrap gap-1.5 mb-3">${aiBadge}${riskBadge}${stageBadge}${confBadge}</div>
         </div>
         ${metricsHtml}
-        ${aiSnippet}
         <div class="card-footer">
           <button class="btn btn-view flex-1">View Details</button>
           ${hasDataPending && !isPitchDeck
