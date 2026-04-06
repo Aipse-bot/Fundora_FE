@@ -602,7 +602,7 @@
 
     async function recordView() {
       try {
-        await fetch(`https://fundorabe-production.up.railway.app/api/startups/${startupId}/view/`, {
+        await fetch(`https://fundorabe-production-5ccb.up.railway.app/api/startups/${startupId}/view/`, {
           method: 'POST',
           headers: authHeaders()
         });
@@ -619,7 +619,7 @@
       await recordView();
 
       try {
-        const res = await fetch(`https://fundorabe-production.up.railway.app/api/startups/${startupId}/`, {
+        const res = await fetch(`https://fundorabe-production-5ccb.up.railway.app/api/startups/${startupId}/`, {
           headers: authHeaders(),
         });
 
@@ -688,7 +688,7 @@
           // Show uploaded logo
           const logoUrl = data.logo.startsWith('http') 
             ? data.logo 
-            : `https://fundorabe-production.up.railway.app${data.logo}`;
+            : `https://fundorabe-production-5ccb.up.railway.app${data.logo}`;
           
           logoImage.src = logoUrl;
           logoImage.classList.remove('hidden');
@@ -704,7 +704,7 @@
               // Show uploaded logo
               const logoUrl = data.logo.startsWith('http') 
                 ? data.logo 
-                : `https://fundorabe-production.up.railway.app${data.logo}`;
+                : `https://fundorabe-production-5ccb.up.railway.app${data.logo}`;
               
               logoImage.src = logoUrl;
               logoImage.alt = `${data.company_name} Logo`;
@@ -1032,7 +1032,7 @@
       console.log('✔ Adding pitch deck PDF link');
       const pdfUrl = pitchDeckField.startsWith('http') 
         ? pitchDeckField 
-        : `https://fundorabe-production.up.railway.app${pitchDeckField}`;
+        : `https://fundorabe-production-5ccb.up.railway.app${pitchDeckField}`;
       
       console.log('Pitch Deck URL:', pdfUrl);
       
@@ -1052,7 +1052,7 @@
       console.log('✔ Adding one-pager PDF link');
       const pdfUrl = onePagerField.startsWith('http') 
         ? onePagerField 
-        : `https://fundorabe-production.up.railway.app${onePagerField}`;
+        : `https://fundorabe-production-5ccb.up.railway.app${onePagerField}`;
       
       console.log('One-Pager URL:', pdfUrl);
       
@@ -1229,7 +1229,7 @@
 
       try {
         const action = shouldAdd ? 'add' : 'remove';
-        const res = await fetch(`https://fundorabe-production.up.railway.app/api/investor/watchlist/${action}/${startupId}/`, {
+        const res = await fetch(`https://fundorabe-production-5ccb.up.railway.app/api/investor/watchlist/${action}/${startupId}/`, {
           method: 'POST',
           headers: authHeaders()
         });

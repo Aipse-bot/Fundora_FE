@@ -810,7 +810,7 @@
     };
 
     // const API_BASE = 'http://127.0.0.1:8000';
-    const API_BASE = 'https://fundorabe-production.up.railway.app';
+    const API_BASE = 'https://fundorabe-production-5ccb.up.railway.app';
     const STARTUPS_ENDPOINT = `${API_BASE}/api/startups/`;
     const SAVE_COMPARISON_ENDPOINT = `${API_BASE}/api/investor/comparisons/save/`;
     const CHECK_COMPARISON_ENDPOINT = `${API_BASE}/api/investor/comparisons/`;
@@ -2372,122 +2372,76 @@
       if (!startupsData || startupsData.length === 0) return '';
 
       var isVal = function(v) { return v != null && v !== '' && v !== 'null'; };
-      var fmt   = function(v) { return isVal(v) ? String(v) : null; };
-      var fmtN  = function(v) {
+      var toNum = function(v) {
         if (!isVal(v)) return null;
         var n = Number(v);
-        return isNaN(n) ? null : 'PHP ' + n.toLocaleString();
+        return isNaN(n) ? null : n;
       };
-      var fmtP  = function(v) { return isVal(v) ? (v + '%') : null; };
-      var fmtRatio = function(ltv, cac) {
-        var l = Number(ltv);
-        var c = Number(cac);
-        if (!isVal(ltv) || !isVal(cac) || isNaN(l) || isNaN(c) || c <= 0) return null;
-        return (Math.round((l / c) * 10) / 10) + 'x';
+      var toText = function(v) {
+        return isVal(v) ? String(v) : null;
       };
-      var pushSection = function(lines, title, pairs) {
-        var valid = [];
-        for (var i = 0; i < pairs.length; i++) {
-          if (isVal(pairs[i][1]) && pairs[i][1] !== 'N/A') {
-            valid.push('    ' + pairs[i][0] + ': ' + pairs[i][1]);
-          }
-        }
-        if (valid.length === 0) return;
-        lines.push('  [' + title + ']');
-        for (var j = 0; j < valid.length; j++) lines.push(valid[j]);
+      var toRatio = function(ltv, cac) {
+        var l = toNum(ltv);
+        var c = toNum(cac);
+        if (l == null || c == null || c <= 0) return null;
+        return Math.round((l / c) * 10) / 10;
       };
 
-      var lines = [
-        'You are an investment analysis assistant on the Fundora platform.',
-        'The user is viewing a side-by-side comparison of the following startups.',
-        'Use only the data below when answering questions about these startups.',
-        ''
-      ];
+      var payload = {
+        role: 'investment_analysis_assistant',
+        use_only: true,
+        currency: 'PHP',
+        startups: startupsData.map(function(s) {
+          var analytics = s.analytics || {};
+          var startup = {
+            n: toText(s.company_name),
+            t: toText(s.tagline),
+            i: toText(s.industry),
+            hq: toText(s.headquarters || s.location),
+            y: toNum(s.year_founded || s.founded_year),
+            st: toText(s.company_stage || s.product_stage),
+            gr: toNum(s.estimated_growth_rate),
+            rw: toNum(getRewardValue(s.reward_potential)),
+            rk: toText(s.risk_level),
+            pm: toText(s.primary_market || s.target_market),
+            geo: toText(s.target_geography),
+            tam: toNum(s.market_size_tam || s.total_addressable_market),
+            sam: toNum(s.market_size_sam),
+            mrr: toNum(s.current_mrr_arr || s.annual_recurring_revenue),
+            users: toNum(s.total_users),
+            paid: toNum(s.paid_users),
+            cac: toNum(s.cac),
+            ltv: toNum(s.ltv),
+            ratio: toRatio(s.ltv, s.cac),
+            gm: toNum(s.gross_margin),
+            rev: toNum(s.current_revenue || s.revenue),
+            val: toNum(s.current_valuation || s.valuation),
+            raised: toNum(s.capital_raised_to_date),
+            ask: toNum(s.funding_ask || s.funding_amount),
+            run: toNum(s.expected_runway_months || s.runway_months),
+            fs: toText(s.current_round_type || s.funding_stage),
+            f: toText(s.founder_name),
+            ft: toText(s.founder_title),
+            team: toNum(s.team_size),
+            cmp: toNum(analytics.total_comparisons),
+            uniq: toNum(analytics.unique_comparers),
+            r30: toNum(analytics.recent_comparisons)
+          };
 
-      for (var idx = 0; idx < startupsData.length; idx++) {
-        var s = startupsData[idx];
+          Object.keys(startup).forEach(function(key) {
+            if (startup[key] == null) delete startup[key];
+          });
 
-        lines.push('--- STARTUP ' + (idx + 1) + ': ' + (s.company_name || 'Unknown') + ' ---');
+          return startup;
+        })
+      };
 
-        // Overview card and table (displayed)
-        pushSection(lines, 'Company Identity', [
-          ['Company Name',  fmt(s.company_name)],
-          ['Tagline',       fmt(s.tagline)],
-          ['Industry',      fmt(s.industry)]
-        ]);
-
-        pushSection(lines, 'Company Details', [
-          ['Headquarters',  fmt(s.headquarters || s.location)],
-          ['Year Founded',  fmt(s.year_founded || s.founded_year)],
-          ['Stage',         fmt(s.company_stage || s.product_stage)]
-        ]);
-
-        // Performance (displayed)
-        pushSection(lines, 'Performance', [
-          ['Estimated Growth Rate', s.estimated_growth_rate != null ? (s.estimated_growth_rate + '%') : null],
-          ['Reward Potential',      s.reward_potential != null ? (getRewardValue(s.reward_potential) + '/5') : null],
-          ['Risk Level',            fmt(s.risk_level)]
-        ]);
-
-        // Market (displayed)
-        pushSection(lines, 'Market', [
-          ['Primary Market',        fmt(s.primary_market || s.target_market)],
-          ['Target Geography',      fmt(s.target_geography)],
-          ['TAM',                   fmtN(s.market_size_tam || s.total_addressable_market)],
-          ['SAM',                   fmtN(s.market_size_sam)]
-        ]);
-
-        // Traction (displayed)
-        pushSection(lines, 'Traction', [
-          ['MRR/ARR',           fmtN(s.current_mrr_arr || s.annual_recurring_revenue)],
-          ['Total Users',       fmt(s.total_users)],
-          ['Paid Users',        fmt(s.paid_users)]
-        ]);
-
-        // Unit economics (displayed)
-        pushSection(lines, 'Unit Economics', [
-          ['CAC',          fmtN(s.cac)],
-          ['LTV',          fmtN(s.ltv)],
-          ['LTV:CAC Ratio',fmtRatio(s.ltv, s.cac)],
-          ['Gross Margin', fmtP(s.gross_margin)]
-        ]);
-
-        // Financials & Funding (displayed)
-        pushSection(lines, 'Financials & Funding', [
-          ['Current Revenue', fmtN(s.current_revenue || s.revenue)],
-          ['Current Valuation', fmtN(s.current_valuation || s.valuation)],
-          ['Capital Raised', fmtN(s.capital_raised_to_date)],
-          ['Funding Ask', fmtN(s.funding_ask || s.funding_amount)],
-          ['Runway (months)', fmt(s.expected_runway_months || s.runway_months)],
-          ['Funding Stage', fmt(s.current_round_type || s.funding_stage)]
-        ]);
-
-        // Team (displayed)
-        pushSection(lines, 'Team', [
-          ['Founder',          fmt(s.founder_name)],
-          ['Founder Title',    fmt(s.founder_title)],
-          ['Team Size',        fmt(s.team_size)]
-        ]);
-
-        // Platform Analytics
-        var analytics = s.analytics || {};
-        pushSection(lines, 'Platform Analytics', [
-          ['Times Compared',   fmt(analytics.total_comparisons)],
-          ['Unique Comparers', fmt(analytics.unique_comparers)],
-          ['Comparisons (30d)',analytics.recent_comparisons > 0 ? String(analytics.recent_comparisons) : null]
-        ]);
-
-        lines.push('');
-      }
-
-      lines.push('---');
-      return lines.join('\n');
+      return 'Use only this compact JSON context when answering:\n' + JSON.stringify(payload);
     }
 
     let chatOpen = false;
     let isChatBusy = false;
-    // Context mode disabled: always use direct prompt mode.
-    let useContextMode = false;
+    let useContextMode = true;
 
     function setChatStatus(state) {
       const el = document.getElementById('chat-status');
@@ -2603,8 +2557,10 @@
       setChatStatus('typing');
 
       try {
-        // Context mode disabled: send only the user's prompt.
-        const prompt = text;
+        const comparisonContext = useContextMode ? buildComparisonContext() : '';
+        const prompt = comparisonContext
+          ? `${comparisonContext}\n\nUser question: ${text}`
+          : text;
         
         /*
         // DEBUG: Token/Character Count
@@ -2658,7 +2614,7 @@
       showTypingIndicator();
       setTimeout(() => {
         removeTypingIndicator();
-        appendChatMessage('👋 Hi! I can help you analyze this startup comparison. Toggle the context button (database icon) in the chat header to switch between full data mode and fast mode.', 'incoming');
+        appendChatMessage('👋 Hi! I can help you analyze this startup comparison using a compact data context.', 'incoming');
       }, 1500);
     }, 800);
 
