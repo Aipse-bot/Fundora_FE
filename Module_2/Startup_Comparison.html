@@ -733,8 +733,6 @@
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <!--
-          Context Toggle disabled for debugging
           <button 
             id="context-toggle-btn" 
             onclick="toggleContextMode()" 
@@ -747,7 +745,6 @@
               <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/>
             </svg>
           </button>
-          -->
           <button onclick="toggleChat()" class="text-gray-500 hover:text-gray-300 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -2361,7 +2358,7 @@
       gpu: 'https://aipse-bot-finance-chatbot-api-gpu-ver.hf.space',
       cpu: 'https://aipse-bot-finance-chatbot-api-cpu-ver.hf.space'
     };
-    let GRADIO_MODE = 'cpu';
+    let GRADIO_MODE = 'gpu';
     const GRADIO_ENDPOINT = '/gradio_api/call/generate_text';
 
     function getGradioBase() {
@@ -2499,7 +2496,28 @@
     }
 
     function toggleContextMode() {
-      appendChatMessage('Context mode is currently disabled for debugging.', 'incoming');
+      useContextMode = !useContextMode;
+      updateContextToggleBtn();
+      appendChatMessage(`Context mode ${useContextMode ? 'enabled' : 'disabled'}.`, 'incoming');
+    }
+
+    function updateContextToggleBtn() {
+      const btn = document.getElementById('context-toggle-btn');
+      if (!btn) return;
+
+      if (useContextMode) {
+        btn.style.background = 'rgba(16, 185, 129, 0.15)';
+        btn.style.color = '#10b981';
+        btn.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+        btn.title = 'Context ON - AI receives full startup data';
+        btn.setAttribute('aria-pressed', 'true');
+      } else {
+        btn.style.background = 'rgba(148, 163, 184, 0.12)';
+        btn.style.color = '#94a3b8';
+        btn.style.border = '1px solid rgba(148, 163, 184, 0.35)';
+        btn.title = 'Context OFF - AI receives question only';
+        btn.setAttribute('aria-pressed', 'false');
+      }
     }
 
     // Direct REST call to Gradio API — no SDK needed
@@ -2543,6 +2561,64 @@
       });
     }
 
+    function normalizeChatReply(reply) {
+      function extractText(value, depth) {
+        if (depth > 5 || value == null) return null;
+
+        if (typeof value === 'string') {
+          const trimmed = value.trim();
+          if (!trimmed) return null;
+
+          // Handle JSON wrapped in markdown fences.
+          const fenceMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+          const candidate = fenceMatch ? fenceMatch[1].trim() : trimmed;
+
+          if ((candidate.startsWith('{') && candidate.endsWith('}')) || (candidate.startsWith('[') && candidate.endsWith(']'))) {
+            try {
+              return extractText(JSON.parse(candidate), depth + 1);
+            } catch (_) {
+              return trimmed;
+            }
+          }
+
+          return candidate;
+        }
+
+        if (Array.isArray(value)) {
+          for (const item of value) {
+            const found = extractText(item, depth + 1);
+            if (found) return found;
+          }
+          return null;
+        }
+
+        if (typeof value === 'object') {
+          if (typeof value.answer === 'string' && value.answer.trim()) return value.answer.trim();
+          if (typeof value.response === 'string' && value.response.trim()) return value.response.trim();
+          if (typeof value.text === 'string' && value.text.trim()) return value.text.trim();
+          if (typeof value.message === 'string' && value.message.trim()) return value.message.trim();
+
+          const priorityKeys = ['result', 'output', 'data', 'value', 'payload'];
+          for (const key of priorityKeys) {
+            if (key in value) {
+              const found = extractText(value[key], depth + 1);
+              if (found) return found;
+            }
+          }
+
+          for (const key of Object.keys(value)) {
+            const found = extractText(value[key], depth + 1);
+            if (found) return found;
+          }
+        }
+
+        return null;
+      }
+
+      const normalized = extractText(reply, 0);
+      return normalized || '';
+    }
+
     async function sendChatMessage() {
       if (isChatBusy) return;
       const input = document.getElementById('chat-input');
@@ -2558,23 +2634,23 @@
 
       try {
         const comparisonContext = useContextMode ? buildComparisonContext() : '';
+        const outputInstruction = 'Return only the final answer text. Do not return JSON, keys, metadata, or markdown code fences.';
         const prompt = comparisonContext
-          ? `${comparisonContext}\n\nUser question: ${text}`
-          : text;
+          ? `${comparisonContext}\n\n${outputInstruction}\n\nUser question: ${text}`
+          : `${outputInstruction}\n\nUser question: ${text}`;
         
-        /*
         // DEBUG: Token/Character Count
         const charCount = prompt.length;
         const approxTokens = Math.ceil(charCount / 4); // rough estimate: 4 chars ≈ 1 token
-        const debugMsg = `[DEBUG] ${mode} | ${charCount} chars (~${approxTokens} tokens)`;
+        const debugMsg = `[DEBUG] mode=${GRADIO_MODE} | context=${useContextMode ? 'on' : 'off'} | ${charCount} chars (~${approxTokens} tokens)`;
         console.log(debugMsg);
         console.log('Full prompt:', prompt);
         appendChatMessage(debugMsg, 'incoming');
-        */
         
         const reply = await callGradio(prompt);
+        const normalizedReply = normalizeChatReply(reply);
         removeTypingIndicator();
-        appendChatMessage(reply || '(No response)', 'incoming');
+        appendChatMessage(normalizedReply || '(No response)', 'incoming');
         setChatStatus('online');
       } catch (err) {
         removeTypingIndicator();
@@ -2607,6 +2683,7 @@
     }
 
     // Set status to online — no pre-connection needed
+  updateContextToggleBtn();
     setChatStatus('online');
 
     // Greeting with typing indicator delay
@@ -2614,7 +2691,7 @@
       showTypingIndicator();
       setTimeout(() => {
         removeTypingIndicator();
-        appendChatMessage('👋 Hi! I can help you analyze this startup comparison using a compact data context.', 'incoming');
+        appendChatMessage('👋 Hi! Im your startup ai comparison assistant.', 'incoming');
       }, 1500);
     }, 800);
 
