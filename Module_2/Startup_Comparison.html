@@ -816,7 +816,7 @@
           
           <button onclick="toggleExpandChat()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Expand View">
             <svg id="chat-expand-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l-5 5m11 5l-5-5m5 5v-4m0 4h-4"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h6v6M9 21H3v-6M21 15v6h-6M3 9V3h6M21 3l-7 7M3 21l7-7"/>
             </svg>
           </button>
 
@@ -2451,18 +2451,20 @@ ${JSON.stringify(payload, null, 2)}`; // null, 2 makes it readable for the AI
     }
 
     function toggleExpandChat() {
-          isChatExpanded = !isChatExpanded; 
-          const panel = document.getElementById('chat-panel'); 
-          const expandIcon = document.getElementById('chat-expand-icon');
-          
-          if (isChatExpanded) { 
-            panel.classList.add('expanded'); 
-            expandIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v6H3M9 9l-7-7M15 3v6h6M15 9l7-7M9 21v-6H3M9 15l-7 7M15 21v-6h6M15 15l7 7"/>`; 
-          } else { 
-            panel.classList.remove('expanded'); 
-            expandIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8V3h5M3 3l7 7M21 8V3h-5M21 3l-7 7M3 16v5h5M3 21l7-7M21 16v5h-5M21 21l-7-7"/>`; 
-          }
+    isChatExpanded = !isChatExpanded; 
+    const panel = document.getElementById('chat-panel'); 
+    const expandIcon = document.getElementById('chat-expand-icon');
+    
+    if (isChatExpanded) { 
+      panel.classList.add('expanded'); 
+      // "Contract" Icon: 4 arrows pointing inward
+      expandIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v6H3m6-6L4.5 7.5M15 3v6h6m-6-6l4.5 4.5M9 21v-6H3m6 6l-4.5-4.5M15 21v-6h6m-6 6l4.5-4.5"/>`; 
+    } else { 
+      panel.classList.remove('expanded'); 
+      // "Expand" Icon: 4 arrows pointing outward
+      expandIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h6v6M9 21H3v-6M21 15v6h-6M3 9V3h6M21 3l-7 7M3 21l7-7"/>`; 
     }
+}
 
     function toggleContextMode() { useContextMode = !useContextMode; updateContextToggleBtn(); showToast(`Context mode ${useContextMode ? 'enabled' : 'disabled'}.`, { type: 'info' }); }
     function updateContextToggleBtn() {
