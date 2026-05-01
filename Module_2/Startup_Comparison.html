@@ -43,6 +43,7 @@
                         radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
       background-attachment: fixed;
       color: #e2e8f0;
+      overflow-anchor: none; /* Prevents main page jumpiness */
     }
 
     /* True Glassmorphism Classes */
@@ -110,11 +111,17 @@
     #comparison-table-container {
       flex: 1;
       min-height: 0;
+      position: relative;
       overflow-x: auto;
       overflow-y: auto;
       border-bottom-left-radius: 20px;
       border-bottom-right-radius: 20px;
       --table-header-height: 56px;
+      
+      /* --- SCROLL BUG FIXES --- */
+      overscroll-behavior: contain; /* Stops scroll momentum from bleeding into the main page */
+      overflow-anchor: none; /* Stops the browser from auto-correcting the inner scroll position */
+      -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling for Mac/iOS trackpads */
     }
 
     /* Scrollbars Improved Contrast */
@@ -133,7 +140,7 @@
     #comparison-table th {
       position: sticky;
       top: 0;
-      z-index: 30;
+      z-index: 90; /* Increased from 30 */
       background: #0B0F19; /* Solid background prevents scroll lag */
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
@@ -151,53 +158,42 @@
       position: sticky;
       top: 0;
       left: 0;
-      z-index: 40 !important;
+      z-index: 100 !important; /* Increased from 40 */
       background: #0B0F19;
     }
 
     /* Row Hover Effects & Column Crosshair */
-    #comparison-table {
-      overflow: hidden;
-    }
-    #comparison-table td, #comparison-table th {
+    
+    /* FIX: Only target td. Targeting th overwrites the 'position: sticky' above causing it to unstick! */
+    #comparison-table td {
       position: relative;
     }
+    
     #comparison-table td.col-highlight, #comparison-table th.col-highlight {
       box-shadow: inset 0 0 0 9999px rgba(59, 130, 246, 0.08);
     }
     .table-row-hover td { transition: background-color 0.2s ease; }
     .table-row-hover:hover td { background-color: rgba(255, 255, 255, 0.05) !important; }
-    #comparison-table tbody .table-row-hover td:hover::after {
-      content: "";
-      position: absolute;
-      background-color: rgba(255, 255, 255, 0.02);
-      left: 0;
-      right: 0;
-      top: -10000px;
-      bottom: -10000px;
-      z-index: -1;
-      pointer-events: none;
-    }
 
     /* Section Dividers */
     .section-divider-row {
       transition: all 0.3s ease;
     }
     .section-divider-row:hover .section-divider-cell {
-      background: rgba(30, 41, 59, 0.98);
+      background: rgb(30, 41, 59); /* Made completely solid */
     }
     .section-divider-row.collapsed-state .section-divider-cell {
-      background: linear-gradient(90deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+      background: linear-gradient(90deg, rgb(30, 41, 59), rgb(15, 23, 42)); /* Made completely solid */
       border-top: 1px solid rgba(255,255,255,0.1);
       border-bottom: 1px solid rgba(255,255,255,0.1);
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
     .section-divider-cell {
-      background: rgba(15, 23, 42, 0.95);
+      background: rgb(15, 23, 42); /* Made completely solid */
       position: sticky;
       left: 0;
       top: var(--table-header-height, 56px);
-      z-index: 26;
+      z-index: 80 !important; /* Increased from 26 to stay above hovered rows */
       padding: 12px 20px;
       font-size: 12px;
       font-weight: 700;
@@ -243,9 +239,11 @@
       background: currentColor;
       opacity: 0.3;
     }
+    
+    /* FIX: Set transform to 'none'. A transform value turns the tr into a containing block, destroying 'position: sticky' */
     tr.group-row.row-collapsing { opacity: 0; transform: scaleY(0.7) translateY(-8px); }
     tr.group-row.row-expanding { opacity: 0; transform: scaleY(0.7) translateY(-8px); }
-    tr.group-row.row-visible { opacity: 1; transform: scaleY(1) translateY(0); }
+    tr.group-row.row-visible { opacity: 1; transform: none; } 
 
     .stat-card-hover { transition: all 0.3s ease; }
     .stat-card-hover:hover { transform: none; background-color: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
@@ -378,37 +376,155 @@
 
     /* Original hover logic */
     .table-row-hover:hover td:first-child {
-      z-index: 60 !important;
+      z-index: 70 !important; /* Adjusted to stay under the section divider (80) */
     }
 
     /* STACKING FIX: Give any hovered cell the absolute highest priority to escape the sticky trap */
     #comparison-table td:hover {
-      z-index: 100 !important;
+      z-index: 60 !important; /* Lowered from 100 so it stays completely hidden under headers when scrolling! */
     }
 
-    .radar-toggle-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-    .radar-pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: 13px; font-weight: 700; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.1); color: #cbd5e1; background: rgba(255, 255, 255, 0.05); cursor: pointer; transition: all 0.2s ease; user-select: none; }
-    .radar-pill.active { color: #0ea5e9; border-color: rgba(14, 165, 233, 0.6); background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(59,130,246,0.08)); box-shadow: 0 6px 18px rgba(59,130,246,0.25); }
-    .radar-pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; display: inline-block; }
-    
-    .radar-layout { display: grid; gap: 24px; }
-    .radar-chart-wrap { width: 100%; max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
-    .radar-legend-hint { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; font-size: 12px; color: #94a3b8; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); padding: 8px 12px; border-radius: 999px; }
-    .radar-legend-hint.pulse { animation: hintPulse 2.6s ease-in-out infinite; }
-    .radar-legend-hint strong { color: #e2e8f0; font-weight: 700; }
-    .radar-legend-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(59, 130, 246, 0.35); background: rgba(59, 130, 246, 0.12); color: #bfdbfe; font-weight: 600; }
-    .radar-strength-panel { display: grid; gap: 12px; align-content: start; }
-    .radar-strength-grid { display: grid; gap: 12px; grid-template-columns: 1fr; margin-top: 0; padding-left: 14px; border-left: 1px solid rgba(148, 163, 184, 0.2); }
-    .radar-strength-icon { width: 32px; height: 32px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; flex-shrink: 0; }
-    @media (min-width: 1024px) {
-      .radar-layout { grid-template-columns: minmax(460px, 1.2fr) minmax(320px, 0.8fr); align-items: start; }
-      .radar-chart-wrap { max-width: 100%; }
-      .radar-legend-hint { justify-content: flex-start; }
+    /* --- Radar Redesign --- */
+    .radar-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 24px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; }
+    .radar-title-group h3 { font-family: 'Syne', system-ui, sans-serif; font-size: 17px; font-weight: 700; color: #f1f5f9; letter-spacing: -0.2px; margin: 0; }
+    .radar-title-group p { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+    .axis-pill-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .axis-pill { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; font-size: 11.5px; font-weight: 600; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; background: rgba(255,255,255,0.04); cursor: pointer; transition: all 0.2s ease; user-select: none; white-space: nowrap; }
+    .axis-pill.active { color: #bfdbfe; border-color: rgba(96,165,250,0.5); background: rgba(59,130,246,0.15); }
+    .axis-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .axis-pill:hover:not(.active) { color: #e2e8f0; background: rgba(255,255,255,0.07); }
+
+    .radar-body { display: grid; grid-template-columns: 1fr 360px; gap: 0; min-height: 0; }
+    .radar-chart-col { padding: 16px 0 16px 20px; display: flex; flex-direction: column; min-width: 0; border-right: 1px solid rgba(255,255,255,0.06); }
+
+    .radar-legend-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 4px 12px; }
+    .legend-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); cursor: pointer; transition: all 0.2s ease; color: #cbd5e1; }
+    .legend-pill .l-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .legend-pill.dimmed { opacity: 0.38; }
+    .legend-pill.highlighted { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); }
+
+    .chart-wrap { flex: 1; position: relative; min-height: 0; }
+    .radar-tip { display: flex; align-items: center; gap: 8px; padding: 8px 12px 4px; font-size: 11px; color: #64748b; }
+    .radar-tip strong { color: #94a3b8; font-weight: 600; }
+
+    .radar-sidebar { display: flex; flex-direction: column; gap: 0; padding: 0; overflow-y: auto; overflow-x: hidden; }
+    .sidebar-heading { padding: 16px 18px 10px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #475569; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .strength-list { display: flex; flex-direction: column; gap: 0; flex: 1; }
+    .strength-item { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.2s ease; cursor: default; }
+    .strength-item:hover { background: rgba(255,255,255,0.025); }
+    .strength-item:last-child { border-bottom: none; }
+    .strength-company { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .strength-company .s-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .strength-company .s-name { font-size: 13px; font-weight: 700; color: #e2e8f0; font-family: 'Syne', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .axis-bars { display: flex; flex-direction: column; gap: 5px; }
+    .axis-bar-row { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+    .axis-label { color: #64748b; width: 110px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track { flex: 1; height: 4px; background: rgba(255,255,255,0.07); border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; transition: width 0.5s ease; }
+    .bar-val { font-family: 'JetBrains Mono', monospace; color: #94a3b8; font-size: 10px; width: 26px; text-align: right; flex-shrink: 0; }
+
+    .badge-row { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+    .badge { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+    .badge.best { color: #34d399; border-color: rgba(52,211,153,0.35); background: rgba(16,185,129,0.1); }
+    .badge.weak { color: #94a3b8; border-color: rgba(148,163,184,0.2); background: rgba(255,255,255,0.04); }
+
+    @media (max-width: 1024px) {
+      .radar-body { grid-template-columns: 1fr; }
+      .radar-chart-col { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 16px 20px; }
+      .radar-sidebar { max-height: 360px; }
     }
-    .radar-strength-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; position: relative; }
-    .radar-strength-card::before { content: ''; position: absolute; left: -21px; top: 50%; transform: translateY(-50%); width: 8px; height: 8px; border-radius: 50%; background: rgba(59, 130, 246, 0.9); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18); }
-    .radar-strength-card h4 { font-size: 14px; color: #e2e8f0; font-weight: 700; }
-    .radar-strength-card .pill { font-size: 12px; padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: #cbd5e1; }
+    @media (max-width: 640px) {
+      .radar-chart-col { padding: 12px 14px; }
+      .sidebar-heading { padding: 10px 14px 8px; }
+      .strength-item { padding: 10px 14px; }
+    }
+    .radar-sidebar::-webkit-scrollbar { width: 4px; }
+    .radar-sidebar::-webkit-scrollbar-track { background: transparent; }
+    .radar-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
+
+    .risk-reward-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: #dbeafe;
+      font-size: 12px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .risk-reward-chip .chip-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+    }
+    .risk-reward-chip .chip-meta {
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .returns-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    /* Ensure the lower info panels under charts share the same height */
+    .chart-info-panel {
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    @media (max-width: 1024px) {
+      .chart-info-panel { min-height: 140px; }
+    }
+    @media (max-width: 640px) {
+      .chart-info-panel { min-height: 120px; }
+    }
+
+    .returns-chart-hint {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.58);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      color: #94a3b8;
+      font-size: 12px;
+    }
+    .returns-zone-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 768px) {
+      .returns-summary-grid { grid-template-columns: 1fr; }
+    }
 
     @keyframes hintPulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.18); border-color: rgba(148, 163, 184, 0.2); }
@@ -519,35 +635,74 @@
       </div>
 
       <div id="charts-section" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div class="glass-card no-hover p-6 md:p-8 slide-left delay-2 chart-container">
+        <div class="glass-card no-hover p-6 md:p-8 slide-left delay-2 chart-container relative flex flex-col h-full">
           <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Projected Returns</h3>
-          <canvas id="returns-chart"></canvas>
+          <div class="returns-chart-hint">
+            <span>Bar colors correspond to specific startups. Baseline represents 0% growth.</span>
+          </div>
+          
+          <div class="relative w-full h-[320px] lg:h-[360px] flex-shrink-0 mb-5">
+            <canvas id="returns-chart"></canvas>
+          </div>
+          
+          <div class="mt-auto flex-1 rounded-2xl border border-white/10 bg-white/[0.03] p-4 chart-info-panel">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div>
+                <p class="text-xs uppercase tracking-[0.24em] text-slate-500 font-semibold">Return Snapshot</p>
+                <p class="text-sm text-slate-400 mt-1">Top, average, and downside context for the current comparison set.</p>
+              </div>
+              <span class="text-[11px] uppercase tracking-[0.2em] text-slate-500 font-semibold">Aligned to current filter</span>
+            </div>
+            <div id="returns-summary" class="returns-summary-grid"></div>
+          </div>
         </div>
-        <div class="glass-card no-hover p-6 md:p-8 slide-right delay-2 chart-container">
+        <div class="glass-card no-hover p-6 md:p-8 slide-right delay-2 chart-container relative flex flex-col h-full">
           <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Risk vs Reward</h3>
-          <canvas id="risk-reward-chart"></canvas>
+          
+          <div class="relative w-full h-[320px] lg:h-[360px] flex-shrink-0 mb-5">
+            <canvas id="risk-reward-chart"></canvas>
+              
+             <!-- Absolute Positioned HTML Labels replacing standard Chart.js titles -->
+             <div class="absolute bottom-[-18px] left-0 text-[10px] uppercase font-bold text-slate-500 tracking-widest pl-6 pointer-events-none">Higher Risk</div>
+             <div class="absolute bottom-[-18px] right-0 text-[10px] uppercase font-bold text-emerald-500 tracking-widest pr-6 pointer-events-none">Lower Risk</div>
+             <div class="absolute top-1/2 left-[-16px] -rotate-90 origin-center text-[10px] uppercase font-bold text-brand-400 tracking-widest -translate-y-1/2 -translate-x-1/2 pointer-events-none whitespace-nowrap">Reward Potential</div>
+          </div>
+
+          <div class="mt-auto flex-1 rounded-2xl border border-white/10 bg-white/[0.03] p-4 chart-info-panel">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div>
+                <p class="text-xs uppercase tracking-[0.24em] text-slate-500 font-semibold">Score Snapshot</p>
+                <p class="text-sm text-slate-400 mt-1">Each chip mirrors the chart point. Duplicate scores are fanned apart so every startup stays visible.</p>
+              </div>
+              <span class="text-[11px] uppercase tracking-[0.2em] text-slate-500 font-semibold">Overlap safe</span>
+            </div>
+            <div id="risk-reward-summary" class="flex flex-wrap gap-2"></div>
+          </div>
+          
         </div>
       </div>
 
-      <div id="radar-section" class="hidden glass-card no-hover p-6 md:p-8 mb-8 fade-in delay-2">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div>
-            <h3 class="text-xl font-display font-bold text-white">Multi-Dimensional Radar</h3>
-            <p class="text-sm text-slate-400 mt-1">Scaled 0–100 vs fixed benchmarks across 8 performance vectors.</p>
+      <div id="radar-section" class="hidden glass-card no-hover mb-8 fade-in delay-2 flex flex-col p-0 overflow-hidden">
+        <div class="radar-header">
+          <div class="radar-title-group">
+            <h3>Multi-Dimensional Radar</h3>
+            <p>Scaled 0–100 vs fixed benchmarks · click legend to spotlight</p>
           </div>
-          <div id="radar-toggle-bar" class="radar-toggle-bar flex justify-end"></div>
+          <div class="axis-pill-row" id="radar-toggle-bar"></div>
         </div>
-        <div class="radar-layout">
-          <div class="radar-chart-wrap">
-            <canvas id="radar-chart"></canvas>
-            <div class="radar-legend-hint pulse" aria-live="polite">
-              <span class="radar-legend-pill">Tip</span>
-              <span>Click a startup name in the legend to <strong>highlight</strong> its radar profile.</span>
+        <div class="radar-body">
+          <div class="radar-chart-col">
+            <div class="radar-legend-row" id="legendRow"></div>
+            <div class="chart-wrap" style="min-height: 360px;">
+              <canvas id="radar-chart"></canvas>
+            </div>
+            <div class="radar-tip">
+              <strong>Tip:</strong> click a startup name above to spotlight its profile · click again to reset
             </div>
           </div>
-          <div class="radar-strength-panel">
-            <div class="text-xs uppercase tracking-[0.2em] text-slate-500 font-semibold">Strength Summary</div>
-            <div id="radar-strength" class="radar-strength-grid"></div>
+          <div class="radar-sidebar">
+            <div class="sidebar-heading">Strength Breakdown</div>
+            <div class="strength-list" id="radar-strength"></div>
           </div>
         </div>
       </div>
@@ -571,7 +726,7 @@
         </div>
       </div>
 
-      <div id="comparison-table-section" class="hidden glass-card mb-8 scale-in delay-3 flex flex-col" style="height: calc(100vh - 140px);">
+      <div id="comparison-table-section" class="hidden glass-card mb-8 scale-in delay-3 flex flex-col" style="height: calc(100dvh - 140px);">
         <div class="p-6 border-b border-white/10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 flex-wrap bg-white/[0.01] rounded-t-2xl flex-shrink-0">
           <div>
             <h2 class="text-xl font-bold text-white font-display">Detailed Comparison</h2>
@@ -661,7 +816,7 @@
           
           <button onclick="toggleExpandChat()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Expand View">
             <svg id="chat-expand-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l-5 5m11 5l-5-5m5 5v-4m0 4h-4"/>
             </svg>
           </button>
 
@@ -792,27 +947,23 @@
       const observerOptions = {
         root: null,
         rootMargin: '-160px 0px -40% 0px', 
-        // Added more thresholds for smoother ratio tracking
         threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1] 
       };
 
       let activeSectionId = null;
       let rafHandle = null;
-      const visibilityMap = new Map(); // Keep track of all sections' visibility
+      const visibilityMap = new Map();
 
       const observer = new IntersectionObserver((entries) => {
-        // 1. Update the map with the latest ratios for elements that just changed
         entries.forEach(entry => {
           visibilityMap.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
         });
 
         if (rafHandle) cancelAnimationFrame(rafHandle);
         rafHandle = requestAnimationFrame(() => {
-          
           let maxRatio = 0;
           let bestTargetId = null;
 
-          // 2. Iterate through ALL tracked sections to find the truly most visible one
           visibilityMap.forEach((ratio, id) => {
             if (ratio > maxRatio) {
               maxRatio = ratio;
@@ -820,13 +971,11 @@
             }
           });
 
-          // 3. Prevent updates if nothing is really visible or if the target hasn't changed
           if (maxRatio < 0.15 || !bestTargetId) return;
           if (bestTargetId === activeSectionId) return;
 
           activeSectionId = bestTargetId;
           
-          // 4. Update the DOM
           document.querySelectorAll('.jump-link').forEach(link => {
             const targetId = link.getAttribute('href').replace('#', '');
             link.classList.toggle('active', targetId === activeSectionId);
@@ -834,7 +983,6 @@
         });
       }, observerOptions);
 
-      // List of section IDs to track
       ['comparison-header', 'quick-stats', 'charts-section', 'radar-section', 'comparison-table-section'].forEach(id => {
         const el = document.getElementById(id);
         if (el) observer.observe(el);
@@ -1057,12 +1205,34 @@
     let radarFocusIndex = null;
 
     function getActiveRadarAxes() { if (activeRadarAxes.size === 0) radarAxesAll.forEach(ax => activeRadarAxes.add(ax.key)); return radarAxesAll.filter(ax => activeRadarAxes.has(ax.key)); }
+    
     function renderRadarToggles() {
       const bar = document.getElementById('radar-toggle-bar'); if (!bar) return;
       bar.innerHTML = '';
       radarAxesAll.forEach(ax => {
-        const pill = document.createElement('button'); pill.type = 'button'; pill.className = `radar-pill${activeRadarAxes.has(ax.key) ? ' active' : ''}`;
-        pill.onclick = () => toggleRadarAxis(ax.key); pill.innerHTML = `<span class="pill-dot"></span>${ax.label}`; bar.appendChild(pill);
+        const pill = document.createElement('button'); pill.type = 'button';
+        pill.className = `axis-pill${activeRadarAxes.has(ax.key) ? ' active' : ''}`;
+        pill.onclick = () => toggleRadarAxis(ax.key);
+        pill.innerHTML = `<span class="dot"></span>${escapeHtml(ax.label)}`;
+        bar.appendChild(pill);
+      });
+    }
+
+    function renderRadarLegend() {
+      const row = document.getElementById('legendRow'); if (!row) return;
+      row.innerHTML = '';
+      startupsData.forEach((s, i) => {
+        const pill = document.createElement('div');
+        const isDimmed = chartHighlightIndex !== null && chartHighlightIndex !== i;
+        const isHighlighted = chartHighlightIndex === i;
+        pill.className = `legend-pill${isDimmed ? ' dimmed' : ''}${isHighlighted ? ' highlighted' : ''}`;
+        const rgb = chartColorCache.radar[i % chartColorCache.radar.length].rawRgb;
+        pill.innerHTML = `<span class="l-dot" style="background:rgb(${rgb})"></span>${escapeHtml(s.company_name)}`;
+        pill.onclick = () => {
+          const targetIdx = chartHighlightIndex === i ? null : i;
+          applyChartHighlight(targetIdx);
+        };
+        row.appendChild(pill);
       });
     }
 
@@ -1075,49 +1245,255 @@
     function renderRadarStrength(labels, normalizedMatrix) {
       const container = document.getElementById('radar-strength'); if (!container) return;
       container.innerHTML = '';
+      const iconMap = { 'Growth Rate': '📈', 'Reward': '⭐', 'Market Size': '🌐', 'Traction': '🚀', 'Gross Margin': '💹', 'LTV : CAC': '⚖️', 'Runway (mo)': '⏱️', 'Team Size': '👥' };
+
       startupsData.forEach((s, idx) => {
         const vals = normalizedMatrix[idx] || []; if (!vals.length) return;
         const maxVal = Math.max(...vals); const minVal = Math.min(...vals);
         const strongLabel = labels[vals.indexOf(maxVal)] || '—';
         const weakLabel = labels[vals.indexOf(minVal)] || '—';
-        const iconMap = { 'Growth Rate': '📈', 'Reward': '⭐', 'Market Size': '🌐', 'Traction': '🚀', 'Gross Margin': '💹', 'LTV : CAC': '⚖️', 'Runway (mo)': '⏱️', 'Team Size': '👥' };
-        const icon = iconMap[strongLabel] || '📊';
-        const card = document.createElement('div'); card.className = 'radar-strength-card';
-        card.innerHTML = `
-          <div class="flex items-center gap-3">
-            <span class="radar-strength-icon">${icon}</span>
-            <div>
-              <h4 class="truncate max-w-[140px] font-display tracking-tight">${escapeHtml(s.company_name || 'Startup')}</h4>
-              <p class="text-xs text-slate-400 mt-0.5 uppercase tracking-wide">Strength: <span class="font-bold text-accent-400">${escapeHtml(strongLabel)}</span></p>
-            </div>
+
+        const rgb = chartColorCache.radar[idx % chartColorCache.radar.length].rawRgb;
+
+        const item = document.createElement('div');
+        item.className = 'strength-item';
+
+        const axes = getActiveRadarAxes();
+        const barRows = axes.slice(0, 5).map((ax, ai) => {
+          const val = vals[ai] || 0;
+          return `<div class="axis-bar-row">
+            <span class="axis-label">${iconMap[ax.label] || '📊'} ${escapeHtml(ax.label)}</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${val}%;background:rgb(${rgb})"></div></div>
+            <span class="bar-val">${val}</span>
+          </div>`;
+        }).join('');
+
+        item.innerHTML = `
+          <div class="strength-company">
+            <span class="s-dot" style="background:rgb(${rgb})"></span>
+            <span class="s-name" title="${escapeHtml(s.company_name)}">${escapeHtml(s.company_name)}</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="pill">Weak: ${escapeHtml(weakLabel)}</span>
+          <div class="axis-bars">${barRows}</div>
+          <div class="badge-row">
+            <span class="badge best">${iconMap[strongLabel] || ''} Top: ${escapeHtml(strongLabel)}</span>
+            <span class="badge weak">Weak: ${escapeHtml(weakLabel)}</span>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function clampChartValue(value, min = 0, max = 5) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function hashString(value) {
+      let hash = 0;
+      const text = String(value || '');
+      for (let i = 0; i < text.length; i += 1) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(i);
+        hash |= 0;
+      }
+      return Math.abs(hash);
+    }
+
+    function getRiskRewardBasePoint(startup) {
+      const riskMap = { 'High': 1, 'Medium': 3, 'Low': 5 };
+      const reward = Math.min(5, Math.max(0, Math.round(parseFloat(getRewardValue(startup.reward_potential)) || 0)));
+      return {
+        x: riskMap[startup.risk_level] ?? 2,
+        y: reward,
+      };
+    }
+
+    function buildRiskRewardPoints(items) {
+      const clusters = new Map();
+      items.forEach((startup, index) => {
+        const base = getRiskRewardBasePoint(startup);
+        const clusterKey = `${base.x.toFixed(2)}|${base.y.toFixed(2)}`;
+        if (!clusters.has(clusterKey)) clusters.set(clusterKey, []);
+        clusters.get(clusterKey).push({ startup, index, base });
+      });
+
+      const points = [];
+      clusters.forEach((cluster) => {
+        const clusterSize = cluster.length;
+        cluster.forEach((entry, clusterIndex) => {
+          let offsetX = 0;
+          let offsetY = 0;
+
+          // Geometric Constellation Pattern
+          if (clusterSize === 2) {
+            offsetX = clusterIndex === 0 ? -0.18 : 0.18;
+            offsetY = clusterIndex === 0 ? -0.18 : 0.18;
+          } else if (clusterSize === 3) {
+            const angles = [-Math.PI / 2, Math.PI / 6, (5 * Math.PI) / 6];
+            const spread = 0.22;
+            offsetX = Math.cos(angles[clusterIndex]) * spread;
+            offsetY = Math.sin(angles[clusterIndex]) * spread;
+          } else if (clusterSize > 3) {
+            const angle = (clusterIndex / clusterSize) * Math.PI * 2;
+            offsetX = Math.cos(angle) * 0.25;
+            offsetY = Math.sin(angle) * 0.25;
+          }
+
+          points.push({
+            startup: entry.startup,
+            index: entry.index,
+            x: clampChartValue(entry.base.x + offsetX),
+            y: clampChartValue(entry.base.y + offsetY),
+            r: clusterSize > 1 ? 10 : 12, // Uniform size for cleaner overlaps
+            clusterSize,
+            clusterIndex,
+            base: entry.base,
+          });
+        });
+      });
+      return points.sort((a, b) => a.index - b.index);
+    }
+
+    function renderRiskRewardSummary(points) {
+      const container = document.getElementById('risk-reward-summary');
+      if (!container) return;
+      container.innerHTML = '';
+
+      points.forEach((point, index) => {
+        const startup = point.startup;
+        const riskLabel = startup.risk_level || 'N/A';
+        const rewardLabel = `${getRewardValue(startup.reward_potential)}/5`;
+        const clusterNote = point.clusterSize > 1 ? `Cluster x${point.clusterSize}` : 'Single point';
+        const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
+        const chip = document.createElement('div');
+        chip.className = 'risk-reward-chip';
+        chip.innerHTML = `
+          <span class="chip-dot" style="background:${color};"></span>
+          <span class="font-semibold text-white">${escapeHtml(startup.company_name || 'Startup')}</span>
+          <span class="chip-meta">${escapeHtml(riskLabel)} · ${escapeHtml(rewardLabel)}</span>
+          ${point.clusterSize > 1 ? `<span class="text-[11px] font-bold text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-1 rounded-full">${escapeHtml(clusterNote)}</span>` : ''}
+        `;
+        container.appendChild(chip);
+      });
+    }
+
+    function formatGrowthPercent(value) {
+      if (value == null || Number.isNaN(Number(value))) return 'N/A';
+      const num = Number(value);
+      return `${num >= 0 ? '+' : ''}${num}%`;
+    }
+
+    function renderProjectedReturnsSummary(points) {
+      const container = document.getElementById('returns-summary');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!points.length) return;
+
+      const growthValues = points.map(point => Number(point.value) || 0);
+      const highestPoint = points.reduce((best, current) => (Number(current.value) > Number(best.value) ? current : best), points[0]);
+      const lowestPoint = points.reduce((best, current) => (Number(current.value) < Number(best.value) ? current : best), points[0]);
+      const averageGrowth = growthValues.reduce((sum, val) => sum + val, 0) / growthValues.length;
+
+      const baseColors = ['59,130,246', '16,185,129', '245,158,11', '139,92,246'];
+      const highestColor = baseColors[highestPoint.index % baseColors.length];
+      const lowestColor = baseColors[lowestPoint.index % baseColors.length];
+
+      const cards = [
+        {
+          label: 'Highest Growth',
+          badge: 'Leader',
+          badgeColor: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
+          value: formatGrowthPercent(highestPoint.value),
+          company: highestPoint.startup.company_name || 'N/A',
+          dotColor: `rgb(${highestColor})`
+        },
+        {
+          label: 'Average',
+          badge: 'Benchmark',
+          badgeColor: 'text-brand-400 bg-brand-400/10 border-brand-400/20',
+          value: formatGrowthPercent(averageGrowth.toFixed(1)),
+          company: 'Across selection',
+          dotColor: '#94a3b8' // neutral gray for average
+        },
+        {
+          label: 'Lowest Growth',
+          badge: 'Min',
+          badgeColor: 'text-red-400 bg-red-400/10 border-red-400/20',
+          value: formatGrowthPercent(lowestPoint.value),
+          company: lowestPoint.startup.company_name || 'N/A',
+          dotColor: `rgb(${lowestColor})`
+        },
+      ];
+
+      cards.forEach(cardData => {
+        const card = document.createElement('div');
+        card.className = 'returns-summary-chip flex flex-col justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors';
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">${escapeHtml(cardData.label)}</div>
+            <span class="text-[10px] font-semibold ${cardData.badgeColor} border px-1.5 py-0.5 rounded-md leading-none">${escapeHtml(cardData.badge)}</span>
+          </div>
+          <div class="text-2xl font-bold font-mono text-white mb-3">${escapeHtml(cardData.value)}</div>
+          <div class="flex items-center gap-2 text-xs font-medium text-slate-300 mt-auto pt-3 border-t border-white/5">
+            <span class="w-2 h-2 rounded-full flex-shrink-0" style="background: ${cardData.dotColor}; box-shadow: 0 0 6px ${cardData.dotColor}"></span>
+            <span class="truncate">${escapeHtml(cardData.company)}</span>
           </div>
         `;
         container.appendChild(card);
       });
     }
 
+    // SPOTLIGHT EFFECT + GRADIENT FILLS
     function applyRadarFocus(chart, focusIdx, colors) {
       if (!chart) return;
       chart.data.datasets.forEach((ds, i) => {
-        const muted = focusIdx !== null && focusIdx !== i; const base = colors[i % colors.length];
-        ds.borderColor = muted ? base.mutedBorder : base.border; ds.backgroundColor = muted ? base.mutedBg : base.bg;
-        ds.borderWidth = muted ? 1.5 : 2.5; ds.pointRadius = muted ? 3 : 5; ds.pointHoverRadius = muted ? 4 : 7; ds.pointBackgroundColor = base.border;
+        const muted = focusIdx !== null && focusIdx !== i;
+        const base = colors[i % colors.length];
+
+        if (!muted) {
+          ds.backgroundColor = (context) => {
+            const {ctx, chartArea} = context.chart;
+            if (!chartArea) return base.bg;
+            const cx = (chartArea.left + chartArea.right) / 2;
+            const cy = (chartArea.top + chartArea.bottom) / 2;
+            const r = Math.min(chartArea.right - chartArea.left, chartArea.bottom - chartArea.top) / 2;
+            const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+            const rgb = base.rawRgb || base.border.replace(/[^\d,]/g, '').split(',').slice(0,3).join(',');
+            gradient.addColorStop(0, `rgba(${rgb}, 0.5)`);
+            gradient.addColorStop(1, `rgba(${rgb}, 0.05)`);
+            return gradient;
+          };
+        } else {
+          ds.backgroundColor = base.mutedBg;
+        }
+
+        ds.borderColor = muted ? base.mutedBorder : base.border;
+        ds.borderWidth = muted ? 1 : 2.5;
+        ds.pointRadius = muted ? 0 : 4;       // Hide muted points
+        ds.pointHoverRadius = muted ? 0 : 6;  // Don't pop on hover if muted
+        ds.pointBackgroundColor = base.border;
       });
       chart.update();
     }
 
+    // GLOW PLUGIN ENHANCEMENT
     const radarGlowPlugin = {
       id: 'radarGlow',
-      afterDatasetsDraw(chart) {
-        const active = (chart.getActiveElements && chart.getActiveElements()) || chart._active || [];
-        if (!active.length) return;
+      beforeDatasetsDraw(chart) {
         const ctx = chart.ctx;
-        active.forEach(({ datasetIndex }) => {
-          const meta = chart.getDatasetMeta(datasetIndex); if (!meta || !meta.dataset) return;
-          ctx.save(); ctx.shadowColor = meta.dataset.options.borderColor || 'rgba(59,130,246,0.8)'; ctx.shadowBlur = 14; ctx.lineWidth = (meta.dataset.options.borderWidth || 2) + 2; meta.dataset.draw(ctx); ctx.restore();
+        chart.data.datasets.forEach((dataset, i) => {
+          const meta = chart.getDatasetMeta(i);
+          if (!meta || !meta.dataset) return;
+          // Only draw continuous glow if it's the active/highlighted state
+          if (dataset.borderWidth > 1) {
+            ctx.save();
+            ctx.shadowColor = typeof dataset.borderColor === 'string' ? dataset.borderColor : 'rgba(59,130,246,0.8)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            ctx.lineWidth = dataset.borderWidth;
+            meta.dataset.draw(ctx);
+            ctx.restore();
+          }
         });
       }
     };
@@ -1321,22 +1697,10 @@
       }
 
       if (radarChart && chartColorCache?.radar) {
-        if (chartHighlightIndex === null) {
-          applyRadarFocus(radarChart, radarFocusIndex, chartColorCache.radar);
-        } else {
-          radarChart.data.datasets.forEach((ds, i) => {
-            const base = chartColorCache.radar[i % chartColorCache.radar.length];
-            const muted = i !== chartHighlightIndex;
-            ds.borderColor = muted ? base.mutedBorder : base.border;
-            ds.backgroundColor = muted ? base.mutedBg : base.bg;
-            ds.borderWidth = muted ? 1.5 : 2.5;
-            ds.pointRadius = muted ? 3 : 5;
-            ds.pointHoverRadius = muted ? 4 : 7;
-            ds.pointBackgroundColor = base.border;
-          });
-          radarChart.update('none');
-        }
+        applyRadarFocus(radarChart, chartHighlightIndex, chartColorCache.radar);
       }
+      
+      renderRadarLegend();
     }
 
     function setTableHeaderOffset() {
@@ -1382,10 +1746,22 @@
       if (wasCollapsed) toggleTableGroup('Overview');
       const targetId = getStartupAnchorId(startup.id);
       const target = document.getElementById(targetId);
+      const container = document.getElementById('comparison-table-container');
       const delay = wasCollapsed ? 260 : 0;
       setTimeout(() => {
         if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+          if (container) {
+            const targetRect = target.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const targetTop = targetRect.top - containerRect.top + container.scrollTop;
+            const targetLeft = targetRect.left - containerRect.left + container.scrollLeft;
+            const nextTop = Math.max(0, targetTop - (container.clientHeight / 2) + (targetRect.height / 2));
+            const nextLeft = Math.max(0, targetLeft - (container.clientWidth / 2) + (targetRect.width / 2));
+
+            container.scrollTo({ top: nextTop, left: nextLeft, behavior: 'smooth' });
+          } else {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+          }
           applyTableColumnHighlight(String(startupIndex + 1));
           setTimeout(() => clearTableColumnHighlight(), 1800);
         } else {
@@ -1397,16 +1773,144 @@
     function renderCharts() {
       const returnsCtx = document.getElementById('returns-chart').getContext('2d');
       if (returnsChart) returnsChart.destroy();
-      const barColorMap = startupsData.map(s => {
-        const isPositive = (s.estimated_growth_rate || 0) >= 0;
-        return isPositive
-          ? { bg: 'rgba(16, 185, 129, 0.8)', border: 'rgb(16, 185, 129)', mutedBg: 'rgba(16, 185, 129, 0.18)', mutedBorder: 'rgba(16, 185, 129, 0.35)' }
-          : { bg: 'rgba(248, 113, 113, 0.8)', border: 'rgb(248, 113, 113)', mutedBg: 'rgba(248, 113, 113, 0.18)', mutedBorder: 'rgba(248, 113, 113, 0.35)' };
+      const returnsPoints = startupsData.map((startup, index) => ({
+        startup,
+        index,
+        value: Number(startup.estimated_growth_rate) || 0,
+      }));
+      
+      const baseColors = ['59,130,246', '16,185,129', '245,158,11', '139,92,246'];
+      const barColorMap = startupsData.map((s, idx) => {
+        const rgb = baseColors[idx % baseColors.length];
+        return {
+          rawRgb: rgb,
+          bg: `rgba(${rgb}, 0.8)`,
+          border: `rgb(${rgb})`,
+          mutedBg: `rgba(${rgb}, 0.18)`,
+          mutedBorder: `rgba(${rgb}, 0.35)`
+        };
       });
+      
+      const returnsChartPlugin = {
+        id: 'returnsChartCallouts',
+        afterDatasetsDraw(chart) {
+          const { ctx, chartArea, scales: { y } } = chart;
+          if (!chartArea || !y) return;
+
+          const zeroY = y.getPixelForValue(0);
+          ctx.save();
+          // Thicker, glowing zero line
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(chartArea.left, zeroY);
+          ctx.lineTo(chartArea.right, zeroY);
+          ctx.stroke();
+
+          ctx.font = '700 11px system-ui';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          
+          chart.data.datasets[0].data.forEach((value, index) => {
+            const meta = chart.getDatasetMeta(0);
+            const bar = meta.data[index];
+            if (!bar || bar.hidden) return;
+
+            const isPositive = value >= 0;
+            const label = `${isPositive ? '+' : ''}${Number(value).toFixed(0)}%`;
+            const yPos = isPositive ? bar.y - 14 : bar.y + 14;
+            const barColor = barColorMap[index];
+            const rgb = barColor.rawRgb;
+
+            // Draw Pill Background
+            ctx.beginPath();
+            const textWidth = ctx.measureText(label).width;
+            const paddingX = 8;
+            const paddingY = 4;
+            ctx.roundRect(bar.x - (textWidth / 2) - paddingX, yPos - paddingY - 5, textWidth + paddingX * 2, 10 + paddingY * 2, 6);
+            ctx.fillStyle = `rgba(${rgb}, 0.15)`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(${rgb}, 0.4)`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Draw Text
+            ctx.fillStyle = `rgb(${rgb})`;
+            ctx.fillText(label, bar.x, yPos);
+          });
+          ctx.restore();
+        }
+      };
+      
+      renderProjectedReturnsSummary(returnsPoints);
+      
       returnsChart = new Chart(returnsCtx, {
         type: 'bar',
-        data: { labels: startupsData.map(s => s.company_name), datasets: [{ label: 'Estimated Growth Rate (%)', data: startupsData.map(s => s.estimated_growth_rate || 0), backgroundColor: barColorMap.map(c => c.bg), borderColor: barColorMap.map(c => c.border), borderWidth: 2 }] },
-        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, onHover: (_, elements) => { applyChartHighlight(elements?.length ? elements[0].index : null); }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } } } }
+        data: { 
+          labels: startupsData.map(s => s.company_name), 
+          datasets: [{ 
+            label: 'Estimated Growth Rate (%)', 
+            data: returnsPoints.map(point => point.value), 
+            // Apply gradient mapping based on positive/negative
+            backgroundColor: (context) => {
+              const chart = context.chart;
+              const {ctx, chartArea, scales} = chart;
+              if (!chartArea) return;
+              const val = context.raw;
+              if (val == null) return;
+              const zeroY = scales.y.getPixelForValue(0);
+              const barY = chart.getDatasetMeta(0).data[context.dataIndex]?.y;
+              if (!barY) return;
+
+              const isPositive = val >= 0;
+              const isMuted = chartHighlightIndex !== null && chartHighlightIndex !== context.dataIndex;
+              const rgb = barColorMap[context.dataIndex].rawRgb;
+              const gradient = ctx.createLinearGradient(0, isPositive ? barY : zeroY, 0, isPositive ? zeroY : barY);
+
+              if (isPositive) {
+                  gradient.addColorStop(0, isMuted ? `rgba(${rgb}, 0.15)` : `rgba(${rgb}, 0.85)`);
+                  gradient.addColorStop(1, isMuted ? `rgba(${rgb}, 0.02)` : `rgba(${rgb}, 0.1)`);
+              } else {
+                  gradient.addColorStop(0, isMuted ? `rgba(${rgb}, 0.02)` : `rgba(${rgb}, 0.1)`);
+                  gradient.addColorStop(1, isMuted ? `rgba(${rgb}, 0.15)` : `rgba(${rgb}, 0.85)`);
+              }
+              return gradient;
+            },
+            borderColor: barColorMap.map(c => c.border), 
+            borderWidth: 2, 
+            borderRadius: 14, 
+            barPercentage: 0.72, 
+            categoryPercentage: 0.78 
+          }] 
+        },
+        plugins: [returnsChartPlugin],
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          layout: {
+            padding: {
+              top: 35,
+              bottom: 35
+            }
+          },
+          plugins: { 
+            legend: { display: false }, 
+            tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.95)', titleColor: '#fff', bodyColor: '#cbd5e1', borderColor: 'rgba(255, 255, 255, 0.1)', borderWidth: 1, padding: 12, callbacks: { label: (context) => `Projected growth: ${formatGrowthPercent(context.raw)}`, afterLabel: (context) => { const average = returnsPoints.reduce((sum, point) => sum + point.value, 0) / (returnsPoints.length || 1); const delta = Number(context.raw) - average; const direction = delta >= 0 ? 'above' : 'below'; return ` ${Math.abs(delta).toFixed(1)}% ${direction} average`; } } } 
+          }, 
+          onHover: (_, elements) => { applyChartHighlight(elements?.length ? elements[0].index : null); }, 
+          scales: { 
+            x: { 
+              grid: { display: false }, // Removed grid for clean look
+              border: { display: false },
+              ticks: { color: '#94a3b8', maxRotation: 0, autoSkip: false } 
+            }, 
+            y: { 
+              display: false, // Hide entirely to rely on data pills
+              beginAtZero: true,
+              grace: '10%'
+            } 
+          } 
+        }
       });
       returnsCtx.canvas.onmouseleave = () => applyChartHighlight(null);
 
@@ -1419,18 +1923,27 @@
         mutedBg: `rgba(${rgb}, 0.18)`,
         mutedBorder: `rgba(${rgb}, 0.35)`
       }));
+      
       const quadrantPlugin = {
         id: 'quadrant',
         beforeDraw(chart, args, options) {
           const { ctx, chartArea: { left, top, right, bottom }, scales: { x, y } } = chart;
           const midX = x.getPixelForValue(2.5);
           const midY = y.getPixelForValue(2.5);
-          
+
           ctx.save();
+          // Dead Zone
           ctx.fillStyle = 'rgba(248, 113, 113, 0.03)'; 
           ctx.fillRect(left, top, midX - left, midY - top);
-          ctx.fillStyle = 'rgba(16, 185, 129, 0.05)'; 
+          
+          // Sweet Spot (Top Right)
+          const gradient = ctx.createRadialGradient(right, top, 0, right, top, (right-midX)*1.5);
+          gradient.addColorStop(0, 'rgba(16, 185, 129, 0.15)');
+          gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+          ctx.fillStyle = gradient;
           ctx.fillRect(midX, top, right - midX, midY - top);
+          
+          // Other Quadrants
           ctx.fillStyle = 'rgba(255, 255, 255, 0.02)'; 
           ctx.fillRect(left, midY, midX - left, bottom - midY);
           ctx.fillStyle = 'rgba(255, 255, 255, 0.01)'; 
@@ -1451,43 +1964,117 @@
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText('High Risk, High Reward', left + (midX - left)/2, top + (midY - top)/2);
-          ctx.fillText('Low Risk, High Reward', midX + (right - midX)/2, top + (midY - top)/2);
+          
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.6)';
+          ctx.fillText('Optimal Zone', midX + (right - midX)/2, top + (midY - top)/2);
+          
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
           ctx.fillText('High Risk, Low Reward', left + (midX - left)/2, midY + (bottom - midY)/2);
           ctx.fillText('Low Risk, Low Reward', midX + (right - midX)/2, midY + (bottom - midY)/2);
+
+          // --- NEW: Constellation Hubs and Spokes ---
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+          ctx.setLineDash([3, 3]);
+
+          const datasets = chart.data.datasets;
+          const groups = {};
+
+          // Group items that share the same true base coordinate
+          datasets.forEach((ds, i) => {
+            const pt = ds.data[0];
+            if(pt && pt._isCluster) {
+              const key = `${pt._baseX}-${pt._baseY}`;
+              if(!groups[key]) groups[key] = { pts: [], baseX: pt._baseX, baseY: pt._baseY };
+              const meta = chart.getDatasetMeta(i);
+              if (meta.data[0]) {
+                groups[key].pts.push({ x: meta.data[0].x, y: meta.data[0].y });
+              }
+            }
+          });
+
+          Object.values(groups).forEach(cluster => {
+            if(cluster.pts.length > 1) {
+              const pixelBaseX = x.getPixelForValue(cluster.baseX);
+              const pixelBaseY = y.getPixelForValue(cluster.baseY);
+
+              // Draw central true-coordinate dot
+              ctx.beginPath();
+              ctx.arc(pixelBaseX, pixelBaseY, 3, 0, Math.PI * 2);
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+              ctx.fill();
+
+              // Draw connecting spokes to the offset bubbles
+              cluster.pts.forEach(pt => {
+                ctx.beginPath();
+                ctx.moveTo(pixelBaseX, pixelBaseY);
+                ctx.lineTo(pt.x, pt.y);
+                ctx.stroke();
+              });
+            }
+          });
           ctx.restore();
         }
       };
 
+      // Build the clustered points and update the summary chips
+      const riskRewardPoints = buildRiskRewardPoints(startupsData);
+      renderRiskRewardSummary(riskRewardPoints); 
+
       riskRewardChart = new Chart(riskRewardCtx, {
-        type: 'scatter',
+        type: 'bubble',
         data: {
-          datasets: startupsData.map((s, idx) => ({
-            label: s.company_name,
-            data: [{ x: riskMap[s.risk_level] ?? 2, y: Math.min(5, Math.max(0, Math.round(parseFloat(getRewardValue(s.reward_potential)) || 0))) }],
-            backgroundColor: scatterColorMap[idx % scatterColorMap.length].bg,
-            borderColor: scatterColorMap[idx % scatterColorMap.length].border,
-            borderWidth: 2,
-            pointRadius: 8
-          }))
+          datasets: startupsData.map((s, idx) => {
+            // Find the specific pre-calculated point for this startup
+            const point = riskRewardPoints.find(p => p.index === idx) || { x: 2, y: 2, r: 12, base: {x: 2, y: 2}, clusterSize: 1 };
+            
+            return {
+              label: s.company_name,
+              data: [{ 
+                x: point.x, 
+                y: point.y,
+                r: point.r,
+                _riskLabel: s.risk_level || 'N/A',
+                _rewardVal: getRewardValue(s.reward_potential),
+                _industry: s.industry || 'N/A',
+                _isCluster: point.clusterSize > 1,
+                _baseX: point.base.x,     // Passed to the plugin for spoke rendering
+                _baseY: point.base.y
+              }],
+              backgroundColor: scatterColorMap[idx % scatterColorMap.length].bg,
+              borderColor: scatterColorMap[idx % scatterColorMap.length].border,
+              borderWidth: point.clusterSize > 1 ? 3 : 2, // Emphasize border if overlapping
+              hoverBorderWidth: 4
+            };
+          })
         },
         plugins: [quadrantPlugin],
         options: { 
           responsive: true, 
-          maintainAspectRatio: true, 
+          maintainAspectRatio: false, 
           onHover: (_, elements) => { applyChartHighlight(elements?.length ? elements[0].datasetIndex : null); },
           onClick: (_, elements) => { if (elements?.length) scrollToStartupMetrics(elements[0].datasetIndex); },
           plugins: { 
             legend: { position: 'bottom', labels: { color: '#94a3b8' } },
             tooltip: {
-              displayColors: false,
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              titleColor: '#fff',
+              bodyColor: '#cbd5e1',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              padding: 12,
+              boxPadding: 6,
               callbacks: {
+                title: function(context) {
+                  return context[0].dataset.label;
+                },
                 label: function(context) {
-                  const company = context.dataset.label;
-                  const xVal = context.raw.x;
-                  const yVal = context.raw.y;
-                  const riskLabel = xVal < 2.5 ? 'High Risk' : (xVal === 2.5 ? 'Med Risk' : 'Low Risk');
-                  const rewardLabel = yVal > 2.5 ? 'High Reward' : (yVal === 2.5 ? 'Med Reward' : 'Low Reward');
-                  return `${company} (${riskLabel}, ${rewardLabel})`;
+                  const dataPoint = context.raw;
+                  return [
+                    `Industry: ${dataPoint._industry}`,
+                    `Risk: ${dataPoint._riskLabel}`,
+                    `Reward: ${dataPoint._rewardVal}/5`
+                  ];
                 },
                 footer: () => 'Click to view in table'
               }
@@ -1497,13 +2084,13 @@
             x: { 
               min: 0, max: 5, 
               grid: { color: 'rgba(255,255,255,0.05)' }, 
-              title: { display: true, text: '← Higher Risk            Lower Risk →', color: '#64748b', font: { size: 11 } },
+              title: { display: false }, // Titles disabled to use HTML absolute positioning
               ticks: { display: false } 
             }, 
             y: { 
               min: 0, max: 5, 
               grid: { color: 'rgba(255,255,255,0.05)' }, 
-              title: { display: true, text: 'Reward Potential', color: '#64748b', font: { size: 11 } },
+              title: { display: false }, // Titles disabled to use HTML absolute positioning
               ticks: { display: false } 
             } 
           } 
@@ -1512,23 +2099,97 @@
       riskRewardCtx.canvas.onmouseleave = () => applyChartHighlight(null);
 
       const radarEl = document.getElementById('radar-chart');
+      // UPDATED COLOR GENERATOR - storing rawRgb for gradient usage
+      const colors = ['59,130,246', '16,185,129', '245,158,11', '139,92,246'].map(rgb => ({
+        rawRgb: rgb,
+        bg: `rgba(${rgb},0.18)`,
+        mutedBg: `rgba(${rgb},0.03)`, // Aggressively dim
+        border: `rgba(${rgb},0.95)`,
+        mutedBorder: `rgba(${rgb},0.15)`
+      }));
+      chartColorCache = { bar: barColorMap, scatter: scatterColorMap, radar: colors };
+
       if (radarEl) {
-        renderRadarToggles(); if (radarChart) radarChart.destroy();
+        renderRadarToggles();
+        renderRadarLegend();
+        if (radarChart) radarChart.destroy();
         const axes = getActiveRadarAxes(); const labels = axes.map(a => a.label);
         const normalize = (val, meta) => { if (val == null || isNaN(Number(val))) return 0; const min = meta.min; const max = meta.max; if (min == null || max == null) return 0; if (max === min) return val >= max ? 100 : 0; return Math.round(((Math.min(Math.max(Number(val), min), max) - min) / (max - min)) * 100); };
         const axisMeta = axes.map(ax => { const values = startupsData.map(ax.value).map(v => (v == null || isNaN(Number(v)) ? null : Number(v))); const benchmark = radarBenchmarks[ax.key]; const valid = values.filter(v => v != null); return { key: ax.key, label: ax.label, values, min: benchmark?.min ?? (valid.length ? Math.min(...valid) : null), max: benchmark?.max ?? (valid.length ? Math.max(...valid) : null), benchmark: benchmark ?? null }; });
-        const colors = ['59,130,246', '16,185,129', '245,158,11', '139,92,246'].map(rgb => ({ bg: `rgba(${rgb},0.18)`, mutedBg: `rgba(${rgb},0.05)`, border: `rgba(${rgb},0.95)`, mutedBorder: `rgba(${rgb},0.35)` }));
-        const datasets = startupsData.map((s, idx) => ({ label: s.company_name, data: axisMeta.map(meta => normalize(meta.values[idx], meta)), backgroundColor: colors[idx % colors.length].bg, borderColor: colors[idx % colors.length].border, borderWidth: 2.5, pointRadius: 5 }));
+        
+        const datasets = startupsData.map((s, idx) => ({ 
+          label: s.company_name, 
+          data: axisMeta.map(meta => normalize(meta.values[idx], meta)), 
+          backgroundColor: colors[idx % colors.length].bg, 
+          borderColor: colors[idx % colors.length].border, 
+          borderWidth: 2.5, 
+          pointRadius: 4 
+        }));
 
         radarChart = new Chart(radarEl.getContext('2d'), {
           type: 'radar', plugins: [radarGlowPlugin], data: { labels, datasets },
-          options: { responsive: true, maintainAspectRatio: true, onHover: (_, elements) => { applyChartHighlight(elements?.length ? elements[0].datasetIndex : null); }, scales: { r: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, angleLines: { color: 'rgba(255,255,255,0.1)' }, pointLabels: { color: '#cbd5e1' }, ticks: { display: false } } }, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' }, onClick: (_, legendItem, legend) => { const idx = legendItem.datasetIndex; radarFocusIndex = radarFocusIndex === idx ? null : idx; applyRadarFocus(legend.chart, radarFocusIndex, colors); } } } }
+          options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            onHover: (_, elements) => { applyChartHighlight(elements?.length ? elements[0].datasetIndex : null); }, 
+            scales: { 
+              r: { 
+                min: 0, 
+                max: 100, 
+                grid: { color: 'rgba(255,255,255,0.05)' }, 
+                angleLines: { color: 'rgba(255,255,255,0.08)' }, 
+                pointLabels: { 
+                  color: '#94a3b8',
+                  font: { size: 11.5, weight: '600', family: "'DM Sans', sans-serif" }
+                }, 
+                ticks: { display: false } 
+              } 
+            }, 
+            plugins: { 
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                titleColor: '#fff',
+                bodyColor: '#cbd5e1',
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                borderWidth: 1,
+                padding: 12,
+                boxPadding: 6,
+                callbacks: {
+                  label: function(context) {
+                    const val = context.raw;
+                    const company = context.dataset.label;
+                    const allVals = context.chart.data.datasets.map(ds => ds.data[context.dataIndex]);
+                    const sortedVals = [...allVals].sort((a,b) => b - a);
+                    const rank = sortedVals.indexOf(val);
+                    let contextStr = '';
+
+                    if (allVals.length > 1) {
+                        if (rank === 0) {
+                            const runnerUp = sortedVals[1];
+                            if (runnerUp > 0) {
+                                const diff = Math.round(((val - runnerUp) / runnerUp) * 100);
+                                contextStr = ` (Outperforming by ${diff}%)`;
+                            }
+                        } else {
+                            const leader = sortedVals[0];
+                            if (leader > 0) {
+                                const diff = Math.round(((leader - val) / leader) * 100);
+                                contextStr = ` (${diff}% behind leader)`;
+                            }
+                        }
+                    }
+                    return `${company}: ${val}${contextStr}`;
+                  }
+                }
+              }
+            } 
+          }
         });
         radarEl.onmouseleave = () => applyChartHighlight(null);
-        applyRadarFocus(radarChart, radarFocusIndex, colors); renderRadarStrength(labels, datasets.map(d => d.data));
+        applyRadarFocus(radarChart, chartHighlightIndex, colors); 
+        renderRadarStrength(labels, datasets.map(d => d.data));
       }
-
-      chartColorCache = { bar: barColorMap, scatter: scatterColorMap, radar: ['59,130,246', '16,185,129', '245,158,11', '139,92,246'].map(rgb => ({ bg: `rgba(${rgb},0.18)`, mutedBg: `rgba(${rgb},0.05)`, border: `rgba(${rgb},0.95)`, mutedBorder: `rgba(${rgb},0.35)` })) };
       applyChartHighlight(chartHighlightIndex);
     }
 
@@ -1558,7 +2219,9 @@
       if (icon) {
         if (isCurrentlyCollapsed) {
           icon.classList.remove('-rotate-90');
+          icon.classList.add('rotate-0');
         } else {
+          icon.classList.remove('rotate-0');
           icon.classList.add('-rotate-90');
         }
       }
