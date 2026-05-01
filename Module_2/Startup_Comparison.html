@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Startup Comparison</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -119,18 +120,29 @@
       --table-header-height: 56px;
       
       /* --- SCROLL BUG FIXES --- */
-      overscroll-behavior: contain; /* Stops scroll momentum from bleeding into the main page */
-      overflow-anchor: none; /* Stops the browser from auto-correcting the inner scroll position */
-      -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling for Mac/iOS trackpads */
+      overscroll-behavior: contain; 
+      overflow-anchor: none; 
+      -webkit-overflow-scrolling: touch; 
+      
+      /* NEW: Adds inner padding so the scrollbar avoids the rounded corners */
+      padding-bottom: 12px;
+      padding-right: 4px;
     }
 
     /* Scrollbars Improved Contrast */
     #comparison-table-container::-webkit-scrollbar { width: 8px; height: 8px; }
-    #comparison-table-container::-webkit-scrollbar-track { background: transparent; }
+    #comparison-table-container::-webkit-scrollbar-track { background: transparent; margin-bottom: 12px; } /* Keeps scrollbar track off the bottom edge */
     #comparison-table-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.55); border-radius: 4px; }
     #comparison-table-container::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.7); }
 
-    #comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    #comparison-table { 
+      width: 100%; 
+      border-collapse: separate; 
+      border-spacing: 0; 
+      
+      /* NEW: Pushes the last row up slightly so it doesn't clip */
+      margin-bottom: 24px; 
+    }
     
     /* PC width constraints */
     #comparison-table th, #comparison-table td { min-width: 200px; }
@@ -190,17 +202,13 @@
     }
     .section-divider-cell {
       background: rgb(15, 23, 42); /* Made completely solid */
-      position: sticky;
-      left: 0;
-      top: var(--table-header-height, 56px);
-      z-index: 80 !important; /* Increased from 26 to stay above hovered rows */
       padding: 12px 20px;
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       color: #cbd5e1;
-      box-shadow: 0 6px 14px rgba(2, 6, 23, 0.35);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
 
     /* Sleeker Winner Highlights */
@@ -301,6 +309,22 @@
     .chat-msg.incoming { align-self: flex-start; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); color: #e2e8f0; border-bottom-left-radius: 4px; }
     .chat-msg.outgoing { align-self: flex-end; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border-bottom-right-radius: 4px; }
     .chat-msg .msg-time { font-size: 11px; opacity: 0.6; margin-top: 6px; display: block; text-align: right; }
+    .chat-msg.incoming ul, .chat-msg.incoming ol { margin-left: 20px;margin-bottom: 10px;list-style-type: disc;}
+    .chat-msg.incoming p { margin-bottom: 8px;}
+    .chat-msg.incoming table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 10px 0;
+        font-size: 13px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        overflow: hidden;  
+    }
+    .chat-msg.incoming th, .chat-msg.incoming td {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 8px;
+        text-align: left;
+    }
     #chat-toggle-btn { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.5); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease; position: relative; }
     #chat-toggle-btn:hover { transform: scale(1.08) translateY(-4px); box-shadow: 0 15px 35px rgba(37, 99, 235, 0.6); }
     #chat-unread-badge { position: absolute; top: 0; right: 0; width: 18px; height: 18px; background: #ef4444; border-radius: 50%; font-size: 11px; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid #0f172a; }
@@ -686,7 +710,7 @@
         <div class="radar-header">
           <div class="radar-title-group">
             <h3>Multi-Dimensional Radar</h3>
-            <p>Scaled 0–100 vs fixed benchmarks · click legend to spotlight</p>
+            <p>Scaled 0–100 vs fixed benchmarks · hover legend to spotlight</p>
           </div>
           <div class="axis-pill-row" id="radar-toggle-bar"></div>
         </div>
@@ -697,7 +721,7 @@
               <canvas id="radar-chart"></canvas>
             </div>
             <div class="radar-tip">
-              <strong>Tip:</strong> click a startup name above to spotlight its profile · click again to reset
+              <strong>Tip:</strong> hover over a startup name to spotlight its profile
             </div>
           </div>
           <div class="radar-sidebar">
@@ -790,29 +814,6 @@
         </div>
         <div class="flex items-center gap-2">
           
-          <button 
-            id="hardware-toggle-btn" 
-            onclick="toggleHardwareMode()" 
-            class="relative inline-flex h-8 w-16 items-center rounded-full transition-all duration-300 focus:outline-none flex-shrink-0 mr-1" 
-            style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3);" 
-            title="Switch to CPU mode">
-            <span id="hw-label-gpu" class="absolute left-2 text-[11px] font-bold text-emerald-400 pointer-events-none select-none transition-opacity duration-300">GPU</span>
-            <span id="hw-label-cpu" class="absolute right-2 text-[11px] font-bold text-slate-300 pointer-events-none select-none opacity-0 transition-opacity duration-300">CPU</span>
-            <span id="hardware-toggle-circle" class="inline-block h-6 w-6 transform rounded-full bg-emerald-400 transition-all duration-300 translate-x-9 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-          </button>
-
-          <button 
-            id="context-toggle-btn" 
-            onclick="toggleContextMode()" 
-            class="w-10 h-10 flex items-center justify-center rounded-lg transition-all flex-shrink-0 hover:bg-white/10"
-            style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);"
-            title="Context ON — AI receives full startup data">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/>
-              <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"/>
-              <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/>
-            </svg>
-          </button>
           
           <button onclick="toggleExpandChat()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Expand View">
             <svg id="chat-expand-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -895,6 +896,7 @@
     let riskRewardChart = null;
     let radarChart = null;
     let chartHighlightIndex = null;
+    let lockedChartIndex = null;
     let chartColorCache = null;
     let activeTableColIndex = null;
     let isComparisonSaved = false;
@@ -1220,18 +1222,47 @@
 
     function renderRadarLegend() {
       const row = document.getElementById('legendRow'); if (!row) return;
+
+      if (row.children.length === startupsData.length) {
+        Array.from(row.children).forEach((pill, i) => {
+          const isDimmed = chartHighlightIndex !== null && chartHighlightIndex !== i;
+          const isHighlighted = chartHighlightIndex === i;
+          const isLocked = lockedChartIndex === i;
+          
+          pill.className = `legend-pill${isDimmed ? ' dimmed' : ''}${isHighlighted ? ' highlighted' : ''}`;
+          
+          // Visual indicator that this item is currently "Locked"
+          if (isLocked) {
+            pill.style.borderColor = 'rgba(59, 130, 246, 0.8)';
+            pill.style.boxShadow = '0 0 8px rgba(59, 130, 246, 0.3)';
+          } else {
+            pill.style.borderColor = '';
+            pill.style.boxShadow = '';
+          }
+        });
+        return;
+      }
+
       row.innerHTML = '';
       startupsData.forEach((s, i) => {
         const pill = document.createElement('div');
+        
         const isDimmed = chartHighlightIndex !== null && chartHighlightIndex !== i;
         const isHighlighted = chartHighlightIndex === i;
         pill.className = `legend-pill${isDimmed ? ' dimmed' : ''}${isHighlighted ? ' highlighted' : ''}`;
+        if (lockedChartIndex === i) {
+            pill.style.borderColor = 'rgba(59, 130, 246, 0.8)';
+            pill.style.boxShadow = '0 0 8px rgba(59, 130, 246, 0.3)';
+        }
+
         const rgb = chartColorCache.radar[i % chartColorCache.radar.length].rawRgb;
         pill.innerHTML = `<span class="l-dot" style="background:rgb(${rgb})"></span>${escapeHtml(s.company_name)}`;
-        pill.onclick = () => {
-          const targetIdx = chartHighlightIndex === i ? null : i;
-          applyChartHighlight(targetIdx);
-        };
+        
+        // HOVER to preview, CLICK to lock
+        pill.onmouseenter = () => applyChartHighlight(i);
+        pill.onmouseleave = () => applyChartHighlight(null);
+        pill.onclick = () => applyChartHighlight(i, true); // passing true means "This is a click!"
+        
         row.appendChild(pill);
       });
     }
@@ -1279,6 +1310,11 @@
             <span class="badge weak">Weak: ${escapeHtml(weakLabel)}</span>
           </div>
         `;
+        
+        item.onmouseenter = () => applyChartHighlight(idx);
+        item.onmouseleave = () => applyChartHighlight(null);
+        item.onclick = () => applyChartHighlight(idx, true); 
+        
         container.appendChild(item);
       });
     }
@@ -1672,11 +1708,24 @@
 
     function getStartupAnchorId(startupId) { return `startup-metrics-${startupId}`; }
 
-    function applyChartHighlight(index) {
-      const nextIndex = typeof index === 'number' ? index : null;
-      if (chartHighlightIndex === nextIndex) return;
-      chartHighlightIndex = nextIndex;
+    function applyChartHighlight(index, isClick = false) {
+      // 1. Handle Click vs Hover Logic
+      if (isClick) {
+        // If clicked, toggle the lock on or off
+        lockedChartIndex = (lockedChartIndex === index) ? null : index;
+        index = lockedChartIndex; // Force highlight to the new lock state
+      } else {
+        // If we are just moving the mouse away (index is null), revert to the locked item
+        if (index === null) {
+          index = lockedChartIndex;
+        }
+      }
 
+      // 2. Prevent unnecessary visual updates to stop flickering
+      if (chartHighlightIndex === index) return;
+      chartHighlightIndex = index;
+
+      // --- CHART UPDATES ---
       if (returnsChart && chartColorCache?.bar) {
         const dataset = returnsChart.data.datasets[0];
         dataset.backgroundColor = chartColorCache.bar.map((c, i) => (chartHighlightIndex === null || i === chartHighlightIndex) ? c.bg : c.mutedBg);
@@ -1700,7 +1749,22 @@
         applyRadarFocus(radarChart, chartHighlightIndex, chartColorCache.radar);
       }
       
+      // --- UI UPDATES ---
       renderRadarLegend();
+
+      const strengthList = document.getElementById('radar-strength');
+      if (strengthList) {
+        Array.from(strengthList.children).forEach((item, i) => {
+          item.style.transition = 'opacity 0.2s ease, filter 0.2s ease';
+          if (chartHighlightIndex === null || chartHighlightIndex === i) {
+            item.style.opacity = '1';
+            item.style.filter = 'grayscale(0%)';
+          } else {
+            item.style.opacity = '0.35';
+            item.style.filter = 'grayscale(60%)';
+          }
+        });
+      }
     }
 
     function setTableHeaderOffset() {
@@ -2264,6 +2328,19 @@
 
       groups.forEach(group => {
         const groupKey = group.label; const isCollapsed = collapsedGroups.has(groupKey); const safeKey = groupKey.replace(/[^a-zA-Z0-9]/g, '-');
+        
+        // 1. Calculate the summary BEFORE building the header row
+        const summary = winnerStats.perGroup[group.label];
+        let summaryHtml = '';
+        if (summary && summary.metricCount > 0) {
+          const leaderIdx = summary.wins.indexOf(Math.max(...summary.wins)); 
+          const leaderName = startupsData[leaderIdx]?.company_name || '—';
+          // Only display if there is an actual winner with > 0 wins
+          if (summary.wins[leaderIdx] > 0) {
+             summaryHtml = `<div class="text-[12px] font-normal text-emerald-400 tracking-wide bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20 hidden sm:block">${leaderName} leads ${summary.wins[leaderIdx]} of ${summary.metricCount}</div>`;
+          }
+        }
+
         const sectionRow = document.createElement('tr'); 
         sectionRow.dataset.section = groupKey; 
         sectionRow.style.cursor = 'pointer'; 
@@ -2276,15 +2353,17 @@
         sectionCell.className = `section-divider-cell ${group.rowClass}`; 
         sectionCell.style.borderLeftColor = CATEGORY_COLORS[group.label] || 'rgba(100,116,139,0.4)';
         
+        // 2. Inject summaryHtml into the right side of the flex container
         sectionCell.innerHTML = `
-          <div class="flex items-center justify-between w-full select-none">
+          <div class="flex items-center w-full select-none gap-4">
             <div class="flex items-center gap-2">
               <svg class="w-5 h-5 transition-transform duration-300 ${isCollapsed ? '-rotate-90' : 'rotate-0'}" id="toggle-${safeKey}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
               <span class="${group.textClass}">${group.icon} ${group.label}</span>
-              <span class="ml-2 text-[11px] bg-white/10 px-2 py-0.5 rounded-full text-slate-400 font-mono tracking-wider border border-white/5">${group.metrics.length} metrics</span>
+              <span class="ml-2 text-[11px] bg-white/10 px-2 py-0.5 rounded-full text-slate-400 font-mono tracking-wider border border-white/5 flex-shrink-0">${group.metrics.length} metrics</span>
             </div>
+            ${summaryHtml}
           </div>
         `;
         
@@ -2334,13 +2413,6 @@
           tbody.appendChild(row);
         });
 
-        const summary = winnerStats.perGroup[group.label];
-        if (summary && summary.metricCount > 0) {
-          const leaderIdx = summary.wins.indexOf(Math.max(...summary.wins)); const leaderName = startupsData[leaderIdx]?.company_name || '—';
-          const summaryRow = document.createElement('tr'); summaryRow.className = 'category-summary-row';
-          const td = document.createElement('td'); td.colSpan = startupsData.length + 1; td.className = 'px-5 py-4 border-t border-white/10'; td.innerHTML = `<span class="category-summary-text">${leaderName} leads in ${summary.wins[leaderIdx]} of ${summary.metricCount} metrics in ${group.label}</span>`;
-          summaryRow.appendChild(td); tbody.appendChild(summaryRow);
-        }
       });
       table.appendChild(tbody);
       setTableHeaderOffset();
@@ -2398,35 +2470,37 @@
       }, 1500);
     }
 
-    function getGradioBase() { return GRADIO_BASES[GRADIO_MODE] || GRADIO_BASES.gpu; }
-    function buildComparisonContext() { 
-    if (!startupsData || startupsData.length === 0) return '';
+    function getGradioBase() { 
+    return 'https://aipse-bot-finance-chatbot-api-gpu-ver.hf.space'; 
+    }
 
-    const payload = {
-        analysis_role: "Investment Analyst",
-        target_currency: "PHP",
-        comparison_set: startupsData.map(s => ({
-            company_name: s.company_name,
-            industry: s.industry,
-            growth_rate_percent: s.estimated_growth_rate,
-            investor_reward_rating: getRewardValue(s.reward_potential), // 1-5 scale
-            risk_level: s.risk_level,
-            monthly_recurring_revenue: s.current_mrr_arr || s.annual_recurring_revenue,
-            customer_acquisition_cost: s.cac,
-            lifetime_value: s.ltv,
-            total_revenue: s.current_revenue || s.revenue,
-            valuation: s.current_valuation || s.valuation,
-            funding_raised: s.capital_raised_to_date,
-            investment_ask: s.funding_ask || s.funding_amount
-        }))
-    };
+    function buildComparisonContext(userQuestion) { 
+        if (!startupsData || startupsData.length === 0) return userQuestion;
 
-    return `### DATASET FOR ANALYSIS (Currency: PHP)
-You are an expert Investment Analyst. Use the following JSON startup data to answer the user's question. 
-Compare metrics like LTV/CAC ratios and Revenue-to-Valuation multiples to provide high-quality advice.
+        // 1. Map the raw data into a clean, readable format for the AI
+        const startupSummary = startupsData.map(s => {
+            return {
+                company: s.company_name,
+                industry: s.industry || "N/A",
+                metrics: {
+                    growth_rate: s.estimated_growth_rate + "%",
+                    mrr: s.current_mrr_arr || s.annual_recurring_revenue,
+                    ltv: s.ltv,
+                    cac: s.cac,
+                    valuation: s.current_valuation || s.valuation,
+                    risk: s.risk_level
+                }
+            };
+        });
 
-${JSON.stringify(payload, null, 2)}`; // null, 2 makes it readable for the AI
-}
+        // 2. Return a combined string of the data and the question
+        // Your app.py will receive this as the 'prompt'
+        return `STARTUP_DATA:
+    ${JSON.stringify(startupSummary, null, 2)}
+
+    USER_QUERY:
+    ${userQuestion}`;
+    }
 
     let chatOpen = false; let isChatExpanded = false; let isChatBusy = false; let useContextMode = true;
 
@@ -2486,9 +2560,10 @@ ${JSON.stringify(payload, null, 2)}`; // null, 2 makes it readable for the AI
     }
 
     function normalizeChatReply(reply) {
-      if (typeof reply === 'string') return reply;
-      if (typeof reply === 'object') return reply.answer || reply.response || reply.text || JSON.stringify(reply);
-      return String(reply);
+      let cleanReply = typeof reply === 'string' ? reply : (reply.answer || JSON.stringify(reply));
+      
+      // This Regex targets the <think> block and removes it entirely
+      return cleanReply.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
     }
 
     function ensureToastCSS() {
@@ -2539,24 +2614,65 @@ ${JSON.stringify(payload, null, 2)}`; // null, 2 makes it readable for the AI
 
     async function sendChatMessage() {
       if (isChatBusy) return;
-      const input = document.getElementById('chat-input'); const text = input.value.trim(); if (!text) return;
-      isChatBusy = true; appendChatMessage(text, 'outgoing'); input.value = ''; input.disabled = true; showTypingIndicator(); setChatStatus('typing');
-      try {
-        const comparisonContext = useContextMode ? buildComparisonContext() : '';
-        const prompt = comparisonContext ? `${comparisonContext}\n\nUser question: ${text}` : `User question: ${text}`;
-        const reply = await callGradio(prompt);
-        removeTypingIndicator(); appendChatMessage(normalizeChatReply(reply) || '(No response)', 'incoming'); setChatStatus('online');
-      } catch (err) {
-        removeTypingIndicator(); appendChatMessage('Something went wrong. Please try again.', 'incoming'); setChatStatus('error'); setTimeout(() => setChatStatus('online'), 3000);
-      } finally { isChatBusy = false; input.disabled = false; input.focus(); }
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        isChatBusy = true;
+        appendChatMessage(text, 'outgoing');
+        
+        const chatContainer = document.getElementById('chat-messages');
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+
+        input.value = '';
+        input.disabled = true;
+        showTypingIndicator();
+        setChatStatus('typing');
+
+        try {
+            // No more ternary operator! We always build the context.
+            // Your app.py now decides if the data is relevant to the answer.
+            const prompt = buildComparisonContext(text);
+            
+            const reply = await callGradio(prompt);
+            
+            removeTypingIndicator(); 
+            appendChatMessage(normalizeChatReply(reply) || '(No response)', 'incoming'); 
+            
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+            setChatStatus('online');
+        } catch (err) {
+            removeTypingIndicator(); 
+            appendChatMessage('Something went wrong. Please try again.', 'incoming'); 
+            setChatStatus('error'); 
+            setTimeout(() => setChatStatus('online'), 3000);
+        } finally { 
+            isChatBusy = false; 
+            input.disabled = false; 
+            input.focus(); 
+        }
     }
 
     function appendChatMessage(text, type) {
-      const messages = document.getElementById('chat-messages'); const div = document.createElement('div'); div.className = `chat-msg ${type}`;
-      div.innerHTML = `${escapeHtml(text)}<span class="msg-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
-      messages.appendChild(div); messages.scrollTop = messages.scrollHeight;
-      if (type === 'incoming' && !chatOpen) document.getElementById('chat-unread-badge')?.classList.remove('hidden');
+    const messages = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    div.className = `chat-msg ${type}`;
+    
+    // Check if it's an incoming message to apply Markdown parsing
+    let messageContent = (type === 'incoming') ? marked.parse(text) : escapeHtml(text);
+    
+    div.innerHTML = `
+        <div class="markdown-content">${messageContent}</div>
+        <span class="msg-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+    `;
+    
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+    
+    if (type === 'incoming' && !chatOpen) {
+        document.getElementById('chat-unread-badge')?.classList.remove('hidden');
     }
+}
 
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
