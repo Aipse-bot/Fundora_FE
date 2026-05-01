@@ -2400,20 +2400,33 @@
 
     function getGradioBase() { return GRADIO_BASES[GRADIO_MODE] || GRADIO_BASES.gpu; }
     function buildComparisonContext() { 
-        if (!startupsData || startupsData.length === 0) return '';
-        var isVal = function(v) { return v != null && v !== '' && v !== 'null'; };
-        var toNum = function(v) { if (!isVal(v)) return null; var n = Number(v); return isNaN(n) ? null : n; };
-        var toText = function(v) { return isVal(v) ? String(v) : null; };
-        var payload = {
-            role: 'investment_analysis_assistant', use_only: true, currency: 'PHP',
-            startups: startupsData.map(function(s) {
-                var startup = { n: toText(s.company_name), i: toText(s.industry), gr: toNum(s.estimated_growth_rate), rw: toNum(getRewardValue(s.reward_potential)), rk: toText(s.risk_level), mrr: toNum(s.current_mrr_arr || s.annual_recurring_revenue), cac: toNum(s.cac), ltv: toNum(s.ltv), rev: toNum(s.current_revenue || s.revenue), val: toNum(s.current_valuation || s.valuation), raised: toNum(s.capital_raised_to_date), ask: toNum(s.funding_ask || s.funding_amount) };
-                Object.keys(startup).forEach(key => { if (startup[key] == null) delete startup[key]; });
-                return startup;
-            })
-        };
-        return 'Use only this compact JSON context when answering:\n' + JSON.stringify(payload); 
-    }
+    if (!startupsData || startupsData.length === 0) return '';
+
+    const payload = {
+        analysis_role: "Investment Analyst",
+        target_currency: "PHP",
+        comparison_set: startupsData.map(s => ({
+            company_name: s.company_name,
+            industry: s.industry,
+            growth_rate_percent: s.estimated_growth_rate,
+            investor_reward_rating: getRewardValue(s.reward_potential), // 1-5 scale
+            risk_level: s.risk_level,
+            monthly_recurring_revenue: s.current_mrr_arr || s.annual_recurring_revenue,
+            customer_acquisition_cost: s.cac,
+            lifetime_value: s.ltv,
+            total_revenue: s.current_revenue || s.revenue,
+            valuation: s.current_valuation || s.valuation,
+            funding_raised: s.capital_raised_to_date,
+            investment_ask: s.funding_ask || s.funding_amount
+        }))
+    };
+
+    return `### DATASET FOR ANALYSIS (Currency: PHP)
+You are an expert Investment Analyst. Use the following JSON startup data to answer the user's question. 
+Compare metrics like LTV/CAC ratios and Revenue-to-Valuation multiples to provide high-quality advice.
+
+${JSON.stringify(payload, null, 2)}`; // null, 2 makes it readable for the AI
+}
 
     let chatOpen = false; let isChatExpanded = false; let isChatBusy = false; let useContextMode = true;
 
