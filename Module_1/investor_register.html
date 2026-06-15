@@ -394,7 +394,7 @@
         submitBtn.textContent = 'Creating Account...';
         
         try {
-            const res = await fetch('https://fundorabe-production-5ccb.up.railway.app/api/investor/register/', {
+            const res = await fetch('https://fundora-be-c24c.onrender.com/investor-registration/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
